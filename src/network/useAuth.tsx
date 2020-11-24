@@ -110,7 +110,7 @@ export default function() {
 
   const orders = {
     getAll: ()=> async () => (await getAxis()).get(`/orders/all`),
-    getSingle: ()=> async uuid => (await getAxis()).get(`/orders/${uuid}`),
+    getSingle: (uuid)=> async () => (await getAxis()).get(`/orders/${uuid}`),
     new: (data)=> async () => (await getAxis()).post('/orders/new', data),
     mine: (params)=> async ()=> (await getAxis()).get(`/orders/mine?include=${params}`),
   };
