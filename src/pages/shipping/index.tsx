@@ -54,7 +54,7 @@ export default function Shipping(props) {
 
 
   useEffect(() => {
-    dispatch(api.orders.getSingle())
+    dispatch(api.orders.getSingle(paramOrderId))
       // @ts-ignore
       .then(({data}) => {
         setUserInfo(data);
