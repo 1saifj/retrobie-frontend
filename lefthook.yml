@@ -1,0 +1,6 @@
+pre-commit:
+  commands:
+    lint:
+      glob: "*.{js,ts}"
+      exclude: "node_modules"
+      run: "npx prettier --write {staged_files} && git add {staged_files}"

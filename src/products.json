@@ -1,0 +1,259 @@
+[
+  {
+    "name": "Adidas Neo",
+    "id": "adidas_neo",
+    "details": {
+      "year": 2014,
+      "manufacturer": "Adidas",
+      "description": {
+        "short_description": "Perfect shoes for casual wear.",
+        "long_description": "A hardwood style with a fresh look. These men's basketball-inspired shoes have a washed canvas upper contrasted by smooth 3-Stripes. They ride on a durable, vulcanized-look rubber cupsole.",
+        "copy": "<ul><li><span> Textile and Synthetic</span></li><li><span > Made in USA or Imported</span></li><li><span> Rubber sole</span></li><li><span> Regular fit; Washed canvas upper</span></li><li><span > Rubber cupsole provides excellent traction</span></li><li><span > Enjoy the comfort and performance of OrthoLite Float sockliner</span></li></ul>"
+      },
+      "images": [
+        "/shoes/adidas_neo/Adidas-NEO-031.jpg",
+        "/shoes/adidas_neo/Adidas-NEO-031_1.jpg",
+        "/shoes/adidas_neo/Adidas-NEO-031_2.jpg",
+        "/shoes/adidas_neo/Adidas-NEO-031_3.jpg",
+        "/shoes/adidas_neo/Adidas-NEO-031_4.jpg"
+      ],
+      "colors": [
+        {
+          "hex": "#7e7681",
+          "name": "light_grey"
+        }
+      ],
+      "sizes": [
+        {
+          "country": "UK",
+          "size": 42
+        }
+      ],
+      "price": {
+        "cost": "2599",
+        "retail": "",
+        "currency": "Ksh"
+      },
+      "stock": {
+        "in_stock": true,
+        "count": "1",
+        "on_sale": false,
+        "sale_price": null
+      },
+      "sex": "male",
+      "type": {
+        "ideal_for": "casual_wear",
+        "sports_type": null,
+        "style": "high_top"
+      },
+      "refurbished": true
+    }
+  },
+  {
+    "name": "Adidas Raleigh Mid",
+    "id": "adidas_raleigh",
+    "details": {
+      "year": 2016,
+      "manufacturer": "Adidas",
+      "description": {
+        "short_description": "Perfect shoes for casual wear.",
+        "long_description": "These shoes re-create old-school basketball sneakers with a modern feel. They have a clean mid-cut hoops look in a mix of leather and mesh.",
+        "copy": "<ul class=\"a-unordered-list a-vertical a-spacing-none\"><li><span class=\"a-list-item\"> 100% Faux Leather</span></li><li><span class=\"a-list-item\"> Imported</span></li><li><span class=\"a-list-item\"> Rubber sole</span></li><li><span class=\"a-list-item\"> Shaft measures approximately 4.25\" from arch</span></li><li><span class=\"a-list-item\"> Heel measures approximately 1.25\"</span></li><li><span class=\"a-list-item\"> Mid-cut fashion sneaker with faux-leather upper featuring tonal three-stripes branding and vulcanized outsole</span></li></ul>"
+      },
+      "images": [
+        "/shoes/adidas_raleigh_mid/adidas_mens_raleigh_mid_50_p_1024x.jpg",
+        "/shoes/adidas_raleigh_mid/adidas_mens_raleigh_mid_1.jpg",
+        "/shoes/adidas_raleigh_mid/adidas_mens_raleigh_mid_2.jpg",
+        "/shoes/adidas_raleigh_mid/adidas_mens_raleigh_mid_3.jpg",
+        "/shoes/adidas_raleigh_mid/adidas_mens_raleigh_mid_4.jpg",
+        "/shoes/adidas_raleigh_mid/adidas_mens_raleigh_mid_5.jpg",
+        "/shoes/adidas_raleigh_mid/adidas_mens_raleigh_mid_6.jpg"
+      ],
+      "colors": [
+        {
+          "hex": "#064BAE",
+          "name": "light_grey"
+        }
+      ],
+      "sizes": [
+        {
+          "country": "UK",
+          "size": 42
+        }
+      ],
+      "price": {
+        "cost": "2999",
+        "retail": "$129",
+        "currency": "Ksh"
+      },
+      "currency": "Ksh",
+      "stock": {
+        "in_stock": true,
+        "count": "1",
+        "on_sale": false,
+        "sale_price": null
+      },
+      "sex": "male",
+      "type": {
+        "ideal_for": "casual_wear",
+        "sports_type": null,
+        "style": "high_top"
+      }
+    },
+    "refurbished": true
+  },
+  {
+    "name": "Nike Free Run 5.0",
+    "id": "nike_free_run_5_0",
+    "details": {
+      "year": 2014,
+      "manufacturer": "Nike",
+      "description": {
+        "copy": "<div><p>Ideal for runs up to 3 miles, the Nike Free RN 5.0 returns to its roots as a natural motion shoe. An updated flex groove pattern and modified midsole foam provides more flexibility than its predecessor, creating a barefoot sensation with every step. At the upper, breathable and stretchy mesh moves with your foot, while synthetic suede overlays provide stable support.</p><p><b>Benefits</b></p><ul><li>Stretch upper designed to fit like a second skin.</li><li>Low foam density lets your foot feel connected to the ground.</li><li>Heel-to-toe grooves allow multi-directional flexibility.</li><li>Asymmetrical lacing system is placed on the side to relieve pressure on your instep.</li><li>Bootie construction integrates the tongue to provide a snug, seamless fit.</li><li>The absence of a heel counter gives freedom to your heel area while providing lockdown.</li><li>Sockliner is designed to give your foot a close, connected feel to the ground.</li><li>Double hot-knife cuts on the outsole and side of the midsole flex to give optimal flexibility with every step.</li><li>Rubber pods on the forefoot and heel enhance traction.</li></ul><p><b class=\"headline-baseline-base\">Product Details</b></p><ul><li>Weight: 8.34 oz. (men's size 10)</li><li>Last: MR-46</li><li>Offset: 6mm (14mm forefoot, 20mm heel)</li><li>Shown: Red/White</li><li>Model: 2014</li></ul></div>",
+        "short_description": "Beginner running shoes.",
+        "long_description": "Ideal for runs up to 3 miles, this natural motion shoe features a breathable, stretchy mesh upper that fits like a second skin. Synthetic suede overlays provide stable support."
+      },
+      "images": [
+        "/shoes/nike_free_run_5_0/nike_free_run_5_0.jpeg",
+        "/shoes/nike_free_run_5_0/nike_free_run_5_0_side.jpg",
+        "/shoes/nike_free_run_5_0/nike_free_run_5_0_side_1.jpeg",
+        "/shoes/nike_free_run_5_0/nike_free_run_5_0_underside.jpeg"
+      ],
+      "colors": [
+        {
+          "hex": "#F4373B",
+          "name": "vibrant_red"
+        }
+      ],
+      "sizes": [
+        {
+          "country": "UK",
+          "size": 42
+        }
+      ],
+      "price": {
+        "cost": "2499",
+        "retail": "",
+        "currency": "Ksh"
+      },
+      "currency": "Ksh",
+      "stock": {
+        "in_stock": true,
+        "count": "1",
+        "on_sale": false,
+        "sale_price": null
+      },
+      "sex": "unisex",
+      "type": {
+        "idea_for": "sports",
+        "sports_type": "running",
+        "style": null
+      }
+    },
+    "refurbished": true
+  },
+  {
+    "name": "Kevin Garnett 2004 MVP",
+    "id": "kevin_garnett_2004_mvp",
+    "details": {
+      "year": 2010,
+      "manufacturer": "Nike",
+      "description": {
+        "copy": "<div><p>Ideal for runs up to 3 miles, the Nike Free RN 5.0 returns to its roots as a natural motion shoe. An updated flex groove pattern and modified midsole foam provides more flexibility than its predecessor, creating a barefoot sensation with every step. At the upper, breathable and stretchy mesh moves with your foot, while synthetic suede overlays provide stable support.</p><p><b>Benefits</b></p><ul><li>Stretch upper designed to fit like a second skin.</li><li>Low foam density lets your foot feel connected to the ground.</li><li>Heel-to-toe grooves allow multi-directional flexibility.</li><li>Asymmetrical lacing system is placed on the side to relieve pressure on your instep.</li><li>Bootie construction integrates the tongue to provide a snug, seamless fit.</li><li>The absence of a heel counter gives freedom to your heel area while providing lockdown.</li><li>Sockliner is designed to give your foot a close, connected feel to the ground.</li><li>Double hot-knife cuts on the outsole and side of the midsole flex to give optimal flexibility with every step.</li><li>Rubber pods on the forefoot and heel enhance traction.</li></ul><p><b class=\"headline-baseline-base\">Product Details</b></p><ul><li>Weight: 8.34 oz. (men's size 10)</li><li>Last: MR-46</li><li>Offset: 6mm (14mm forefoot, 20mm heel)</li><li>Shown: Red/White</li><li>Model: 2014</li></ul></div>",
+        "short_description": "Casual outdoor shoes/casual basketball shoes.",
+        "long_description": "These shoes are perfect for casual wear or casual sports use. They are perfectly breathable, making them a great choice for casual basketball games, too."
+      },
+      "images": [
+        "/shoes/kevin_garnett_2004_mvp/kevin_garnet_2004_mvp.jpg",
+        "/shoes/kevin_garnett_2004_mvp/kevin_garnet_2004_mvp_1.jpg",
+        "/shoes/kevin_garnett_2004_mvp/kevin_garnet_2004_mvp_2.jpg",
+        "/shoes/kevin_garnett_2004_mvp/kevin_garnet_2004_mvp_3.jpg",
+        "/shoes/kevin_garnett_2004_mvp/kevin_garnet_2004_mvp_4.jpg"
+      ],
+      "colors": [
+        {
+          "hex": "#F4373B",
+          "name": "vibrant_red"
+        }
+      ],
+      "sizes": [
+        {
+          "country": "UK",
+          "size": 42
+        }
+      ],
+      "price": {
+        "cost": "3000",
+        "retail": "",
+        "currency": "Ksh"
+      },
+      "stock": {
+        "in_stock": true,
+        "count": "1",
+        "on_sale": false,
+        "sale_price": null
+      },
+      "sex": "unisex",
+      "type": {
+        "idea_for": "sports",
+        "sports_type": "running",
+        "style": null
+      }
+    },
+    "refurbished": true
+  },
+  {
+    "name": "Nike Zoom Kobe V",
+    "id": "nike_zoom_kobe_v",
+    "details": {
+      "year": 2014,
+      "manufacturer": {
+        "main": "Nike",
+        "brand": "Zoom",
+        "endorsed_by": "Kobe"
+      },
+      "description": {
+        "copy": "<div><p>Ideal for runs up to 3 miles, the Nike Free RN 5.0 returns to its roots as a natural motion shoe. An updated flex groove pattern and modified midsole foam provides more flexibility than its predecessor, creating a barefoot sensation with every step. At the upper, breathable and stretchy mesh moves with your foot, while synthetic suede overlays provide stable support.</p><p><b>Benefits</b></p><ul><li>Stretch upper designed to fit like a second skin.</li><li>Low foam density lets your foot feel connected to the ground.</li><li>Heel-to-toe grooves allow multi-directional flexibility.</li><li>Asymmetrical lacing system is placed on the side to relieve pressure on your instep.</li><li>Bootie construction integrates the tongue to provide a snug, seamless fit.</li><li>The absence of a heel counter gives freedom to your heel area while providing lockdown.</li><li>Sockliner is designed to give your foot a close, connected feel to the ground.</li><li>Double hot-knife cuts on the outsole and side of the midsole flex to give optimal flexibility with every step.</li><li>Rubber pods on the forefoot and heel enhance traction.</li></ul><p><b class=\"headline-baseline-base\">Product Details</b></p><ul><li>Weight: 8.34 oz. (men's size 10)</li><li>Last: MR-46</li><li>Offset: 6mm (14mm forefoot, 20mm heel)</li><li>Shown: Red/White</li><li>Model: 2014</li></ul></div>",
+        "short_description": "Beginner running shoes.",
+        "long_description": "Ideal for runs up to 3 miles, this natural motion shoe features a breathable, stretchy mesh upper that fits like a second skin. Synthetic suede overlays provide stable support."
+      },
+      "images": [
+        "/shoes/nike_zoom_kobe_v/nike-zoom-kobe-v-white-black-del-sol-01.jpg",
+        "/shoes/nike_zoom_kobe_v/nike-zoom-kobe-v-white-black-del-sol-02.jpg",
+        "/shoes/nike_zoom_kobe_v/nike-zoom-kobe-v-white-black-del-sol-03.jpg",
+        "/shoes/nike_zoom_kobe_v/nike-zoom-kobe-v-white-black-del-sol-04.jpg",
+        "/shoes/nike_zoom_kobe_v/nike-zoom-kobe-v-white-black-del-sol-05.jpg"
+      ],
+      "colors": [
+        {
+          "hex": "#df6e03",
+          "name": "selective_yellow"
+        }
+      ],
+      "sizes": [
+        {
+          "country": "UK",
+          "size": 42
+        }
+      ],
+      "price": {
+        "cost": "2599",
+        "retail": "",
+        "currency": "Ksh"
+      },
+      "stock": {
+        "in_stock": true,
+        "count": "1",
+        "on_sale": false,
+        "sale_price": null
+      },
+      "sex": "unisex",
+      "type": {
+        "idea_for": "sports",
+        "sports_type": "running",
+        "style": null
+      }
+    },
+    "refurbished": true
+  }
+]

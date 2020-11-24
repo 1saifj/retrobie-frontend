@@ -1,0 +1,24 @@
+@font-face {
+    font-family: 'Andea Rough';
+    src: url('Andea-Rough.woff2') format('woff2'),
+    url('Andea-Rough.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Andea Rounded';
+    src: url('Andea-Rounded.woff2') format('woff2'),
+    url('Andea-Rounded.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Andea Clean';
+    src: url('Andea-Clean.woff2') format('woff2'),
+    url('Andea-Clean.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+

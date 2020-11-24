@@ -1,0 +1,11 @@
+{
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "headers": {
+        "cache-control": "public, max-age=604800, immutable"
+      },
+      "dest": "/static/$1"
+    }
+  ]
+}

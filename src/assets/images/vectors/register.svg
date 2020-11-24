@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+     width="48" height="48"
+     viewBox="0 0 172 172"
+     style=" fill:#000000;">
+    <g fill="none" fill-rule="nonzero"
+       stroke="none"
+       stroke-width="1" stroke-linecap="butt"
+       stroke-linejoin="miter"
+       stroke-miterlimit="10"
+       stroke-dasharray=""
+       stroke-dashoffset="0"
+       font-family="none"
+       font-weight="none"
+       font-size="none"
+       text-anchor="none"
+       style="mix-blend-mode: normal">
+        <g>
+            <path d="M150.5,146.91667c0,7.91558 -6.41775,14.33333 -14.33333,14.33333h-82.41667c-7.91558,0 -14.33333,-6.41775 -14.33333,-14.33333v-121.83333c0,-7.91558 6.41775,-14.33333 14.33333,-14.33333h82.41667c7.91558,0 14.33333,6.41775 14.33333,14.33333z"
+                  fill="#bbdefb">
+            </path>
+            <path d="M118.25,86l-43,35.83333v-71.66667z" fill="#3c91e4">
+            </path>
+            <path d="M21.5,75.25h60.91667v21.5h-60.91667z" fill="#3c91e4">
+            </path>
+        </g>
+    </g>
+
+</svg>

@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Men",
+    "link": "men",
+    "image": "/"
+  },
+  {
+    "name": "Women",
+    "link": "women",
+    "image": "/"
+  },
+  {
+    "name": "Children",
+    "link": "children",
+    "image": "/"
+  }
+]
