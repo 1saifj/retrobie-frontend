@@ -114,6 +114,14 @@ const links = [
 ];
 
 const menuItems = [
+  // note: having these items preloaded here
+  // makes sure they don't jump around the page
+  // if dynamically loaded
+  {
+    title: 'Brands',
+    featured: false,
+    links: [],
+  }
   // {
   //     title: "Mens",
   //     featured: {
@@ -154,23 +162,13 @@ const newItems = [
       'https://ik.imagekit.io/t25/v2/landing/nike-lebron-17-low-bone_HmFkaLy_9Tl.webp?tr=w-200',
     to: '',
   },
-  {
-    title: '',
-    image: '',
-    to: '',
-  },
-  {
-    title: '',
-    image: '',
-    to: '',
-  },
 ];
 
 export {menuItems, newItems};
 
-export function sortBrands(brands, mapToLinks) {
+export function sortBrands(brands: any): Map<any, any> {
   // If no brands, return an empty array
-  if (!brands?.length) return [];
+  if (!brands?.length) return new Map<any, any>();
   // Capitalize the brand names
   const brandNames = brands.map(brand => capitalize(brand.name));
   // and sort them
@@ -193,22 +191,14 @@ export function sortBrands(brands, mapToLinks) {
     }
   });
 
-  // At this point, we could return the object with the arrays, and
-  // it could work fine, but I already had this api up so I'd rather
-  // build on top of it for now.
+  return brandCharMap;
+}
 
-  // TODO : Everything below here should be broken into a new function
-  // Only returning an array for consistency
-  if (!mapToLinks) return [...brandCharMap.entries()];
+export function getBrandLinks(brandCharMap: Map<any, any>){
 
-  const items = {
-    title: 'Brands',
-    featured: false,
-    links: [],
-  };
-
-  [...brandCharMap.keys()].forEach(key => {
-    items.links.push({
+  // @ts-ignore
+  return [...brandCharMap.keys()].map(key => {
+    return {
       title: key.toUpperCase(),
       to: '#',
       items: brandCharMap.get(key)?.map(item => ({
@@ -218,8 +208,7 @@ export function sortBrands(brands, mapToLinks) {
           .toLowerCase()
           .replace(new RegExp(' ', 'g'), '-')}`,
       })),
-    });
+    }
   });
 
-  return items;
 }

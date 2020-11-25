@@ -1,7 +1,14 @@
 import React from 'react';
 import Image from 'react-progressive-graceful-image';
 
-const RetroImage = ({src, srcSet, alt, style, solidColor, placeholderStyle}) => {
+const RetroImage = ({src, srcSet, alt, style, solidColor, placeholderStyle}: {
+  src: string,
+  alt: string,
+  srcSet?,
+  style?,
+  solidColor?,
+  placeholderStyle?
+}) => {
 
   const setPlaceholderQueryParam = (src)=> {
     if (!src) return '';
@@ -13,8 +20,6 @@ const RetroImage = ({src, srcSet, alt, style, solidColor, placeholderStyle}) => 
 
   return (
     <div style={{
-      minWidth: 250,
-      minHeight: 250,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
