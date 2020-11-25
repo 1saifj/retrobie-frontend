@@ -210,7 +210,7 @@ export default function Checkout(props) {
                         <p>
                           Before we can complete your order, we need to know a few more things about
                           you first. To find out how this data is used, please read our{' '}
-                          <Link to={'/privacy/terms-and-conditions'}>Terms and Conditions</Link>
+                          <Link to={'/privacy/terms-of-service'}>Terms and Conditions</Link>
                         </p>
                         <div>
                           <h4>Already Have an Account?</h4>

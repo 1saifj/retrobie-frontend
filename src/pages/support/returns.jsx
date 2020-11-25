@@ -32,8 +32,12 @@ class Returns extends React.Component {
               </p>
               <p>That said, there are some things you need to keep in mind:</p>
               <ul>
-                <li>You may cancel your order any time before delivery.</li>
-                <li>You have seven days since the day of delivery to make a returns claim.</li>
+                <li>
+                  You may cancel your order any time before delivery.
+                </li>
+                <li>
+                  You have seven (7) days since the day of delivery to make a returns claim.
+                </li>
               </ul>
             </Container>
             <Container>

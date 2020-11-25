@@ -3,17 +3,20 @@ import Layout from '../../components/Layout';
 import {SupportParent} from './delivery';
 import SEOHeader from '../../components/SEOHeader';
 import {Container} from 'bloomer';
+import {Request} from '../../constants/icons'
 
 class CustomRequests extends Component {
     render() {
         return (
-            <Layout>
-                <SEOHeader title={'Making a Custom Request'}
-                           description={"Are you looking for sneakers in Nairobi and have a particular pair of sneakers in mind? We'll do our best to track them down for you. "}
+            <Layout style={{display: 'flex', justifyContent: 'center', marginTop: '48px'}}>
+                <SEOHeader
+                  title={'Making a Custom Request'}
+                  description={"Are you looking for sneakers in Nairobi and have a particular pair of sneakers in mind? We'll do our best to track them down for you. "}
                 />
                 <div>
                     <SupportParent>
                         <Container>
+                            <img style={{maxWidth: 48}} src={Request}/>
                             <h1>Custom Requests</h1>
                             <p>
                                 If you have a request for specific shoes, our agents and suppliers will try

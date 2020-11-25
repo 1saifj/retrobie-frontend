@@ -15,8 +15,7 @@ class PayingForAnOrder extends Component {
                         and the delivery has been confirmed by both parties.
                     </p>
                     <p>
-                        Accepted payment methods are <b>Cash</b> and <b>Mpesa</b>. More payment methods will be added
-                        in the future.
+                        Currently-accepted payment methods are <b>Cash</b> and <b>Mpesa</b>.
                     </p>
                 </CenterPageContent>
             </Layout>

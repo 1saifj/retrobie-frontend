@@ -9,7 +9,7 @@ const DefaultFooter = () => {
   return (
     <div>
       <Foot>
-        <div>
+        <div style={{width: '100%'}}>
           <div style={{textAlign: 'center'}}>
             <AnimatedLogo plain={true} color="#444" />
             <SocialButtonsParent>
@@ -31,46 +31,16 @@ const DefaultFooter = () => {
           </div>
           <ListParent>
             <ul>
-              <p>Get to know us</p>
+              <p>Our Policies</p>
               <li>
-                <Link to="/support/delivery">Shipping</Link>
+                <Link to="/support/delivery">Delivery</Link>
               </li>
               <li>
                 <Link to="/support/returns">Returns</Link>
               </li>
-              <li>
-                <Link to="/support/exchanges">Exchanges</Link>
-              </li>
-              <li>
-                <Link to="/support">FAQs</Link>
-              </li>
             </ul>
             <ul>
-              <p>Customer Service</p>
-              <li>
-                <Link to="/support/delivery">Shipping</Link>
-              </li>
-              <li>
-                <Link to="/support/returns">Returns</Link>
-              </li>
-              <li>
-                <Link to="/support/exchanges">Exchanges</Link>
-              </li>
-              <li>
-                <Link to="/support">FAQs</Link>
-              </li>
-            </ul>
-            <ul>
-              <p>Company</p>
-              <li>
-                <Link to="/company/about">About us</Link>
-              </li>
-              <li>
-                <Link to="/support/get-in-touch">Contact us</Link>
-              </li>
-            </ul>
-            <ul>
-              <p>Further Information</p>
+              <p>Legal & Privacy</p>
               <li>
                 <Link to="/privacy/cookies">Cookie Policy</Link>
               </li>
@@ -81,7 +51,7 @@ const DefaultFooter = () => {
           </ListParent>
           <div style={{textAlign: 'center'}}>
             <p style={{marginBottom: 0, fontSize: '14px', paddingBottom: '12px'}}>
-              Copyright &copy; {new Date().getFullYear()} The 2500 Store
+              Copyright &copy; {new Date().getFullYear()} Retrobie LTD
             </p>
           </div>
         </div>
@@ -107,9 +77,9 @@ const SocialButtonsParent = styled.div`
 `;
 
 const ListParent = styled.div`
-  display: grid;
-  display: none;
-  grid-template-columns: repeat(auto-fit, minmax(142px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 `;
 
 const Foot = styled(Footer)`
@@ -118,15 +88,11 @@ const Foot = styled(Footer)`
   display: flex;
   justify-content: center;
 
-  & > div {
-    display: grid;
-    justify-content: center;
-  }
-
   ul {
     list-style: none;
     margin: 0;
     padding: 0;
+    flex: 0 1 120px;
 
     & > p {
       font-weight: 600;

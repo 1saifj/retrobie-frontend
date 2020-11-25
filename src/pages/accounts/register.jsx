@@ -228,7 +228,7 @@ const RegisterUser = (props) => {
                                         <small style={{display: 'inline'}}>
                                             By signing up, you agree to the&nbsp;
 
-                                            <a href={'/company/terms-and-conditions'} style={{fontSize: 'unset'}}>
+                                            <a href={'/company/terms-of-service'} style={{fontSize: 'unset'}}>
                                                 terms and conditions
                                             </a>
                                         </small>

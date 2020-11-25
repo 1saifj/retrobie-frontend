@@ -208,7 +208,7 @@ const HeroSection = styled(Columns)`
 
   .image {
     margin: 0 auto;
-    min-height: 300px;
+    min-height: 350px;
 
     img {
       border-radius: 6px;
