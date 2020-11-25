@@ -39,7 +39,7 @@ class Support extends React.Component {
                             <img src={chevron} alt={'chevron'}/>
                         </HelpItem>
                     </Link>
-                    <Link to={"/support/returns"}>
+                    <Link to={"/support/cancelling-an-order"}>
                         <HelpItem>
                             <p>Cancelling an order</p>
                             <img src={chevron} alt={'chevron'}/>
@@ -81,7 +81,7 @@ const SupportParent = styled.div`
 
 const HelpItem = styled.div`
     display: flex;
-    border: 1px solid #004196;
+    border: 1px solid #444;
     border-radius: 4px;
     margin-bottom: 8px;
     min-width: 350px;
@@ -100,7 +100,7 @@ const HelpItem = styled.div`
     
     &:hover {
       cursor:pointer;
-      background: #004196;
+      background: var(--color-primary);
       
       img {
         filter: invert(100%);

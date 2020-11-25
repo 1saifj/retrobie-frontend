@@ -22,6 +22,8 @@ import Return from '../assets/images/icons/return.svg';
 import FreePickups from '../assets/images/icons/inside.webp';
 import Diamond from '../assets/images/icons/diamond.svg';
 import HelpIcon from '../assets/images/icons/question.svg';
+import CancelOrder from '../assets/images/icons/cancel-order.svg';
+import Request from '../assets/images/icons/request.svg';
 
 import CloseIcon from '../assets/images/icons/close.svg';
 import CloseIconSimple from '../assets/images/icons/close-simple.svg';
@@ -98,6 +100,7 @@ export {
   AirJordanWhiteLogo,
   AntaLogo,
   AntaWhiteLogo,
+  CancelOrder,
   CloseIcon,
   CloseIconSimple,
   ConverseLogo,
@@ -152,6 +155,7 @@ export {
   PaypalLogo,
   Plane,
   Plus,
+  Request,
   Replace,
   Return,
   TwitterLogoWhite,

@@ -7,10 +7,10 @@ import AdminDashboard from '../pages/admin/dashboard';
 const Cart = lazy(() => import('../pages/cart'));
 const App = lazy(() => import('../App'));
 const HowItWorks = lazy(() => import('../pages/how-it-works'));
-const Cookies = lazy(() => import('../pages/cookies'));
+const Cookies = lazy(() => import('../pages/privacy/cookies'));
 const Blog = lazy(() => import('../pages/blog'));
 const About = lazy(() => import('../pages/about'));
-const Tos = lazy(() => import('../pages/terms-of-service'));
+const Tos = lazy(() => import('../pages/privacy/terms-of-service'));
 const Product = lazy(() => import('../pages/product'));
 const Support = lazy(() => import('../pages/support/support'));
 const Checkout = lazy(() => import('../pages/checkout'));
@@ -21,6 +21,7 @@ const CustomRequests = lazy(() => import('../pages/support/custom-requests'));
 const Other = lazy(() => import('../pages/support/other'));
 const PayingForAnOrder = lazy(() => import('../pages/support/paying-for-an-order'));
 const MakingAnOrder = lazy(() => import('../pages/support/making-an-order'));
+const CancellingAnOrder = lazy(() => import('../pages/support/cancelling-an-order'));
 const Delivery = lazy(() => import('../pages/support/delivery'));
 
 //Admin
@@ -95,7 +96,7 @@ function Routes() {
                     <Route exact path="/how-it-works" component={HowItWorks} />
                     <Route exact path="/support" component={Support} />
                     <Route exact path="/privacy/cookies" component={Cookies} />
-                    <Route exact path="/privacy/terms-and-conditions" component={Tos} />
+                    <Route exact path="/privacy/terms-of-service" component={Tos} />
                     <Route exact path="/checkout" component={Checkout} />
                     <Route path="/checkout/shipping/:orderId" component={Shipping} />
                     <Route path={'/product/:id'} component={Product} />
@@ -104,6 +105,7 @@ function Routes() {
                     <Route exact path="/support/get-in-touch" component={Other} />
                     <Route exact path="/support/paying-for-an-order" component={PayingForAnOrder} />
                     <Route exact path="/support/making-an-order" component={MakingAnOrder} />
+                    <Route exact path="/support/cancelling-an-order" component={CancellingAnOrder} />
                     <Route exact path="/support/delivery" component={Delivery} />
 
                     <Route exact path="/brands/" component={BrandsPage} />

@@ -27,12 +27,12 @@ class Delivery extends Component {
                   <li>Afya Center</li>
                 </ul>
               </p>
-              <p>
-                Outside the CBD, drop-off point delivery is only supported in the following areas:
-                <ul>
-                  <li>Stima Plaza</li>
-                </ul>
-              </p>
+              {/*<p>*/}
+              {/*  Outside the CBD, drop-off point delivery is only supported in the following areas:*/}
+              {/*  <ul>*/}
+              {/*    <li>Stima Plaza</li>*/}
+              {/*  </ul>*/}
+              {/*</p>*/}
               <p>
                 <b>Note</b>: Delivery outside these areas{' '}
                 <em>
@@ -44,9 +44,8 @@ class Delivery extends Component {
             <div>
               <h3>Home/Office delivery</h3>
               <p>
-                We are currently working with a third-party supplier to facilitate office
-                deliveries. However, these can only be done within Nairobi. The feature will be
-                ready to roll out soon.
+                We are currently working with a third-party supplier to facilitate home & office
+                deliveries. However, these can only be done within Nairobi.
               </p>
               <p>
                 For delivery outside Nairobi, please get in touch with us at

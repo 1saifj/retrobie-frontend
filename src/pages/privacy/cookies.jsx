@@ -1,27 +1,27 @@
 import React from 'react';
-import Layout from '../components/Layout';
-import SEOHeader from '../components/SEOHeader';
+import Layout from '../../components/Layout';
+import SEOHeader from '../../components/SEOHeader';
 
 const Cookies = () => {
   return (
     <Layout>
       <SEOHeader
-        title={'Cookie Policy for The 2500 Store'}
+        title={'Cookie Policy for Retrobie'}
         description={'Discover how we store and process your data.'}
       />
-      <div>
-        <h1>Cookie Policy for The 2500 Store</h1>
+      <div style={{padding: '24px 48px'}}>
+        <h1>Privacy & Cookie Policy</h1>
 
-        <p>This is the Cookie Policy for The 2500 Store, accessible from https://retrobie.com</p>
 
-        <h2>
-          <strong>What Are Cookies</strong>
-        </h2>
 
         <p>
           As is common practice with almost all professional websites this site uses cookies, which
-          are tiny files that are downloaded to your computer, to improve your experience. This page
-          describes what information they gather, how we use it and why we sometimes need to store
+          are tiny files that are downloaded to your computer, to improve your experience.
+        </p>
+
+        <p>
+          This page
+          describes what information we gather, how we use it and why we sometimes need to store
           these cookies. We will also share how you can prevent these cookies from being stored
           however this may downgrade or 'break' certain elements of the sites functionality.
         </p>
@@ -29,7 +29,7 @@ const Cookies = () => {
         <p>For more general information on cookies see the Wikipedia article on HTTP Cookies.</p>
 
         <h2>
-          <strong>How We Use Cookies</strong>
+          <strong>How we use cookies</strong>
         </h2>
 
         <p>
@@ -40,9 +40,9 @@ const Cookies = () => {
           a service that you use.
         </p>
 
-        <h2>
-          <strong>Disabling Cookies</strong>
-        </h2>
+        <h3>
+          <strong>Disabling cookies</strong>
+        </h3>
 
         <p>
           You can prevent the setting of cookies by adjusting the settings on your browser (see your
@@ -52,9 +52,9 @@ const Cookies = () => {
           Therefore it is recommended that you do not disable cookies.
         </p>
 
-        <h2>
-          <strong>The Cookies We Set</strong>
-        </h2>
+        <h3>
+          <strong>The cookies we set</strong>
+        </h3>
 
         <ul>
           <li>
@@ -127,25 +127,25 @@ const Cookies = () => {
             </p>
           </li>
 
-          <li>
-            <p>
-              The Google AdSense service we use to serve advertising uses a DoubleClick cookie to
-              serve more relevant ads across the web and limit the number of times that a given ad
-              is shown to you.
-            </p>
-            <p>
-              For more information on Google AdSense see the official Google AdSense privacy FAQ.
-            </p>
-          </li>
+          {/*<li>*/}
+          {/*  <p>*/}
+          {/*    The Google AdSense service we use to serve advertising uses a DoubleClick cookie to*/}
+          {/*    serve more relevant ads across the web and limit the number of times that a given ad*/}
+          {/*    is shown to you.*/}
+          {/*  </p>*/}
+          {/*  <p>*/}
+          {/*    For more information on Google AdSense see the official Google AdSense privacy FAQ.*/}
+          {/*  </p>*/}
+          {/*</li>*/}
 
-          <li>
-            <p>
-              Several partners advertise on our behalf and affiliate tracking cookies simply allow
-              us to see if our customers have come to the site through one of our partner sites so
-              that we can credit them appropriately and where applicable allow our affiliate
-              partners to provide any bonus that they may provide you for making a purchase.
-            </p>
-          </li>
+          {/*<li>*/}
+          {/*  <p>*/}
+          {/*    Several partners advertise on our behalf and affiliate tracking cookies simply allow*/}
+          {/*    us to see if our customers have come to the site through one of our partner sites so*/}
+          {/*    that we can credit them appropriately and where applicable allow our affiliate*/}
+          {/*    partners to provide any bonus that they may provide you for making a purchase.*/}
+          {/*  </p>*/}
+          {/*</li>*/}
 
           <li>
             <p>
