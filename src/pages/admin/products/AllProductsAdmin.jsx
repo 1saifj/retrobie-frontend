@@ -1,26 +1,28 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import Loading from '../../../components/loading';
-import useApi from '../../../network/useApi';
-import useSWR from 'swr';
+import {useAuth} from '../../../network';
+import {useDispatch} from 'react-redux';
 
 export default function AllProducts() {
-  const api = useApi();
+  const api = useAuth();
+  const dispatch = useDispatch();
 
-  const {data: allProducts, error, loading} = useSWR(
-    'get-all-products', api.products.getAll,
-  );
+  const [allProducts, setAllProducts] = useState([]);
 
-    if (loading) {
+  useEffect(() => {
+    dispatch(api.products.getAll())
+      .then(({data})=> {
+        setAllProducts(data);
+      });
+  }, []);
+
+    if (!allProducts?.length) {
         return (
             <div>
                 <Loading minor={true} />
             </div>
         )
-    }
-
-    if (error) {
-        console.log(error);
     }
 
     return (
@@ -30,29 +32,26 @@ export default function AllProducts() {
             </div>
 
             <div>
+              <div>
                 {
-                    allProducts?.data.all.length &&
-                    <div>
-                        {
-                            allProducts.data.all.map(product => {
-                                return (
-                                    <div>
-                                        <Link to={`single/${product.uuid}`}>
-                                            <div style={{
-                                                padding: "18px",
-                                                border: "1px solid lightgrey",
-                                                borderRadius: "4px"
-                                            }}>
-                                                <p>{product.name}</p>
-                                            </div>
-                                        </Link>
+                  allProducts.map(product => {
+                    return (
+                      <div>
+                        <Link to={`single/${product.uuid}`}>
+                          <div style={{
+                            padding: "18px",
+                            border: "1px solid lightgrey",
+                            borderRadius: "4px"
+                          }}>
+                            <p>{product.name}</p>
+                          </div>
+                        </Link>
 
-                                    </div>
-                                )
-                            })
-                        }
-                    </div>
+                      </div>
+                    )
+                  })
                 }
+              </div>
             </div>
         </>
     );

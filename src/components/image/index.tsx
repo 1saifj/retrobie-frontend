@@ -1,16 +1,16 @@
-import React from 'react';
+import React, {CSSProperties} from 'react';
 import Image from 'react-progressive-graceful-image';
 
 const RetroImage = ({src, srcSet, alt, style, solidColor, placeholderStyle}: {
   src: string,
   alt: string,
-  srcSet?,
-  style?,
-  solidColor?,
-  placeholderStyle?
+  srcSet?: {sizes: string; srcSet: string},
+  style?: CSSProperties,
+  solidColor?: boolean,
+  placeholderStyle?: CSSProperties
 }) => {
 
-  const setPlaceholderQueryParam = (src)=> {
+  const getPlaceholderUrl = (src)=> {
     if (!src) return '';
     const url = new URL(src);
     const queryParam = new URLSearchParams(url.search);
@@ -23,10 +23,9 @@ const RetroImage = ({src, srcSet, alt, style, solidColor, placeholderStyle}: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      ...style,
     }}>
       <Image
-        placeholder={setPlaceholderQueryParam(src)}
+        placeholder={getPlaceholderUrl(src)}
         src={src}
         srcSetData={srcSet}
       >
@@ -36,7 +35,12 @@ const RetroImage = ({src, srcSet, alt, style, solidColor, placeholderStyle}: {
             if (loading) {
               return (
                 <div
-                  style={{minWidth: 300, minHeight: 400, background: '#eee', ...placeholderStyle}}
+                  style={{
+                    minWidth: 300,
+                    minHeight: 500,
+                    background: '#f5f5f5',
+                    ...placeholderStyle,
+                  }}
                 />
               );
             }
@@ -48,6 +52,7 @@ const RetroImage = ({src, srcSet, alt, style, solidColor, placeholderStyle}: {
               <img
                 alt={alt}
                 src={src}
+                style={style}
                 srcSet={srcSetData.srcSet}
                 sizes={srcSetData.sizes}
               />);
@@ -57,6 +62,7 @@ const RetroImage = ({src, srcSet, alt, style, solidColor, placeholderStyle}: {
           return (
             <img
               src={src}
+              style={style}
               alt={alt}
             />);
         }}

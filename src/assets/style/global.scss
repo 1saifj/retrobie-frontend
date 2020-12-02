@@ -196,7 +196,7 @@ h4 {
 
 h5 {
   font-size: 0.9em;
-  margin: 1.5em 0
+  margin: 0.35rem 0
 }
 
 h6 {
@@ -207,8 +207,8 @@ h6 {
 p,
 a,
 li {
-  font-size: 16px;
-  margin: .73em 0
+  font-size: 1rem;
+  margin: .43em 0
 }
 
 small, small a {
@@ -523,7 +523,7 @@ h5,
 h6 {
   color: var(--color-text);
   line-height: normal;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 ul {
@@ -538,18 +538,13 @@ ol {
 
 p,
 li {
-  margin-bottom: 12px;
-  margin-top: 12px;
   color: var(--color-text);
+  font-family: var(--font-family-text)
 }
 
 
 small, small a {
   color: #3E4756;
-  line-height: normal;
-}
-
-span {
   line-height: normal;
 }
 
@@ -707,4 +702,26 @@ b {
   ul {
     padding: 0;
   }
+}
+
+
+.fade-enter {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+.fade-enter-active{
+  opacity: 1;
+  transform: translateX(0%);
+}
+.fade-exit {
+  opacity: 0;
+  transform: translateX(0%);
+}
+.fade-exit-active{
+  opacity: 0;
+  transform: translateX(100%);
+}
+.fade-enter-active,
+.fade-exit-active{
+  transition: opacity 500ms, transform 500ms;
 }

@@ -11,7 +11,9 @@ class Env {
     return 'v2';
   }
 
-  getClientBaseUrl() {}
+  getClientBaseUrl() {
+    return "https://retrobie.com"
+  }
 
   getApiBaseUrl() {
     return `${this.getApiHost()}/${this.getApiVersion()}`;

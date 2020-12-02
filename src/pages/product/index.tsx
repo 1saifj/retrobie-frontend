@@ -53,8 +53,9 @@ function Product({match}) {
     slug: undefined,
     detail: {
       sizeCountry: "",
-      size: "",
+      size: null,
       primaryColor: "",
+      sex: null,
       secondaryColor: ""
     }
 
@@ -468,7 +469,6 @@ const ProductParent = styled.div`
 const DescriptionParent = styled.div`
   max-width: 800px;
   min-width: 300px;
-  width: 800px;
   padding: 32px 64px 0 64px;
   border-radius: 6px;
 

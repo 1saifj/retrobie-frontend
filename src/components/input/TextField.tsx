@@ -5,6 +5,8 @@ import styled from 'styled-components';
 
 const TextField: ({label, chars, buttonAction, help, ...props}: {
   label: string;
+  name: string;
+  placeholder: string;
   chars?: number;
   buttonAction?: Function;
   help?: string;

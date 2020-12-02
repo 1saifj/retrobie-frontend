@@ -5,7 +5,6 @@ import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {UserState} from '../state/reducers/userReducers';
 import {AuthenticatedUser} from '../types';
 import jwtDecode from 'jwt-decode';
-import CONSTANTS from '../constants';
 
 function isExpiredOrCloseToExpiry(token: string) {
   const decoded: AuthenticatedUser = jwtDecode(token);
@@ -123,8 +122,8 @@ export default function() {
 
   const imageKit = {
     getSignature: ()=> async () => (await getAxis()).get(`/auth/imagekit/signature`),
-    upload: (data)=> async () => axios.post(CONSTANTS.IMAGEKIT_URL, data),
-    delete: (data)=> async () => (await getAxis()).delete(`https://api.imagekit.io/v1/files/${data.fileId}`),
+    upload: (data)=> async () => axios.post('https://upload.imagekit.io/api/v1/files/upload', data),
+    delete: (data)=> async () => axios.delete(`https://api.imagekit.io/v1/files/${data.fileId}`),
   };
 
 
@@ -143,13 +142,13 @@ export default function() {
      * Get a single brand
      * @returns {Promise<AxiosResponse<any>>}
      */
-    getSingle: ()=> ()=> async (name) => (await getAxis()).get(`/brands/${name}/info`),
+    getSingle: (name)=> async () => (await getAxis()).get(`/brands/${name}/info`),
     /**
      * Get a single brand's products
      * @returns {Promise<AxiosResponse<any>>}
      */
-    getProducts: ()=> async (name) => (await getAxis()).get(`/brands/${name}/products`),
-    updateImage: ()=> async uuid => (await getAxis()).put(`/brands/images/${uuid}`),
+    getProducts: (name)=> async () => (await getAxis()).get(`/brands/${name}/products`),
+    updateImage: (uuid)=> async () => (await getAxis()).put(`/brands/images/${uuid}`),
     /**
      * Create a single brand
      * @param {object}data
@@ -172,7 +171,8 @@ export default function() {
     resetPassword: (data)=> async () => (await getAxis()).post('auth/reset-password', data),
     verify: (data)=> async () => (await getAxis()).post('auth/verify-account', data),
     me: ()=> async ()=> (await getAxis()).get('accounts/me'),
-    login: (data)=> async () => (await getAxis()).post('auth/login', data),
+    login: (data: {login: string, password: string}) =>
+      async () => (await getAxis()).post('auth/login', data),
     logOut: (data: {accessToken: string})=> async () => (await getAxis()).post("/accounts/logout", data),
     check: ()=> async () => (await getAxis()).get('auth/check'),
   };

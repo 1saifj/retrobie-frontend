@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {axis} from '../../../network';
+import {axis, useAuth} from '../../../network';
 import Loading from '../../../components/loading';
 import styled from 'styled-components';
 import {notify} from '../../../helpers/views';
 import {Button, Column, Columns, Field} from 'bloomer';
 import {Form, Formik} from 'formik';
 import TextField from '../../../components/input/TextField';
-import {useQuery} from 'react-query';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import OnOffSwitch from '../../../components/OnOffSwitch';
@@ -18,9 +17,8 @@ import defaultHelpers, {
   capitalize,
   cleanString,
   extractErrorMessage,
-  getUploadedImagesStorageName,
 } from '../../../helpers';
-import useApi from '../../../network/useApi';
+import {useDispatch} from 'react-redux';
 
 const UpdateProductValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
@@ -31,7 +29,7 @@ const UpdateProductValidationSchema = Yup.object().shape({
   seo: Yup.string().required(),
   size: Yup.number().required(),
   sizeCountry: Yup.string()
-    .oneOf(['M', 'F'])
+    .oneOf(['UK', 'US', "CHN"])
     .required(),
   sex: Yup.string()
     .oneOf(['M', 'F'])
@@ -41,58 +39,59 @@ const UpdateProductValidationSchema = Yup.object().shape({
   brand: Yup.string().required(),
   currency: Yup.string().required(),
   originalPrice: Yup.number().required(),
-  idealFor: Yup.string().optional(),
+  // idealFor: Yup.string().optional(),
   style: Yup.string().required(),
   condition: Yup.string().required(),
-  endorsedBy: Yup.string().optional(),
-  sportsType: Yup.string().optional(),
+  // endorsedBy: Yup.string().optional(),
+  // sportsType: Yup.string().optional(),
 });
 
 export default function SingleProductAdmin(props) {
-  const api = useApi();
+  const api = useAuth();
+  const dispatch = useDispatch();
   const [showImageModal, setImageModalShown] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
 
   const productId = props.match.params.id;
-  const {data: responseProductData, loading} = useQuery(
-    ['get-single-product-id', productId],
-    (key, productId) => api.products.getSingle(productId)
-  );
   const [thisProductData, setThisProduct] = useState(undefined);
 
-  const componentName = `${cleanString(thisProductData?.slug, '_')}_${productId}`;
+  const componentName = `custom_uploader_${productId}`;
 
   useEffect(() => {
-    if (responseProductData) {
-      const {data} = responseProductData;
-      setThisProduct({
-        name: data.name,
-        slug: data.slug,
-        uuid: data.uuid,
-        short: data.description.short,
-        long: data.description.long,
-        seo: data.description.seo,
-        size: data.detail.size,
-        sex: data.detail.sex,
-        adminStock: data.stock.adminCount,
-        usersStock: data.stock.usersCount,
-        brand: data.brands[0].name,
-        images: data.images,
-        currency: 'Ksh.',
-        categories: data.categories,
-        originalPrice: data.originalPrice,
-        productType: data.productType,
-        isOnOffer: data.isOnOffer,
-        idealFor: data.meta.idealFor,
-        style: data.meta.style,
-        condition: data.meta.condition,
-        endorsedBy: data.meta.endorsedBy,
-        sportsType: data.meta.sportsType,
-      });
-    }
-  }, [responseProductData]);
+    dispatch(api.products.getSingle(productId))
+      // @ts-ignore
+      .then(({data})=> {
+        if (data) {
+          setThisProduct({
+            name: data.name,
+            slug: data.slug,
+            uuid: data.uuid,
+            short: data.description.short,
+            long: data.description.long,
+            seo: data.description.seo,
+            size: data.detail.size,
+            sizeCountry: data.detail.sizeCountry,
+            sex: data.detail.sex,
+            adminStock: data.stock.adminCount,
+            usersStock: data.stock.usersCount,
+            brand: capitalize(data.brands[0].name),
+            images: data.images,
+            currency: 'Ksh.',
+            categories: data.categories,
+            originalPrice: data.originalPrice,
+            productType: data.productType,
+            isOnOffer: data.isOnOffer,
+            idealFor: data.meta.idealFor,
+            style: data.meta.style,
+            condition: data.meta.condition,
+            endorsedBy: data.meta.endorsedBy,
+            sportsType: data.meta.sportsType,
+          });
+        }
+      })
+  }, []);
 
-  if (loading || !thisProductData) {
+  if (!thisProductData) {
     return (
       <Loading message={'Please wait a while...'} />
     )
@@ -145,11 +144,15 @@ export default function SingleProductAdmin(props) {
     <div>
       <div>
         <Formik
+          validationSchema={UpdateProductValidationSchema}
           initialValues={{
             ...thisProductData,
+            sizeCountry: "UK",
             brand: capitalize(thisProductData.brand),
           }}
-          onSubmit={async values => {
+          onSubmit={async (values, {setFieldValue}) => {
+            //fixme
+            setFieldValue('images', thisProductData.images)
             // When updating a product, we only want to send details that have changed
             // And ignore the rest
             // Note: arrays always show up
@@ -177,9 +180,10 @@ export default function SingleProductAdmin(props) {
             }
 
             try {
-              const {data} = await api.products.update(productId, diff);
+              // @ts-ignore
+              const {data} = await dispatch(api.products.update(productId, diff));
               // Delete the now uploaded images
-              localStorage.removeItem(getUploadedImagesStorageName(componentName));
+              localStorage.removeItem(componentName);
               notify('success', data.message);
             } catch (e) {
               console.error(e);
@@ -188,22 +192,20 @@ export default function SingleProductAdmin(props) {
             }
           }}
         >
-          {({setFieldValue, values}) => (
+          {({setFieldValue, submitForm, values}) => (
             <Form>
               <FormItemsParent>
                 <h3>Main Details</h3>
                 <div>
                   <CustomImageUploader
-                    name={'update_product'}
                     allowMultiple={true}
+                    id={productId}
                     initialImages={values.images}
                     onClickSelectedImage={images => {
                       setImageModalShown(!showImageModal);
                       setSelectedImages(images);
                     }}
-                    onInit={images => {
-                      setFieldValue('images', images);
-                    }}
+                    onInit={images => setFieldValue('images', images)}
                     onUpload={(err, all) => {
                       if (err) {
                         notify('error', 'Failed to upload one or more of your images');

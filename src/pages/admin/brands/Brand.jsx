@@ -13,44 +13,6 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function getMinMax() {
-    return getRandomInt(1000, 10000);
-}
-
-
-function getAnalyticsData() {
-    const analyticsData = [
-        {
-            name: 'Page A', uv: getMinMax(), pv: getMinMax(), amt: 2400,
-        },
-        {
-            name: 'Page B', uv: getMinMax(), pv: getMinMax(), amt: 2210,
-        },
-        {
-            name: 'Page C', uv: getMinMax(), pv: getMinMax(), amt: 2290,
-        },
-        {
-            name: 'Page D', uv: getMinMax(), pv: getMinMax(), amt: 2000,
-        },
-        {
-            name: 'Page E', uv: getMinMax(), pv: getMinMax(), amt: 2181,
-        },
-        {
-            name: 'Page F', uv: getMinMax(), pv: getMinMax(), amt: 2500,
-        },
-        {
-            name: 'Page G', uv: getMinMax(), pv: getMinMax(), amt: 2100,
-        },
-    ];
-    return analyticsData;
-}
-
-
-
-// async function getAll(brandId) {
-//     await Promise.all([getSingleBrand(brandId), getSingleBrandProducts(brandId)])
-// }
-
 const BrandLogoParent = styled('div')`
     display: flex;
     flex-direction: column;

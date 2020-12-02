@@ -3,14 +3,14 @@ import './megamenu.scoped.css';
 import {Link, useHistory} from 'react-router-dom';
 import {getBrandLinks, menuItems, newItems, sortBrands} from './Items';
 import cart from '../../assets/images/icons/cart.svg';
-import Drawer from 'rc-drawer/';
+import Drawer from 'rc-drawer';
 import {Button, Container, Section} from 'bloomer';
 import Cart from '../cart';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {logoutUserAction, toggleSidebarAction} from '../../state/actions';
 import {useAuth} from '../../network';
 import RetroImage from '../image';
-import {User} from 'react-feather';
+import {Archive, Smartphone, User} from 'react-feather';
 import {Tooltip} from 'react-tippy';
 
 const MegaMenu = () => {
@@ -50,8 +50,8 @@ const MegaMenu = () => {
     }
 
     return (
-      <div>
-          <nav className="navbar">
+      <>
+          <nav className="navbar" style={{alignItems: 'center'}}>
               <ul className="menu hover-enabled">
                   <li className="default">
                       <Tooltip
@@ -61,11 +61,11 @@ const MegaMenu = () => {
                         inertia={true}
                         position={'bottom'}
                         html={(
-                        <ul style={{display: 'flex', listStyle: 'none'}}>
+                        <ul style={{display: 'flex', listStyle: 'none', gap: 12, padding: 0}}>
 
                             {
                                 newItems.map((item, index) => (
-                                  <div className="submenu-flex">
+                                  <div className="submenu-flex" key={String(index)}>
                                       <li className="promo-container">
                                           <a tabIndex={0}
                                              role="menuitem"
@@ -95,6 +95,7 @@ const MegaMenu = () => {
                           key={String(index)}
                           title={item.title}
                           links={item.links}
+                          style={item.style}
                           featured={item.featured}/>
                       ))
                   }
@@ -217,15 +218,6 @@ const MegaMenu = () => {
                               </div>
                           </>
                         ) :
-                        window.location.pathname === '/accounts/me' ?
-                          (
-                            <Button style={{fontWeight: 500}}
-                                    onClick={() => logout()}
-                                    isColor={'secondary'}>
-                                Log Out
-                            </Button>
-                          )
-                          :
                           (
                            <>
                                <Tooltip
@@ -234,9 +226,35 @@ const MegaMenu = () => {
                                  position="bottom"
                                  theme={'light'}
                                  interactive={true}
+                                 arrow={true}
                                  html={
                                      <div>
-                                         Your account
+                                         <ul style={{
+                                           padding: "12px",
+                                           listStyle: "none",
+                                           textAlign: "left",
+                                           margin: 0
+                                         }}>
+                                           <li style={{
+                                             display: 'flex',
+                                             gap: 4,
+                                             alignItems: 'center',
+                                             borderBottom: "1px solid lightgray",
+                                             paddingBottom: "6px"
+                                           }}>
+                                             <Smartphone style={{stroke: "#444", width: 16, height: 16}}/>
+                                             <a href={'/accounts/me'}>
+                                               Your account
+                                             </a>
+                                           </li>
+                                           <div/>
+                                           <li style={{display: 'flex', gap: 4, alignItems: 'center'}}>
+                                             <Archive style={{stroke: "#444", width: 16, height: 16}}/>
+                                             <a href={'/accounts/me/orders'}>
+                                               Your orders
+                                             </a>
+                                           </li>
+                                         </ul>
                                      </div>
                                  }
                                >
@@ -249,13 +267,13 @@ const MegaMenu = () => {
               </div>
           </nav>
 
-      </div>
+      </>
     );
 };
 
 MegaMenu.propTypes = {};
 
-const NavbarItem = ({title, links, featured}) => {
+const NavbarItem = ({title, links, featured, style}) => {
     return (
         <li className="default">
 
@@ -268,27 +286,28 @@ const NavbarItem = ({title, links, featured}) => {
               html={(
                 <ul style={{
                     display: 'flex',
+                    flexWrap: 'wrap',
                     padding: "0 12px",
                     listStyle: 'none',
-                    minWidth: 400
+                    ...style
                 }}>
 
                     {
                         links &&
                         links.map(category => (
                           <div style={{
-                              flex: 1,
+                              flex: '1 0 150px',
                               textAlign: 'left',
                               maxWidth: "100%",
-                              margin: "0 0.5rem"
+                              margin: "0 0.5rem",
                           }} key={category.title}>
                               <li style={{
                                   fontWeight: "bold",
                                   margin: "0 0 0.625rem",
-                                  borderBottom: "1px solid #d8d8d8"
+                                  borderBottom: "1px solid #d8d8d8",
+                                  paddingBottom: 8
                               }}>
                                   <a
-                                    style={{padding: '0.625rem 0 0.3125rem'}}
                                     tabIndex={0}
                                      href={category.to} title={category.title}>
                                       {category.title}
@@ -296,7 +315,7 @@ const NavbarItem = ({title, links, featured}) => {
                               </li>
                               {
                                   category.items?.map(item => (
-                                    <li className="sublink" key={item.title}>
+                                    <li key={item.title}>
                                         <a tabIndex={0} href={item.to} title={item.title}>
                                             {item.title}
                                         </a>

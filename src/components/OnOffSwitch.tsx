@@ -2,7 +2,13 @@ import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import styled from "styled-components";
 
-const OnOffSwitch = props => {
+const OnOffSwitch = (
+  props: {
+      label: string,
+      onText: string,
+      offText: string,
+      onChange: Function
+  }) => {
     const [checked, setChecked] = useState(false);
     return (
         <>
@@ -27,7 +33,7 @@ const OnOffSwitch = props => {
                     <p style={{
                         marginTop: '4px',
                         color: '#444',
-                        fontWeight: '700',
+                        fontWeight: 700,
                         fontFamily: '"Myriad Pro", serif',
                         marginLeft: '8px',
                         fontSize: '14px'

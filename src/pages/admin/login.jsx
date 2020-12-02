@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './login.scoped.css';
 import {Button, Column, Columns} from 'bloomer';
 import jwtDecode from 'jwt-decode';
@@ -9,31 +9,24 @@ import TextField from '../../components/input/TextField';
 import {Form, Formik} from 'formik';
 import {FormParent} from '../accounts/register';
 import {useDispatch} from 'react-redux';
-import {useQuery} from 'react-query';
 import {loginUserAction} from '../../state/actions';
-import {useApi} from '../../network';
+import {useAuth} from '../../network';
 
 const AdminLogin = props => {
-  const api = useApi();
-  const {data: accountInfoResponse} = useQuery('/accounts/me', api.accounts().me);
+  const api = useAuth();
   const dispatch = useDispatch();
 
   const setUserLoggedIn = payload => dispatch(loginUserAction(payload));
 
-  useEffect(() => {
-    if (accountInfoResponse) {
-    }
-  }, []);
-
   async function attemptLogin(values) {
     const {login, password} = values;
 
-    try {
-      const {data} = await api.accounts.login({
-        login,
-        password,
-      });
+    const {data, ...rest} = await dispatch(api.accounts.login({
+      login,
+      password,
+    }));
 
+    if (data) {
       if (data.accessToken && data.refreshToken) {
         const decoded = jwtDecode(data.accessToken);
 
@@ -47,8 +40,8 @@ const AdminLogin = props => {
       } else {
         console.log('2FA enabled.');
       }
-    } catch (e) {
-      const message = extractErrorMessage(e);
+    } else {
+      const message = extractErrorMessage(rest);
       notify('error', message);
     }
   }

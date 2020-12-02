@@ -2,9 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
-import Right from '../../assets/images/icons/right.svg';
-import Left from '../../assets/images/icons/left.svg';
-import {Arrow} from './ProductSlider';
 
 function BrandSlider({items, className}) {
 

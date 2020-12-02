@@ -121,6 +121,11 @@ const menuItems = [
     title: 'Brands',
     featured: false,
     links: [],
+    style: {
+      minWidth: 600,
+      padding: '12px',
+      rowGap: 8
+    }
   }
   // {
   //     title: "Mens",

@@ -4,7 +4,7 @@
  *  - Get 'add more' working
  */
 
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {Button, Checkbox, Column, Columns, Field, Modal, ModalBackground, ModalClose, ModalContent} from 'bloomer';
 import {Form, Formik, useFormikContext} from 'formik';
@@ -13,13 +13,13 @@ import '../../../../assets/style/bulma-fx';
 import {v4 as uuidv4} from 'uuid';
 import {capitalize, extractErrorMessage, slugify} from '../../../../helpers';
 import 'react-quill/dist/quill.snow.css';
-import Editor from '../Editor';
+import Editor from '../../brands/Editor';
 import CustomImageUploader from '../../../../components/upload/CustomImageUploader';
 import * as Yup from 'yup';
 import SelectField from '../../../../components/input/SelectField';
 import {notify} from '../../../../helpers/views';
-import {useQuery} from 'react-query';
-import useApi from '../../../../network/useApi';
+import {useAuth} from '../../../../network';
+import {useDispatch} from 'react-redux';
 
 const options = [
     { value: 'chocolate', label: 'Chocolate' },
@@ -97,9 +97,18 @@ function Monitor({ brand }) {
 }
 
 const CreateProductModal = props => {
-    const api = useApi();
+    const api = useAuth();
+    const dispatch = useDispatch();
     const thisBrand = props.brand;
-    const {data: allBrandsResponse} = useQuery("/brands/all", api.brands.getAll)
+
+    const [allBrandsResponse, setAllBrandsResponse] = useState();
+
+    useEffect(()=> {
+        dispatch(api.brands.getAll())
+          .then((response)=> {
+              setAllBrandsResponse(response);
+          })
+    }, [])
 
     return (
       <>
@@ -123,20 +132,18 @@ const CreateProductModal = props => {
                             onSubmit={async (values, {setSubmitting}) => {
 
                                 setSubmitting(true);
-                                const prefix = CustomImageUploader.UPLOADED_IMAGES_PREFIX;
-                                const uploaderId = `create_product_${prefix}`;
+                                const uploaderId = `custom_uploader`;
                                 values.images = JSON.parse(localStorage.getItem(uploaderId));
 
+                                const {data, ...rest} = await dispatch(api.products.create(values));
 
-                                try {
-                                    const {data} = await api.products.create(values);
-
+                                if (data) {
                                     setSubmitting(false);
                                     localStorage.removeItem(uploaderId);
                                     notify('success', data.message);
-                                } catch (e) {
+                                } else {
                                     setSubmitting(false);
-                                    const message = extractErrorMessage(e);
+                                    const message = extractErrorMessage(rest);
                                     notify('error', message);
                                 }
 
@@ -293,9 +300,9 @@ const CreateProductModal = props => {
                                                   type="text"
                                                   options={[
                                                       {
-                                                          value: "sneaker",
-                                                          label: "Sneaker"
-                                                      }
+                                                          value: 'sneaker',
+                                                          label: 'Sneaker',
+                                                      },
                                                   ]}
                                                   name="productType"/>
 

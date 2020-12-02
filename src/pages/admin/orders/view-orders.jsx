@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {Link} from 'react-router-dom';
-import {useQuery} from 'react-query';
 import useApi from '../../../network/useApi';
 import useSWR from 'swr';
 

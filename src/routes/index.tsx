@@ -1,6 +1,5 @@
 import React, {lazy, Suspense} from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
-import WrapPageElement from '../helpers/wrapPageElement';
 import Loading from '../components/loading';
 import AdminDashboard from '../pages/admin/dashboard';
 
@@ -45,6 +44,7 @@ const SingleBrand = lazy(() => import('../pages/brands/Brand'));
 // User
 const UserDashboard = lazy(() => import('../pages/user/dashboard'));
 const UserProfile = lazy(() => import('../pages/accounts/me'));
+const UserOrders = lazy(() => import('../pages/accounts/me/orders'));
 
 const UserSingleOrder = lazy(() => import('../pages/orders/single-order'));
 // auth
@@ -70,119 +70,109 @@ function Routes() {
   };
   return (
     <BrowserRouter>
-      <Route
-        render={props => {
-          return (
-            <WrapPageElement
-              props={props}
-              element={
-                <Suspense fallback={<Loading message={false} />}>
-                  <Switch>
-                    <Route exact path="/" component={App} />
-                    <Route exact path="/accounts/register" component={RegisterUser} />
-                    <Route exact path="/accounts/login" component={LoginUser} />
-                    <Route exact path="/accounts/forgot-password" component={ForgotPassword} />
-                    <Route exact path="/accounts/reset-password" component={ResetPassword} />
-                    <Route exact path="/accounts/verify" component={VerifyAccount} />
-                    <Route exact path="/accounts/me" component={UserProfile} />
+      <Suspense fallback={<Loading message={false} />}>
+        <Switch>
+          <Route exact path="/" component={App} />
+          <Route exact path="/accounts/register" component={RegisterUser} />
+          <Route exact path="/accounts/login" component={LoginUser} />
+          <Route exact path="/accounts/forgot-password" component={ForgotPassword} />
+          <Route exact path="/accounts/reset-password" component={ResetPassword} />
+          <Route exact path="/accounts/verify" component={VerifyAccount} />
+          <Route exact path="/accounts/me" component={UserProfile} />
+          <Route exact path="/accounts/me/orders" component={UserOrders} />
 
-                    <Route path="/orders/mine/:orderId" component={UserSingleOrder} />
+          <Route path="/orders/mine/:orderId" component={UserSingleOrder} />
 
-                    <Route exact path="/cart" component={Cart} />
-                    <Route exact path="/company/about" component={About} />
-                    <Route exact path="/company/blog" component={Blog} />
-                    <Route exact path="/dashboard" component={UserDashboard} />
+          <Route exact path="/cart" component={Cart} />
+          <Route exact path="/company/about" component={About} />
+          <Route exact path="/company/blog" component={Blog} />
+          <Route exact path="/dashboard" component={UserDashboard} />
 
-                    <Route exact path="/how-it-works" component={HowItWorks} />
-                    <Route exact path="/support" component={Support} />
-                    <Route exact path="/privacy/cookies" component={Cookies} />
-                    <Route exact path="/privacy/terms-of-service" component={Tos} />
-                    <Route exact path="/checkout" component={Checkout} />
-                    <Route path="/checkout/shipping/:orderId" component={Shipping} />
-                    <Route path={'/product/:id'} component={Product} />
-                    <Route exact path="/support/returns" component={Returns} />
-                    <Route exact path="/support/custom-requests" component={CustomRequests} />
-                    <Route exact path="/support/get-in-touch" component={Other} />
-                    <Route exact path="/support/paying-for-an-order" component={PayingForAnOrder} />
-                    <Route exact path="/support/making-an-order" component={MakingAnOrder} />
-                    <Route exact path="/support/cancelling-an-order" component={CancellingAnOrder} />
-                    <Route exact path="/support/delivery" component={Delivery} />
+          <Route exact path="/how-it-works" component={HowItWorks} />
+          <Route exact path="/support" component={Support} />
+          <Route exact path="/privacy/cookies" component={Cookies} />
+          <Route exact path="/privacy/terms-of-service" component={Tos} />
+          <Route exact path="/checkout" component={Checkout} />
+          <Route path="/checkout/shipping/:orderId" component={Shipping} />
+          <Route path={'/product/:id'} component={Product} />
+          <Route exact path="/support/returns" component={Returns} />
+          <Route exact path="/support/custom-requests" component={CustomRequests} />
+          <Route exact path="/support/get-in-touch" component={Other} />
+          <Route exact path="/support/paying-for-an-order" component={PayingForAnOrder} />
+          <Route exact path="/support/making-an-order" component={MakingAnOrder} />
+          <Route exact path="/support/cancelling-an-order" component={CancellingAnOrder} />
+          <Route exact path="/support/delivery" component={Delivery} />
 
-                    <Route exact path="/brands/" component={BrandsPage} />
-                    <Route exact path="/brands/:brand" component={SingleBrand} />
-                    <Route exact path="/brands/:brand/:id" component={Product} />
+          <Route exact path="/brands/" component={BrandsPage} />
+          <Route exact path="/brands/:brand" component={SingleBrand} />
+          <Route exact path="/brands/:brand/:id" component={Product} />
 
-                    {/*Admin*/}
-                    <Route exact path="/company/admin/login" component={AdminLogin} />
+          {/*Admin*/}
+          <Route exact path="/company/admin/login" component={AdminLogin} />
 
-                    <AdminRoute exact path="/company/admin/dashboard/home" component={AdminHome} />
-                    <AdminRoute exact path="/company/admin/dashboard/" component={AdminHome} />
-                    <AdminRoute
-                      exact
-                      path="/company/admin/dashboard/products"
-                      component={AdminProductsHome}
-                    />
-                    <AdminRoute
-                      exact
-                      path="/company/admin/dashboard/products/all"
-                      component={AdminAllProducts}
-                    />
-                    <AdminRoute
-                      exact
-                      path="/company/admin/dashboard/products/create"
-                      component={AdminCreateProduct}
-                    />
-                    <AdminRoute
-                      path="/company/admin/dashboard/products/single/:id"
-                      component={AdminSingleProduct}
-                    />
-                    <AdminRoute
-                      path="/company/admin/dashboard/product/:id"
-                      component={AdminSingleProduct}
-                    />
-                    <AdminRoute
-                      exact
-                      path="/company/admin/dashboard/orders/all"
-                      component={AdminOrders}
-                    />
-                    <AdminRoute
-                      exact
-                      path="/company/admin/dashboard/orders/"
-                      component={AdminOrders}
-                    />
-                    <AdminRoute
-                      path="/company/admin/dashboard/order/:id"
-                      component={AdminSingleOrder}
-                    />
-                    <AdminRoute
-                      path="/company/admin/dashboard/orders/single/:id"
-                      component={AdminSingleOrder}
-                    />
+          <AdminRoute exact path="/company/admin/dashboard/home" component={AdminHome} />
+          <AdminRoute exact path="/company/admin/dashboard/" component={AdminHome} />
+          <AdminRoute
+            exact
+            path="/company/admin/dashboard/products"
+            component={AdminProductsHome}
+          />
+          <AdminRoute
+            exact
+            path="/company/admin/dashboard/products/all"
+            component={AdminAllProducts}
+          />
+          <AdminRoute
+            exact
+            path="/company/admin/dashboard/products/create"
+            component={AdminCreateProduct}
+          />
+          <AdminRoute
+            path="/company/admin/dashboard/products/single/:id"
+            component={AdminSingleProduct}
+          />
+          <AdminRoute
+            path="/company/admin/dashboard/product/:id"
+            component={AdminSingleProduct}
+          />
+          <AdminRoute
+            exact
+            path="/company/admin/dashboard/orders/all"
+            component={AdminOrders}
+          />
+          <AdminRoute
+            exact
+            path="/company/admin/dashboard/orders/"
+            component={AdminOrders}
+          />
+          <AdminRoute
+            path="/company/admin/dashboard/order/:id"
+            component={AdminSingleOrder}
+          />
+          <AdminRoute
+            path="/company/admin/dashboard/orders/single/:id"
+            component={AdminSingleOrder}
+          />
 
-                    <AdminRoute exact path="/company/admin/dashboard/misc" component={MiscPages} />
-                    <AdminRoute
-                      exact
-                      path="/company/admin/dashboard/brands"
-                      component={AdminBrands}
-                    />
-                    <AdminRoute
-                      exact
-                      path="/company/admin/dashboard/brands/:id"
-                      component={AdminSingleBrand}
-                    />
-                    <AdminRoute
-                      exact
-                      path="/company/admin/dashboard/brands/:id/products"
-                      component={AdminBrandProducts}
-                    />
-                    <Route component={NotFound} />
-                  </Switch>
-                </Suspense>
-              }
-            />
-          );
-        }}
-      />
+          <AdminRoute exact path="/company/admin/dashboard/misc" component={MiscPages} />
+          <AdminRoute
+            exact
+            path="/company/admin/dashboard/brands"
+            component={AdminBrands}
+          />
+          <AdminRoute
+            exact
+            path="/company/admin/dashboard/brands/:id"
+            component={AdminSingleBrand}
+          />
+          <AdminRoute
+            exact
+            path="/company/admin/dashboard/brands/:id/products"
+            component={AdminBrandProducts}
+          />
+          <Route component={NotFound} />
+        </Switch>
+      </Suspense>
     </BrowserRouter>
   );
 }

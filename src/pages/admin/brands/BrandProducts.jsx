@@ -1,15 +1,16 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import EmptyState from '../../../components/empty/EmptyState';
 import PageNotFound from '../../../assets/images/icons/page-not-found.svg';
 import {Button} from 'bloomer';
-import {useQuery} from 'react-query';
-import CreateProductModal from './modals/CreateProductModal';
+import CreateProductModal from '../products/modals/CreateProductModal';
 import Loading from '../../../components/loading';
-import useApi from '../../../network/useApi';
+import {useAuth} from '../../../network';
+import {useDispatch} from 'react-redux';
 
 
 function BrandProducts({match}) {
-  const api = useApi();
+  const api = useAuth();
+  const dispatch = useDispatch();
 
   async function getBrand(id) {
     return await api.brands.get();
@@ -20,33 +21,18 @@ function BrandProducts({match}) {
     return data;
 }*/
 
+  const [thisBrand, setThisBrand] = useState({});
   const brandId = match.params.id;
     //here, brandId is both the key passed for caching and the value passed to 'getBrand'
-    const {status, data, error} = useQuery([brandId, brandId], getBrand, {
-        retry: 1
-    });
+  useEffect(() => {
+    dispatch(api.brands.getSingle(brandId))
+      .then(({data})=> {
+        setThisBrand(data);
+      })
+  }, []);
 
-    const thisBrand = data ? data.data : null;
 
     const [isCreateBrandModalActive, setCreateBrandModalActive] = useState(false);
-
-    if (status === "loading") {
-        return (
-            <Loading message={false}/>
-        )
-    }
-
-    if (error) {
-        return (
-            <div>
-                An error occurred:
-                <br/>
-                <br/>
-                {error.toString()}
-            </div>
-        );
-    }
-
 
     return (
         <>

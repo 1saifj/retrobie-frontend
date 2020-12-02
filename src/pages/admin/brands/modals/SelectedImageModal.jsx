@@ -55,7 +55,7 @@ export default function SelectedImageModal(props) {
                         }
                     </div>
                 </ActualContent>
-                <ModalClose onClick={onClose}/>
+                <ModalClose type={'button'} onClick={onClose}/>
             </ModalContent>
         </Modal>
 

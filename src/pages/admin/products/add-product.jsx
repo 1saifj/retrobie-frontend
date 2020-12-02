@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import {axis} from '../../../network';
 import {notify} from '../../../helpers/views';
 import {Button} from 'bloomer';
-import CreateProductModal from '../brands/modals/CreateProductModal';
+import CreateProductModal from './modals/CreateProductModal';
 import SelectedImageModal from '../brands/modals/SelectedImageModal';
 
 /**

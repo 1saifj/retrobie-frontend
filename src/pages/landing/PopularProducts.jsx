@@ -45,7 +45,7 @@ function PopularProducts() {
       <BrandImagesParent>
         {featuredProducts?.length &&
           featuredProducts.map(product => (
-            <Link to={`/brands/${product.brands[0].slug}/${product.uuid}`} key={product.name}>
+            <Link to={`/product/${product.uuid}`} key={product.name}>
               <BrandParent>
                 <div className={'image'}>
                   <img src={product.images[0].thumbnailUrl} alt={'featured image'} />
@@ -57,12 +57,6 @@ function PopularProducts() {
             </Link>
           ))}
       </BrandImagesParent>
-
-      <div style={{textAlign: 'center'}}>
-        <Link style={{color: 'var(--color-primary)'}} to={'more'}>
-          View more
-        </Link>
-      </div>
     </>
   );
 }

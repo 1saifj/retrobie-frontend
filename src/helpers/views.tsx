@@ -1,4 +1,4 @@
-import {toast} from 'react-toastify';
+import {toast, ToastOptions} from 'react-toastify';
 import {CloseButton} from '../App';
 import React from 'react';
 import {ErrorIconLight, InfoLight, WarningIconLight} from '../constants/icons';
@@ -24,13 +24,12 @@ export function notify(type:
                          | 'success'
                          | 'loading'
                          | 'warning',
-                       message: string, options?) {
+                       message: string, options?: ToastOptions) {
     toast(mapToType(type, message), {
     position: toast.POSITION.TOP_CENTER,
     hideProgressBar: true,
     closeOnClick: false,
     draggable: true,
-    autoClose: true,
     className: `notification is-${type}`,
     closeButton: <CloseButton closeToast={() => {
     }}/>,

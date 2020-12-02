@@ -17,6 +17,8 @@ import {notify} from '../../../../helpers/views';
 import {cleanString, extractErrorMessage} from '../../../../helpers';
 import * as Yup from 'yup';
 import useApi from '../../../../network/useApi';
+import {useAuth} from '../../../../network';
+import {useDispatch} from 'react-redux';
 
 const CreateBrandValidationSchema = Yup.object().shape({
     name: Yup.string()
@@ -76,7 +78,8 @@ function Monitor() {
 
 
 const CreateBrandModal = props => {
-    const api = useApi();
+    const api = useAuth();
+    const dispatch = useDispatch();
 
     const storedFeatured = JSON.parse(localStorage.getItem('new-brand-featured-image'));
     const storedLogo = JSON.parse(localStorage.getItem('new-brand-logo'));
@@ -108,7 +111,7 @@ const CreateBrandModal = props => {
                                     const merged = {...values, logo, featuredImage};
                                     try {
                                         setSubmitting(false);
-                                        const response = await api.brands(null).create(merged);
+                                        const response = await dispatch(api.brands.create(merged));
                                         if (props.onCreate && typeof props.onCreate === 'function') {
                                             props.onCreate(response.data);
                                         }

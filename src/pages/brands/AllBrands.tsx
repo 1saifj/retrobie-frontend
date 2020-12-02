@@ -14,10 +14,11 @@ function BrandsComponent() {
     const api = useAuth();
     const dispatch = useDispatch();
 
-    const [allBrands, setAllBrands] = useState();
+    const [allBrands, setAllBrands] = useState([]);
 
     useEffect(()=> {
         dispatch(api.brands.getAll())
+          // @ts-ignore
           .then(({data})=> {
               setAllBrands(data);
           })
@@ -39,10 +40,12 @@ function BrandsComponent() {
     }
 
     return (
-        <>
-            <Layout>
-                <SEOHeader title={'Browse Shoes By Brand'}
-                           description={'Browse your favorite Nike, Jordan, Adidas, Yeezy and more shoes by brand in our Nairobi shop.'}
+      <>
+          <Layout>
+              {/*// @ts-ignore*/}
+                <SEOHeader
+                  title={'Browse Shoes By Brand'}
+                  description={'Browse your favorite Nike, Jordan, Adidas, Yeezy and more shoes by brand in our Nairobi shop.'}
                 />
                 <Section>
                     <Container>
@@ -50,7 +53,7 @@ function BrandsComponent() {
 
                         <LogosParent>
                             {
-                                allBrands.map(brand => (
+                                allBrands?.map(brand => (
                                     <Link to={`/brands/${brand.name}`}>
                                         <div className={'image--parent'}>
                                             <img src={brand.logo ? brand.logo.thumbnailUrl : ""}

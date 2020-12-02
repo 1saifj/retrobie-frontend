@@ -7,7 +7,20 @@ export type ProductType = {
   uuid: string;
   images?: Array<ImageType>;
   isOnOffer: boolean;
+  detail?: ProductDetailType;
+  meta?: ProductMetaType
 };
+
+type ProductDetailType = {
+  size: number;
+  sizeCountry: string;
+  sex: "M" | "F";
+}
+
+type ProductMetaType = {
+  style: string;
+  condition: string;
+}
 
 export type StockType = {
   usersCount: number;
@@ -58,4 +71,10 @@ export interface AuthenticatedUser {
   iss: string;
   jti: string;
   userId: string;
+}
+
+export interface SchemaProps {
+  [key: string]: {
+    [key: string]: any;
+  };
 }

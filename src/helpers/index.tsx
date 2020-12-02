@@ -16,6 +16,8 @@ export function addDashes(phoneNumber) {
     const value = phoneNumber.replace(/\D[^\.]/g, '');
     return value.slice(0, 3) + '-' + value.slice(3, 6) + '-' + value.slice(6);
   }
+
+  return undefined;
 }
 
 export function findIndexWithAttr(array, attr, value) {
@@ -29,16 +31,10 @@ export function findIndexWithAttr(array, attr, value) {
 
 export function capitalize(str) {
   if (str && typeof str === 'string') return str.charAt(0).toUpperCase() + str.substring(1);
+
+  return '';
 }
 
-export function getUploadedImagesStorageName(componentId) {
-  if (componentId) {
-    const componentName = cleanString(componentId, '_');
-    const uploadedImagesPrefix = 'uploaded_product_images';
-    // Only load these variables if 'componentName' is defined
-    return componentName ? `${uploadedImagesPrefix}_${componentName}` : undefined;
-  }
-}
 
 /**
  * Use this method to get images uploaded to Imagekit but
@@ -46,11 +42,7 @@ export function getUploadedImagesStorageName(componentId) {
  * @param str - a unique id
  * @returns {[*]}
  */
-export function getUploadedImages(str) {
-  const componentName = cleanString(str, '_');
-  const uploadedImagesStorageJSON = getUploadedImagesStorageName(componentName);
-  return uploadedImagesStorageJSON ? JSON.parse(uploadedImagesStorageJSON) : [];
-}
+
 /**
  * This function replaces a certain string from the input string throughout the whole word.
  * @param {string} input - the input string
@@ -150,9 +142,11 @@ export function extractErrorMessage(e) {
         if (!data || data.message.toLowerCase() !== 'ok') {
           return 'Could not reach the server. Please try again in a few minutes.';
         }
+
+        return 'Up';
       }).catch(e=> {
 
-        return e.message;
+      return e.message;
     });
 
     return 'An unknown error occurred. Please try again later.';
@@ -167,7 +161,7 @@ class DefaultHelpers {
    * @param obj2
    * @returns {{}}
    */
-  objectDiff(obj1, obj2) {
+  objectDiff<T>(obj1: T, obj2: T): Partial<T> {
     return Object.keys(obj2).reduce((diff, key) => {
       if (obj1[key] === obj2[key]) return diff;
       return {

@@ -10,7 +10,7 @@ export default function(product, id) {
         {
           '@type': 'ListItem',
           position: 1,
-          name: 'Brands',
+          name: 'Brand',
           item: `${env.getClientBaseUrl()}/brands`,
         },
         {
@@ -47,7 +47,7 @@ export function subProduct(product, url) {
       price: product.originalPrice,
       itemCondition: 'https://schema.org/UsedCondition',
       availability: 'https://schema.org/InStock',
-      priceValidUntil: '01/12/2020',
+      priceValidUntil: '01/12/2021',
       seller: {
         '@type': 'Organization',
         name: 'Retrobie',
@@ -55,7 +55,7 @@ export function subProduct(product, url) {
     },
     brand: {
       '@type': 'Thing',
-      name: product.brands?.[0].name || 'Adidas',
+      name: product.brands?.[0].name,
     },
   };
 }

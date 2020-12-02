@@ -3,16 +3,15 @@ import styled from 'styled-components';
 import Header from '../header/header';
 import Footer from '../footer/footer';
 import {Delete, Notification} from 'bloomer';
-import {HIDE_BETA_WARNING_ERROR} from '../../constants';
 import {Helmet} from 'react-helmet';
 import {Transition} from 'react-transition-group';
 import {ErrorIconDark} from '../../constants/icons';
 import PropTypes from 'prop-types';
 
 function Layout(props) {
-    const warning = sessionStorage.getItem(HIDE_BETA_WARNING_ERROR);
+    const warning = sessionStorage.getItem('hide-beta-warning');
 
-    const [hideWarning, setWarningHidden] = useState(warning);
+    const [hideWarning, setWarningHidden] = useState(Boolean(warning));
 
     const [mounted, setMounted] = useState(false);
 
@@ -27,6 +26,11 @@ function Layout(props) {
         exiting: {opacity: 0},
         exited: {opacity: 0},
     };
+
+    function hideBetaWarning() {
+        setWarningHidden(true);
+        sessionStorage.setItem('hide-beta-warning', String(true));
+    }
 
     useEffect(() => {
 
@@ -60,10 +64,7 @@ function Layout(props) {
                                     </Helmet>
                                     <Notification isColor={'warning'}
                                                   style={{display: Boolean(hideWarning) ? 'none' : 'block'}}>
-                                        <Delete onClick={() => {
-                                            sessionStorage.setItem(HIDE_BETA_WARNING_ERROR, 'true');
-                                            setWarningHidden(true);
-                                        }}/>
+                                        <Delete onClick={() => hideBetaWarning()}/>
                                         <div style={{display: 'flex'}}>
                                             <img src={ErrorIconDark}
                                                  style={{width: '24px', margin: '0 12px', display: 'inline'}}

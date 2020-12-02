@@ -16,11 +16,11 @@ const tabs = [
     name: "Your account",
     component: UserDetails,
   },
-  {
-    name: "Your orders",
-    icon: Truck,
-    component: UserOrders
-  },
+  // {
+  //   name: "Your orders",
+  //   icon: Truck,
+  //   component: UserOrders
+  // },
   // {
   //   name: "Favorites",
   //   icon: Star,
