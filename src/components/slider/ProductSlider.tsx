@@ -20,6 +20,7 @@ function Slider({images}) {
           <div style={{display: 'flex', justifyContent: 'center'}}>
             <SwitchTransition mode={'out-in'}>
               <CSSTransition
+                timeout={500}
                 key={imageIndex}
                 classNames="fade"
               >
@@ -40,6 +41,8 @@ function Slider({images}) {
               //   alignItems: 'center',
               marginTop: -48,
               marginBottom: 24,
+              position: 'relative',
+              zIndex: 2
             }}
           >
             {

@@ -1,7 +1,8 @@
-import {TOGGLE_SIDEBAR} from '../actions/constants';
+import { TOGGLE_SIDEBAR } from '../actions/constants';
 
 const initialState = {
   isSidebarOpen: false,
+  theme: 'light'
 };
 
 export default (state = initialState, action) => {

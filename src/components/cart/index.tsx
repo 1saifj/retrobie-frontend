@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {formatNumberWithCommas} from '../../helpers';
@@ -12,6 +12,7 @@ import {useHistory} from 'react-router';
 import {Link} from 'react-router-dom';
 import {Minus, Plus} from 'react-feather';
 import {CartItemType, CartType} from '../../types';
+import Loading from '../loading';
 
 /**
  * This function checks whether it's safe to add the current product
@@ -67,11 +68,48 @@ export function isProductInStock(
   }
 }
 
-export default function Cart(props) {
-  const cart: CartType = useSelector((state: RootStateOrAny) => state.cart);
+export default function Cart(
+  {
+    source,
+    size,
+    bordered,
+    showRemoveButton,
+    showAddButton,
+    hideCheckoutButton,
+    onCheckout,
+    checkoutButtonLink,
+    checkoutButtonText,
+  }: {
+    source?: CartType
+    size?: 'L' | 'S';
+    bordered?: boolean;
+    showRemoveButton?: boolean;
+    showAddButton?: boolean;
+    hideCheckoutButton?: boolean;
+    onCheckout?: ((event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement, MouseEvent>) => void) & ((event: React.MouseEvent<HTMLElement, MouseEvent>) => void);
+    checkoutButtonLink?: string;
+    checkoutButtonText?: string;
+  }) {
+
+
+  const cartState = useSelector((state: RootStateOrAny) => state.cart);
+  const [cart, setCart] = useState<CartType>(null);
   const isSidebarOpen: boolean = useSelector((state: RootStateOrAny) => state.meta.isSidebarOpen);
   const dispatch = useDispatch();
   const history = useHistory();
+
+  useEffect(()=> {
+    // @ts-ignore
+    if (source?.cartItems) {
+      setCart({
+        ...source,
+        // @ts-ignore
+        items: source.cartItems,
+      });
+    } else {
+      setCart(cartState)
+    }
+  }, [source, cartState])
 
   function dispatchToCart(data: CartItemType) {
     const {shouldAddToCart, message} = isProductInStock(cart, data);
@@ -79,7 +117,7 @@ export default function Cart(props) {
     if (shouldAddToCart) {
       const cartItem: CartItemType = data;
       // TODO: Better feedback mechanism?
-      if (!isSidebarOpen) notify('info', `Successfully added ${data.name} to cart!`);
+      if (!isSidebarOpen) notify('info', `Successfully added ${data.productName} to cart!`);
 
       dispatch(addItemToCartAction({item: cartItem}));
     } else {
@@ -97,16 +135,20 @@ export default function Cart(props) {
   }
 
   function redirectOrCloseSidebar(path: string) {
+    openOrCloseSidebar(false);
+
     if (history.location.pathname === path) {
       openOrCloseSidebar(false);
     } else {
-      if (props.history) props.history.push(path);
+      if (history) history.push(path);
       else window.location.href = path;
     }
   }
 
-  function openOrCloseSidebar(open: boolean) {
-    dispatch(toggleSidebarAction({open}));
+  const openOrCloseSidebar = (open: boolean)=> dispatch(toggleSidebarAction({open}))
+
+  if (!cart){
+    return <Loading minor={true} />
   }
 
   return (
@@ -119,14 +161,14 @@ export default function Cart(props) {
               key={cartItem.uuid}
               onClick={() => redirectOrCloseSidebar(`/product/${cartItem.productId}`)}
             >
-              <CartItem size={props.size} bordered={props.bordered}>
-                <div style={{width: '100px'}}>
-                  <img src={cartItem.thumbnailUrl} alt={cartItem.name} />
+              <CartItem size={size} bordered={bordered}>
+                <div style={{width: '100px', height: '80px', display: 'flex'}}>
+                  <img src={cartItem.thumbnailUrl} alt={`${cartItem.productName} thumbnail`}/>
                 </div>
 
                 <div className="desc">
                   <div style={{maxWidth: '225px'}}>
-                    <p>{cartItem.name}</p>
+                    <p>{cartItem.productName}</p>
                   </div>
                   <div style={{textAlign: 'right'}}>
                     <p>Ksh. {formatNumberWithCommas(cartItem.price)}</p>
@@ -135,7 +177,7 @@ export default function Cart(props) {
                 </div>
                 {
                   <ButtonsParent>
-                    {props.showRemoveButton && (
+                    {showRemoveButton && (
                       <Button
                         isColor="light"
                         style={{padding: 0}}
@@ -147,7 +189,7 @@ export default function Cart(props) {
                         <Minus />
                       </Button>
                     )}
-                    {props.showAddButton && (
+                    {showAddButton && (
                       <Button
                         isColor="light"
                         disabled={cartItem.quantity === cartItem.stock}
@@ -175,25 +217,33 @@ export default function Cart(props) {
             >
               Ksh. {formatNumberWithCommas(cart.total)}
             </h3>
+            <>
+              {/*
+                  TODO: - Add shipping costs
+                        - Indicate status of the order
+                        - Show delivery location, if any
+                        - 
+              */}
+            </>
           </div>
-          {!props.hideCheckoutButton && !props.onCheckout && (
+          {!hideCheckoutButton && !onCheckout && (
             <div>
-              <Link to={props.checkoutButtonLink || '/checkout'}>
-                <Button
-                  isColor="primary"
-                  style={{
-                    width: '100%',
-                    fontSize: 18,
-                    fontWeight: 'bold',
-                  }}
-                >
-                  {props.checkoutButtonText || 'CHECKOUT'}
-                </Button>
-              </Link>
+              <Button
+                isColor="primary"
+                onClick={()=> redirectOrCloseSidebar(checkoutButtonLink || '/checkout')}
+                style={{
+                  width: '100%',
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                }}
+              >
+                {checkoutButtonText || 'CHECKOUT'}
+              </Button>
+
             </div>
           )}
 
-          {!props.hideCheckoutButton && props.onCheckout && (
+          {!hideCheckoutButton && onCheckout && (
             <div>
               <Button
                 isColor="primary"
@@ -202,9 +252,9 @@ export default function Cart(props) {
                   fontSize: 18,
                   fontWeight: 'bold',
                 }}
-                onClick={props.onCheckout}
+                onClick={onCheckout}
               >
-                {props.checkoutButtonText || 'CHECKOUT'}
+                {checkoutButtonText || 'CHECKOUT'}
               </Button>
             </div>
           )}
@@ -212,7 +262,7 @@ export default function Cart(props) {
       ) : (
         <div>
           <EmptyState
-            title={"It's kinda lonely in here."}
+            title={'It\'s kinda lonely in here.'}
             message={'Your cart is empty'}
             icon={Manga}
             width={'350px'}
@@ -251,6 +301,11 @@ Cart.propTypes = {
 const CartParent = styled.div`
   -ms-overflow-style: none;
   scrollbar-width: none;
+  /* background: ${props => props.theme === 'light' ?
+    'var(--color-background--light)' :
+    'var(--color-background--dark)'
+  }; */
+
 
   &::-webkit-scrollbar {
     display: none;
@@ -293,12 +348,12 @@ export const CartItem = styled.div`
   display: flex;
   align-items: center;
   transition: all 0.25s ease-in-out;
-  max-width: 500px;
+  //max-width: 500px;
   width: 100%;
 
   &:hover {
     cursor: pointer;
-    border: ${props => (props.border ? `1px solid #222` : `1px solid lightgrey`)};
+    border: ${props => (props.bordered ? `1px solid #222` : `1px solid lightgrey`)};
   }
 
   .desc {
@@ -320,8 +375,9 @@ export const CartItem = styled.div`
   }
 
   img {
-    max-width: ${props => (props.size === 'L' ? `100%` : `50px`)};
+    max-width: ${props => (props.size === 'L' ? `100%` : `80px`)};
     height: auto;
     max-height: 80px;
+    object-fit: contain;
   }
 `;

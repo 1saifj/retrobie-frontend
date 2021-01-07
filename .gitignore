@@ -27,3 +27,5 @@ yarn-error.log*
 *.zip
 /src/assets/images/Shoes/
 /src/assets/style/.sass-cache/
+
+.eslintcache

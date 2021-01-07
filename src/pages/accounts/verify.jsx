@@ -9,7 +9,7 @@ import VerifiedIcon from '../../assets/images/icons/verified.svg';
 import jwtDecode from 'jwt-decode';
 import * as Yup from 'yup';
 import InputMask from 'react-input-mask';
-import {useApi, useAuth} from '../../network';
+import {useAuth} from '../../network';
 import {useDispatch} from 'react-redux';
 
 const FormParent = styled.div`

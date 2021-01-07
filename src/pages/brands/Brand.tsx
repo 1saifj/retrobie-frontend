@@ -1,40 +1,37 @@
 import React, {useEffect, useState} from 'react';
 import Layout from '../../components/Layout';
-import BrandsFilters from '../../components/filters/brand-filters';
+import BrandsFilters from './components/brand-filters';
 import styled from 'styled-components';
 import Loading from '../../components/loading';
 import {Container, Section} from 'bloomer';
 import {useAuth} from '../../network';
-import {useDispatch} from 'react-redux';
 import {formatNumberWithCommas} from '../../helpers';
 import {Link} from 'react-router-dom';
-import {useFilters} from '../../components/filters/useFilters';
+import useSWR from 'swr/esm/use-swr';
+import {BrandType, ProductType} from '../../types';
+import {useFilters} from '../../hooks';
 
 export default function ViewSingleBrand(props) {
 
-    const api = useAuth();
-    const dispatch = useDispatch();
+  const brandNameOrId = props.match.params.brand;
 
-  const {products, setAllProducts} = useFilters();
+  const api = useAuth();
+  const brandFetcher = (url, name)=> api.brands.getSingle(name).then(({data})=> data);
+  const {data: brandData} = useSWR<BrandType>(['/brands/:id', brandNameOrId], brandFetcher);
 
-    const brandNameOrId = props.match.params.brand;
+  const {products: renderProducts} = useFilters();
 
-    const [brandData, setBrandData] = useState(null);
+  const allProductsFetcher = (url, name) => api.brands.getProducts(name).then(({data})=> data);
+  const {data: allProducts} = useSWR<ProductType[]>([
+    brandData ? `/products/all/${brandData.name}`: undefined,
+    brandNameOrId
+  ], allProductsFetcher)
 
-  useEffect(() => {
-    dispatch(api.brands.getSingle(brandNameOrId))
-      // @ts-ignore
-      .then(({data}) => setBrandData(data));
-
-    dispatch(api.brands.getProducts(brandNameOrId))
-      // @ts-ignore
-      .then(({data}) => setAllProducts(data));
-  }, []);
-
-  // useEffect(()=> {
-  //   console.log('Working with criteria ', criteria);
-  // }, [criteria])
-
+  if (!allProducts) {
+    return (
+      <Loading/>
+    )
+  }
 
   return (
     <Layout>
@@ -64,16 +61,17 @@ export default function ViewSingleBrand(props) {
                   <div style={{display: 'flex', gap: 64}}>
 
                     <BrandsFilters
+                      products={allProducts}
                       allCriteria={['sex', 'size', 'price', 'style']}
                     />
                     <div>
-                      <div
-                        style={{
-                          display: 'flex',
-                          columnGap: 24,
-                        }}>
+                      <div style={{
+                        display: 'flex',
+                        columnGap: 24,
+                      }}
+                      >
                         {
-                          products.length ? products.map((item, index) => (
+                          renderProducts.map((item, index) => (
                             <ProductItem
                               key={String(index)}
                               to={`/brands/${brandNameOrId}/${item.uuid}`}
@@ -95,14 +93,11 @@ export default function ViewSingleBrand(props) {
                                 </p>
                               </div>
                             </ProductItem>
+
                           ))
-                        : <div>
-                            <p>No products match that request :(</p>
-                          </div>
+
                         }
-
                       </div>
-
                     </div>
 
                   </div>
@@ -111,63 +106,6 @@ export default function ViewSingleBrand(props) {
                 :
                 <div>
                   <Loading minor/>
-
-                  {/*<EmptyState*/}
-                  {/*  icon={EmptyBox}*/}
-                  {/*  title={"We're fresh out of stock"}*/}
-                  {/*  message={"Looks we're all out of stock! If you want to get notified when we restock, feel free to leave your email."}*/}
-                  {/*  color={"#353535"}*/}
-                  {/*  prompt={() => (*/}
-                  {/*    <div style={{ display: 'flex', justifyContent: 'center' }}>*/}
-                  {/*      <div id="mc_embed_signup" style={{ maxWidth: '600px' }}>*/}
-                  {/*        <form*/}
-                  {/*          action="https://store.us15.list-manage.com/subscribe/post?u=6ec31ce43b70efd818395b2ae&amp;id=159a07cdbd"*/}
-                  {/*          method="post" id="mc-embedded-subscribe-form"*/}
-                  {/*          name="mc-embedded-subscribe-form"*/}
-                  {/*          className="validate" target="_blank" noValidate>*/}
-                  {/*          <div id="mc_embed_signup_scroll">*/}
-                  {/*            <div>*/}
-                  {/*              <div>*/}
-                  {/*                <Input placeholder='you@gmail.com'*/}
-                  {/*                       type="email"*/}
-                  {/*                       defaultValue=""*/}
-                  {/*                       name="EMAIL"*/}
-                  {/*                       className="required email"*/}
-                  {/*                       id="mce-EMAIL" />*/}
-                  {/*                <Button isColor='primary' type="submit"*/}
-                  {/*                        defaultValue='Subscribe'*/}
-                  {/*                        name="subscribe"*/}
-                  {/*                        style={{*/}
-                  {/*                          width: '100%',*/}
-                  {/*                          marginTop: '8px'*/}
-                  {/*                        }}*/}
-                  {/*                        id="mc-embedded-subscribe"*/}
-                  {/*                        className="button">*/}
-                  {/*                  Hit me up*/}
-                  {/*                </Button>*/}
-                  {/*              </div>*/}
-                  {/*            </div>*/}
-                  {/*            <div id="mce-responses" className="clear">*/}
-                  {/*              <div className="response"*/}
-                  {/*                   id="mce-error-response"*/}
-                  {/*                   style={{ display: "none" }} />*/}
-                  {/*              <div className="response"*/}
-                  {/*                   id="mce-success-response"*/}
-                  {/*                   style={{ display: "none" }} />*/}
-                  {/*            </div>*/}
-                  {/*            <div style={{ position: "absolute", left: "-5000px" }}*/}
-                  {/*                 aria-hidden="true">*/}
-                  {/*              <input type="text"*/}
-                  {/*                     name="b_6ec31ce43b70efd818395b2ae_159a07cdbd"*/}
-                  {/*                     defaultValue='' />*/}
-                  {/*            </div>*/}
-                  {/*          </div>*/}
-                  {/*        </form>*/}
-                  {/*      </div>*/}
-
-                  {/*    </div>*/}
-                  {/*  )}*/}
-                  {/*  style={{ height: "80vh" }} />*/}
                 </div>
             }
 

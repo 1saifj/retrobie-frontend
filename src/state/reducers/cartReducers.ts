@@ -1,6 +1,6 @@
 import {v4 as uuidV4} from 'uuid';
 import {CartItemType} from '../../types';
-import {ADD_TO_CART, REMOVE_FROM_CART} from '../actions/constants';
+import {ADD_TO_CART, DELETE_CART, REMOVE_FROM_CART} from '../actions/constants';
 
 type CartState = {
   id?: number;
@@ -13,16 +13,7 @@ const initialState: CartState = {
   id: null,
   count: 0,
   total: 0,
-  items: [
-    // {
-    //     name: "",
-    //     uuid: "",
-    //     quantity: 0,
-    //     price: "",
-    //     thumbnailUrl: ""
-    //     slug: ""
-    // }
-  ],
+  items: [],
 };
 
 export default (state = initialState, action: {type: string; payload}) => {
@@ -38,6 +29,7 @@ export default (state = initialState, action: {type: string; payload}) => {
 
       // Create a new cartId if there are no items in the cart.
       if (!addToCartState.items.length) {
+        // we are essentially creating the user's cart for the first time
         addToCartState.id = uuidV4();
       }
 
@@ -49,7 +41,7 @@ export default (state = initialState, action: {type: string; payload}) => {
       if (!itemExists) {
         const newCartItem: CartItemType = {
           uuid: uuidV4(),
-          name: addToCartActionItem.name,
+          productName: addToCartActionItem.productName,
           productId: addToCartActionItem.productId,
           slug: addToCartActionItem.slug,
           quantity: 1,
@@ -78,9 +70,6 @@ export default (state = initialState, action: {type: string; payload}) => {
         removeFromCartActionItem.originalPrice || removeFromCartActionItem.price;
 
       // Find the index of the item to be removed
-      console.group('Removing item from cart.', removeFromCartActionItem.productId);
-      console.log('Attempting to remove item ', removeFromCartActionItem);
-      console.groupEnd();
       let itemToBeRemovedIndex = removeFromCartState.items.findIndex(
         item => item.productId === removeFromCartActionItem.productId
       );
@@ -88,16 +77,28 @@ export default (state = initialState, action: {type: string; payload}) => {
       if (itemToBeRemovedIndex !== -1) {
         // Retrieve the item from state
         let itemToBeRemoved = removeFromCartState.items[itemToBeRemovedIndex];
-        // if there's more than 1 in their cart
-        if (itemToBeRemoved.quantity > 1) {
+        // if there's 1 or more  in their cart
+        if (itemToBeRemoved.quantity >= 1) {
           // decrease its quantity by one
           itemToBeRemoved.quantity -= 1;
           // decrease the total product count by 1
           removeFromCartState.count -= 1;
           // // decrement the total
           removeFromCartState.total -= Number(removeFromCartItemPrice);
+
+          if (itemToBeRemoved.quantity === 0){
+            // if the item quantity shrinks to 0, remove it from the cart
+            removeFromCartState.items.splice(itemToBeRemovedIndex, 1);
+          }
+
         } else {
-          console.log('Deleting empty cart ', removeFromCartState.id);
+          console.log('That item does not exist in the cart');
+        }
+
+        // if there are no longer any items in the cart
+        if (!removeFromCartState.items.length || removeFromCartState.count <= 0){
+          // delete the old cart
+          console.log("No items in cart. Deleting...", removeFromCartState)
           removeFromCartState.id = null;
           removeFromCartState.items = [];
           removeFromCartState.total = 0;
@@ -108,6 +109,13 @@ export default (state = initialState, action: {type: string; payload}) => {
       }
 
       return removeFromCartState;
+    case DELETE_CART:
+      return {
+        id: null,
+        count: 0,
+        total: 0,
+        items: [],
+      };
     default:
       return state;
   }

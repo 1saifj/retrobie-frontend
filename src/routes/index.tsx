@@ -1,27 +1,33 @@
+import '../assets/style/index.scss';
 import React, {lazy, Suspense} from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import Loading from '../components/loading';
 import AdminDashboard from '../pages/admin/dashboard';
 
 const Cart = lazy(() => import('../pages/cart'));
-const App = lazy(() => import('../App'));
+const Landing = lazy(() => import('../pages/landing'));
 const HowItWorks = lazy(() => import('../pages/how-it-works'));
 const Cookies = lazy(() => import('../pages/privacy/cookies'));
 const Blog = lazy(() => import('../pages/blog'));
+const Category = lazy(() => import('../pages/category'));
+const Collection = lazy(() => import('../pages/collections'));
 const About = lazy(() => import('../pages/about'));
 const Tos = lazy(() => import('../pages/privacy/terms-of-service'));
 const Product = lazy(() => import('../pages/product'));
-const Support = lazy(() => import('../pages/support/support'));
-const Checkout = lazy(() => import('../pages/checkout'));
-const Shipping = lazy(() => import('../pages/shipping'));
-const NotFound = lazy(() => import('../pages/notfound'));
+
 const Returns = lazy(() => import('../pages/support/returns'));
+const Support = lazy(() => import('../pages/support'));
 const CustomRequests = lazy(() => import('../pages/support/custom-requests'));
 const Other = lazy(() => import('../pages/support/other'));
 const PayingForAnOrder = lazy(() => import('../pages/support/paying-for-an-order'));
 const MakingAnOrder = lazy(() => import('../pages/support/making-an-order'));
 const CancellingAnOrder = lazy(() => import('../pages/support/cancelling-an-order'));
-const Delivery = lazy(() => import('../pages/support/delivery'));
+const Delivery = lazy(() => import('../pages/support/shipping/shipping-and-delivery'));
+const SupportMaps = lazy(() => import('../pages/support/shipping/maps'));
+
+const Checkout = lazy(() => import('../pages/checkout'));
+const Shipping = lazy(() => import('../pages/shipping'));
+const NotFound = lazy(() => import('../pages/notfound'));
 
 //Admin
 const AdminLogin = lazy(() => import('../pages/admin/login'));
@@ -46,7 +52,7 @@ const UserDashboard = lazy(() => import('../pages/user/dashboard'));
 const UserProfile = lazy(() => import('../pages/accounts/me'));
 const UserOrders = lazy(() => import('../pages/accounts/me/orders'));
 
-const UserSingleOrder = lazy(() => import('../pages/orders/single-order'));
+const UserSingleOrder = lazy(() => import('../pages/accounts/me/orders/single-order'));
 // auth
 const RegisterUser = lazy(() => import('../pages/accounts/register'));
 const LoginUser = lazy(() => import('../pages/accounts/login'));
@@ -56,7 +62,7 @@ const ResetPassword = lazy(() => import('../pages/accounts/reset-password'));
 const VerifyAccount = lazy(() => import('../pages/accounts/verify'));
 
 function Routes() {
-  const AdminRoute = function({component: Component, ...rest}) {
+  const AdminRoute = function ({ component: Component, ...rest }) {
     return (
       <Route
         {...rest}
@@ -72,7 +78,7 @@ function Routes() {
     <BrowserRouter>
       <Suspense fallback={<Loading message={false} />}>
         <Switch>
-          <Route exact path="/" component={App} />
+          <Route exact path="/" component={Landing} />
           <Route exact path="/accounts/register" component={RegisterUser} />
           <Route exact path="/accounts/login" component={LoginUser} />
           <Route exact path="/accounts/forgot-password" component={ForgotPassword} />
@@ -101,11 +107,17 @@ function Routes() {
           <Route exact path="/support/paying-for-an-order" component={PayingForAnOrder} />
           <Route exact path="/support/making-an-order" component={MakingAnOrder} />
           <Route exact path="/support/cancelling-an-order" component={CancellingAnOrder} />
+          <Route exact path="/support/delivery/maps" component={SupportMaps} />
           <Route exact path="/support/delivery" component={Delivery} />
+          <Route exact path="/support/shipping/" component={Delivery} />
+          <Route exact path="/support/shipping/maps" component={SupportMaps} />
 
           <Route exact path="/brands/" component={BrandsPage} />
           <Route exact path="/brands/:brand" component={SingleBrand} />
           <Route exact path="/brands/:brand/:id" component={Product} />
+
+          <Route path="/category/:id/" component={Category} />
+          <Route path="/collection/:id/" component={Collection} />
 
           {/*Admin*/}
           <Route exact path="/company/admin/login" component={AdminLogin} />

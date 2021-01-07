@@ -11,7 +11,7 @@ import {useDispatch} from 'react-redux';
 import {loginUserAction} from '../../state/actions';
 import {extractErrorMessage} from '../../helpers';
 import {notify} from '../../helpers/views';
-import {useApi, useAuth} from '../../network';
+import {useAuth} from '../../network';
 
 const FormParent = styled.div`
   display: grid;
@@ -71,7 +71,7 @@ export default function LoginUser(props) {
                                     if (props.callback && typeof props.callback === 'function') {
                                       props.callback(null, data);
                                     } else {
-                                      props.history.push('/dashboard');
+                                      props.history.push('/');
                                     }
                                   } else {
                                     //todo: two factor authentication

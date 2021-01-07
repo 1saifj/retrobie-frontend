@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {ReactElement, useEffect, useState} from 'react';
 import {useField} from 'formik';
 import {Help, Input, Label, TextArea} from 'bloomer';
 import styled from 'styled-components';
 
 const TextField: ({label, chars, buttonAction, help, ...props}: {
-  label: string;
+  label: string | ReactElement;
   name: string;
   placeholder: string;
   chars?: number;

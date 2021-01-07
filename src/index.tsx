@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import {env} from './config';
 import ScrollToTop from './components/ScrollToTop';
 import {PersistGate} from 'redux-persist/integration/react';
-import ProvideFilters from './components/filters/useFilters/FilterProvider';
+import {FilterProvider} from './hooks/useFilters';
 
 require('react-hot-loader/patch');
 
@@ -38,14 +38,14 @@ const render = Component => {
     const {store, persistor} = configureStore();
     return ReactDOM.render((
       <Provider store={store}>
-        <ProvideFilters>
+        <FilterProvider>
           <PersistGate loading={<p>Please wait...</p>} persistor={persistor}>
             <Root>
               <ScrollToTop/>
               <Component/>
             </Root>
           </PersistGate>
-        </ProvideFilters>
+        </FilterProvider>
       </Provider>
     ), document.getElementById('root'));
 };

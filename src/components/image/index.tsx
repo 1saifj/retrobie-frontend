@@ -1,14 +1,14 @@
 import React, {CSSProperties} from 'react';
 import Image from 'react-progressive-graceful-image';
 
-const RetroImage = ({src, srcSet, alt, style, solidColor, placeholderStyle}: {
+export default function ({src, srcSet, alt, style, solidColor, placeholderStyle}: {
   src: string,
   alt: string,
   srcSet?: {sizes: string; srcSet: string},
   style?: CSSProperties,
   solidColor?: boolean,
   placeholderStyle?: CSSProperties
-}) => {
+}) {
 
   const getPlaceholderUrl = (src)=> {
     if (!src) return '';
@@ -72,5 +72,3 @@ const RetroImage = ({src, srcSet, alt, style, solidColor, placeholderStyle}: {
 
   );
 }
-
-export default RetroImage;

@@ -1,82 +1,43 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, { useState } from 'react';
 import Loading from '../../components/loading';
-import {addItemToCartAction} from '../../state/actions';
-import {formatNumberWithCommas} from '../../helpers';
-import {notify} from '../../helpers/views';
+import {addItemToCartAction, toggleSidebarAction} from '../../state/actions';
+import { formatNumberWithCommas } from '../../helpers';
 import styled from 'styled-components';
 import Layout from '../../components/Layout';
 import SEOHeader from '../../components/SEOHeader';
 import {
   Diamond,
-  ErrorIcon404Dark,
-  ErrorIcon502Dark,
   FastDelivery,
   HelpIcon,
   Replace,
   Return,
 } from '../../constants/icons';
 import '../../assets/style/index.scss';
-import {JsonLd} from 'react-schemaorg';
-import productJsonld, {subProduct} from './product.jsonld';
-import {Button, Delete, Modal, ModalBackground, ModalClose, ModalContent, Tag, Title} from 'bloomer';
+import { JsonLd } from 'react-schemaorg';
+import productJsonld, { subProduct } from './product.jsonld';
+import { Button, Delete, Modal, ModalBackground, ModalClose, ModalContent, Tag, Title } from 'bloomer';
 import ProductSlider from '../../components/slider/ProductSlider';
-import './product.scoped.css';
-import EmptyState from '../../components/empty/EmptyState';
-import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
-import {isProductInStock} from '../../components/cart';
-import {useAuth} from '../../network';
-import {CartItemType, CartType, ProductType} from '../../types';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { isProductInStock } from '../../components/cart';
+import { useAuth } from '../../network';
+import { CartItemType, CartType, ProductType } from '../../types';
+import useSWR from 'swr';
+import {useNotify} from '../../hooks';
 
-function Product({match}) {
+function Product({ match }) {
   const api = useAuth();
   const dispatch = useDispatch();
-  const {id} = match.params;
+  const { id } = match.params;
 
-  // @ts-ignore
-  const [currentProduct, setCurrentProduct] = useState({
-    images: [],
-    stock: {
-      usersCount: 0,
-      adminCount: 0
-    },
-    name: '',
-    description: {
-      copy: "",
-      long: "",
-      seo: "",
-      short: '',
-    },
-    originalPrice: 0,
-    uuid: "",
-    isOnOffer: false,
-    currency: 'Ksh',
-    slug: undefined,
-    detail: {
-      sizeCountry: "",
-      size: null,
-      primaryColor: "",
-      sex: null,
-      secondaryColor: ""
-    }
-
-
-  });
   const isSidebarOpen = useSelector((state: RootStateOrAny) => state.meta.isSidebarOpen);
 
   const [conditionModalOpen, setConditionModalOpen] = useState(false);
   const cart: CartType = useSelector((state: RootStateOrAny) => state.cart);
 
-  useEffect(() => {
+  const singleDataFetcher = (_key, id) => api.products.getSingle(id).then(({ data }) => data)
+  const { data: currentProduct, error } = useSWR<ProductType>(['/orders/single', id], singleDataFetcher)
 
-    dispatch(api.products.getSingle(id))
-      // @ts-ignore
-      .then(({data})=> {
-        setCurrentProduct(data);
-      }).catch(err=> {
-
-    })
-
-  }, []);
+  const {notify} = useNotify();
 
   // if (error) {
   //   return (
@@ -98,7 +59,7 @@ function Product({match}) {
   //   );
   // }
 
-  if (!currentProduct || !currentProduct.description) {
+  if (!currentProduct) {
     return <Loading message={false} />;
   }
 
@@ -111,7 +72,7 @@ function Product({match}) {
   function dispatchToCart(productItem: ProductType) {
 
     let cartItem: CartItemType = {
-      name: productItem.name,
+      productName: productItem.name,
       stock: productItem.stock.usersCount,
       images: productItem.images,
       uuid: productItem.uuid,
@@ -124,12 +85,20 @@ function Product({match}) {
       productId: productItem.uuid
     };
 
-    const {shouldAddToCart, message} = isProductInStock(cart, cartItem);
+    const { shouldAddToCart, message } = isProductInStock(cart, cartItem);
     if (shouldAddToCart) {
-      if (!isSidebarOpen) notify('info', `${productItem.name} added to cart`);
-      dispatch(addItemToCartAction({item: cartItem}));
+      if (!isSidebarOpen) {
+        const toastId = notify.info( `${productItem.name} added to cart`, {
+          onClick: () => {
+            notify.dismiss(toastId);
+            dispatch(toggleSidebarAction({open: true}))
+          },
+        });
+
+      }
+      dispatch(addItemToCartAction({ item: cartItem }));
     } else {
-      notify('error', message);
+      notify.error(message);
     }
   }
 
@@ -154,8 +123,8 @@ function Product({match}) {
     <>
       {/* @ts-ignore*/}
       <SEOHeader title={currentProduct.name} description={currentProduct.description.copy} />
-      <JsonLd item={{...productJsonld(currentProduct, id)}} />
-      <JsonLd item={{...subProduct(currentProduct, match.url)}} />
+      <JsonLd item={{ ...productJsonld(currentProduct, id) }} />
+      <JsonLd item={{ ...subProduct(currentProduct, match.url) }} />
 
       <Layout>
         <ProductRoot>
@@ -169,21 +138,21 @@ function Product({match}) {
             {currentProduct?.images?.length ? (
               <ProductSlider images={currentProduct.images} />
             ) : (
-              <div>
-                <Loading minor />
-              </div>
-            )}
+                <div>
+                  <Loading minor />
+                </div>
+              )}
 
-            <div style={{width: '80%', borderRadius: '4px'}}>
+            <div style={{ width: '80%', borderRadius: '4px' }}>
               <div>
                 <ValueProposition>
                   <div>
-                    <img style={{width: '50px'}} src={FastDelivery} alt={'Free Delivery'} />
+                    <img style={{ width: '50px' }} src={FastDelivery} alt={'Free Delivery'} />
                     <h4>Next-day Delivery</h4>
                     <p>Anywhere within Nairobi</p>
                   </div>
                   <div>
-                    <img style={{width: '50px'}} src={HelpIcon} alt={'easy payment'} />
+                    <img style={{ width: '50px' }} src={HelpIcon} alt={'easy payment'} />
                     <h4>Need help?</h4>
                     <p>
                       Hit us up on Twitter <a href="https://twitter.com/retrbobie">@retrobie</a> or
@@ -191,7 +160,7 @@ function Product({match}) {
                     </p>
                   </div>
                   <div>
-                    <img style={{width: '50px'}} src={Diamond} alt={'easy payment'} />
+                    <img style={{ width: '50px' }} src={Diamond} alt={'easy payment'} />
                     <h4>Assured Quality</h4>
                     <p>100% original product guarantee</p>
                   </div>
@@ -208,10 +177,15 @@ function Product({match}) {
               />
               <DescriptionParent>
                 <h1>{currentProduct.name}</h1>
-                <h2>{`${currentProduct.currency || 'Ksh'}.  ${formatNumberWithCommas(
-                  currentProduct.originalPrice
-                )}`}</h2>
-                <p>{currentProduct.description.short}</p>
+                <h2>
+                  {
+                    `${currentProduct.currency || 'Ksh'
+                    }.  
+                    ${formatNumberWithCommas(currentProduct.originalPrice)
+                    }`
+                  }
+                </h2>
+                 <p>{currentProduct.description.short}</p>
                 <div>
                   <h4>Description</h4>
                   <p>{currentProduct.description.copy}</p>
@@ -231,9 +205,8 @@ function Product({match}) {
                     <SizesParent>
                       <Sizes>
                         <CustomTag>
-                          <p>{`${
-                            currentProduct.detail.size
-                          } ${currentProduct.detail.sizeCountry.toUpperCase()}`}</p>
+                          <p>{`${currentProduct.detail.size
+                            } ${currentProduct.detail.sizeCountry.toUpperCase()}`}</p>
                         </CustomTag>
                       </Sizes>
                     </SizesParent>
@@ -241,7 +214,7 @@ function Product({match}) {
                 </div>
                 <ColorsRoot>
                   <h4>Product colors</h4>
-                  <div style={{display: 'flex', gap: '6px'}}>
+                  <div style={{ display: 'flex', gap: '6px' }}>
                     <ColorsParent src={currentProduct.detail.primaryColor}>
                       <Color src={currentProduct.detail.primaryColor} />
                     </ColorsParent>
@@ -267,7 +240,7 @@ function Product({match}) {
                   </div>
                 </div>
                 <Buttons>
-                  <div style={{margin: '18px 0'}}>
+                  <div style={{ margin: '18px 0' }}>
                     <div>
                       <Button
                         isColor="primary"
@@ -299,16 +272,16 @@ function Product({match}) {
                         flexWrap: 'wrap',
                       }}
                     >
-                      <div style={{flex: '1 0 180px'}}>
-                        <img alt={'return'} src={Return} style={{width: '48px'}} />
-                        <h4 style={{color: '#353535'}}>Free returns within 7 days</h4>
+                      <div style={{ flex: '1 0 180px' }}>
+                        <img alt={'return'} src={Return} style={{ width: '48px' }} />
+                        <h4 style={{ color: '#353535' }}>Free returns within 7 days</h4>
                         <p>
                           &#10003; Direct returns - money refunded to your M-Pesa or Paypal account.
                         </p>
                       </div>
-                      <div style={{flex: '1 0 180px'}}>
-                        <img alt={'replace'} src={Replace} style={{width: '48px'}} />
-                        <h4 style={{color: '#353535'}}>Free replacements within 14 days</h4>
+                      <div style={{ flex: '1 0 180px' }}>
+                        <img alt={'replace'} src={Replace} style={{ width: '48px' }} />
+                        <h4 style={{ color: '#353535' }}>Free replacements within 14 days</h4>
                         <p>&#10003; Replace your product with any other of similar value</p>
                       </div>
                     </div>
@@ -325,13 +298,13 @@ function Product({match}) {
                   </div>
 
                   <ConditionParent>
-                    <div style={{textAlign: 'center', color: '#222'}}>
+                    <div style={{ textAlign: 'center', color: '#222' }}>
                       <Modal isActive={conditionModalOpen}>
                         <Delete onClick={() => openModal(false)} />
                         <ModalBackground />
                         <ModalContent>
                           <Title>Condition Guide</Title>
-                          <p style={{color: '#222'}}>
+                          <p style={{ color: '#222' }}>
                             All products on T25 are divided into three distinct categories:
                           </p>
                           <ul>

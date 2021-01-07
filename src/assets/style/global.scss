@@ -1,5 +1,7 @@
 :root {
   --color-background: #FFFFFF;
+  --color-background--light: #fff;
+  --color-background--dark: #444;
   --color-foreground: #111111;
   --color-primary: #f40028;
   --color-primary-light: #ea0021;
@@ -565,7 +567,7 @@ b {
 }
 
 .fade-enter {
-  opacity: 0;
+  opacity: 1;
 }
 
 .fade-exit {
@@ -625,26 +627,29 @@ b {
 
 .navbar {
   max-height: 4rem;
+  background: var(--color-background--light);
 }
 
 .drawer-content {
   scrollbar-width: none;
 }
+.buttons .button {
+  margin: unset;
+}
 
-.button+.button {
-  margin-left: 24px;
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  button {
+    flex: 1 1 150px;
+  }
 }
 
 .button {
-  transition: all 0.25s cubic-bezier(0, 1.06, 1, 1);
   height: unset;
   padding: 12px 32px;
-}
-
-.button.is-foreground {
-  border: 1px solid var(--color-foreground);
-  background: var(--color-backgrond);
-  color: var(--color-foreground);
 }
 
 .button.is-small {
@@ -704,24 +709,52 @@ b {
   }
 }
 
-
 .fade-enter {
-  opacity: 0;
-  transform: translateX(-100%);
+  opacity: 1;
 }
 .fade-enter-active{
   opacity: 1;
-  transform: translateX(0%);
 }
 .fade-exit {
   opacity: 0;
-  transform: translateX(0%);
 }
 .fade-exit-active{
   opacity: 0;
-  transform: translateX(100%);
 }
 .fade-enter-active,
-.fade-exit-active{
-  transition: opacity 500ms, transform 500ms;
+.fade-exit-active {
+  transition: opacity 0.25ms ease-in-out;
+}
+
+
+.modal-content, .modal-card {
+  & > div {
+    padding: 48px;
+  }
+}
+
+@media screen and (max-width: 768px){
+  .modal-content, .modal-card {
+    width: 80%;
+
+    & > div {
+      padding: 24px;
+    }
+  }
+}
+
+.tippy-popper .tippy-tooltip.light-theme {
+  background-color: white !important;
+}
+
+.is-ghost {
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+  line-height: inherit;
+
+  &:hover {
+    border-bottom: 1px solid currentColor;
+  }
 }

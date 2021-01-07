@@ -88,6 +88,7 @@ import Plane from '../assets/images/icons/plane.svg';
 import Verify from '../assets/images/icons/verify.svg';
 import Listing from '../assets/images/icons/listing.svg';
 import Password from '../assets/images/icons/password.svg';
+import Tick from '../assets/images/icons/tick.svg';
 
 import JJY from '../assets/images/marketing/Air-Jordan-1-Hi-85-Varsity-Red.webp';
 
@@ -158,6 +159,7 @@ export {
   Request,
   Replace,
   Return,
+  Tick,
   TwitterLogoWhite,
   VansBlackLogo,
   VansWhiteLogo,

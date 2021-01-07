@@ -7,7 +7,7 @@ import CustomModal from '../../components/CustomModal';
 import {useAuth} from '../../network';
 import {notify} from '../../helpers/views';
 
-export default function PayWithMpesaOnlineModal({isActive, onClose, meta: {phoneNumber}}) {
+export default function PayWithMpesaOnlineModal({isActive, onClose, meta: {phoneNumber, orderNo}}) {
   const checkout = useSelector((state: RootStateOrAny) => state.user.checkout);
   const api = useAuth();
   const dispatch = useDispatch();
@@ -21,6 +21,7 @@ export default function PayWithMpesaOnlineModal({isActive, onClose, meta: {phone
   return (
     <div>
       <CustomModal
+        closeOnClickBackground={false}
         onClose={()=> {
           if (!paymentLoading) return onClose();
         }}
@@ -41,13 +42,14 @@ export default function PayWithMpesaOnlineModal({isActive, onClose, meta: {phone
             <p>
               You will automatically receive a prompt on your phone:
               <b> +254-{addDashes(phoneNumber)}</b>&nbsp;
-              for a charge of <strong>Ksh. {formatNumberWithCommas(checkout.total)}</strong>.
+              for a charge of <strong>Ksh. {formatNumberWithCommas(checkout.total)}</strong>
             </p>
+            <h4 style={{marginBottom: 0}}>For extra security</h4>
             <p>
-              Do you want to proceed?
+              Cross-reference the order number <b>{orderNo}</b>.
             </p>
           </div>
-          <div>
+          <div className={'buttons'} style={{marginTop:'1.5rem'}}>
             <Button
               isColor="primary"
               isLoading={paymentLoading}

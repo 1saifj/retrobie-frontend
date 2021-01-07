@@ -4,8 +4,11 @@ import {
   LOG_IN_USER,
   LOG_OUT_USER,
   REFRESH_SESSION,
+  SAVE_CHECKOUT_ADDRESS,
+  SAVE_SHIPPING_QUOTE,
+  SAVE_ZOOM_LEVEL,
 } from '../actions/constants';
-import {CartType} from '../../types';
+import {AddressType, CartType, CheckoutType} from '../../types';
 
 export type UserInfoType = {
   email: string;
@@ -28,6 +31,8 @@ export type UserState =  {
   lastName?: string,
   phoneNumber?: string,
   role: 'user',
+  isVerified: boolean;
+  addresses: Array<AddressType>,
   avatar: {
     url: string,
     thumbnailUrl: string,
@@ -37,7 +42,7 @@ export type UserState =  {
     refreshToken: string,
   },
   isLoggedIn: boolean,
-  checkout: CartType,
+  checkout: CheckoutType,
 }
 
 const initialState: UserState = {
@@ -45,21 +50,12 @@ const initialState: UserState = {
   lastName: '',
   phoneNumber: '',
   role: 'user',
-  avatar: {
-    url: '',
-    thumbnailUrl: '',
-  },
-  tokens: {
-    accessToken: '',
-    refreshToken: '',
-  },
+  isVerified: null,
+  avatar: null,
+  tokens: null,
   isLoggedIn: false,
-  checkout: {
-    id: null,
-    total: 0,
-    count: 0,
-    items: []
-  },
+  addresses: null,
+  checkout: null,
 };
 
 export type LoginUserActionPayload = {
@@ -92,11 +88,12 @@ export default (state = initialState, action) => {
       emptyUserState.isLoggedIn = false;
       return emptyUserState;
     case CREATE_CHECKOUT:
-      const createCheckoutPayload = action.payload;
+      const createCheckoutPayload: CartType = action.payload;
       let createCheckoutState = Object.assign({}, state);
       createCheckoutState = {
         ...createCheckoutState,
         checkout: {
+          ...createCheckoutState.checkout,
           id: createCheckoutPayload.id,
           total: createCheckoutPayload.total,
           count: createCheckoutPayload.count,
@@ -123,6 +120,50 @@ export default (state = initialState, action) => {
       }
 
       return refreshSessionState;
+    case SAVE_CHECKOUT_ADDRESS:
+      let gotUserInfoState = Object.assign({}, state);
+      const gotUserInfoPayload = action.payload;
+      gotUserInfoState = {
+        ...gotUserInfoState,
+        checkout: {
+          ...gotUserInfoState.checkout,
+          delivery: {
+            cost: null,
+            address: {
+              ...gotUserInfoPayload.address
+            }
+          }
+        }
+      }
+      return gotUserInfoState;
+    case SAVE_SHIPPING_QUOTE:
+      let quoteState = Object.assign({}, state);
+      const saveShippingPayload = action.payload
+      quoteState = {
+        ...quoteState,
+        checkout: {
+          ...quoteState.checkout,
+          delivery: {
+            ...quoteState.checkout.delivery,
+            cost: saveShippingPayload.cost,
+            courierOrderNo: saveShippingPayload.courierOrderNo
+          }
+        }
+      }
+      return quoteState;
+    case SAVE_ZOOM_LEVEL:
+      let saveZoomLevelState = Object.assign({}, state);
+      const zoomLevelPayload: {level: number} = action.payload;
+      saveZoomLevelState = {
+        ...saveZoomLevelState,
+        checkout: {
+          ...saveZoomLevelState.checkout,
+          meta: {
+            zoomLevel: zoomLevelPayload.level
+          }
+        }
+      }
+      return saveZoomLevelState;
     default:
       return state;
   }

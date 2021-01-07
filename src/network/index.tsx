@@ -7,5 +7,4 @@ export const axis = axios.create({
   timeout: 30000,
 });
 
-export {default as useApi} from './useApi'
-export {default as useAuth} from './useAuth'
+export {useAuth} from '../hooks';

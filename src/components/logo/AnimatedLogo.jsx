@@ -57,7 +57,6 @@ const PlainLogo = styled.div`
     font-size: 2.5rem;
     letter-spacing: 0.25rem;
     padding-top: 0.65rem;
-    padding-left: 0.5rem;
     padding-right: 0.36rem;
     padding-bottom: 0.2rem;
     

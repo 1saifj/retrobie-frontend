@@ -1,14 +1,25 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
 import {Modal, ModalBackground, ModalClose, ModalContent} from 'bloomer';
 
 
-export default function CustomModal({isActive, onClose, children}){
+export default function CustomModal(
+  {
+    isActive,
+    onClose,
+    children,
+    closeOnClickBackground
+  }: {
+    isActive: boolean,
+    onClose: (e)=> void,
+    children: ReactElement,
+    closeOnClickBackground?: boolean
+  }){
 
   return (
     <Modal isActive={isActive}>
-      <ModalBackground onClick={onClose}/>
+      <ModalBackground onClick={!closeOnClickBackground ? undefined: onClose}/>
       <ModalContent>
-        <div style={{background: 'white', padding: "24px 48px", borderRadius: 4}}>
+        <div style={{background: 'white', borderRadius: 4}}>
           {children}
         </div>
       </ModalContent>

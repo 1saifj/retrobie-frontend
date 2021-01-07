@@ -1,13 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import Layout from '../../../components/Layout';
-import {Lock, Truck, Users} from 'react-feather';
+import {Lock, Users} from 'react-feather';
 import Loading from '../../../components/loading';
 import {Tab, TabLink, TabList, Tabs} from 'bloomer';
-import {useDispatch, useSelector} from 'react-redux';
-import useApi from '../../../network/useApi';
-import {UserDetails, UserOrders} from './components';
+import {UserDetails} from './components';
 import {useAuth} from '../../../network';
-import {UserState} from '../../../state/reducers/userReducers';
+import useSWR from 'swr/esm/use-swr';
 
 
 const tabs = [
@@ -38,17 +36,11 @@ const tabs = [
 export default function UserProfile() {
   const api = useAuth();
 
-  const [userInfo, setUserInfo] = useState(null);
+  const userInfoFetcher = (...args)=> api.accounts.me().then(({data}) => data).catch(err => err);
+  const {data: userInfo} = useSWR('me', userInfoFetcher)
+
   const [accountTabs, setAccountTabs] = useState(tabs);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(api.accounts.me())
-      .then(({data}) => {
-      setUserInfo(data);
-    });
-  }, []);
 
   if (!userInfo) {
     return (
