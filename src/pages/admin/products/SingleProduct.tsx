@@ -19,6 +19,7 @@ import defaultHelpers, {
   extractErrorMessage,
 } from '../../../helpers';
 import {useDispatch} from 'react-redux';
+import useSWR from 'swr/esm/use-swr';
 
 const UpdateProductValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
@@ -46,57 +47,49 @@ const UpdateProductValidationSchema = Yup.object().shape({
   // sportsType: Yup.string().optional(),
 });
 
-export default function SingleProductAdmin(props) {
+export default function SingleProduct(props) {
   const api = useAuth();
   const dispatch = useDispatch();
   const [showImageModal, setImageModalShown] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
 
   const productId = props.match.params.id;
-  const [thisProductData, setThisProduct] = useState(undefined);
 
   const componentName = `custom_uploader_${productId}`;
 
-  useEffect(() => {
-    dispatch(api.products.getSingle(productId))
-      // @ts-ignore
-      .then(({data})=> {
-        if (data) {
-          setThisProduct({
-            name: data.name,
-            slug: data.slug,
-            uuid: data.uuid,
-            short: data.description.short,
-            long: data.description.long,
-            seo: data.description.seo,
-            size: data.detail.size,
-            sizeCountry: data.detail.sizeCountry,
-            sex: data.detail.sex,
-            adminStock: data.stock.adminCount,
-            usersStock: data.stock.usersCount,
-            brand: capitalize(data.brands[0].name),
-            images: data.images,
-            currency: 'Ksh.',
-            categories: data.categories,
-            originalPrice: data.originalPrice,
-            productType: data.productType,
-            isOnOffer: data.isOnOffer,
-            idealFor: data.meta.idealFor,
-            style: data.meta.style,
-            condition: data.meta.condition,
-            endorsedBy: data.meta.endorsedBy,
-            sportsType: data.meta.sportsType,
-          });
-        }
-      })
-  }, []);
+  const singleProductFetcher = (key, id) => api.products.get(id).then(({data}) => ({
+      name: data.name,
+      slug: data.slug,
+      uuid: data.uuid,
+      short: data.description.short,
+      long: data.description.long,
+      seo: data.description.seo,
+      size: data.detail.size,
+      sizeCountry: data.detail.sizeCountry,
+      sex: data.detail.sex,
+      adminStock: data.stock.adminCount,
+      usersStock: data.stock.usersCount,
+      brand: capitalize(data.brands[0].name),
+      images: data.images,
+      currency: 'Ksh.',
+      categories: data.categories,
+      originalPrice: data.originalPrice,
+      productType: data.productType,
+      isOnOffer: data.isOnOffer,
+      idealFor: data.meta.idealFor,
+      style: data.meta.style,
+      condition: data.meta.condition,
+      endorsedBy: data.meta.endorsedBy,
+      sportsType: data.meta.sportsType,
+    }
+  ));
+  const {data: thisProductData} = useSWR([`/product/${productId}`, productId], singleProductFetcher);
 
   if (!thisProductData) {
     return (
       <Loading message={'Please wait a while...'} />
     )
   }
-
 
 
   const conditions = [
@@ -432,7 +425,9 @@ export default function SingleProductAdmin(props) {
                         <Column isSize={{desktop: '1/2'}}>
                           <label>Are these shoes better suited for men or women?</label>
                           <Select
-                            defaultValue={'M'}
+                            defaultValue={{
+                              value: 'M'
+                            }}
                             value={
                               values.sex && {
                                 label: values.sex === 'M' ? 'Men' : 'Women',

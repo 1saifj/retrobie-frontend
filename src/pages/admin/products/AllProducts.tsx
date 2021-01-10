@@ -3,21 +3,15 @@ import {Link} from 'react-router-dom';
 import Loading from '../../../components/loading';
 import {useAuth} from '../../../network';
 import {useDispatch} from 'react-redux';
+import useSWR from 'swr/esm/use-swr';
 
 export default function AllProducts() {
   const api = useAuth();
-  const dispatch = useDispatch();
 
-  const [allProducts, setAllProducts] = useState([]);
+  const allProductsFetcher = (url) => api.products.getAll().then(({data})=> data);
+  const {data: allProducts} = useSWR('/products/all', allProductsFetcher);
 
-  useEffect(() => {
-    dispatch(api.products.getAll())
-      .then(({data})=> {
-        setAllProducts(data);
-      });
-  }, []);
-
-    if (!allProducts?.length) {
+    if (!allProducts) {
         return (
             <div>
                 <Loading minor={true} />

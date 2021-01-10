@@ -33,11 +33,14 @@ const NotFound = lazy(() => import('../pages/notfound'));
 const AdminLogin = lazy(() => import('../pages/admin/login'));
 const AdminHome = lazy(() => import('../pages/admin/home'));
 const AdminProductsHome = lazy(() => import('../pages/admin/products'));
-const AdminAllProducts = lazy(() => import('../pages/admin/products/AllProductsAdmin'));
-const AdminCreateProduct = lazy(() => import('../pages/admin/products/add-product'));
-const AdminSingleProduct = lazy(() => import('../pages/admin/products/SingleProductAdmin'));
+const AdminAllProducts = lazy(() => import('../pages/admin/products/AllProducts'));
+const AdminCreateProduct = lazy(() => import('../pages/admin/products/AddProduct'));
+const AdminSingleProduct = lazy(() => import('../pages/admin/products/SingleProduct'));
 
 const AdminOrders = lazy(() => import('../pages/admin/orders/view-orders'));
+const AdminCategories = lazy(() => import('../pages/admin/categories'));
+const AdminSingleCategory = lazy(() => import('../pages/admin/categories/SingleCategory'));
+
 const AdminSingleOrder = lazy(() => import('../pages/admin/orders/single'));
 const AdminBrands = lazy(() => import('../pages/admin/brands/AllBrands'));
 const AdminBrandProducts = lazy(() => import('../pages/admin/brands/BrandProducts'));
@@ -151,6 +154,16 @@ function Routes() {
             exact
             path="/company/admin/dashboard/orders/all"
             component={AdminOrders}
+          />
+          <AdminRoute
+            exact
+            path="/company/admin/dashboard/categories"
+            component={AdminCategories}
+          />
+          <AdminRoute
+            exact
+            path="/company/admin/dashboard/categories/:slug"
+            component={AdminSingleCategory}
           />
           <AdminRoute
             exact

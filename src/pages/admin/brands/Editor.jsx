@@ -77,11 +77,4 @@ const QuillParent = styled.div`
   }
 `
 
-Editor.propTypes = {
-    defaultValue: PropTypes.string,
-    placeholder: PropTypes.string,
-    label: PropTypes.string,
-    onChange: PropTypes.func
-};
-
 export default Editor;

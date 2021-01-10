@@ -40,6 +40,7 @@ export type StockType = {
 };
 
 export type ImageType = {
+  fileId: string
   url: string;
   thumbnailUrl: string;
 };
@@ -60,8 +61,17 @@ export type AddressType = {
   lng: number;
 }
 
+export interface CategoryType {
+  name: string;
+  slug: string;
+  uuid: string;
+  landingImage: ImageType
+}
+
 export interface BrandType {
+  uuid: string;
   name: string
+  logo: ImageType
   description?: {
     long: string
   }

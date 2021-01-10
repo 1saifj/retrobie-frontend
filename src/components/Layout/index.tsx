@@ -105,8 +105,4 @@ export default function(props) {
 
 const LayoutParent = styled.div`
   margin-top: 48px;
-  
-  a {
-    text-decoration: underline;
-  }
 `;

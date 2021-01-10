@@ -4,7 +4,8 @@ import {Select} from 'bloomer';
 
 export default function SelectField({options, placeholder, ...props}) {
 
-  const [field, meta, helpers] = useField(props)
+  // @ts-ignore
+  const [field, meta, helpers] = useField(props);
 
   const hasError = meta.touched && meta.error;
 
@@ -18,7 +19,9 @@ export default function SelectField({options, placeholder, ...props}) {
           {...field}
           {...props}
           onChange={(e) => {
+            // @ts-ignore
             field.onChange(e.target.value);
+            // @ts-ignore
             helpers.setValue(e.target.value);
           }}
         >
@@ -26,7 +29,7 @@ export default function SelectField({options, placeholder, ...props}) {
             {placeholder}
           </option>
           {
-            options?.map(item=> (
+            options?.map(item => (
               <option value={item.value}>
                 {item.label}
               </option>
@@ -44,4 +47,4 @@ export default function SelectField({options, placeholder, ...props}) {
       </div>
     </>
   );
-}
+};

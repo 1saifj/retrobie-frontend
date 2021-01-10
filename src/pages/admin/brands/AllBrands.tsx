@@ -10,19 +10,19 @@ import {ChevronDown, Eye, Plus, Truck} from 'react-feather';
 import SidebarShoe from '../../../assets/images/icons/products.svg';
 import Sale from '../../../assets/images/icons/sale.svg';
 import {notify} from '../../../helpers/views';
-import Warning from '../../../assets/images/icons/warning.svg';
 import useSWR from 'swr/esm/use-swr';
 import {useAuth} from '../../../hooks';
+import {BrandType} from '../../../types';
 
 
 function AllBrandsAdmin(props) {
     const api = useAuth();
 
-    const getAllBrands = () => api.brands.getAllV2().then(({data})=> data);
+    const getAllBrands = () => api.brands.getAll().then(({data})=> data);
 
     const [allBrandsState, setAllBrands] = useState([]);
     const [showCreateBrandModal, setShowCreateBrandModal] = useState(false);
-    const {data: allBrands, error} = useSWR('brands/all', getAllBrands);
+    const {data: allBrands, error} = useSWR<Array<BrandType>>('/brands/all', getAllBrands);
 
     useEffect(() => {
         if (allBrands) {
@@ -33,6 +33,12 @@ function AllBrandsAdmin(props) {
                   [...allBrands].map(item => ({
                       ...item,
                       active: false
+                  })).sort(((a, b) => {
+                    if (a.name < b.name) return -1
+
+                    if (a.name > b.name) return 1;
+
+                    return 0;
                   }))
                 );
             }
@@ -119,14 +125,15 @@ function AllBrandsAdmin(props) {
                     </div>
                 </BrandHeader>
                 {
-                    allBrandsState.map((brand, index) => (
+                    allBrandsState.map((brand: BrandType & {active: boolean}, index) => (
                         <>
                             <BrandItemRoot active={brand.active}>
                                 <BrandItem onClick={() => setBrandActive(index)}>
                                     <BrandItemParent>
                                         <div style={{display: 'flex', alignItems: 'center'}}>
                                             <div>
-                                                <img src={brand.brandLogo ? brand.brandLogo.thumbnailUrl : ""}
+                                                <img
+                                                  src={brand.logo ? brand.logo.thumbnailUrl : ""}
                                                      alt={`${brand.name} logo`}/>
                                             </div>
                                             <div>

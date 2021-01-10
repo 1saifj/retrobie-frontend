@@ -37,7 +37,7 @@ function Product({ match }) {
   const singleDataFetcher = (_key, id) => api.products.getSingle(id).then(({ data }) => data)
   const { data: currentProduct, error } = useSWR<ProductType>(['/orders/single', id], singleDataFetcher)
 
-  const {notify} = useNotify();
+  const notify = useNotify();
 
   // if (error) {
   //   return (

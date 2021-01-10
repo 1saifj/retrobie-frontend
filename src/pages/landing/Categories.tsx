@@ -1,42 +1,30 @@
-import React, {useState} from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import CategoryTitle from '../../assets/images/vectors/sneaker 1.svg';
 import ChevronRight from '../../assets/images/icons/chevron-right.svg';
 import {Link} from 'react-router-dom';
-
-let categories = [
-    {
-        name: 'Men',
-        color: '#ba3f38',
-        src: "https://ik.imagekit.io/t25/v2/landing/man-shoes-5-transparent-bg_23zrfYib4.webp?tr=w-250",
-        slug: 'mens-shoes'
-    },
-    {
-        name: 'Women',
-        color: '#45c0c7',
-        src: "https://ik.imagekit.io/t25/v2/landing/woman-mirror-1-transparent-bg_ihyqA0BG0.webp?tr=w-250",
-        slug: 'womens-shoes'
-    },
-    {
-        name: 'Kids',
-        color: '#d13b78',
-        src: "https://ik.imagekit.io/t25/v2/landing/kids-shoes-transparent-bg_WiOT3wv9w.webp?tr=w-250",
-        slug: 'kids-shoes'
-    },
-    {
-        name: 'Affordable',
-        color: '#fdb813',
-        src: "https://ik.imagekit.io/t25/v2/landing/woman-shoes-1-transparent-bg_jMp_5MbMK.webp?tr=w-250",
-        slug: 'affordable-shoes'
-    }
-];
+import {useAuth} from '../../hooks';
+import useSWR from 'swr/esm/use-swr';
+import {Loading} from '../../components';
+import {CategoryType} from '../../types';
 
 const Categories = () => {
-    const [allCategories] = useState(categories);
+
+    const api = useAuth();
+    const allCategoriesFetcher = () => api.category.getAll().then(({data}) => data);
+    const {data: allCategories} = useSWR<Array<CategoryType>>('/categories/all', allCategoriesFetcher);
+
+    if (!allCategories) {
+        return <Loading minor={true}/>
+    }
+
     return (
         <Parent>
             <header style={{display: 'flex'}}>
-                <img src={CategoryTitle} style={{width: '54px', padding: '8px'}}/>
+                <img
+                  alt={'small blue shoe'}
+                  src={CategoryTitle}
+                  style={{width: '54px', padding: '8px'}}/>
                 <h2>Shop by category</h2>
             </header>
             <div className={'list'}>
@@ -54,7 +42,13 @@ const Categories = () => {
                                 </header>
                                 <div>
                                     <div style={{
-                                        background: item.color,
+                                        background:
+                                        // a bit hacky, but it works
+                                          item.slug.includes("women") ? "#45c0c7"
+                                          : item.slug.includes("men") ? "#ba3f38"
+                                          : item.slug.includes("kids") ? "#d13b78"
+                                          : item.slug.includes("affordable") ? "#fdb813"
+                                            : "",
                                         textAlign: 'center',
                                         borderRadius: '2px',
                                         minWidth: '250px',
@@ -64,7 +58,7 @@ const Categories = () => {
                                         minHeight: '380px',
                                         flex: '1 1 250px'
                                     }}>
-                                        <img src={item.src} alt={item.name}/>
+                                        <img src={`${item.landingImage?.url}?tr=w-250`} alt={item.name}/>
                                     </div>
                                 </div>
                             </Category>
@@ -95,8 +89,7 @@ const Category = styled('div')`
     transform: translateY(-4px);
   }  
   h4 {
-    margin: 1em;
-    margin-bottom: 0;
+    margin: 1em 1em 0;
   }
   
   header {
@@ -113,14 +106,13 @@ const Category = styled('div')`
   
   .next {
     background: #F5F6F7;
-    padding: 8px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     width: 28px;
     height: 28px;
-    padding-left: 6px;
+    padding: 8px 8px 8px 6px;
   }
   img {
     border-radius: 2px;

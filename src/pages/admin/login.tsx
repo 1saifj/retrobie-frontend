@@ -64,7 +64,7 @@ const AdminLogin = props => {
               </header>
 
               <Columns>
-                <Column isSize={{desktop: 1}}>
+                <Column isSize={{desktop: 6}}>
                   <TextField
                     type="email"
                     label="Email Address"
@@ -72,7 +72,7 @@ const AdminLogin = props => {
                     placeholder={'eg. you@secure.com'}
                   />
                 </Column>
-                <Column isSize={{desktop: 1}}>
+                <Column isSize={{desktop: 6}}>
                   <TextField
                     type="password"
                     label="Password"

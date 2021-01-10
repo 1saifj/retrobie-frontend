@@ -1,4 +1,4 @@
-import axios, {AxiosInstance, AxiosResponse} from 'axios';
+import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {env} from '../../config';
 import {logoutUserAction, refreshSessionAction} from '../../state/actions';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
@@ -124,7 +124,7 @@ export default function() {
 
   const imageKit = {
     getSignature: () => async () => (await getAxis()).get(`/auth/imagekit/signature`),
-    upload: (data) => async () => axios.post('https://upload.imagekit.io/api/v1/files/upload', data),
+    upload: (data, config?: AxiosRequestConfig) => async () => axios.post('https://upload.imagekit.io/api/v1/files/upload', data, config),
     delete: (data) => async () => axios.delete(`https://api.imagekit.io/v1/files/${data.fileId}`),
   };
 
@@ -139,8 +139,7 @@ export default function() {
      * Get all products
      * @returns {Promise<AxiosResponse<any>>}
      */
-    getAll: () => async () => (await getAxis()).get(`/brands/all`),
-    getAllV2: async () => (await getAxis()).get(`/brands/all`),
+    getAll: async () => (await getAxis()).get(`/brands/all`),
     /**
      * Get a single brand
      * @returns {Promise<AxiosResponse<any>>}
@@ -161,14 +160,17 @@ export default function() {
   };
 
   const category = {
-    getOne: async (id)=> (await getAxis()).get(`/category/${id}`)
+    getOne: async (id)=> (await getAxis()).get(`/category/${id}`),
+    getAll: async ()=> (await getAxis()).get('/categories'),
+    create: (data)=> async ()=> (await getAxis()).post('/categories', data),
+    update: (uuid, data)=> async ()=> (await getAxis()).put(`/categories/${uuid}`, data),
   }
 
   const products = {
-    getAll: () => async () => (await getAxis()).get('/products/all'),
+    getAll: async () => (await getAxis()).get('/products/all'),
     getFeatured: async () => (await getAxis()).get('/products/popular'),
     getSingle: async (id) => (await getAxis()).get(`/products/${id}`),
-    get: (id) => async () => (await getAxis()).get(`/products/${id}`),
+    get: async (id) => (await getAxis()).get(`/products/${id}`),
     create: (data) => async () => (await getAxis()).post('/products/new', data),
     update: (id, data) => async () => (await getAxis()).put(`/products/${id}/update`, data),
   };

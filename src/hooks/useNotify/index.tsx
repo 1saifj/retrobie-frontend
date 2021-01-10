@@ -32,14 +32,17 @@ export default function (globalOptions?: ToastOptions) {
 
 
   return {
-    notify: {
-      dismiss: (toastId)=> toast.dismiss(toastId),
-      info: (message: string, options?: ToastOptions) => getToast('info', message, options),
-      error: (message: string, options?: ToastOptions) => getToast('error', message, options),
-      success: (message: string, options?: ToastOptions) => getToast('success', message, options),
-      loading: (message: string, options?: ToastOptions) => getToast('loading', message, options),
-      warning: (message: string, options?: ToastOptions) => getToast('warning', message, options),
-    }
+    dismiss: (toastId)=> toast.dismiss(toastId),
+    info: (message: string, options?: ToastOptions) => getToast('info', message, options),
+    error: (message: string, options?: ToastOptions) => getToast('error', message, options),
+    success: (message: string, options?: ToastOptions) => getToast('success', message, options),
+    loading: (message: string, options?: ToastOptions) => getToast('loading', message, options),
+    // same as 'loading' but has to be dismissed manually
+    progress: (progress: number, options?: ToastOptions) => getToast('loading', progress, {
+      ...options,
+      autoClose: false
+    }),
+    warning: (message: string, options?: ToastOptions) => getToast('warning', message, options),
   };
 }
 

@@ -25,7 +25,7 @@ const MegaMenu = () => {
   const userState: UserState = useSelector((state: RootStateOrAny) => state.user);
   const dispatch = useDispatch<PromiseThunk<any>>();
 
-  const allBrandsFetcher = () => api.brands.getAllV2().then(({data}) => data);
+  const allBrandsFetcher = () => api.brands.getAll().then(({data}) => data);
   const {data: allBrands} = useSWR('/brands/all', allBrandsFetcher);
   const [menuList, setMenuList] = useState(menuItems);
 

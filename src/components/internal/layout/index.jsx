@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Sidebar from '../../../pages/admin/sidebar';
 import AuthenticatedMenu from '../../nav/AuthenticatedMenu';
 import {Box as LayoutBox} from 'bloomer';
-import {Anchor, BarChart2, Box, Home, Settings, Truck, Users} from 'react-feather';
+import {Anchor, BarChart2, Box, Flag, Home, Settings, Truck, Users} from 'react-feather';
 import {ReactComponent as SidebarShoe} from '../../../assets/images/icons/shoe.svg';
 
 
@@ -35,6 +35,11 @@ class InternalLayout extends React.Component {
                 name: 'Products',
                 icon: <SidebarShoe fill={"#fff"} style={{width: '24px', marginTop: 0}}/>,
                 route: '/company/admin/dashboard/products',
+            },
+            {
+                name: 'Categories',
+                icon: <Flag color={'#fff'}/>,
+                route: '/company/admin/dashboard/categories'
             },
             {
                 name: 'Brands',

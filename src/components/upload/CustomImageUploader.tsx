@@ -2,10 +2,10 @@ import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {generateRandomString} from '../../helpers';
 import styled from 'styled-components';
 import {Button, Delete} from 'bloomer';
-import {notify} from '../../helpers/views';
 import {useAuth} from '../../network';
 import MD5 from 'uuid/dist/esm-node/md5';
 import {useDispatch} from 'react-redux';
+import {useNotify} from '../../hooks';
 
 type ImageType = {
     // a random string
@@ -85,28 +85,31 @@ function CustomImageUploader(
       deferredUpload,
       onUpload,
       onClickSelectedImage,
-    allowMultiple,
+      allowMultiple,
       id,
-      onBeforeChange
+      onBeforeChange,
+      onUploadProgress
   }: {
-      onInit?: (images)=> void,
-      initialImages?: any[],
+      onInit?: (images: Array<UploadedImageType>)=> void,
+      initialImages?: UploadedImageType[],
       instantUpload?: boolean,
       deferredUpload?: boolean,
-      onUpload: (err, images)=> void,
+      onUpload: (err, images: Array<UploadedImageType>)=> void,
       onClickSelectedImage?: (e)=> void,
-    allowMultiple: boolean,
-    id?: string,
-      onBeforeChange?: (e)=> void
+      allowMultiple: boolean,
+      id: string,
+      onBeforeChange?: (e)=> void,
+      onUploadProgress?: (progress: number)=> void
 
   }) {
 
     const api = useAuth();
     const dispatch = useDispatch();
+    const notify = useNotify();
 
     const inputRef = useRef(null);
     // Only load these variables if 'componentName' is defined
-    const uploadedImagesStorageName = `custom_uploader_${id}`;
+    const uploadedImagesStorageName = `custom_uploader/${id}`;
     const uploadedImagesStorageJSON = localStorage.getItem(uploadedImagesStorageName);
     const uploadedImagesArray = useMemo(
       () => uploadedImagesStorageJSON ?
@@ -124,7 +127,7 @@ function CustomImageUploader(
             onInit(uploadedImagesArray);
         }
         setUploadedImagesState(uploadedImagesArray);
-    }, []);
+    }, [id]);
 
     async function onChange(e) {
         const addedFiles: Array<File> = e.target.files;
@@ -134,13 +137,13 @@ function CustomImageUploader(
         if (FileReader && files.length) {
             for (let i = 0; i < files.length; i++) {
                 const currentFile = files[i];
-                const md5 = MD5(currentFile.name).toString();
+                const md5 = MD5(currentFile.name).toString('utf-8');
                 // If this file does not already exists in our list, add it.
                 const objectAlreadySelected = selectedImages.filter(obj => obj.md5 === md5).length;
                 const objectUploaded = uploadedImagesState.filter(obj => obj.md5 === md5).length;
 
                 if (objectUploaded) {
-                    notify('info', 'An image you\'ve selected has already been uploaded');
+                    notify.info(`An image you've selected has already been uploaded`);
                     continue;
                 }
 
@@ -176,7 +179,7 @@ function CustomImageUploader(
 
     async function onDelete(image) {
         if (image.uploaded) {
-            notify('info', 'Not yet implemented');
+            notify.info('Not yet implemented');
         } else {
             const selectedForDeleteIndex = selectedImagesState
               .findIndex(single => single.md5 === image.md5);
@@ -192,8 +195,8 @@ function CustomImageUploader(
         const uploaded = [...uploadedImagesState];
         for (let i = 0; i < files.length; i++) {
             const currentFile = files[i];
-            // @ts-ignore
-            const {data: signatureData} = await dispatch(api.imageKit.getSignature());
+
+            const {data: signatureData} = await dispatch<any>(api.imageKit.getSignature());
 
             if (signatureData) {
                 const formData = new FormData();
@@ -204,8 +207,22 @@ function CustomImageUploader(
                 formData.append('file', currentFile.file);
                 formData.append('fileName', currentFile.file.name);
 
-                // @ts-ignore
-                const {data: uploadData} = await dispatch(api.imageKit.upload(formData));
+                const {data: uploadData} = await dispatch<any>(api.imageKit.upload(formData, {
+                  // TODO: We should account for the 'current'
+                  //  upload, rather than use a general callback like this.
+                  onUploadProgress: (progressEvent)=> {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+                    if (typeof onUploadProgress === 'function') {
+                      onUploadProgress(percentCompleted);
+                    } else {
+                      if (percentCompleted < 100) {
+                        notify.progress(percentCompleted, {toastId: currentFile.id});
+                      } else {
+                        notify.dismiss(currentFile.id);
+                      }
+                    }
+                  }
+                }));
 
                 if (uploadData) {
                     const uploadedData: UploadedImageType = {
@@ -246,97 +263,103 @@ function CustomImageUploader(
         }
     }
 
-    return (
-      <>
-          <Root>
-              {
-                  uploadedImagesState?.length ? (
-                    <div className={'preview'}>
-                        <div className={'header'}>
-                          <h4>Uploaded images</h4>
-                        </div>
-                        <div className={'preview--files'}>
-                            {
-                                uploadedImagesState?.map(image => (
-                                  <div>
-                                      <div style={{position: 'relative'}}>
-                                          {/*<Delete onClick={()=> onDelete(image)}/>*/}
-                                          <img style={{maxWidth: 150}} src={image.thumbnailUrl} alt={''}/>
-                                      </div>
-                                  </div>
-                                ))
-                            }
-                        </div>
-                    </div>
-                  ) : <span/>
-              }
-              {
-                  selectedImagesState.length ? (
-                    <div className={'preview'}>
-                        <div className={'header'}>
-                          <h4>Selected images</h4>
-                        </div>
-                        <div className={'preview--files'}>
-                            {
-                                selectedImagesState?.map((image, index) => (
-                                  <SelectedImage>
-                                      <div style={{position: 'relative'}}>
-                                          <Delete onClick={() => onDelete(image)}/>
-                                          <img src={image.src}
-                                               alt={''}
-                                               onClick={() => {
-                                                   if (typeof onClickSelectedImage == 'function') {
-                                                       onClickSelectedImage([selectedImagesState[index]]);
-                                                   }
-                                               }}
-                                          />
-                                      </div>
-                                  </SelectedImage>
-                                ))
-                            }
-                        </div>
-                        {
-                            !deferredUpload && (
-                              <div style={{textAlign: 'right'}}>
-                                  <Button isColor={'info'}
-                                          isSize={'small'}
-                                          onClick={async () => {
-                                              await upload(selectedImagesState);
-                                          }}
-                                  >
-                                      Upload
-                                  </Button>
-                              </div>
-                            )
-                        }
-                    </div>
-                  ) : <span/>
-              }
-              <input type="file"
-                     style={{display: 'none'}}
-                     multiple={allowMultiple}
-                     ref={inputRef}
-                     name={'file'}
-                     onChange={async (e) => {
-                         if (typeof onBeforeChange === 'function') {
-                             onBeforeChange(e);
-                         }
-                         await onChange(e);
-                     }}
-              />
-              <div>
-                  <Button isColor={'primary'}
-                          isSize={'small'}
-                          onClick={() => {
-                              inputRef.current.click();
-                          }}
-                  >
-                      Select images
-                  </Button>
+  return (
+    <>
+      <Root>
+        {
+          uploadedImagesState?.length ? (
+            <div className={'preview'}>
+              <div className={'header'}>
+                <h4>Uploaded images</h4>
               </div>
-          </Root>
-      </>
-    );
+              <div className={'preview--files'}>
+                {
+                  uploadedImagesState?.map((image, index) => (
+                    <div key={String(index)}>
+                      <div style={{position: 'relative'}}>
+                        {/*<Delete onClick={()=> onDelete(image)}/>*/}
+                        <img style={{maxWidth: 150}} src={image.thumbnailUrl} alt={''}/>
+                      </div>
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+          ) : (
+            <div style={{marginBottom: 12}}>
+              <p>
+                No uploaded images
+              </p>
+            </div>
+          )
+        }
+        {
+          selectedImagesState.length ? (
+            <div className={'preview'}>
+              <div className={'header'}>
+                <h4>Selected images</h4>
+              </div>
+              <div className={'preview--files'}>
+                {
+                  selectedImagesState?.map((image, index) => (
+                    <SelectedImage>
+                      <div style={{position: 'relative'}}>
+                        <Delete onClick={() => onDelete(image)}/>
+                        <img src={image.src}
+                             alt={''}
+                             onClick={() => {
+                               if (typeof onClickSelectedImage == 'function') {
+                                 onClickSelectedImage([selectedImagesState[index]]);
+                               }
+                             }}
+                        />
+                      </div>
+                    </SelectedImage>
+                  ))
+                }
+              </div>
+              {
+                !deferredUpload && (
+                  <div style={{textAlign: 'right'}}>
+                    <Button isColor={'info'}
+                            isSize={'small'}
+                            onClick={async () => {
+                              await upload(selectedImagesState);
+                            }}
+                    >
+                      Upload
+                    </Button>
+                  </div>
+                )
+              }
+            </div>
+          ) : <span/>
+        }
+        <input type="file"
+               style={{display: 'none'}}
+               multiple={allowMultiple}
+               ref={inputRef}
+               name={'file'}
+               onChange={async (e) => {
+                 if (typeof onBeforeChange === 'function') {
+                   onBeforeChange(e);
+                 }
+                 await onChange(e);
+               }}
+        />
+        <div>
+          <Button isColor={'primary'}
+                  isSize={'small'}
+                  onClick={() => {
+                    inputRef.current.click();
+                  }}
+          >
+            {allowMultiple ? 'Select images' : 'Select image'}
+          </Button>
+        </div>
+      </Root>
+    </>
+  );
 }
 
 export default CustomImageUploader;
