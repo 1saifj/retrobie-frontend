@@ -17,6 +17,8 @@ function slugify(string, options?: {
         throw new Error('slugify: string argument expected');
     }
 
+    if (!options) options = {};
+
     if (options.lower === undefined) options.lower = true;
 
     const locale = locales[options.locale] || {};

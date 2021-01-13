@@ -1,15 +1,12 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import './animated-logo.scoped.css';
 import styled from 'styled-components';
-import {NAV_ANIMATION_PLAYED} from '../../constants';
+
+const NAV_ANIMATION_PLAYED = 'NAV_ANIMATION_PLAYED';
 
 const AnimatedLogo = props => {
     const navAnimationPlayed = sessionStorage.getItem(NAV_ANIMATION_PLAYED);
-
-    useEffect(() => {
-        sessionStorage.setItem(NAV_ANIMATION_PLAYED, 'true')
-    }, []);
 
     return (
         <>
@@ -21,7 +18,7 @@ const AnimatedLogo = props => {
                         </div>
                     </PlainLogo>
                     :
-                    <div className="stage">
+                    <div className="stage" onAnimationEnd={()=> sessionStorage.setItem(NAV_ANIMATION_PLAYED, 'true')}>
                         <div className="wrapper">
                             <div className="slash"/>
                             <div className="sides">

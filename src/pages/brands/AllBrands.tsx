@@ -1,37 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import {connect, useDispatch} from 'react-redux';
+import {connect} from 'react-redux';
 import styled from 'styled-components';
 import SEOHeader from '../../components/SEOHeader';
 import Layout from '../../components/Layout';
 import {Link} from 'react-router-dom';
 import {Container, Section} from 'bloomer';
-import {EmptyStateWithLayout} from '../../components/empty/EmptyState';
-import errorIcon from '../../assets/images/icons/error-text.svg';
 import Loading from '../../components/loading';
 import {useAuth} from '../../network';
+import useSWR from 'swr/esm/use-swr';
+import {BrandType} from '../../types';
 
-function BrandsComponent() {
+function AllBrandsComponent() {
     const api = useAuth();
-    const dispatch = useDispatch();
 
-    const [allBrands, setAllBrands] = useState([]);
-
-    useEffect(()=> {
-        dispatch(api.brands.getAll())
-          // @ts-ignore
-          .then(({data})=> {
-              setAllBrands(data);
-          })
-    }, [])
-
-    // if (error) {
-    //     return (
-    //         <EmptyStateWithLayout icon={errorIcon}
-    //                               message={"Could not fetch this section. Please check back in a while."}
-    //                               title={"We're working on that."}
-    //         />
-    //     )
-    // }
+    const allBrandsFetcher = ()=> api.brands.getAll().then(({data})=> data)
+    const {data: allBrands} = useSWR<Array<BrandType>>('/brands', allBrandsFetcher)
 
     if (!allBrands) {
         return (
@@ -42,7 +25,6 @@ function BrandsComponent() {
     return (
       <>
           <Layout>
-              {/*// @ts-ignore*/}
                 <SEOHeader
                   title={'Browse Shoes By Brand'}
                   description={'Browse your favorite Nike, Jordan, Adidas, Yeezy and more shoes by brand in our Nairobi shop.'}
@@ -109,4 +91,4 @@ const LogosParent = styled.div`
   }
 `;
 
-export default connect()(BrandsComponent);
+export default AllBrandsComponent;

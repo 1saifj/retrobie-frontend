@@ -137,7 +137,13 @@ function Landing({ history }) {
               alt="stand for something"
               style={{ width: 65, alignSelf: 'flex-start', padding: 8 }}
             />
-            <h2>What we stand for</h2>
+            <div>
+              <h2 style={{marginBottom: 0}}>What we stand for</h2>
+              <p>
+                Every member of the Retrobie team works and
+                operates on a set of core values
+              </p>
+            </div>
           </div>
           <Values>
             <div>

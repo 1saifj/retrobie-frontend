@@ -3,11 +3,11 @@ import {generateRandomString} from '../../helpers';
 import styled from 'styled-components';
 import {Button, Delete} from 'bloomer';
 import {useAuth} from '../../network';
-import MD5 from 'uuid/dist/esm-node/md5';
+import MD5 from 'md5';
 import {useDispatch} from 'react-redux';
 import {useNotify} from '../../hooks';
 
-type ImageType = {
+type LocalImageType = {
     // a random string
     id: string,
     uploaded: false,
@@ -86,6 +86,7 @@ function CustomImageUploader(
       onUpload,
       onClickSelectedImage,
       allowMultiple,
+      folder,
       id,
       onBeforeChange,
       onUploadProgress
@@ -94,6 +95,7 @@ function CustomImageUploader(
       initialImages?: UploadedImageType[],
       instantUpload?: boolean,
       deferredUpload?: boolean,
+      folder?: string,
       onUpload: (err, images: Array<UploadedImageType>)=> void,
       onClickSelectedImage?: (e)=> void,
       allowMultiple: boolean,
@@ -119,8 +121,9 @@ function CustomImageUploader(
       [uploadedImagesStorageJSON, initialImages],
     );
 
-    const [selectedImagesState, setSelectedImagesState] = useState<Array<ImageType>>([]);
+    const [selectedImagesState, setSelectedImagesState] = useState<Array<LocalImageType>>([]);
     const [uploadedImagesState, setUploadedImagesState] = useState<Array<UploadedImageType>>(uploadedImagesArray);
+
 
     useEffect(() => {
         if (typeof onInit === 'function') {
@@ -132,12 +135,12 @@ function CustomImageUploader(
     async function onChange(e) {
         const addedFiles: Array<File> = e.target.files;
         const files: Array<File> = [...addedFiles];
-        const selectedImages = [];
+        const selectedImages: Array<LocalImageType> = [];
 
         if (FileReader && files.length) {
             for (let i = 0; i < files.length; i++) {
                 const currentFile = files[i];
-                const md5 = MD5(currentFile.name).toString('utf-8');
+                const md5 = MD5(currentFile.name);
                 // If this file does not already exists in our list, add it.
                 const objectAlreadySelected = selectedImages.filter(obj => obj.md5 === md5).length;
                 const objectUploaded = uploadedImagesState.filter(obj => obj.md5 === md5).length;
@@ -190,7 +193,7 @@ function CustomImageUploader(
         }
     }
 
-    async function upload(files) {
+    async function upload(files: Array<LocalImageType>) {
         let selectedImages = [];
         const uploaded = [...uploadedImagesState];
         for (let i = 0; i < files.length; i++) {
@@ -206,6 +209,7 @@ function CustomImageUploader(
                 });
                 formData.append('file', currentFile.file);
                 formData.append('fileName', currentFile.file.name);
+                formData.append('folder', folder);
 
                 const {data: uploadData} = await dispatch<any>(api.imageKit.upload(formData, {
                   // TODO: We should account for the 'current'

@@ -1,9 +1,9 @@
 import React, {useEffect} from 'react';
 import {capitalize} from '../../../helpers';
 import styled from 'styled-components';
-import {useFilters} from '../../../hooks';
 import qs from 'qs';
 import {ProductType} from '../../../types';
+import useFiltersV2 from '../../../hooks/useFiltersV2';
 
 export default function (
   {
@@ -19,7 +19,7 @@ export default function (
     filterByCriteria,
     criteriaValues,
     setAllProducts
-  } = useFilters();
+  } = useFiltersV2();
 
   useEffect(() => {
     setAllCriteria(allCriteria);
@@ -29,7 +29,7 @@ export default function (
     if (products) {
       setAllProducts(products);
     }
-  }, [])
+  }, [products])
 
   if (!allCriteria?.length) {
     return (
@@ -80,7 +80,7 @@ export default function (
 }
 
 const FilterItem = styled.div`
-  border: 1px solid ${p => p.applied() ? 'red' : 'var(--color-border-gray)'};
+  border: 1px solid ${p => p.applied() ? 'var(--color-primary)' : 'var(--color-border-gray)'};
   padding: 10px 8px 8px;
   border-radius: 2px;
   width: max-content;

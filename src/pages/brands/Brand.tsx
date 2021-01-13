@@ -9,7 +9,7 @@ import {formatNumberWithCommas} from '../../helpers';
 import {Link} from 'react-router-dom';
 import useSWR from 'swr/esm/use-swr';
 import {BrandType, ProductType} from '../../types';
-import {useFilters} from '../../hooks';
+import useFiltersV2 from '../../hooks/useFiltersV2';
 
 export default function ViewSingleBrand(props) {
 
@@ -19,13 +19,13 @@ export default function ViewSingleBrand(props) {
   const brandFetcher = (url, name)=> api.brands.getSingle(name).then(({data})=> data);
   const {data: brandData} = useSWR<BrandType>(['/brands/:id', brandNameOrId], brandFetcher);
 
-  const {products: renderProducts} = useFilters();
+  const {products: renderProducts} = useFiltersV2();
 
-  const allProductsFetcher = (url, name) => api.brands.getProducts(name).then(({data})=> data);
+  const filteredProductsFetcher = (url, name) => api.brands.getFilteredProducts(name).then(({data})=> data);
   const {data: allProducts} = useSWR<ProductType[]>([
-    brandData ? `/products/all/${brandData.name}`: undefined,
+    brandData ? `/brands/${brandData.name}/products/filtered`: undefined,
     brandNameOrId
-  ], allProductsFetcher)
+  ], filteredProductsFetcher)
 
   if (!allProducts) {
     return (
@@ -44,17 +44,18 @@ export default function ViewSingleBrand(props) {
                   <BrandHeader>
                     <div
                       style={{display: 'flex', justifyContent: 'space-around', alignItems: 'center'}}>
-                      <div style={{marginRight: '64px', marginLeft: '220px', maxWidth: '70%'}}>
+                      <div>
+                        <img style={{borderRadius: "4px"}}
+                             src={brandData.logo?.thumbnailUrl}
+                             alt={brandData.name}/>
+                      </div>
+
+                      <div style={{marginRight: '64px', maxWidth: '70%'}}>
                         <h1>About {brandData.name}</h1>
                         <p>
                           {brandData.description.long}
                         </p>
                       </div>
-                      {/*<div>*/}
-                      {/*    <img style={{width: "200px", borderRadius: "6px"}}*/}
-                      {/*         src={brandData.featuredImage?.thumbnailUrl}*/}
-                      {/*         alt={brandData.name}/>*/}
-                      {/*</div>*/}
                     </div>
                     <hr/>
                   </BrandHeader>
@@ -82,13 +83,13 @@ export default function ViewSingleBrand(props) {
                               }}>
 
                               <div style={{height: '100%'}}>
-                                <img src={item.images[0].url}/>
+                                <img src={item.url} alt={item.name}/>
                               </div>
                               <div className={'footer'}>
                                 <p>{item.name}</p>
                                 <p>
                                   <b>
-                                    Ksh. {formatNumberWithCommas(item.originalPrice)}
+                                    Ksh. {formatNumberWithCommas(item.price)}
                                   </b>
                                 </p>
                               </div>

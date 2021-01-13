@@ -144,12 +144,13 @@ export default function() {
      * Get a single brand
      * @returns {Promise<AxiosResponse<any>>}
      */
-    getSingle: async (name) => (await getAxis()).get(`/brands/${name}/info`),
+    getSingle: async (name) => (await getAxis()).get(`/brands/${name}`),
     /**
      * Get a single brand's products
      * @returns {Promise<AxiosResponse<any>>}
      */
     getProducts: async (name) => (await getAxis()).get(`/brands/${name}/products`),
+    getFilteredProducts: async (name) => (await getAxis()).get(`/brands/${name}/products/filtered`),
     updateImage: (uuid) => async () => (await getAxis()).put(`/brands/images/${uuid}`),
     /**
      * Create a single brand

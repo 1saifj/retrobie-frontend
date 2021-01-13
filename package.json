@@ -18,6 +18,7 @@
     "formik-persist": "^1.1.0",
     "jwt-decode": "^2.2.0",
     "mapbox-gl": "^1.13.0",
+    "md5": "^2.3.0",
     "mocker-data-generator": "^2.10.0",
     "ms": "^2.1.2",
     "node-sass": "^4.13.1",

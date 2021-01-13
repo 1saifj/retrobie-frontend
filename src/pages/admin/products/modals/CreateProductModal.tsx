@@ -95,7 +95,10 @@ function Monitor({ brand }) {
 
     useEffect(() => {
         if (values.name) {
-            values.slug = slugify(values.name).toLowerCase();
+            values.slug = slugify(values.name, {
+              lower: true,
+              strict: true
+            });
             if (brand && brand.name) {
                 values.brand = brand.name;
                 values.folder = `${brand.name}/${values.slug}`;
@@ -158,6 +161,7 @@ const CreateProductModal = props => {
                             images: [],
                             style: '',
                             sex: '',
+                            folder: '',
                             condition: '',
                             primaryColor: '',
                             secondaryColor: '',
@@ -192,7 +196,7 @@ const CreateProductModal = props => {
                                     <CustomImageUploader
                                       allowMultiple={true}
                                       id={`${values.brand}/${values.slug}`}
-                                      // same as uploaderId
+                                      folder={values.folder}
                                       instantUpload={false}
                                       onUpload={() => {
                                       }}
