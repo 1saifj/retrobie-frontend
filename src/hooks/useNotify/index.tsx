@@ -4,7 +4,7 @@ import {ErrorIconLight, InfoLight, Tick, WarningIconLight} from '../../constants
 import {Loading} from '../../components';
 import {generateRandomString} from '../../helpers';
 
-const CloseButton = ({ onClick }) => <button className="delete" onClick={onClick} />;
+const CloseButton = ({closeToast}) => <button className="delete" onClick={closeToast}/>;
 
 type NotificationType = 'info' | 'error' | 'success' | 'loading' | 'warning';
 
@@ -23,7 +23,7 @@ export default function (globalOptions?: ToastOptions) {
       toastId,
       draggable: true,
       className: `notification is-${type}`,
-      closeButton: <CloseButton onClick={() => toast.dismiss(toastId)}/>,
+      closeButton: CloseButton,
       ...(options ? options : globalOptions),
     });
 

@@ -19,7 +19,7 @@ import {
   ModalContent,
   Section,
 } from 'bloomer';
-import {NormalCart} from '../../constants/icons';
+import {ErrorIconDark, NormalCart} from '../../constants/icons';
 import {Form, Formik} from 'formik';
 import TextField from '../../components/input/TextField';
 import {cleanString, extractErrorMessage} from '../../helpers';
@@ -33,7 +33,7 @@ import {notify} from '../../helpers/views';
 import EyeVector from '../../assets/images/vectors/eye.svg';
 import {createCheckoutAction, loginUserAction} from '../../state/actions';
 import {env} from '../../config';
-import {CartType} from '../../types';
+import {CartType, CheckoutType, ServerCartType} from '../../types';
 import {LoginUserActionPayload} from '../../state/reducers/userReducers';
 import {useAuth} from '../../network';
 import useSWR from 'swr/esm/use-swr';
@@ -86,12 +86,30 @@ export default function Checkout(props) {
   const api = useAuth();
 
   const isUserLoggedIn = useSelector((state: RootStateOrAny) => state.user.isLoggedIn);
+  const localCart: CartType = useSelector((state: RootStateOrAny) => state.cart);
 
   const userInfoFetcher = (...args)=> api.accounts.me().then(({data}) => data);
   const {data: userInfo} = useSWR(isUserLoggedIn ? 'me': null, userInfoFetcher)
 
-  const checkoutState = useSelector((state: RootStateOrAny) => state.user.checkout);
-  const cartState = useSelector((state: RootStateOrAny) => state.cart);
+  const cartId = props.match.params.cartId;
+
+  const isLocalCartEmpty = localCart.count === 0;
+
+  // Does the cart in the redux store have the same
+  // id as the param in the url?
+  // Notice that localCart.id will realistically never be null
+  const isLocalCart = localCart.id == cartId;   // TODO: verifying if valid guid will save us a few requests
+
+  const cartInfoFetcher = (key, id) => api.cart.fetch(id).then(({data}) => data)
+
+  const {data: remoteCart, error: remoteCartError} = useSWR<ServerCartType>(
+    !isLocalCart ?
+      [`/cart/${cartId}`, cartId] :
+      null,
+    cartInfoFetcher,
+  );
+
+  const checkoutState: CheckoutType = useSelector((state: RootStateOrAny) => state.user.checkout);
   const [isLoginModalOpen, setLoginModalOpen] = useState(false);
 
   const [passwordShown, setPasswordShown] = useState(false);
@@ -102,18 +120,42 @@ export default function Checkout(props) {
 
   const createCheckout = (payload: CartType) => dispatch(createCheckoutAction(payload));
 
-  // when a user lands on this page, we create a new checkout
   useEffect(() => {
-    createCheckout(cartState);
-  }, [isUserLoggedIn]);
+    // when a user lands on this page,
+    // check if this is a local cart
+    if (isLocalCart) {
+      // if it is, create a checkout from it
+      createCheckout(localCart);
+    } else {
+      // if the cart is not local, it will be fetched by swr
+      if (remoteCart) {
+        // if it exists,
+        const {cartItems, uuid, ...rest} = remoteCart;
+        // convert it into a local cart
+        const localCart: CartType = {
+          ...rest,
+          items: cartItems,
+          id: uuid,
+        };
+        // and create a checkout from it
+        createCheckout(localCart);
+      }
 
-  if (!checkoutState) {
-    return (
-      <Loading/>
-    )
-  }
+    }
 
-  if (!checkoutState.items?.length) {
+  }, [
+    // once a user logs in, this component should re-render in order to show
+    // their cart
+    isUserLoggedIn,
+    cartId,
+    localCart,
+    remoteCart,
+    isLocalCart
+  ]);
+
+  // if it's a local cart and it's empty
+  if (isLocalCart && isLocalCartEmpty) {
+    // show an empty state
     return (
       <EmptyState
         title={'Your Cart is Empty'}
@@ -121,7 +163,7 @@ export default function Checkout(props) {
         message={'Do some shopping and check back later. ;)'}
         prompt={() => (
           <Button
-            type={'primary'}
+            isColor={'primary'}
             onClick={() => props.history.push('/')}
             style={{marginTop: '12px', width: '250px'}}
           >
@@ -131,6 +173,28 @@ export default function Checkout(props) {
       />
     );
   }
+
+  if (remoteCartError) {
+    return (
+      <EmptyState
+        icon={ErrorIconDark}
+        title="That doesn't look right"
+        message={'Something went wrong. Please try again later.'}
+      />
+    );
+  }
+
+  // if the local cart isn't available from redux,
+  // but the remote cart hasn't been loaded yet
+  if (!isLocalCart && !remoteCart){
+    // show a loading screen
+    return (
+      <div>
+        <Loading/>
+      </div>
+      );
+  }
+
 
   async function submitCart(cartInfo) {
     try {
@@ -383,6 +447,7 @@ export default function Checkout(props) {
                   <div style={{maxWidth: 600, margin: '0 auto'}}>
                     <h2 style={{color: '#222'}}>Your Cart</h2>
                     <Cart
+                      source={remoteCart}
                       hideCheckoutButton={!isUserLoggedIn}
                       checkoutButtonText={'Proceed to Payment & Delivery'}
                       onCheckout={async () => {
@@ -420,7 +485,7 @@ export default function Checkout(props) {
   );
 }
 
-const GridParent = styled('div')`
+const GridParent = styled.div<{isLoggedIn?: boolean}>`
   margin-top: 24px;
 
   .cart--flex {

@@ -121,7 +121,7 @@ const TextField: ({label, chars, buttonAction, help, ...props}: {
 
 export default TextField;
 
-const InputParent = styled.div`
+const InputParent = styled.div<{tooHigh?: boolean; isButtonActive?: boolean}>`
   text-align: left;
   font-weight: bold;
   position: relative;

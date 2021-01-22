@@ -1,6 +1,8 @@
 export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
 export const DELETE_CART = 'DELETE_CART';
+export const EMPTY_CART = 'EMPTY_CART';
 export const ADD_TO_CART = 'ADD_TO_CART';
+export const FETCH_REMOTE_CART = 'FETCH_REMOTE_CART';
 
 export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
 

@@ -35,7 +35,12 @@ const Header = ({style, withoutNav, topRightButton, rootStyle}: {
                     <Navbar style={{...style, alignItems: 'center'}}>
                         <NavbarBrand style={{alignItems: 'center', justifyContent: 'center', marginTop: 36}}>
                             <NavbarItem className={'logo'}>
-                                <Link to="/" style={{display: "flex", alignItems: "center"}}>
+                                <Link to="/"
+                                      style={{
+                                          display: "flex",
+                                          alignItems: "center",
+                                          lineHeight: 'normal'
+                                      }}>
                                     <AnimatedLogo color="#444"/>
                                 </Link>
                             </NavbarItem>

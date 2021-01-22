@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import Layout from '../../components/Layout';
 import styled from 'styled-components';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {addDashes, formatNumberWithCommas} from '../../helpers';
 import EmptyState from '../../components/empty/EmptyState';
 import {ErrorIconDark, NormalCart} from '../../constants/icons';
-import {Button} from 'bloomer';
+import {Button, Column, Columns, Help} from 'bloomer';
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import RadioField from '../../components/input/RadioField';
@@ -15,7 +15,6 @@ import PeaceSign from '../../assets/images/emoji/peace-sign.png';
 import PointingDown from '../../assets/images/emoji/backhand-index-pointing-down.png';
 import IndexFinger from '../../assets/images/emoji/backhand-index-pointing-up.png';
 import {ChevronRight} from 'react-feather';
-import {notify} from '../../helpers/views';
 import TextField from '../../components/input/TextField';
 import SimpleMap from '../../components/map/SimpleMap';
 import Loading from '../../components/loading';
@@ -24,11 +23,13 @@ import PayWithMpesaOnlineModal from './PayWithMpesaOnlineModal';
 import {ThunkDispatch} from 'redux-thunk';
 import {UserState} from '../../state/reducers/userReducers';
 import {AnyAction} from 'redux';
-import { SwitchTransition, CSSTransition } from "react-transition-group";
-import {AddressType, CheckoutType, OrderType} from '../../types';
-import useSwr from 'swr'
+import {CSSTransition, SwitchTransition} from 'react-transition-group';
+import {AddressType, CheckoutType, OrderStatus, PaymentStatus} from '../../types';
+import useSwr from 'swr';
 import useSWR from 'swr/esm/use-swr';
 import {saveCheckoutAddressAction, saveShippingQuoteAction, setZoomLevelAction} from '../../state/actions';
+import {useNotify} from '../../hooks';
+import {SelectField} from '../../components/input';
 
 const CompleteOrderValidationSchema = Yup.object({
   deliveryLocation: Yup.string().required(),
@@ -42,7 +43,6 @@ export default function Shipping(props) {
   const {data: userInfo, error} = useSwr('me', userInfoFetcher)
 
   const paramOrderId = props.match.params.orderId;
-  const [[deliveryLng, deliveryLat], setDeliveryLocation] = useState([null, null]);
   const [payNowOrOnDelivery, setPayNowOrOnDelivery] = useState<"pay-on-delivery"|"pay-now">(null);
   // @ts-ignore
   const [completedOrder, setCompletedOrder] = useState({});
@@ -51,12 +51,15 @@ export default function Shipping(props) {
   const [payOnlineOrBuyGoods, setPayOnlineOrBuyGoods] = useState<"pay-online"|"buy-goods">(null);
   const [isPayOnlineModalOpen, setPayOnlineModalOpen] = useState(false);
 
-  const orderDataFetcher = (orderId) => api.orders.getSingle(orderId).then(({data})=> data);
-  const {data: orderInfo} = useSWR(['order/data', paramOrderId], (url , orderId)=> orderDataFetcher(orderId))
+  const orderDataFetcher = (key, orderId) => api.orders.checkStatus(orderId).then(({data})=> data);
+  const {data: orderStatusResult} = useSWR<{
+    paymentStatus: PaymentStatus,
+    orderStatus: OrderStatus,
+    referenceNo: string
+  }>([`orders/${paramOrderId}/status`, paramOrderId], orderDataFetcher)
 
-  useEffect(() => {
-
-  }, []);
+  const [wardsAndLocalAreas, setWardsAndLocalAreas] = useState<Array<{label: string, value: string}>>([]);
+  const notify = useNotify();
 
   function flip(value?) {
     setPayOnlineOrBuyGoods(value)
@@ -92,13 +95,21 @@ export default function Shipping(props) {
     )
   }
 
-  if (!orderInfo) {
+  if (!orderStatusResult) {
     return <Loading message={'Please wait...'}/>;
+  }
+
+  if (orderStatusResult.orderStatus != 'incomplete'){
+    return (
+      <div>
+        <p>Other status</p>
+      </div>
+    )
   }
 
   function completeOrder(order) {
     if (!order?.payNowOrOnDelivery) {
-      notify('info', 'Please select a payment method to proceed');
+      notify.info('Please select a payment method to proceed');
     }
   }
 
@@ -122,16 +133,21 @@ export default function Shipping(props) {
 
   async function onLocateUser(address: AddressType){
     saveCheckout(address);
-    try {
-      const {data} = await getDeliveryQuote(address);
-      dispatch(saveShippingQuoteAction(data))
-    }catch (e){
-      notify('error', 'Could not get shipping quote')
+    // address.lat && address.lng will be null
+    // when the marker is being cleared
+    if (address.lat && address.lng) {
+      try {
+        const {data} = await getDeliveryQuote(address);
+        dispatch(saveShippingQuoteAction(data))
+      }catch (e){
+        notify.error('Could not get shipping quote')
+      }
+    }else {
+      dispatch(saveShippingQuoteAction({cost: null, courierOrderNo: null}))
     }
   }
 
   function saveCheckout({lat, lng, location, placeId}: AddressType){
-    setDeliveryLocation([lng, lat]);
     dispatch(saveCheckoutAddressAction({
         address: {
           placeId,
@@ -152,13 +168,48 @@ export default function Shipping(props) {
           <h2>Complete your order</h2>
           <h3>Select a Delivery Location</h3>
           <Formik
-            initialValues={{}}
-            validationSchema={CompleteOrderValidationSchema}
-            onSubmit={() => {
+            initialValues={{
+              constituency: '',
+              wardOrLocalArea: '',
+              deliveryAddress: '',
+            }}
+            validate={(values) => {
+              const errors = {
+                deliveryAddress: '',
+                constituency: '',
+                wardOrLocalArea: '',
+              };
+
+              const lat = checkout?.delivery?.address?.lat;
+              const lng = checkout?.delivery?.address?.lng;
+
+              // if the user has not used the map to provide
+              // their location
+              if (!lat || !lng) {
+                // check if they have provided
+                //their constituency, wardOrLocalArea and deliveryAddress
+                if (!values.deliveryAddress) {
+                  errors.deliveryAddress = 'This field is required';
+                }
+                if (!values.constituency) {
+                  errors.constituency = 'This field is required';
+                }
+                if (!values.wardOrLocalArea) {
+                  errors.wardOrLocalArea = 'This field is required';
+                }
+
+                return errors;
+              } else {
+                // if lat & lang are provided, no other fields are needed
+                return {};
+              }
+            }}
+            onSubmit={async (values, {setSubmitting}) => {
+              setSubmitting(true);
 
             }}
           >
-            {({}) => (
+            {({values, setFieldValue, errors, handleBlur}) => (
               <Form>
                 <div>
                   <div>
@@ -169,18 +220,17 @@ export default function Shipping(props) {
                     <SimpleMap
                       initialZoom={checkout?.meta?.zoomLevel}
                       onZoom={(level => {
-                        setZoomLevel(level)
+                        setZoomLevel(level);
                       })}
                       initialLocation={{
                         location: checkout?.delivery?.address.location,
                         value: {
                           placeId: checkout?.delivery?.address.placeId,
-                          lat: checkout?.delivery?.address?.lat || deliveryLng,
-                          lng: checkout?.delivery?.address?.lng || deliveryLat,
+                          lat: checkout?.delivery?.address?.lat,
+                          lng: checkout?.delivery?.address?.lng,
                         },
                       }}
-                      help={`Note: the marker does not have to be 100% accurate -
-                             just close enough to know your general location.`}
+                      help={`Note: if the marker is not accurate, drag and drop it to your preferred location.`}
                       onLocateUser={(
                         [lng, lat],
                         item,
@@ -199,16 +249,88 @@ export default function Shipping(props) {
                             Fill in the following form if the above map doesn't work,
                             or if you wish to add any information that will make finding your location easier.
                           </p>
+                          <Help>
+                            Tip: If you don't know your constituency, try searching for
+                            your ward or a well-known local area. For example,
+                            searching for "Fedha" will bring up
+                            "Embakasi Central", searching for
+                            "Eastleigh" will bring up "Kamkunju" and
+                            "Karen" or "Dam Estate" will bring up "Lang'ata",... etc.
+                          </Help>
                         </div>
-                        <TextField
-                          label={'Estate'}
-                          placeholder={'eg. TRM'}
-                          name={'nearby'}
-                          type={'text'}/>
+                        <Columns>
+                          <Column>
+                            <label>Constituency</label>
+                            <SelectField
+                              error={errors.constituency}
+                              onBlur={handleBlur}
+                              isAsync={true}
+                              onChange={(value) => {
+                                if (value) {
+                                  setFieldValue('constituency', value.constituency);
+
+                                  const {wards, local_places} = value;
+                                  const result = [].concat(wards).concat(local_places)
+                                    .map(item => {
+                                      return {
+                                        label: item,
+                                        value: item,
+                                      };
+                                    });
+                                  setWardsAndLocalAreas(result);
+                                } else {
+                                  setFieldValue('constituency', null);
+                                  setWardsAndLocalAreas([]);
+                                }
+                              }}
+                              isClearable={true}
+                              loadOptions={async (inputValue) => {
+                                try {
+
+                                  const {data} = await api.deliveries.getLocations({q: inputValue});
+                                  // don't sort. They're returned
+                                  // sorted according to relevance
+                                  return data;
+                                } catch (e) {
+                                  notify.error('Could not fetch delivery locations.');
+                                }
+                              }}
+                              loadingMessage={'Please wait...'}
+                              getOptionValue={(option) => {
+                                return option.constituency;
+                              }}
+                              getOptionLabel={(option) => {
+                                return option.constituency;
+                              }}
+                              placeholder={'Search for a place'}/>
+                          </Column>
+                          <Column>
+                            <label>Ward/Local area</label>
+                            <SelectField
+                              error={values.constituency ? errors.wardOrLocalArea : null}
+                              isAsync={false}
+                              loadingMessage={'Please wait...'}
+                              // this input is disabled if a constituency has not been selected
+                              disabled={!values.constituency}
+                              isClearable={true}
+                              onChange={(value) => {
+                                setFieldValue('wardOrLocalArea', value);
+                              }}
+                              filterOption={(option, input) => {
+                                return option.value
+                                  ?.toLowerCase()
+                                  .startsWith(input) || option.value
+                                  ?.toLowerCase()
+                                  .includes(input);
+                              }}
+                              options={wardsAndLocalAreas}
+                              placeholder={'Search or select...'}/>
+                          </Column>
+                        </Columns>
                         <TextField
                           label={'Delivery address'}
                           placeholder={'Estate name / Building name / Block no. / Apartment no.'}
-                          name={'place'}
+                          name={'deliveryAddress'}
                           type={'textarea'}/>
                       </div>
 
@@ -293,7 +415,7 @@ export default function Shipping(props) {
                                             </div>
                                             <ChevronRight
                                               style={{
-                                                transform: payOnlineOrBuyGoods === 'pay-online' ? 'rotate(90deg)': '0'
+                                                transform: payOnlineOrBuyGoods === 'pay-online' ? 'rotate(90deg)' : '0',
                                               }}
                                               className={'chevron'}/>
                                           </div>
@@ -357,7 +479,7 @@ export default function Shipping(props) {
                                             </div>
                                             <ChevronRight
                                               style={{
-                                                transform: payOnlineOrBuyGoods === 'buy-goods' ? 'rotate(90deg)': '0'
+                                                transform: payOnlineOrBuyGoods === 'buy-goods' ? 'rotate(90deg)' : '0',
                                               }}
                                               className={'chevron'}/>
                                           </div>
@@ -538,10 +660,10 @@ export default function Shipping(props) {
                       </div>
                       <div className={'subtotal'}>
                         <h4>Total</h4>
-                        <h3>Ksh.{" "}
+                        <h3>Ksh.{' '}
                           {
                             checkoutDelivery?.cost ?
-                              formatNumberWithCommas(checkoutTotal + checkoutDelivery?.cost) :
+                              formatNumberWithCommas(checkoutTotal + checkoutDelivery.cost) :
                               formatNumberWithCommas(checkoutTotal)
                           }
                         </h3>
@@ -549,42 +671,28 @@ export default function Shipping(props) {
                     </Totals>
                   </div>
 
-                  {
-                    payNowOrOnDelivery === 'pay-now' &&
-                    payOnlineOrBuyGoods === 'pay-online' ?
-                      (
-                        <div style={{display: 'flex', justifyContent: 'center', marginTop: 24}}>
-                          <div style={{width: '100%', textAlign: 'center'}}>
+                  <div id={'footer'}>
+                    {
+                      payNowOrOnDelivery === "pay-on-delivery" ||
+                        payOnlineOrBuyGoods === "buy-goods" ?
+                        (
+                          <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            marginTop: 24,
+                          }}>
                             <Button
                               isColor="primary"
-                              disabled
+                              onClick={() => completeOrder({})}
                               style={{width: '100%', fontWeight: 'bold'}}
                             >
-                              Your order will be confirmed automatically
+                              Complete your order
                             </Button>
                           </div>
-                        </div>
-                      ) : (
-                        <div>
-                          {
-                            payNowOrOnDelivery === 'pay-on-delivery' ||
-                            payOnlineOrBuyGoods === 'buy-goods'
-                              ?
-                              <div style={{display: 'flex', justifyContent: 'center', marginTop: 24}}>
-                                <Button
-                                  isColor="primary"
-                                  onClick={() => completeOrder({})}
-                                  style={{width: '100%', fontWeight: 'bold'}}
-                                >
-                                  Complete your order
-                                </Button>
-                              </div> :
-                              <div/>
-                          }
-                        </div>
-                      )
-
-                  }
+                        )
+                        : <span/>
+                    }
+                  </div>
                 </div>
               </Form>
             )}
@@ -594,7 +702,13 @@ export default function Shipping(props) {
         <PayWithMpesaOnlineModal
           isActive={isPayOnlineModalOpen}
           onClose={() => setPayOnlineModalOpen(false)}
-          meta={{phoneNumber: userInfo?.phoneNumber, orderNo: orderInfo.orderNo}}/>
+          meta={{
+            phoneNumber: userInfo?.phoneNumber,
+            referenceNo: orderStatusResult.referenceNo,
+            paymentStatus: orderStatusResult.paymentStatus
+          }}
+          onPaymentInitiated={()=> {}}
+        />
       </CompleteOrderRoot>
     </Layout>
   );
@@ -642,16 +756,21 @@ const CompleteOrderRoot = styled.div`
       transition: all ease-in-out 0.25s;
       margin-bottom: 24px;
       justify-content: space-between;
-
-      &:hover {
-        cursor: pointer;
-        opacity: 0.8;
-      }
-
+      
       h4,
       p {
         margin: 0;
         margin-bottom: 6px;
+        transition: all ease-in-out 0.25s;
+      }
+
+      &:hover {
+        cursor: pointer;
+        
+        h4,
+        p {
+          color: var(--color-primary);
+        }
       }
     }
   }

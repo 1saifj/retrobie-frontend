@@ -42,6 +42,11 @@ class InternalLayout extends React.Component {
                 route: '/company/admin/dashboard/categories'
             },
             {
+              name: 'Deliveries',
+              icon: <Truck color={"#fff"}/>,
+              route: '/company/admin/dashboard/deliveries'
+            },
+            {
                 name: 'Brands',
                 icon: <Box color={"#fff"}/>,
                 route: '/company/admin/dashboard/brands'

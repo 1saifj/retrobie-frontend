@@ -169,9 +169,7 @@ export default function SimpleMap(
 
   return (
     <>
-      <MapParent
-        className={'has-error'}
-      >
+      <MapParent>
         <div>
           <div style={{display: 'flex'}}>
             <AutoCompleteInput
@@ -196,8 +194,7 @@ export default function SimpleMap(
               actionItem={()=> (
                 <Button
                   isOutlined={true}
-                  isColor={'primary'}
-                  style={{padding: 9}}
+                  style={{padding: 9, borderWidth: 2}}
                   title={'Detect your current location'}
                   onClick={()=> locateUser()}>
                   <img
@@ -228,6 +225,15 @@ export default function SimpleMap(
           <Help>
             {help}
           </Help>
+          <div>
+            <Button
+              onClick={()=> {
+                onMapLocateUser({lat: null, lng: null}, null);
+              }}
+            >
+              Clear marker
+            </Button>
+          </div>
         </div>
       </MapParent>
     </>

@@ -1,29 +1,78 @@
 import React, {useState} from 'react';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
-import {Button} from 'bloomer';
+import {Button, Help} from 'bloomer';
 import {addDashes, extractErrorMessage, formatNumberWithCommas} from '../../helpers';
 import MpesaLogo from '../../assets/images/logos/mpesa.svg';
 import CustomModal from '../../components/CustomModal';
 import {useAuth} from '../../network';
 import {notify} from '../../helpers/views';
+import {AxiosResponse} from 'axios';
+import {CheckoutType, PaymentStatus} from '../../types';
+import Notification from '../../components/notification';
 
-export default function PayWithMpesaOnlineModal({isActive, onClose, meta: {phoneNumber, orderNo}}) {
-  const checkout = useSelector((state: RootStateOrAny) => state.user.checkout);
+export default function PayWithMpesaOnlineModal(
+  {
+    isActive,
+    onClose,
+    meta: {
+      phoneNumber,
+      referenceNo,
+      paymentStatus
+    },
+    onPaymentInitiated
+  }: {
+    isActive: boolean,
+    onClose: ()=> void,
+    onPaymentInitiated: ()=> void,
+    meta: {
+      phoneNumber: string,
+      referenceNo: string,
+      // we will retrieve a payment status from the server
+      paymentStatus?: PaymentStatus
+    }
+  },
+) {
+  const checkout: CheckoutType = useSelector((state: RootStateOrAny) => state.user.checkout);
   const api = useAuth();
   const dispatch = useDispatch();
-  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [isPaymentLoading, setPaymentLoading] = useState(false);
 
-  async function initiateOnlinePayment(data) {
-    notify('loading', "Please wait...", {})
+  // We track whether this payment has been initiated locally
+  // because of swr might take a while to re-query the server for a
+  // payment status.
+  // Additionally, using local state alone isn't enough
+  // because if the user refreshes the page, they would have to
+  // re-initiate the transaction
+  const [isPaymentInitiated, setPaymentInitiated] = useState(false);
+
+  async function initiateOnlinePayment(cartId: string) {
     setPaymentLoading(true);
-    return dispatch(api.payments.initiateMpesaOnlinePayment(data));
+    try {
+      // @ts-ignore
+      const response = await dispatch<AxiosResponse<{message: string, id: string, referenceNo: string}>>(api.payments.initiateMpesaOnlinePayment({cartId}));
+
+      setPaymentLoading(false);
+
+      if (response.data) {
+        onPaymentInitiated();
+        setPaymentInitiated(true);
+        notify('success', 'Your payment is being processed. Please enter your Mpesa PIN when prompted.');
+      }
+    }catch (e){
+      setPaymentLoading(false);
+
+      console.log('An error occurred ', e);
+      const message = extractErrorMessage(e);
+      notify('error', message);
+    }
   }
+
   return (
     <div>
       <CustomModal
         closeOnClickBackground={false}
-        onClose={()=> {
-          if (!paymentLoading) return onClose();
+        onClose={() => {
+          if (!isPaymentLoading) return onClose();
         }}
         isActive={isActive}>
         <div>
@@ -32,50 +81,129 @@ export default function PayWithMpesaOnlineModal({isActive, onClose, meta: {phone
             <img
               style={{
                 width: 80,
-                verticalAlign: 'middle'
+                verticalAlign: 'middle',
               }}
               alt={'mpesa logo'}
               src={MpesaLogo}
             />{' '} Online
           </h3>
-          <div className={'steps'}>
-            <p>
-              You will automatically receive a prompt on your phone:
-              <b> +254-{addDashes(phoneNumber)}</b>&nbsp;
-              for a charge of <strong>Ksh. {formatNumberWithCommas(checkout.total)}</strong>
-            </p>
-            <h4 style={{marginBottom: 0}}>For extra security</h4>
-            <p>
-              Cross-reference the order number <b>{orderNo}</b>.
-            </p>
-          </div>
-          <div className={'buttons'} style={{marginTop:'1.5rem'}}>
-            <Button
-              isColor="primary"
-              isLoading={paymentLoading}
-              onClick={async () => {
-                try {
-                  await initiateOnlinePayment({
-                    cartId: checkout.id,
-                  });
-                  setPaymentLoading(false);
-                  notify('success', "Your payment is being processed")
-                }catch (e){
-                  setPaymentLoading(false);
-                  const message = extractErrorMessage(e);
-                  notify('error', message);
+          {
+            // if paymentStatus does not exist,
+            // the user has not attempted to initiate the payment before
+            (isPaymentInitiated || (
+              paymentStatus &&
+              paymentStatus !== 'errored' &&
+              paymentStatus !== 'cancelled'
+            )) ? (
+              <div>
+                {
+                  (paymentStatus === 'initiated' || isPaymentInitiated) ? (
+                    <div>
+                      <Notification
+                        message=''
+                        title={'Transaction initiated'}
+                        type={'info'}/>
+                    </div>
+                  ) : paymentStatus === 'processed' ? (
+                    <div>
+                      <Notification
+                        title={'Your payment has been processed.'}
+                        type={'success'}/>
+                    </div>
+                  ) : <span/>
+
                 }
-              }}
-            >
-              Pay now
-            </Button>
-            <Button onClick={onClose}>
-              Cancel
-            </Button>
-          </div>
+
+                <div style={{marginBottom: '1rem'}}>
+                  <div>
+                    <p>
+                      The number{' '}
+                      <b> +254-{addDashes(phoneNumber)}</b>&nbsp;
+                      will receive a charge of{' '}
+                      <strong>Ksh. {formatNumberWithCommas(checkout.total)}</strong>. {' '}
+                      Enter your M-Pesa PIN to complete the transaction.
+                    </p>
+                  </div>
+                  <div>
+                    <h4 style={{marginBottom: 0}}>For extra security</h4>
+                    <p>
+                      Cross-reference the payment number <b>{referenceNo}</b>.
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <Button
+                    style={{width: '100%'}}
+                    isOutlined={true}
+                    isLoading={isPaymentLoading}
+                    isColor={'primary'}>
+                    Complete your order
+                  </Button>
+                  {
+                    paymentStatus !== 'processed' && (
+                      <Help style={{display: 'flex', gap: 6}}>
+                        Didn't receive a prompt?
+                        <Button
+                          style={{borderBottom: '1px solid lightgray'}}
+                          isColor={'ghost'}
+                          onClick={() => initiateOnlinePayment(checkout.id)}
+                        >
+                          Try again
+                        </Button>
+                      </Help>
+                    )
+                  }
+                </div>
+              </div>
+            ) : (
+              //
+              <div>
+
+                {
+                  paymentStatus === 'errored' ? (
+                    <div>
+                      <Notification
+                        message='Something went wrong while trying to process your transaction. Please try again.'
+                        title={'An error occurred'}
+                        type={'error'}/>
+                    </div>
+                  ) : paymentStatus === 'cancelled' ? (
+                    <div>
+                      <Notification
+                        message=''
+                        title={'Your previous transaction was cancelled'}
+                        type={'warning'}/>
+                    </div>
+                  ) : <span/>
+                }
+
+                <p>
+                  You will receive a prompt on your phone:
+                  <b> +254-{addDashes(phoneNumber)}</b>&nbsp;
+                  for a charge of <strong>Ksh. {formatNumberWithCommas(checkout.total)}</strong>
+                </p>
+
+                <div className={'buttons'} style={{marginTop: '1rem'}}>
+                  <Button
+                    isColor="primary"
+                    isLoading={isPaymentLoading}
+                    onClick={async () => initiateOnlinePayment(checkout.id)}
+                  >
+                    Pay now
+                  </Button>
+                  <Button
+                    disabled={isPaymentLoading}
+                    onClick={onClose}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )
+          }
 
         </div>
       </CustomModal>
     </div>
-  )
-}
+  );
+};

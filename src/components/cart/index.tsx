@@ -2,7 +2,13 @@ import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {formatNumberWithCommas} from '../../helpers';
-import {addItemToCartAction, removeItemFromCartAction, toggleSidebarAction} from '../../state/actions';
+import {
+  addItemToCartAction,
+  deleteCheckoutAction,
+  emptyCartAction,
+  removeItemFromCartAction,
+  toggleSidebarAction,
+} from '../../state/actions';
 import PropTypes from 'prop-types';
 import {Button} from 'bloomer';
 import Manga from '../../assets/images/icons/marginalia-online-shopping.png';
@@ -11,7 +17,7 @@ import {notify} from '../../helpers/views';
 import {useHistory} from 'react-router';
 import {Link} from 'react-router-dom';
 import {Minus, Plus} from 'react-feather';
-import {CartItemType, CartType} from '../../types';
+import {CartItemType, CartType, ServerCartType} from '../../types';
 import Loading from '../loading';
 
 /**
@@ -80,7 +86,7 @@ export default function Cart(
     checkoutButtonLink,
     checkoutButtonText,
   }: {
-    source?: CartType
+    source?: ServerCartType
     size?: 'L' | 'S';
     bordered?: boolean;
     showRemoveButton?: boolean;
@@ -92,18 +98,17 @@ export default function Cart(
   }) {
 
 
-  const cartState = useSelector((state: RootStateOrAny) => state.cart);
+  const cartState: CartType = useSelector((state: RootStateOrAny) => state.cart);
   const [cart, setCart] = useState<CartType>(null);
   const isSidebarOpen: boolean = useSelector((state: RootStateOrAny) => state.meta.isSidebarOpen);
   const dispatch = useDispatch();
   const history = useHistory();
 
   useEffect(()=> {
-    // @ts-ignore
     if (source?.cartItems) {
       setCart({
         ...source,
-        // @ts-ignore
+        id: source.uuid,
         items: source.cartItems,
       });
     } else {
@@ -125,11 +130,16 @@ export default function Cart(
     }
   }
 
+  function emptyCart() {
+    dispatch(emptyCartAction());
+    dispatch(deleteCheckoutAction());
+  }
+
   function removeFromCart(data: CartItemType) {
     let cartItem: CartItemType = JSON.parse(JSON.stringify(data));
     if (cart.count === 1) {
       if (window.confirm('You are about to empty your cart. Are you sure?')) {
-        dispatch(removeItemFromCartAction({item: cartItem}));
+        emptyCart()
       }
     } else dispatch(removeItemFromCartAction({item: cartItem}));
   }
@@ -181,7 +191,7 @@ export default function Cart(
                       <Button
                         isColor="light"
                         style={{padding: 0}}
-                        onClick={event => {
+                        onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                           event.stopPropagation();
                           removeFromCart(cartItem);
                         }}
@@ -194,7 +204,7 @@ export default function Cart(
                         isColor="light"
                         disabled={cartItem.quantity === cartItem.stock}
                         style={{padding: 0}}
-                        onClick={event => {
+                        onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                           event.stopPropagation();
                           dispatchToCart(cartItem);
                         }}
@@ -230,7 +240,7 @@ export default function Cart(
             <div>
               <Button
                 isColor="primary"
-                onClick={()=> redirectOrCloseSidebar(checkoutButtonLink || '/checkout')}
+                onClick={()=> redirectOrCloseSidebar(checkoutButtonLink || `/checkout/${cart.id}`)}
                 style={{
                   width: '100%',
                   fontSize: 18,
@@ -340,7 +350,7 @@ const CartContent = styled.div`
   }
 `;
 
-export const CartItem = styled.div`
+export const CartItem = styled.div<{bordered: boolean, size: 'L' | 'S'}>`
   border: ${props => (props.bordered ? `1px solid #cacaca` : `1px solid transparent`)};
   border-radius: 4px;
   padding: 8px 8px;

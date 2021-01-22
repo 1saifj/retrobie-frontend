@@ -1,6 +1,6 @@
 import {v4 as uuidV4} from 'uuid';
 import {CartItemType} from '../../types';
-import {ADD_TO_CART, DELETE_CART, REMOVE_FROM_CART} from '../actions/constants';
+import {ADD_TO_CART, DELETE_CART, EMPTY_CART, REMOVE_FROM_CART} from '../actions/constants';
 
 type CartState = {
   id?: number;
@@ -95,15 +95,8 @@ export default (state = initialState, action: {type: string; payload}) => {
           console.log('That item does not exist in the cart');
         }
 
-        // if there are no longer any items in the cart
-        if (!removeFromCartState.items.length || removeFromCartState.count <= 0){
-          // delete the old cart
-          console.log("No items in cart. Deleting...", removeFromCartState)
-          removeFromCartState.id = null;
-          removeFromCartState.items = [];
-          removeFromCartState.total = 0;
-          removeFromCartState.count = 0;
-        }
+        // // if there are no longer any items in the cart
+        // DELETE_CART or EMPTY_CART should be called
       } else {
         console.log('Cannot remove invalid item from state', action.payload);
       }
@@ -116,6 +109,14 @@ export default (state = initialState, action: {type: string; payload}) => {
         total: 0,
         items: [],
       };
+    case EMPTY_CART:
+      const emptyCartActionState = Object.assign({}, state);
+      return {
+        id: emptyCartActionState.id,
+        count: 0,
+        total: 0,
+        items: []
+      }
     default:
       return state;
   }

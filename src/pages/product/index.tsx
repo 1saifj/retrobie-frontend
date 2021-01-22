@@ -122,9 +122,9 @@ function Product({ match }) {
   return (
     <>
       {/* @ts-ignore*/}
-      <SEOHeader title={currentProduct.name} description={currentProduct.description.copy} />
-      <JsonLd item={{ ...productJsonld(currentProduct, id) }} />
-      <JsonLd item={{ ...subProduct(currentProduct, match.url) }} />
+      <SEOHeader title={currentProduct.name} description={currentProduct.description.copy}/>
+      <JsonLd item={{...productJsonld(currentProduct, id)}}/>
+      <JsonLd item={{...subProduct(currentProduct, match.url)}}/>
 
       <Layout>
         <ProductRoot>
@@ -135,24 +135,24 @@ function Product({ match }) {
               alignItems: 'center',
             }}
           >
-            {currentProduct?.images?.length ? (
-              <ProductSlider images={currentProduct.images} />
-            ) : (
-                <div>
-                  <Loading minor />
-                </div>
-              )}
+            <ProductSlider
+              productName={currentProduct.name}
+              images={currentProduct.images}/>
 
-            <div style={{ width: '80%', borderRadius: '4px' }}>
+            <div style={{
+              width: '80%',
+              borderRadius: '4px',
+              marginTop: 84
+            }}>
               <div>
                 <ValueProposition>
                   <div>
-                    <img style={{ width: '50px' }} src={FastDelivery} alt={'Free Delivery'} />
+                    <img style={{width: '50px'}} src={FastDelivery} alt={'Free Delivery'}/>
                     <h4>Next-day Delivery</h4>
                     <p>Anywhere within Nairobi</p>
                   </div>
                   <div>
-                    <img style={{ width: '50px' }} src={HelpIcon} alt={'easy payment'} />
+                    <img style={{width: '50px'}} src={HelpIcon} alt={'easy payment'}/>
                     <h4>Need help?</h4>
                     <p>
                       Hit us up on Twitter <a href="https://twitter.com/retrbobie">@retrobie</a> or
@@ -160,7 +160,7 @@ function Product({ match }) {
                     </p>
                   </div>
                   <div>
-                    <img style={{ width: '50px' }} src={Diamond} alt={'easy payment'} />
+                    <img style={{width: '50px'}} src={Diamond} alt={'easy payment'}/>
                     <h4>Assured Quality</h4>
                     <p>100% original product guarantee</p>
                   </div>
@@ -185,7 +185,7 @@ function Product({ match }) {
                     }`
                   }
                 </h2>
-                 <p>{currentProduct.description.short}</p>
+                <p>{currentProduct.description.short}</p>
                 <div>
                   <h4>Description</h4>
                   <p>{currentProduct.description.copy}</p>
@@ -206,23 +206,12 @@ function Product({ match }) {
                       <Sizes>
                         <CustomTag>
                           <p>{`${currentProduct.detail.size
-                            } ${currentProduct.detail.sizeCountry.toUpperCase()}`}</p>
+                          } ${currentProduct.detail.sizeCountry.toUpperCase()}`}</p>
                         </CustomTag>
                       </Sizes>
                     </SizesParent>
                   )}
                 </div>
-                <ColorsRoot>
-                  <h4>Product colors</h4>
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    <ColorsParent src={currentProduct.detail.primaryColor}>
-                      <Color src={currentProduct.detail.primaryColor} />
-                    </ColorsParent>
-                    <ColorsParent src={currentProduct.detail.secondaryColor}>
-                      <Color src={currentProduct.detail.secondaryColor} />
-                    </ColorsParent>
-                  </div>
-                </ColorsRoot>
 
                 <div>
                   <div>
@@ -240,20 +229,20 @@ function Product({ match }) {
                   </div>
                 </div>
                 <Buttons>
-                  <div style={{ margin: '18px 0' }}>
+                  <div style={{margin: '18px 0'}}>
                     <div>
                       <Button
                         isColor="primary"
                         onClick={() => {
                           return dispatchToCart({
                             ...currentProduct,
-                            price: currentProduct.originalPrice
-                          })
+                            price: currentProduct.originalPrice,
+                          });
                         }}
                         disabled={notInStock()}
                         style={{
                           width: '100%',
-                          fontWeight: 'bold'
+                          fontWeight: 'bold',
                         }}
                       >
                         {notInStock() ? 'OUT OF STOCK' : 'ADD TO CART.'}
@@ -272,22 +261,22 @@ function Product({ match }) {
                         flexWrap: 'wrap',
                       }}
                     >
-                      <div style={{ flex: '1 0 180px' }}>
-                        <img alt={'return'} src={Return} style={{ width: '48px' }} />
-                        <h4 style={{ color: '#353535' }}>Free returns within 7 days</h4>
+                      <div style={{flex: '1 0 180px'}}>
+                        <img alt={'return'} src={Return} style={{width: '48px'}}/>
+                        <h4 style={{color: '#353535'}}>Free returns within 7 days</h4>
                         <p>
                           &#10003; Direct returns - money refunded to your M-Pesa or Paypal account.
                         </p>
                       </div>
-                      <div style={{ flex: '1 0 180px' }}>
-                        <img alt={'replace'} src={Replace} style={{ width: '48px' }} />
-                        <h4 style={{ color: '#353535' }}>Free replacements within 14 days</h4>
+                      <div style={{flex: '1 0 180px'}}>
+                        <img alt={'replace'} src={Replace} style={{width: '48px'}}/>
+                        <h4 style={{color: '#353535'}}>Free replacements within 14 days</h4>
                         <p>&#10003; Replace your product with any other of similar value</p>
                       </div>
                     </div>
                   </div>
 
-                  <hr />
+                  <hr/>
 
                   <div>
                     <h3>Missing your size?</h3>
@@ -298,13 +287,13 @@ function Product({ match }) {
                   </div>
 
                   <ConditionParent>
-                    <div style={{ textAlign: 'center', color: '#222' }}>
+                    <div style={{textAlign: 'center', color: '#222'}}>
                       <Modal isActive={conditionModalOpen}>
-                        <Delete onClick={() => openModal(false)} />
-                        <ModalBackground />
+                        <Delete onClick={() => openModal(false)}/>
+                        <ModalBackground/>
                         <ModalContent>
                           <Title>Condition Guide</Title>
-                          <p style={{ color: '#222' }}>
+                          <p style={{color: '#222'}}>
                             All products on T25 are divided into three distinct categories:
                           </p>
                           <ul>
@@ -368,7 +357,7 @@ function Product({ match }) {
                             </li>
                           </ul>
                         </ModalContent>
-                        <ModalClose />
+                        <ModalClose/>
                       </Modal>
                     </div>
                   </ConditionParent>
@@ -389,7 +378,6 @@ const ValueProposition = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   justify-content: space-around;
   padding: 24px;
-  margin-top: 12px;
   text-align: center;
 
   & > div {
@@ -460,7 +448,7 @@ const ColorsRoot = styled.div`
   }
 `;
 
-const ColorsParent = styled.div`
+const ColorsParent = styled.div<{src: string}>`
   border: 2px solid ${props => props.src};
   padding: 2px;
   border-radius: 50%;
@@ -474,7 +462,7 @@ const ColorsParent = styled.div`
   justify-content: center;
 `;
 
-const Color = styled.div`
+const Color = styled.div<{src: string}>`
   background: ${props => props.src};
   border-radius: 50%;
   width: 24px;

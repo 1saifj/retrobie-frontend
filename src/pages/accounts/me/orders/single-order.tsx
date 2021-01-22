@@ -85,27 +85,20 @@ export default function({match: {params: {orderId}}}) {
             <Cart
               bordered={true}
               source={orderData.cart}
-              hideCheckoutButton={true}
+              hideCheckoutButton={false}
+              checkoutButtonText={"Complete this order"}
             />
           </div>
-        </div>
-        <div style={{textAlign: 'center'}}>
-          <div style={{display: 'flex', marginBottom: 4}}>
-            <Button
-              style={{flex: 1}}
-              isOutlined
-              isColor={'success'}>
-              Complete this order
-            </Button>
+          <div>
+            <Help>
+              If not completed, this order will be deleted automatically after a week.{" "}
+              <Button
+                style={{borderBottom: '1px solid lightgray'}}
+                isColor={'ghost'}>
+                Delete it now
+              </Button>
+            </Help>
           </div>
-          <Help>
-            If not completed, this order will be deleted automatically after a week.{" "}
-            <Button
-              style={{borderBottom: '1px solid lightgray'}}
-              isColor={'ghost'}>
-              Delete it now
-            </Button>
-          </Help>
         </div>
       </Layout>
     </>

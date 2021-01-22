@@ -26,7 +26,7 @@ export default function AdminOrders() {
   }
 
   function getCompletedOrders() {
-    return allOrders?.filter(order => order.status === "pending_confirmation");
+    return allOrders?.filter(order => order.status === "pendingConfirmation");
   }
 
   function getIncompleteOrders() {

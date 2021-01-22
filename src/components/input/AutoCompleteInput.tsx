@@ -217,6 +217,10 @@ const InputParent = styled.div`
   align-items: center;
   gap: 6px;
   
+  img {
+    transition: all ease-in-out 0.25s;
+  }
+  
   button {
     &:hover, &:active, &:focus {
       img {
@@ -226,7 +230,7 @@ const InputParent = styled.div`
   }
 `
 
-const DropdownItem = styled.li`
+const DropdownItem = styled.li<{selected: boolean; highlighted: boolean}>`
   background-color: 
   ${
   p => p.selected ?

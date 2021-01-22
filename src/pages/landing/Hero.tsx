@@ -149,6 +149,7 @@ const HeroSection = styled(Columns)`
 
     p {
       font-size: 28px;
+      line-height: normal;
     }
 
     h1 {

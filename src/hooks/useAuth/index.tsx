@@ -103,7 +103,7 @@ export default function() {
           if (err.response?.status === 401) {
             console.log('Got 401 error');
           }
-          return err;
+          throw err;
         },
       );
       return axis;
@@ -114,6 +114,7 @@ export default function() {
     getSingle: async (uuid) => (await getAxis()).get(`/orders/${uuid}`),
     new: (data) => async () => (await getAxis()).post('/orders/new', data),
     mine: async (params) => (await getAxis()).get(`/orders/mine?include=${params}`),
+    checkStatus: async (id)=> (await getAxis()).get(`/orders/${id}/status`)
   };
 
   const payments = {
@@ -178,6 +179,8 @@ export default function() {
 
   const deliveries = {
     getQuote: async (data) => (await getAxis()).post('/delivery/quote', data),
+    populate: ()=> async () => (await getAxis()).post('/delivery/locations/populate'),
+    getLocations: async ({q}: {q: string}) => (await getAxis()).get(`/delivery/locations?q=${q}`),
   }
 
   const accounts = {
@@ -196,6 +199,11 @@ export default function() {
     update: async (data) => (await getAxis()).post('/accounts/update', data),
   };
 
+  const cart = {
+    fetch: async (id)=> (await getAxis()).get(`carts/${id}`),
+    checkPaymentStatus: async (id)=> (await getAxis()).get(`carts/${id}/payment-status`)
+  }
+
   async function ping() {
     return (await getAxis()).get('up');
   }
@@ -203,6 +211,7 @@ export default function() {
   return {
     accounts,
     brands,
+    cart,
     category,
     deliveries,
     imageKit,

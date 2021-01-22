@@ -63,7 +63,7 @@ function Loading(
 
 export default Loading;
 
-const LoadingComponent = styled.div`
+const LoadingComponent = styled.div<{minor?: boolean}>`
     height: ${p => p.minor ? "auto" : "100vh"} ;
     display: flex;
     flex-direction: column;

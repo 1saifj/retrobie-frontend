@@ -10,7 +10,7 @@ import {
   TOGGLE_SIDEBAR,
   SAVE_CHECKOUT_ADDRESS,
   SAVE_SHIPPING_QUOTE,
-  SAVE_ZOOM_LEVEL,
+  SAVE_ZOOM_LEVEL, FETCH_REMOTE_CART, EMPTY_CART,
 } from './constants';
 import {AddressType, CartItemType, CartType} from '../../types';
 import {LoginUserActionPayload} from '../reducers/userReducers';
@@ -22,8 +22,18 @@ export const addItemToCartAction = (payload: {item: CartItemType}) =>
   createAction(ADD_TO_CART, payload);
 export const removeItemFromCartAction = (payload: {item: CartItemType}) =>
   createAction(REMOVE_FROM_CART, payload);
+
+// emptying a cart involves getting rid of all the cart items
+// but doesn't delete the cartId
+export const emptyCartAction = () => createAction(EMPTY_CART);
+// deleting a cart deletes everything to do with the cart.
+// This is normally done only after a successful checkout.
 export const deleteCartAction = () => createAction(DELETE_CART);
+export const fetchRemoteCartAction = (payload: {id: string}) => createAction(FETCH_REMOTE_CART, payload);
+
 export const createCheckoutAction = (payload: CartType) => createAction(CREATE_CHECKOUT, payload);
+// since the checkoutId is taken directly from the cartId
+// there is no need to have separate 'delete' and 'empty' actions
 export const deleteCheckoutAction = () => createAction(DELETE_CHECKOUT);
 
 //user

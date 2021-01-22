@@ -13,7 +13,7 @@ const OnOffSwitch = (
     return (
         <>
             <div style={{display: 'flex'}}>
-                <OnOffSwitchParent onText={props.onText} offText={props.offText}>
+                <OnOffSwitchParent>
                     <p className={'label'}>{props.label}</p>
                     <input onChange={(e) => {
                         if (props.onChange && typeof props.onChange === 'function') {
@@ -44,12 +44,6 @@ const OnOffSwitch = (
             </div>
         </>
     );
-};
-
-OnOffSwitch.propTypes = {
-    onText: PropTypes.string.isRequired,
-    offText: PropTypes.string.isRequired,
-    onChange: PropTypes.func
 };
 
 export default OnOffSwitch;

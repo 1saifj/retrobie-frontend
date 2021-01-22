@@ -203,7 +203,7 @@ const BrandHeader = styled.header`
   }
 `;
 
-const BrandItemRoot = styled.div`
+const BrandItemRoot = styled.div<{active?: boolean}>`
     
   .details {
       svg {

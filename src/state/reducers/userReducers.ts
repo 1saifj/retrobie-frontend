@@ -88,6 +88,8 @@ export default (state = initialState, action) => {
       emptyUserState.isLoggedIn = false;
       return emptyUserState;
     case CREATE_CHECKOUT:
+      // create a new checkout from a cart
+      // PS: notice that checkoutId and cartId are the same
       const createCheckoutPayload: CartType = action.payload;
       let createCheckoutState = Object.assign({}, state);
       createCheckoutState = {
@@ -103,10 +105,17 @@ export default (state = initialState, action) => {
       return createCheckoutState;
     case DELETE_CHECKOUT:
       let deleteCheckoutState = Object.assign({}, state);
+      // delete everything from the checkout
+      // apart from delivery location and metadata
       deleteCheckoutState = {
         ...deleteCheckoutState,
-        // @ts-ignore
-        checkout: {}
+        checkout: {
+          ...deleteCheckoutState.checkout,
+          id: null,
+          total: null,
+          count: 0,
+          items: null,
+        }
       };
       return deleteCheckoutState;
     case REFRESH_SESSION:

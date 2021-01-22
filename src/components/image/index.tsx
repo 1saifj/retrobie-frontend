@@ -1,13 +1,23 @@
 import React, {CSSProperties} from 'react';
 import Image from 'react-progressive-graceful-image';
 
-export default function ({src, srcSet, alt, style, solidColor, placeholderStyle}: {
+export default function (
+  {
+    src,
+    srcSet,
+    alt,
+    style,
+    solidColor,
+    placeholderStyle,
+    ...props
+  }: {
   src: string,
   alt: string,
   srcSet?: {sizes: string; srcSet: string},
   style?: CSSProperties,
   solidColor?: boolean,
-  placeholderStyle?: CSSProperties
+  placeholderStyle?: CSSProperties,
+  [key: string]: any
 }) {
 
   const getPlaceholderUrl = (src)=> {
@@ -55,6 +65,7 @@ export default function ({src, srcSet, alt, style, solidColor, placeholderStyle}
                 style={style}
                 srcSet={srcSetData.srcSet}
                 sizes={srcSetData.sizes}
+                {...props}
               />);
           }
 
@@ -64,6 +75,7 @@ export default function ({src, srcSet, alt, style, solidColor, placeholderStyle}
               src={src}
               style={style}
               alt={alt}
+              {...props}
             />);
         }}
 

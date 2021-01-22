@@ -54,12 +54,12 @@ export default function (
                   {
                     criteriaValues[criteriaKey]?.map((criteriaValue, index)=> (
                       <FilterItem
-                        applied={()=> {
+                        applied={(()=> {
                           const params = qs.parse(window.location.search, {
                             ignoreQueryPrefix: true
                           });
                           return String(criteriaValue) === String(params[criteriaKey]);
-                        }}
+                        })()}
                         onClick={()=> filterByCriteria(criteriaKey, criteriaValue)}
                         key={String(index)}>
                         <p>
@@ -79,8 +79,8 @@ export default function (
   );
 }
 
-const FilterItem = styled.div`
-  border: 1px solid ${p => p.applied() ? 'var(--color-primary)' : 'var(--color-border-gray)'};
+const FilterItem = styled.div<{applied?: boolean}>`
+  border: 1px solid ${p => p.applied ? 'var(--color-primary)' : 'var(--color-border-gray)'};
   padding: 10px 8px 8px;
   border-radius: 2px;
   width: max-content;

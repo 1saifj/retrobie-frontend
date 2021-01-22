@@ -52,6 +52,14 @@ export type CartType = {
   items: Array<CartItemType>;
 };
 
+export type ServerCartType = {
+  id?: number;
+  uuid: string;
+  total: number;
+  count: number;
+  cartItems: Array<CartItemType>;
+};
+
 export type PromiseThunk<T> = (payload) => Promise<T>
 
 export type AddressType = {
@@ -104,15 +112,20 @@ export interface CartItemType extends ProductType {
 
 export type OrderStatus = 'incomplete' |
   'refunded' |
-  'refunded_partially' |
+  'refundedPartially' |
   'declined' |
   'disputed' |
-  'pending_payment' |
-  'pending_confirmation' |
-  'pending_dispatch' |
-  'in_transit' |
+  'pendingPayment' |
+  'pendingConfirmation' |
+  'pendingDispatch' |
+  'inTransit' |
   'delivered' |
   'cancelled';
+
+export type PaymentStatus = 'initiated' |
+  'processed' |
+  'cancelled' |
+  'errored'
 
 export interface OrderType {
   status: OrderStatus,

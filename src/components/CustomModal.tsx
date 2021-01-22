@@ -10,7 +10,7 @@ export default function CustomModal(
     closeOnClickBackground
   }: {
     isActive: boolean,
-    onClose: (e)=> void,
+    onClose: (e: React.MouseEvent<any>)=> void,
     children: ReactElement,
     closeOnClickBackground?: boolean
   }){

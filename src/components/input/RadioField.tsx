@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import styled from 'styled-components';
 import {Radio} from 'bloomer';
 
-const RadioParent = styled.div`
+const RadioParent = styled.div<{bordered?: boolean; selected?: boolean}>`
   display: flex;
   align-items: center;
   border: ${
@@ -62,7 +62,7 @@ export default function RadioField(
   if (!isGroup)
     return (
       <>
-        <RadioParent onChange={(e) => onChange(e.target.value)}>
+        <RadioParent onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}>
           <Radio name={name} value={value} />
         </RadioParent>
       </>

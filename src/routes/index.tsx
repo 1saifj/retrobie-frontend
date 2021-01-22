@@ -35,6 +35,7 @@ const AdminHome = lazy(() => import('../pages/admin/home'));
 const AdminProductsHome = lazy(() => import('../pages/admin/products'));
 const AdminAllProducts = lazy(() => import('../pages/admin/products/AllProducts'));
 const AdminCreateProduct = lazy(() => import('../pages/admin/products/AddProduct'));
+const AdminDeliveries = lazy(() => import('../pages/admin/deliveries'));
 const AdminSingleProduct = lazy(() => import('../pages/admin/products/SingleProduct'));
 
 const AdminOrders = lazy(() => import('../pages/admin/orders/view-orders'));
@@ -101,7 +102,7 @@ function Routes() {
           <Route exact path="/support" component={Support} />
           <Route exact path="/privacy/cookies" component={Cookies} />
           <Route exact path="/privacy/terms-of-service" component={Tos} />
-          <Route exact path="/checkout" component={Checkout} />
+          <Route exact path="/checkout/:cartId" component={Checkout} />
           <Route path="/checkout/shipping/:orderId" component={Shipping} />
           <Route path={'/product/:id'} component={Product} />
           <Route exact path="/support/returns" component={Returns} />
@@ -141,6 +142,11 @@ function Routes() {
             exact
             path="/company/admin/dashboard/products/create"
             component={AdminCreateProduct}
+          />
+          <AdminRoute
+            exact
+            path="/company/admin/dashboard/deliveries"
+            component={AdminDeliveries}
           />
           <AdminRoute
             path="/company/admin/dashboard/products/single/:id"

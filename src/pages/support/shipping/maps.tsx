@@ -48,15 +48,21 @@ export default function ShippingMaps(){
               </h4>
               <p>
                 If you can't find your location through our search functionality,
-                it's not available to us through our mapping provider, and can't be
-                helped for the moment.
+                it's not available to us through our mapping provider.
               </p>
               <p>
-                If your want your location added to the map for future purposes
-                you can either get in touch with us.
+                The search functionality works best with nearby
+                {" "}<b>
+                  named roads
+                </b>{" "}
+                and monuments.
+
+                So, while you may be unable to find the name of your
+                specific estate/block of apartments, etc, you may have better luck
+                searching for the name of a nearby road/shopping mall/government building... etc.
               </p>
               <p>
-                Otherwise, click on the{" "}
+                Alternatively, click on the{" "}
                 '<img style={{width: 12}} src={CurrentLocationIcon}/>'{" "}
                 button and leave the other fields blank.
               </p>
@@ -65,7 +71,7 @@ export default function ShippingMaps(){
                   Note:
                 </strong>{" "}
                 don't forget to drag the red marker to your current location
-                if it's innacurate
+                if it's innacurate.
               </p>
             </div>
             <div>
@@ -80,16 +86,16 @@ export default function ShippingMaps(){
                 results in a marker that isn't at your current location.
               </p>
               <p>
-                Your device's GPS probably isn't very modern or was only designed to
+                Your device's GPS probably isn't modern or was only designed to
                 locate you accurately to a few hundred meters. This is especially common
                 in old computers and laptops.
               </p>
               <p>
                 <strong>
                   Solution #1:
-                </strong> The GPS signal will be at least 60% accurate - it shouldn't
+                </strong> The GPS location will be at least 60% accurate - it shouldn't
                 be too far off from your current location.
-                Most times, you can easily drag the marker to your current location.
+                You can easily drag the marker to your current location to correct the innacuracy.
               </p>
               <p>
                 <strong>
@@ -98,6 +104,24 @@ export default function ShippingMaps(){
                 transfer the cart to your mobile device and click on{" "}
                 '<img style={{width: 12}} src={CurrentLocationIcon}/>'{" "}
                 to try again!
+              </p>
+              <p>
+                Mobile devices typically have more accurate geolocation services
+                courtesy of the more modern technology they are built with.
+              </p>
+            </div>
+            <div>
+              <h4 id={'this-is-my-last-resort'}>
+                c. None of the two options apply
+              </h4>
+              <p>
+                If neither <b>option a</b> nor <b>option b</b> work for you,
+                or if you are unable to load the map altogether, simply fill in
+                the fields under the "<b>Detailed Information</b>" section and
+                ignore the map altogether.
+
+                One of our representatives will get in touch with you to get a better
+                understanding of where you are located.
               </p>
             </div>
           </div>

@@ -29,7 +29,7 @@ const Categories = () => {
             </header>
             <div className={'list'}>
                 {
-                    allCategories.map(item => (
+                    allCategories.slice(0, 4).map(item => (
                         <Link
                           key={item.name}
                           to={`/category/${item.slug}`}>
@@ -70,7 +70,7 @@ const Categories = () => {
     );
 };
 
-const Parent = styled(Link)`
+const Parent = styled.div`
     
   .list {
     display: flex;

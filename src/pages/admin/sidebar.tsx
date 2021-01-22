@@ -101,7 +101,7 @@ const SidebarParent = styled.div`
   }
 `;
 
-const SidebarItem = styled.li`
+const SidebarItem = styled.li<{isActive?:boolean}>`
   padding: 4px 12px;
   margin: 4px 8px;
   border-radius: 4px;

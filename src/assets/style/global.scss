@@ -210,7 +210,8 @@ p,
 a,
 li {
   font-size: 1rem;
-  margin: .43em 0
+  margin: .43em 0;
+  line-height: 1.38rem;
 }
 
 small, small a {
@@ -310,10 +311,12 @@ label, p.label {
   margin-bottom: 0.5em;
   margin-top: 0.5em;
 }
+
 p.help {
   color: #666666;
   margin: 4px 0 4px;
 }
+
 //https://codepen.io/aaroniker/pen/ZEYoxEY
 @supports (-webkit-appearance: none) or (-moz-appearance: none) {
   input[type='checkbox'],
@@ -494,8 +497,17 @@ textarea {
   }
 }
 
+.input, .textarea, .button {
+  border-width: 2px;
+  transition: all ease-in-out 0.25s;
+}
+
 input.has-error, .has-error input {
   border-color: var(--color-error);
+}
+
+.has-error .error {
+  padding: 8px;
 }
 
 .has-error .error small {
@@ -675,6 +687,12 @@ b {
 
 .notification.is-error {
   background: #d80000;
+}
+
+.notification.is-info {
+  h4, p {
+    color: #FFFFFF;
+  }
 }
 
 .notification > .delete {
