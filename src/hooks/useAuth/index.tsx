@@ -196,7 +196,7 @@ export default function() {
       return (await getAxis()).post('/accounts/logout', data);
     },
     check: () => async () => (await getAxis()).get('auth/check'),
-    update: async (data) => (await getAxis()).post('/accounts/update', data),
+    update: (diff) => async () => (await getAxis()).post('/accounts/me', diff),
   };
 
   const cart = {
@@ -219,6 +219,5 @@ export default function() {
     payments,
     products,
     ping,
-
   };
 };

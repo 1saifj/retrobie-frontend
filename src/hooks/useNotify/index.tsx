@@ -65,7 +65,7 @@ function mapToType(type: NotificationType, message: string) {
 }
 
 const NotificationMarkup = ({ message, icon }) => (
-  <div style={{ display: 'flex', alignItems: 'center' }}>
+  <div style={{ display: 'flex', alignItems: 'center', padding: '12px 8px' }}>
     <img style={{ width: '24px', margin: '0 12px' }} alt="info icon" src={icon} />
     <p style={{ color: 'white', marginRight: 24 }}>{message}</p>
   </div>

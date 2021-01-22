@@ -6,7 +6,6 @@ import {env} from '../config';
 export function formatNumberWithCommas(x: number): string {
   return x.toLocaleString('en-KE', {
     currency:'Ksh',
-    minimumSignificantDigits: 2
   })
 }
 

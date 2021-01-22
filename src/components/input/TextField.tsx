@@ -2,6 +2,7 @@ import React, {ReactElement, useEffect, useState} from 'react';
 import {useField} from 'formik';
 import {Help, Input, Label, TextArea} from 'bloomer';
 import styled from 'styled-components';
+import InputMask from 'react-input-mask';
 
 const TextField: ({label, chars, buttonAction, help, ...props}: {
   label: string | ReactElement;
@@ -10,8 +11,21 @@ const TextField: ({label, chars, buttonAction, help, ...props}: {
   chars?: number;
   buttonAction?: Function;
   help?: string;
+  disabled?: boolean
+  prefix?: string
+  type: 'password' | 'text' | 'textarea' | 'email' | 'phone' | 'number',
   [p: string]: any
-}) => (JSX.Element) = ({label, chars, buttonAction, help, ...props}) => {
+}) => (JSX.Element) = (
+  {
+    label,
+    chars,
+    buttonAction,
+    help,
+    type,
+    disabled,
+    prefix,
+    ...props
+  }) => {
   // @ts-ignore
   const [field, meta] = useField(props);
   const [charRemaining, setRemaining] = useState(chars);
@@ -22,7 +36,7 @@ const TextField: ({label, chars, buttonAction, help, ...props}: {
   const hasError = meta.touched && meta.error;
 
   useEffect(() => {
-    if (props.type === 'textarea') {
+    if (type === 'textarea') {
       if (field.value) {
         const remaining = chars - field.value.length;
         setRemaining(remaining);
@@ -36,8 +50,7 @@ const TextField: ({label, chars, buttonAction, help, ...props}: {
     }
   }, [field.value]);
 
-  // @ts-ignore
-  if (props.type === 'textarea') {
+  if (type === 'textarea') {
     return (
       <>
         <InputParent className={hasError ? 'has-error' : ''} tooHigh={tooHigh}>
@@ -58,40 +71,76 @@ const TextField: ({label, chars, buttonAction, help, ...props}: {
     );
   }
 
+  if (type === 'phone') {
+    return (
+      <div>
+        <label>{label}</label>
+        <InputMask
+          mask="9999-999-999"
+          onBlur={(e)=> {
+            field.onBlur(e);
+            if (typeof props.onBlur === 'function') {
+              props.onBlur(e);
+            }
+          }}
+          value={field.value}
+          onChange={e => {
+            field.onChange(e);
+            if (typeof props.onChange === 'function') {
+              props.onChange(e);
+            }
+          }}
+        >
+          {inputProps => (
+            <Input
+              label={'Your phone number'}
+              name={'phoneNumber'}
+              placeholder={'eg. 0728-538-683'}
+              {...inputProps}
+              type="tel"
+            />
+          )}
+        </InputMask>
+      </div>
+    )
+  }
+
   return (
     <>
       <InputParent className={hasError ? 'has-error' : ''} isButtonActive={isButtonActive}>
         <Label>{label}</Label>
         <div
           className={'parent'}
-          style={{background: props.disabled ? 'whitesmoke' : 'transparent'}}
+          style={{background: disabled ? 'whitesmoke' : 'transparent'}}
         >
-          {props.prefix && (
+          {prefix && (
             <div className={'prefix'}>
               <p>{props.prefix}</p>
             </div>
           )}
           <Input
+            disabled={disabled}
+            type={type}
             {...field}
             {...props}
             onFocus={e=> {
-              if (props.onFocus && typeof props.onFocus === 'function') {
+              if (typeof props.onFocus === 'function') {
                 props.onFocus(e);
               }
             }}
             onBlur={e=> {
               field.onBlur(e);
-              if (props.onBlur && typeof props.onBlur === 'function') {
+              if (typeof props.onBlur === 'function') {
                 props.onBlur(e);
               }
             }}
             onChange={(e)=> {
               field.onChange(e);
-              if (props.onChange && typeof props.onChange === 'function') {
+              if (typeof props.onChange === 'function') {
                 props.onChange(e);
               }
             }}
-            style={{marginLeft: props.prefix ? '-33px' : '0'}}/>
+            style={{marginLeft: prefix ? '-33px' : '0'}}/>
           {props.icon && (
             <img
               src={props.icon}

@@ -342,7 +342,6 @@ export default function Checkout(props) {
                                     <Field>
                                       <label>Your phone number</label>
                                       <InputMask
-                                        maskChar={''}
                                         mask="9999-999-999"
                                         onBlur={handleBlur}
                                         value={values.phoneNumber}

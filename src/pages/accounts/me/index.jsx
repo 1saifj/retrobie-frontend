@@ -6,6 +6,8 @@ import {Tab, TabLink, TabList, Tabs} from 'bloomer';
 import {UserDetails} from './components';
 import {useAuth} from '../../../network';
 import useSWR from 'swr/esm/use-swr';
+import {env} from '../../../config';
+import {Tooltip} from 'react-tippy';
 
 
 const tabs = [
@@ -61,12 +63,25 @@ export default function UserProfile() {
     <>
       <Layout>
         <div style={{maxWidth: '800px', margin: '120px auto'}}>
-          <div>
-            <Users style={{display: 'inline', marginRight: 8}}/>
-            <h2 style={{display: 'inline'}}>
-              {userInfo?.firstName}&nbsp;
-              {userInfo?.lastName}
-            </h2>
+          <div style={{display: 'flex', gap: 12, alignItems: 'center'}}>
+            <Tooltip
+              theme={'light'}
+              position={'right'}
+              arrow={true}
+              title={'Systematically generated from your name'}
+            >
+              <img
+                style={{borderRadius: 4}}
+                alt={'avatar'}
+                src={env.getApiBaseUrl() + userInfo.avatar.thumbnailUrl}/>
+            </Tooltip>
+            <div>
+              <Users style={{display: 'inline', marginRight: 8}}/>
+              <h2 style={{display: 'inline'}}>
+                {userInfo?.firstName}&nbsp;
+                {userInfo?.lastName}
+              </h2>
+            </div>
           </div>
           <Tabs style={{marginBottom: 0}}>
             <TabList>

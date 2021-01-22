@@ -644,6 +644,7 @@ export default function Shipping(props) {
                                     Ksh.
                                   </b>
                                 </span>
+                                &nbsp;
                                 <span>
                                     <b>
                                       {formatNumberWithCommas(checkoutDelivery.cost)}

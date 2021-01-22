@@ -181,6 +181,7 @@ export default function PayWithMpesaOnlineModal(
                 <p>
                   You will receive a prompt on your phone:
                   <b> +254-{addDashes(phoneNumber)}</b>&nbsp;
+                  {/*TODO: don't forget to charge both total + shipping*/}
                   for a charge of <strong>Ksh. {formatNumberWithCommas(checkout.total)}</strong>
                 </p>
 

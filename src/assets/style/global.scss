@@ -610,7 +610,11 @@ b {
   fill: none;
 }
 
-
+.Toastify__toast-container {
+  width: unset;
+  min-width: 320px;
+  max-width: 420px;
+}
 
 .Toastify__toast {
   border-radius: 4px !important;

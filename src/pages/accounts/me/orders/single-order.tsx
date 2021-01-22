@@ -8,6 +8,7 @@ import {Button, Help, Tag} from 'bloomer';
 import {capitalize} from '../../../../helpers';
 import styled from 'styled-components';
 import {Tooltip} from 'react-tippy';
+import {OrderStatus} from '../../../../types';
 
 export default function({match: {params: {orderId}}}) {
 
@@ -22,15 +23,16 @@ export default function({match: {params: {orderId}}}) {
     )
   }
 
-  function mapStatus(status) {
+  function mapStatus(status: OrderStatus) {
     if (!status) return <Tag>Undefined</Tag>;
 
     switch (status) {
       case 'cancelled':
         return <Tag isColor='danger'>Cancelled</Tag>;
-      case 'fulfilled':
-        return <Tag isColor={'success'}>Fulfilled</Tag>;
+      case 'delivered':
+        return <Tag isColor={'success'}>{capitalize(status)}</Tag>;
       case 'incomplete':
+      case 'pendingPayment':
         return (
           <Tooltip
             theme={'light'}
@@ -42,8 +44,16 @@ export default function({match: {params: {orderId}}}) {
         );
       default:
         return <Tag>{capitalize(status)}</Tag>;
-      case 'finalized':
-        return <Tag isColor={'info'}>Finalized</Tag>;
+      case 'pendingConfirmation':
+        return (
+          <Tooltip
+            theme={'light'}
+            position={'right'}
+            title={'Your payment has been received. We will call you to confirm delivery details.'}
+          >
+            <Tag isColor={'info'}>Pending Confirmation</Tag>
+          </Tooltip>
+        );
     }
   }
 
@@ -57,7 +67,7 @@ export default function({match: {params: {orderId}}}) {
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 4
+              gap: 4,
             }}>
               <h4>
                 Order no:
@@ -70,7 +80,7 @@ export default function({match: {params: {orderId}}}) {
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 4
+            gap: 4,
           }}>
             <h4>
               Status:
@@ -85,13 +95,16 @@ export default function({match: {params: {orderId}}}) {
             <Cart
               bordered={true}
               source={orderData.cart}
-              hideCheckoutButton={false}
-              checkoutButtonText={"Complete this order"}
+              hideCheckoutButton={
+                orderData.status === 'pendingConfirmation' ||
+                orderData.status === 'delivered'
+              }
+              checkoutButtonText={'Complete this order'}
             />
           </div>
           <div>
             <Help>
-              If not completed, this order will be deleted automatically after a week.{" "}
+              If not completed, this order will be deleted automatically after a week.{' '}
               <Button
                 style={{borderBottom: '1px solid lightgray'}}
                 isColor={'ghost'}>

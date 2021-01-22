@@ -48,6 +48,7 @@ export default function({isActive, onClose}){
                     }}
                     allowMultiple={false}/>
                   <TextField
+                    type={'text'}
                     label={'Category Name'}
                     name={'name'}
                     placeholder={'eg. Men\'s Shoes'}
