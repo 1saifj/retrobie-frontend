@@ -21,6 +21,22 @@ export type ProductType = {
   currency?: string
 };
 
+// This is the ProductType as represented/provided
+// by Meilisearch
+export type FilteredProduct = {
+  price: number,
+  sex: "M" | "F",
+  size: number,
+  style: string,
+  condition: string,
+  uuid: string
+  url: string,
+  name: string
+  thumbnailUrl: string
+  brands?: BrandType,
+  description?: string
+}
+
 type ProductDetailType = {
   size: number;
   sizeCountry: string;
@@ -74,6 +90,7 @@ export interface CategoryType {
   slug: string;
   uuid: string;
   landingImage: ImageType
+  products?: Array<ProductType>
 }
 
 export interface BrandType {

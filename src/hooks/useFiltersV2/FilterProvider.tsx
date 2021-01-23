@@ -1,5 +1,5 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {ProductType} from '../../types';
+import {FilteredProduct} from '../../types';
 import qs from 'qs';
 
 const filterContext = createContext(null);
@@ -15,43 +15,33 @@ export default function ProvideFilters({children}) {
 }
 
 export function useFiltersV2(): {
-  setAllProducts: (products: Array<ProductType>)=> void,
+  setAllProducts: (products: Array<FilteredProduct>)=> void,
   setAllCriteria: (criteria: Array<string>) => void,
   filterByCriteria: Function,
-  criteriaValues: any,
+  criteriaValues: Map<string, Set<string | number>>,
   products: Array<FilteredProduct>,
 } {
   return useContext(filterContext);
 }
 
-type FilteredProduct = {
-  price: number,
-  sex: "M" | "F",
-  size: number,
-  style: string,
-  condition: string,
-  uuid: string
-  url: string,
-  name: string
-  thumbnailUrl: string
-}
+
 
 function useProvideFilters() {
 
   const [transformedProducts, setTransformedProducts] = useState<Array<FilteredProduct>>([]);
 
-  const [allProducts, setAllProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState<Array<FilteredProduct>>(null);
 
-  const [filteredProducts, setFilteredProducts] = useState<Array<ProductType>>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Array<FilteredProduct>>([]);
 
-  const [criteriaValues, setCriteriaValues] = useState({});
+  const [criteriaValues, setCriteriaValues] = useState<Map<string, Set<string | number>>>(null);
   // a list of all the criteria to be applied
   const [allCriteria, setAllCriteria] = useState<Array<string>>([]);
 
   // this hook is called when allProducts or allCriteria change
   // i.e. when they are set (at any point)
   useEffect(() => {
-    const newCriteria = {...criteriaValues};
+    const newCriteria = new Map(criteriaValues);
 
     // grab the criteria we need to sort by from each product
     // we need a list of flat products with only the required criteria
@@ -60,19 +50,28 @@ function useProvideFilters() {
 
       const newP = product;
 
-      // for all provided criteria
+      // for the provided list of criteria,
+      // loop through each entry
       allCriteria.forEach(crit => {
-        // if the criteria object doesn't exist
-        if (!newCriteria[crit]) {
+
+        // and check if the criteria object
+        // already contains a set of values
+
+        // if it doesn't
+        if (!newCriteria.has(crit)) {
           // create a new set for it
-          newCriteria[crit] = new Set();
+          // and add the current value
+          newCriteria.set(crit, new Set<string | number>().add(newP[crit]));
         } else {
-          // and if it does, convert it from an array to a set
-          newCriteria[crit] = new Set(newCriteria[crit]);
+          // if it does, add the new value to the existing set
+          newCriteria.get(crit).add(newP[crit]);
         }
 
-        //
-        newCriteria[crit] = Array.from(newCriteria[crit].add(newP[crit]));
+        // and sort the entries
+        Array.from(newCriteria.entries()).map(([key, set]) => {
+          const arr = Array.from(set).sort();
+          newCriteria.set(key, new Set<string | number>(arr));
+        });
       });
 
       return newP;

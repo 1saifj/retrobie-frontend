@@ -278,7 +278,10 @@ export default function Cart(
             width={'350px'}
             style={{minWidth: '280px'}}
             prompt={() => (
-              <Button isColor="primary" style={{width: '100%'}}>
+              <Button
+                isColor="primary"
+                onClick={()=> redirectOrCloseSidebar('/')}
+                style={{width: '100%'}}>
                 Start Shopping
               </Button>
             )}

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Layout from '../../components/Layout';
-import BrandsFilters from './components/brand-filters';
+import ProductFilters from './components/product-filters';
 import styled from 'styled-components';
 import Loading from '../../components/loading';
 import {Container, Section} from 'bloomer';
@@ -8,7 +8,7 @@ import {useAuth} from '../../network';
 import {formatNumberWithCommas} from '../../helpers';
 import {Link} from 'react-router-dom';
 import useSWR from 'swr/esm/use-swr';
-import {BrandType, ProductType} from '../../types';
+import {BrandType, FilteredProduct, ProductType} from '../../types';
 import useFiltersV2 from '../../hooks/useFiltersV2';
 
 export default function ViewSingleBrand(props) {
@@ -22,7 +22,7 @@ export default function ViewSingleBrand(props) {
   const {products: renderProducts} = useFiltersV2();
 
   const filteredProductsFetcher = (url, name) => api.brands.getFilteredProducts(name).then(({data})=> data);
-  const {data: allProducts} = useSWR<ProductType[]>([
+  const {data: allProducts} = useSWR<FilteredProduct[]>([
     brandData ? `/brands/${brandData.name}/products/filtered`: undefined,
     brandNameOrId
   ], filteredProductsFetcher)
@@ -61,7 +61,7 @@ export default function ViewSingleBrand(props) {
                   </BrandHeader>
                   <div style={{display: 'flex', gap: 64}}>
 
-                    <BrandsFilters
+                    <ProductFilters
                       products={allProducts}
                       allCriteria={['sex', 'size', 'price', 'style']}
                     />
@@ -72,7 +72,7 @@ export default function ViewSingleBrand(props) {
                       }}
                       >
                         {
-                          renderProducts.map((item, index) => (
+                          renderProducts?.map((item, index) => (
                             <ProductItem
                               key={String(index)}
                               to={`/brands/${brandNameOrId}/${item.uuid}`}
@@ -132,7 +132,7 @@ const BrandHeader = styled.header`
   }
 `;
 
-const ProductItem = styled(Link)`
+export const ProductItem = styled(Link)`
   border: 1px solid #f1f1f1;
   border-radius: 4px;
   min-width: 200px;

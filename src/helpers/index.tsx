@@ -27,8 +27,9 @@ export function findIndexWithAttr(array, attr, value) {
   return -1;
 }
 
-export function capitalize(str) {
-  if (str && typeof str === 'string') return str.charAt(0).toUpperCase() + str.substring(1);
+export function capitalize(str: string) {
+  if (typeof str === 'string')
+    return str.charAt(0).toUpperCase() + str.substring(1);
 
   return '';
 }
