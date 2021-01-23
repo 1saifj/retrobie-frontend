@@ -3,8 +3,8 @@ class Env {
     return this.isDev()
       ? 'http://localhost:2500/api'
       : this.isStaging
-      ? 'https://api.staging.retrobie.com'
-      : 'https://api.retrobie.com';
+      ? 'https://api.staging.retrobie.com/api'
+      : 'https://api.retrobie.com/api';
   }
 
   getApiVersion() {
@@ -16,7 +16,7 @@ class Env {
   }
 
   getApiBaseUrl() {
-    return `${this.getApiHost()}/${this.getApiVersion()}`;
+    return `${this.getApiHost()}/${this.getApiVersion()}/`;
   }
 
   getEnvironment() {
