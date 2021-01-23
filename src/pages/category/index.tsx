@@ -77,7 +77,7 @@ export default function({match}){
                 renderProducts?.map((item, index) => (
                   <ProductItem
                     key={String(index)}
-                    to={`/product/${item.uuid}`}
+                    to={`/product/${item.uuid}/`}
                     style={{
                       flex: '0 1 200px',
                       maxHeight: 250,
