@@ -94,7 +94,9 @@ export default function() {
       const axis = axios.create({
         baseURL: env.getApiBaseUrl(),
         headers: {
-          Authorization: bearer,
+          ...(bearer && {
+            Authorization: bearer
+          })
         },
       });
       axis.interceptors.response.use(
