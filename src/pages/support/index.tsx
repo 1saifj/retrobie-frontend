@@ -26,13 +26,13 @@ function Support() {
                       <img src={chevron} alt={'chevron'}/>
                   </HelpItem>
               </Link>
-              <Link to={'/support/delivery'}>
+              <Link to={'/policies/shipping-policy'}>
                   <HelpItem>
                       <p>Delivery</p>
                       <img src={chevron} alt={'chevron'}/>
                   </HelpItem>
               </Link>
-              <Link to={'/support/returns'}>
+              <Link to={'/policies/returns-policy'}>
                   <HelpItem>
                       <p>Returns</p>
                       <img src={chevron} alt={'chevron'}/>
@@ -67,23 +67,15 @@ const SupportParent = styled.div`
   flex-direction: column;
   align-items: center;
   margin: 48px 0;
-  
-  p {
-    color: #353535;
-  }
-
-  a {
-      text-decoration: none;
-  }
 `;
 
 const HelpItem = styled.div`
     display: flex;
-    border: 1px solid #444;
+    border: 1px solid var(--color-border-pale);
     border-radius: 4px;
     margin-bottom: 8px;
     min-width: 350px;
-    padding: 8px 12px;
+    padding: 6px 12px;
     align-items: center;
     justify-content: space-between;
     transition: all 0.25s ease-in-out;
@@ -98,10 +90,11 @@ const HelpItem = styled.div`
     
     &:hover {
       cursor:pointer;
-      background: gray;
+      background: var(--color-primary);
+      border-color: #444444;
       
       p {
-        color: #eeeeee;
+        color: #fff;
       }
       
       img {

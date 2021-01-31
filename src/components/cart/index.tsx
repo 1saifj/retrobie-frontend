@@ -12,10 +12,9 @@ import {
 import PropTypes from 'prop-types';
 import {Button} from 'bloomer';
 import Manga from '../../assets/images/icons/marginalia-online-shopping.png';
-import EmptyState from '../empty/EmptyState';
+import {EmptyState} from '../../components';
 import {notify} from '../../helpers/views';
 import {useHistory} from 'react-router';
-import {Link} from 'react-router-dom';
 import {Minus, Plus} from 'react-feather';
 import {CartItemType, CartType, ServerCartType} from '../../types';
 import Loading from '../loading';
@@ -85,6 +84,8 @@ export default function Cart(
     onCheckout,
     checkoutButtonLink,
     checkoutButtonText,
+    checkoutButtonDisabled,
+    checkoutButtonIsLoading
   }: {
     source?: ServerCartType
     size?: 'L' | 'S';
@@ -95,6 +96,8 @@ export default function Cart(
     onCheckout?: ((event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement, MouseEvent>) => void) & ((event: React.MouseEvent<HTMLElement, MouseEvent>) => void);
     checkoutButtonLink?: string;
     checkoutButtonText?: string;
+    checkoutButtonDisabled?: boolean;
+    checkoutButtonIsLoading?: boolean;
   }) {
 
 
@@ -240,7 +243,9 @@ export default function Cart(
             <div>
               <Button
                 isColor="primary"
+                disabled={checkoutButtonDisabled}
                 onClick={()=> redirectOrCloseSidebar(checkoutButtonLink || `/checkout/${cart.id}`)}
+                isLoading={checkoutButtonIsLoading}
                 style={{
                   width: '100%',
                   fontSize: 18,
@@ -257,6 +262,8 @@ export default function Cart(
             <div>
               <Button
                 isColor="primary"
+                disabled={checkoutButtonDisabled}
+                isLoading={checkoutButtonIsLoading}
                 style={{
                   width: '100%',
                   fontSize: 18,
@@ -275,7 +282,6 @@ export default function Cart(
             title={'It\'s kinda lonely in here.'}
             message={'Your cart is empty'}
             icon={Manga}
-            width={'350px'}
             style={{minWidth: '280px'}}
             prompt={() => (
               <Button

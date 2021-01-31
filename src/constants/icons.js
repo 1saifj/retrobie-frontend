@@ -1,4 +1,4 @@
-import Logo from '../assets/images/emoji/logo.png';
+import Logo from '../assets/images/logos/retrobie-logo.png';
 import P100 from '../assets/images/emoji/100.png';
 
 import ErrorIconDark from '../assets/images/icons/warning.svg';
@@ -10,6 +10,7 @@ import ErrorIcon502Dark from '../assets/images/icons/error-502.svg';
 import InfoDark from '../assets/images/icons/info.svg';
 import InfoLight from '../assets/images/icons/info-light.svg';
 import WarningIconLight from '../assets/images/icons/warning-circle-white.svg';
+import DeadEyes from '../assets/images/vectors/dead.svg';
 
 import EmptyBox from '../assets/images/icons/empty-box.webp';
 import EmptyCart from '../assets/images/icons/empty-cart.svg';
@@ -107,6 +108,7 @@ export {
   ConverseLogo,
   ConverseWhiteLogo,
   CoolPeach,
+  DeadEyes,
   Diamond,
   EmptyBox,
   EmptyCart,

@@ -5,16 +5,27 @@ import ChevronRight from '../../assets/images/icons/chevron-right.svg';
 import {Link} from 'react-router-dom';
 import {useAuth} from '../../hooks';
 import useSWR from 'swr/esm/use-swr';
-import {Loading} from '../../components';
+import {EmptyState, Loading} from '../../components';
 import {CategoryType} from '../../types';
+import ServerError from '../../assets/images/vectors/dead.svg';
 
 const Categories = () => {
 
     const api = useAuth();
     const allCategoriesFetcher = () => api.category.getAll().then(({data}) => data);
-    const {data: allCategories} = useSWR<Array<CategoryType>>('/categories/all', allCategoriesFetcher);
+    const {data: allCategories, error} = useSWR<Array<CategoryType>>('/categories/all', allCategoriesFetcher);
 
-    if (!allCategories) {
+  if (error) {
+    return (
+      <EmptyState
+        icon={ServerError}
+        title={"Oops! That's an error. It's on us."}
+        message={"We couldn't fetch this section. Our best engineers have been notified, and are working on it."}
+      />
+    );
+  }
+
+  if (!allCategories) {
         return <Loading minor={true}/>
     }
 

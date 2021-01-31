@@ -5,8 +5,9 @@ import {Link} from 'react-router-dom';
 import {capitalize} from '../../../../helpers';
 import useSWR from 'swr/esm/use-swr';
 import {useAuth} from '../../../../hooks';
-import {Layout, Loading, RetroImage } from '../../../../components';
-import { OrderType } from '../../../../types';
+import {EmptyState, Layout, Loading, RetroImage} from '../../../../components';
+import {OrderType} from '../../../../types';
+import {DeadEyes, EmptyBox} from '../../../../constants/icons';
 
 const OrderItem = styled.div`
   padding: 12px 24px;
@@ -40,11 +41,37 @@ export default function() {
       });
     }
   });
-  const {data: userOrders} = useSWR('my-orders', myOrderFetcher);
+  const {data: userOrders, error: fetchOrdersError} = useSWR<OrderType[]>('/orders/mine', myOrderFetcher);
+
+  if (fetchOrdersError){
+    return (
+      <Layout>
+        <EmptyState
+          icon={DeadEyes}
+          message={'Something went wrong. Our best engineers have been informed and are working on it as you read this.'}
+          title={"Oops. That's an error"}/>
+      </Layout>
+    )
+  }
+
 
   if (!userOrders) {
     return (
       <Loading/>
+    )
+  }
+
+  if (!userOrders.length) {
+    return (
+      <Layout>
+        <EmptyState
+          icon={EmptyBox}
+          iconWidth={56}
+          centerAlign={true}
+          title={"You haven't made any orders yet"}
+          message={'Make a few orders and check back later.'}
+        />
+      </Layout>
     )
   }
 
@@ -74,7 +101,7 @@ export default function() {
           </div>
           <div>
             {
-              userOrders?.length  && userOrders?.map((order: OrderType) => {
+              userOrders?.length  && userOrders.map((order: OrderType) => {
                 if (order.cart) {
                   return (
                     <>

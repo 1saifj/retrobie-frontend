@@ -9,7 +9,37 @@ import styled from 'styled-components';
 import axios from 'axios';
 import AutoCompleteInput from '../input/AutoCompleteInput';
 import CurrentLocationIcon from '../../assets/images/icons/current-location.svg';
-import { HashLink } from 'react-router-hash-link';
+import {HashLink} from 'react-router-hash-link';
+
+type LocationIQPlace = {
+  "place_id": string,
+  "osm_id": string,
+  "osm_type": string,
+  "licence": string,
+  "lat": string,
+  "lon": string,
+  "boundingbox": [
+    string,
+    string,
+    string,
+    string
+  ],
+  "class": string,
+  "type": string,
+  "display_name": string,
+  "display_place": string,
+  "display_address": string,
+  "address": {
+    "name": string,
+    "road": string,
+    "suburb": string,
+    "city": string,
+    "state": string,
+    "postcode": string,
+    "country": string,
+    "country_code": string
+  }
+}
 
 export type LngLat = {
   lat: number,
@@ -69,8 +99,8 @@ export default function SimpleMap(
 
   const mapContainerRef = useRef(null);
 
-  async function geoCodeQuery(q) {
-    const response = await axios.get(`https://us1.locationiq.com/v1/search.php?key=pk.0f7e04f1735b49798174c83d72c1cb41&q=${q}&countrycodes=ke&viewbox=${nairobiBoundingBox.join(",")}&format=json`);
+  async function geoCodeQuery(q): Promise<[LocationIQPlace]> {
+    const response = await axios.get(`https://us1.locationiq.com/v1/autocomplete.php?key=pk.0f7e04f1735b49798174c83d72c1cb41&q=${q}&countrycodes=ke&viewbox=${nairobiBoundingBox.join(",")}&format=json`);
     return response?.data;
   }
 
@@ -108,7 +138,7 @@ export default function SimpleMap(
         onMapLocateUser(lngLat);
       })
 
-      map.on('zoom', (e)=> {
+      map.on('zoom', ()=> {
         if (typeof onZoom === 'function') {
           onZoom(map.getZoom())
         }
@@ -156,8 +186,8 @@ export default function SimpleMap(
         return {
           value: {
             placeId: item.place_id,
-            lat: item.lat,
-            lng: item.lon,
+            lat: Number(item.lat),
+            lng: Number(item.lon),
           },
           name: item.display_name
         }
@@ -175,11 +205,11 @@ export default function SimpleMap(
             <AutoCompleteInput
               label={"Search for a place"}
               help={()=> (
-                <HashLink to={`/support/delivery/maps#trouble-finding-location`}>
-                  <Help>
-                    Can't find your location?
-                  </Help>
-                </HashLink>
+                  <HashLink to={`/support/delivery/maps#trouble-finding-location`}>
+                    <Help>
+                      Can't find your location?
+                    </Help>
+                  </HashLink>
               )}
               items={queryResults}
               initialItem={{

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import SEOHeader from '../../components/SEOHeader';
 
-import { Button, Container, Input, Section } from 'bloomer';
+import {Button, Container, Input, Section} from 'bloomer';
 import Return from '../../../src/assets/images/icons/return.svg';
 import FastDelivery from '../../../src/assets/images/icons/delivery.svg';
 import FreePickups from '../../../src/assets/images/icons/pickup.svg';
@@ -15,8 +15,8 @@ import WinkingEmoji from '../../assets/images/emoji/wink.webp';
 
 import jsonld from './jsonld';
 
-import { MPesaLogo } from '../../constants/icons';
-import { JsonLd } from 'react-schemaorg';
+import {MPesaLogo} from '../../constants/icons';
+import {JsonLd} from 'react-schemaorg';
 import Layout from '../../components/Layout';
 import PopularProducts from './PopularProducts';
 import Scope from '../../../src/assets/images/vectors/DancingDoodle.svg';
@@ -26,8 +26,7 @@ import Originality from '../../../src/assets/images/vectors/RollingDoodle.svg';
 import Categories from './Categories';
 import Discover from './Discover';
 import Hero from './Hero';
-import LightPattern from '../../assets/images/patterns/dot-grid.webp';
-import DotPattern from '../../assets/images/patterns/dots.svg'
+import DotPattern from '../../assets/images/patterns/dots.svg';
 
 const LoaderParent = styled.div`
   width: 100%;
@@ -41,12 +40,8 @@ const LoaderParent = styled.div`
 function Landing({ history }) {
   return (
     <Layout style={{ maxWidth: '1684px' }}>
-      {/* @ts-ignore */}
       <SEOHeader
-        title={'The Home of Authentic Sports Shoes and Sneakers in Kenya'}
-        description={
-          "We stock high-quality sneakers, running shoes, trainers, gym shoes, sports shoes and classy men's shoes at affordable prices in Kenya. We also do personal thrifting and accept shoe requests from trusted repeat customers. Delivery within the CBD is free."
-        }
+        title={'The Home of Authentic Sneakers & Sports Shoes in Kenya'}
       />
       <JsonLd item={jsonld()} />
       <div

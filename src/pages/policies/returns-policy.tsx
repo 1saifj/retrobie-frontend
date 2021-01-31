@@ -1,28 +1,28 @@
 import React from 'react';
 import Layout from '../../components/Layout';
-import styled from 'styled-components';
-import {SupportParent} from './shipping/shipping-and-delivery';
+import {SupportParent} from './shipping-policy';
 import {Return} from '../../constants/icons';
 import SEOHeader from '../../components/SEOHeader';
 import {Container} from 'bloomer';
+import {Link} from 'react-router-dom';
 
-class Returns extends React.Component {
+class ReturnsPolicy extends React.Component {
   render() {
     return (
       <Layout style={{display: 'flex', justifyContent: 'center', marginTop: '48px'}}>
         <SEOHeader
-          title={'Making Returns'}
+          title={'Making ReturnsPolicy'}
           description={
-            "If you purchased a product from one of sneaker shops in Nairobi but aren't satisfied, here are the resources you need for making returns."
+            'If you purchased a product from one of sneaker shops in Nairobi but aren\'t satisfied, here are the resources you need for making returns.'
           }
         />
         <SupportParent>
           <Container>
             <Container>
               <div>
-                <img src={Return} alt={'making returns'} style={{width: '48px'}} />
+                <img src={Return} alt={'making returns'} style={{width: '48px'}}/>
               </div>
-              <h2>Returns and Refunds</h2>
+              <h2>Returns Policy</h2>
               <p>
                 First things first, considering a refund or return means you made an order from us,
                 which means we owe you a gigantic "Thank You!" Nothing makes us happier than having
@@ -30,6 +30,20 @@ class Returns extends React.Component {
                 your requirements is a crucial component of that, we've made the returns process as
                 seamless as possible for your experience.
               </p>
+              <p>
+                A return occurs when a customer (You) requests for a product to be taken back by Us
+                (Retrobie) due to a fault with the product or an error made during delivery.
+              </p>
+
+              <p>
+                The return will then take 3-5 business days to process,
+                within which time, a full or partial refund will be issued
+                in accordance with our{' '}
+                <Link to={'/support/policies/refund-policy'}>
+                  refund policy
+                </Link>.
+              </p>
+
               <p>That said, there are some things you need to keep in mind:</p>
               <ul>
                 <li>
@@ -38,10 +52,19 @@ class Returns extends React.Component {
                 <li>
                   You have seven (7) days since the day of delivery to make a returns claim.
                 </li>
+                <li>
+                  <p>
+                    A return can only be made once claim has been successfully processed.
+                    To learn more, see our{' '}
+                    <Link to={'/support/policies/claims-policy'}>
+                      claims policy
+                    </Link>
+                  </p>
+                </li>
               </ul>
             </Container>
             <Container>
-              <FAQs>
+              <div>
                 <h3>Frequently Asked Questions</h3>
                 <p>
                   These are some of the enquires that customers have most often. If you have any
@@ -82,6 +105,11 @@ class Returns extends React.Component {
                           <li>
                             <p>You received the wrong order.</p>
                           </li>
+                          <li>
+                            <p>
+                              The product doesn't fit as expected.
+                            </p>
+                          </li>
                         </ul>
                       </div>
                     </div>
@@ -92,7 +120,12 @@ class Returns extends React.Component {
                       <div>
                         <p>
                           We will contact you in order to arrange a time that's convenient for
-                          dropping off the order. Once the return package is received and properly
+                          collecting the order. A Retrobie representative will then collect the product
+                          from an agreed upon location on an agreed upon date, but within 48 hours of the
+                          claim having been processed.
+                        </p>
+                        <p>
+                          Once the return package is received and properly
                           assessed, you will receive a confirmation email or message and get back
                           your money within 48 hours.
                         </p>
@@ -137,21 +170,40 @@ class Returns extends React.Component {
                       </div>
                     </div>
                     <div>
-                      <div>
-                        <h4>Can I return my items after the timeline to return has expired?</h4>
-                      </div>
-                      <div>
-                        <p>Unfortunately, no..</p>
-                      </div>
+                      <h4>Can I return my items after the timeline to return has expired?</h4>
+                      <p>Unfortunately, no.</p>
+                    </div>
+                    <div>
+                      <h4>How much do returns cost?</h4>
+                      <p>
+                        Making a return costs as much as you were charged for the delivery
+                        of the product in the first place.
+                      </p>
+                      <p>
+                        However, if the fault was on our end - e.g. we delivered the wrong
+                        size/wrong order - the returns are free.
+                      </p>
+                    </div>
+                    <div>
+                      <h4>Why would my return be rejected?</h4>
+                      <p>
+                        A return can be rejected for a variety of reasons.
+                      </p>
+                      <ul>
+                        <li>
+                          You may be prohibited from making future returns if we notice
+                          a suspicious history of returning products.
+                        </li>
+                        <li>
+
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </div>
-              </FAQs>
+              </div>
             </Container>
-            <p>
-              Please note that we keep track of all returns requests for future purposes. Accounts
-              with suspicious returns request could be denied from requesting returns in the future.
-            </p>
+
           </Container>
         </SupportParent>
       </Layout>
@@ -159,6 +211,4 @@ class Returns extends React.Component {
   }
 }
 
-export default Returns;
-
-const FAQs = styled.div``;
+export default ReturnsPolicy;

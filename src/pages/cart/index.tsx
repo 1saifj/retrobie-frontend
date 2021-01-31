@@ -3,7 +3,7 @@ import Layout from '../../components/Layout';
 import {connect, RootStateOrAny, useSelector} from 'react-redux';
 import styled from 'styled-components';
 import Cart from '../../components/cart';
-import EmptyState from '../../components/empty/EmptyState';
+import {EmptyState} from '../../components';
 import {EmptyCart} from '../../constants/icons';
 import {Button} from 'bloomer';
 

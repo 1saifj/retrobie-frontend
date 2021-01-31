@@ -19,7 +19,8 @@ let gettingTokenPromise = null;
  * This serves as a replacement for useApi.
  * <br/>
  *
- * NOTE: Every exported function in this hook is a thunk.
+ * NOTE: Non-idempotent requests (POST, PUT, etc) are thunks. GET requests are normal
+ * async functions
  */
 export default function() {
 
@@ -116,7 +117,9 @@ export default function() {
     getSingle: async (uuid) => (await getAxis()).get(`/orders/${uuid}`),
     new: (data) => async () => (await getAxis()).post('/orders/new', data),
     mine: async (params) => (await getAxis()).get(`/orders/mine?include=${params}`),
-    checkStatus: async (id)=> (await getAxis()).get(`/orders/${id}/status`)
+    checkStatus: async (id)=> (await getAxis()).get(`/orders/${id}/status`),
+    complete: (data: {cartId: string, address})=> async () => (await getAxis()).post(`/orders/${data.cartId}/complete`, data),
+    cancel: async (data) => (await getAxis()).post(`/orders/${data.id}/cancel`),
   };
 
   const payments = {

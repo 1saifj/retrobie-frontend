@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {Helmet} from 'react-helmet';
 import site from '../site-details';
 import {env} from '../config';
@@ -14,12 +13,12 @@ function SEOHeader(
       canonicalSlug
   }:
     {
-        description,
-        author?,
-        lang?,
+        description?: string,
+        author?: string,
+        lang?: string,
         meta?,
-        title,
-        canonicalSlug?
+        title: string,
+        canonicalSlug?: string
     }
 ) {
 
@@ -30,7 +29,7 @@ function SEOHeader(
             htmlAttributes={{
                 lang,
             }}
-            title={title}
+            title={`Retrobie | ${title}`}
 
             titleTemplate={`%s | ${site.siteMetadata.title}`}
             link={[

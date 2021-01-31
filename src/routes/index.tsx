@@ -7,27 +7,31 @@ import AdminDashboard from '../pages/admin/dashboard';
 const Cart = lazy(() => import('../pages/cart'));
 const Landing = lazy(() => import('../pages/landing'));
 const HowItWorks = lazy(() => import('../pages/how-it-works'));
-const Cookies = lazy(() => import('../pages/privacy/cookies'));
 const Blog = lazy(() => import('../pages/blog'));
 const Category = lazy(() => import('../pages/category'));
 const Collection = lazy(() => import('../pages/collections'));
 const About = lazy(() => import('../pages/about'));
-const Tos = lazy(() => import('../pages/privacy/terms-of-service'));
 const Product = lazy(() => import('../pages/product'));
 
-const Returns = lazy(() => import('../pages/support/returns'));
+const TermsOfService = lazy(() => import('../pages/policies/terms-of-service'));
+const CookiePolicy = lazy(() => import('../pages/policies/privacy-and-cookie-policy'));
+const ReturnsPolicy = lazy(() => import('../pages/policies/returns-policy'));
+const ClaimsPolicy = lazy(() => import('../pages/policies/claims-policy'));
+const ExchangePolicy = lazy(() => import('../pages/policies/exchange-policy'));
+const RefundPolicy = lazy(() => import('../pages/policies/refund-policy'));
+const ShippingPolicy = lazy(() => import('../pages/policies/shipping-policy'));
+
 const Support = lazy(() => import('../pages/support'));
 const CustomRequests = lazy(() => import('../pages/support/custom-requests'));
 const Other = lazy(() => import('../pages/support/other'));
-const PayingForAnOrder = lazy(() => import('../pages/support/paying-for-an-order'));
-const MakingAnOrder = lazy(() => import('../pages/support/making-an-order'));
-const CancellingAnOrder = lazy(() => import('../pages/support/cancelling-an-order'));
-const Delivery = lazy(() => import('../pages/support/shipping/shipping-and-delivery'));
+const PayingForAnOrder = lazy(() => import('../pages/support/orders/paying-for-an-order'));
+const MakingAnOrder = lazy(() => import('../pages/support/orders/making-an-order'));
+const CancellingAnOrder = lazy(() => import('../pages/support/orders/cancelling-an-order'));
 const SupportMaps = lazy(() => import('../pages/support/shipping/maps'));
 
 const Checkout = lazy(() => import('../pages/checkout'));
 const Shipping = lazy(() => import('../pages/shipping'));
-const NotFound = lazy(() => import('../pages/notfound'));
+const NotFound = lazy(() => import('../pages/not-found'));
 
 //Admin
 const AdminLogin = lazy(() => import('../pages/admin/login'));
@@ -100,20 +104,25 @@ function Routes() {
 
           <Route exact path="/how-it-works" component={HowItWorks} />
           <Route exact path="/support" component={Support} />
-          <Route exact path="/privacy/cookies" component={Cookies} />
-          <Route exact path="/privacy/terms-of-service" component={Tos} />
+          <Route exact path="/privacy/privacy-and-cookie-policy" component={CookiePolicy} />
+          <Route exact path="/privacy/terms-of-service" component={TermsOfService} />
           <Route exact path="/checkout/:cartId" component={Checkout} />
           <Route path="/checkout/shipping/:orderId" component={Shipping} />
           <Route path={'/product/:id'} component={Product} />
-          <Route exact path="/support/returns" component={Returns} />
+
+          <Route exact path="/policies/return-policy" component={ReturnsPolicy} />
+          <Route exact path="/policies/claims-policy" component={ClaimsPolicy} />
+          <Route exact path="/policies/refund-policy" component={RefundPolicy} />
+          <Route exact path="/policies/exchange-policy" component={ExchangePolicy} />
+          <Route exact path="/policies/shipping-policy/" component={ShippingPolicy} />
+
+
           <Route exact path="/support/custom-requests" component={CustomRequests} />
           <Route exact path="/support/get-in-touch" component={Other} />
           <Route exact path="/support/paying-for-an-order" component={PayingForAnOrder} />
           <Route exact path="/support/making-an-order" component={MakingAnOrder} />
           <Route exact path="/support/cancelling-an-order" component={CancellingAnOrder} />
           <Route exact path="/support/delivery/maps" component={SupportMaps} />
-          <Route exact path="/support/delivery" component={Delivery} />
-          <Route exact path="/support/shipping/" component={Delivery} />
           <Route exact path="/support/shipping/maps" component={SupportMaps} />
 
           <Route exact path="/brands/" component={BrandsPage} />

@@ -1,5 +1,6 @@
-import {applyMiddleware, createStore, compose} from 'redux';
+import {applyMiddleware, compose, createStore} from 'redux';
 import {persistReducer, persistStore} from 'redux-persist';
+import {createStateSyncMiddleware, initStateWithPrevTab} from 'redux-state-sync';
 import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
@@ -15,9 +16,22 @@ export default function() {
     whitelist: ['cart', 'meta', 'user'],
   };
 
+  const tabsSyncMiddleWareConfig = {
+    // we don't want these actions to be synced across tabs
+    blacklist: [
+      "persist/PERSIST",
+      "persist/REHYDRATE"
+    ],
+  };
+
   const pReducer = persistReducer(persistConfig, rootReducer);
 
-  const store = createStore(pReducer, composeEnhancers(applyMiddleware(thunk)));
+  const middlewares = [thunk, createStateSyncMiddleware(tabsSyncMiddleWareConfig)];
+
+  const store = createStore(pReducer, composeEnhancers(applyMiddleware(...middlewares)));
+
+  // initialize our tabs sync middleware
+  initStateWithPrevTab(store);
 
   if (process.env.NODE_ENV !== 'production') {
     // @ts-ignore

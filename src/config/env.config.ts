@@ -16,7 +16,7 @@ class Env {
   }
 
   getApiBaseUrl() {
-    return `${this.getApiHost()}/${this.getApiVersion()}/`;
+    return `${this.getApiHost()}/${this.getApiVersion()}`;
   }
 
   getEnvironment() {

@@ -31,18 +31,40 @@ const DefaultFooter = () => {
           </div>
           <ListParent>
             <ul>
-              <p>Our Policies</p>
+              <p>The Company</p>
               <li>
-                <Link to="/support/delivery">Delivery</Link>
+                <Link to="/privacy/cookies">About us</Link>
               </li>
               <li>
-                <Link to="/support/returns">Returns</Link>
+                <Link to="/privacy/terms-of-service">Get in touch</Link>
+              </li>
+              <li>
+                <Link to="/support/custom-requests">Requesting for a specific shoe</Link>
+              </li>
+            </ul>
+
+            <ul>
+              <p>Our Policies</p>
+              <li>
+                <Link to="/policies/claims-policy">Claims policy</Link>
+              </li>
+              <li>
+                <Link to="/policies/return-policy">Returns policy</Link>
+              </li>
+              <li>
+                <Link to="/policies/refund-policy">Refund policy</Link>
+              </li>
+              <li>
+                <Link to="/policies/exchange-policy">Exchange policy</Link>
+              </li>
+              <li>
+                <Link to="/policies/shipping-policy">Shipping policy</Link>
               </li>
             </ul>
             <ul>
               <p>Legal & Privacy</p>
               <li>
-                <Link to="/privacy/cookies">Cookie Policy</Link>
+                <Link to="/privacy/privacy-and-cookie-policy">Cookie Policy</Link>
               </li>
               <li>
                 <Link to="/privacy/terms-of-service">Terms of use</Link>
@@ -92,7 +114,11 @@ const Foot = styled(Footer)`
     list-style: none;
     margin: 0;
     padding: 0;
-    flex: 0 1 120px;
+    flex: 0 1 250px;
+    
+    li, p {
+      margin: 0;
+    }
 
     & > p {
       font-weight: 600;
@@ -101,6 +127,7 @@ const Foot = styled(Footer)`
 
   a {
     text-decoration: none;
+    font-size: .9em;
   }
   a:hover {
     opacity: 0.8;

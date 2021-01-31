@@ -5,10 +5,10 @@ import {addDashes, extractErrorMessage, formatNumberWithCommas} from '../../help
 import MpesaLogo from '../../assets/images/logos/mpesa.svg';
 import CustomModal from '../../components/CustomModal';
 import {useAuth} from '../../network';
-import {notify} from '../../helpers/views';
 import {AxiosResponse} from 'axios';
-import {CheckoutType, PaymentStatus} from '../../types';
+import {AddressType, CheckoutType, PaymentStatus} from '../../types';
 import Notification from '../../components/notification';
+import {useNotify} from '../../hooks';
 
 export default function PayWithMpesaOnlineModal(
   {
@@ -35,7 +35,9 @@ export default function PayWithMpesaOnlineModal(
   const checkout: CheckoutType = useSelector((state: RootStateOrAny) => state.user.checkout);
   const api = useAuth();
   const dispatch = useDispatch();
+  const notify = useNotify();
   const [isPaymentLoading, setPaymentLoading] = useState(false);
+  const [isCompleteOrderLoading, setIsCompleteOrderLoading] = useState(false);
 
   // We track whether this payment has been initiated locally
   // because of swr might take a while to re-query the server for a
@@ -56,14 +58,32 @@ export default function PayWithMpesaOnlineModal(
       if (response.data) {
         onPaymentInitiated();
         setPaymentInitiated(true);
-        notify('success', 'Your payment is being processed. Please enter your Mpesa PIN when prompted.');
+        notify.success('Your payment is being processed. Please enter your Mpesa PIN when prompted.');
       }
     }catch (e){
       setPaymentLoading(false);
 
       console.log('An error occurred ', e);
       const message = extractErrorMessage(e);
-      notify('error', message);
+      notify.error(message);
+    }
+  }
+
+  async function completeOrder(cartId: string, address: AddressType){
+    setIsCompleteOrderLoading(true);
+    try {
+      setIsCompleteOrderLoading(false);
+      await dispatch(api.orders.complete({
+          cartId,
+          address: {
+            latLng: [address.lat, address.lng],
+          },
+        }),
+      );
+    }catch (e){
+      setIsCompleteOrderLoading(false);
+      const message = extractErrorMessage(e);
+      notify.error(message);
     }
   }
 
@@ -136,8 +156,12 @@ export default function PayWithMpesaOnlineModal(
                   <Button
                     style={{width: '100%'}}
                     isOutlined={true}
-                    isLoading={isPaymentLoading}
-                    isColor={'primary'}>
+                    isLoading={isPaymentLoading || isCompleteOrderLoading}
+                    isColor={'primary'}
+                    onClick={async () => {
+                      await completeOrder(checkout.id, checkout.delivery.address);
+                    }}
+                  >
                     Complete your order
                   </Button>
                   {
@@ -147,6 +171,7 @@ export default function PayWithMpesaOnlineModal(
                         <Button
                           style={{borderBottom: '1px solid lightgray'}}
                           isColor={'ghost'}
+                          isLoading={isPaymentLoading}
                           onClick={() => initiateOnlinePayment(checkout.id)}
                         >
                           Try again

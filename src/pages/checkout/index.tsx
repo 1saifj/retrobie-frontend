@@ -4,7 +4,7 @@ import Layout from '../../components/Layout';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import Cart from '../../components/cart';
 import InputMask from 'react-input-mask';
-import EmptyState from '../../components/empty/EmptyState';
+import {EmptyState, Loading} from '../../components';
 import {
   Button,
   Column,
@@ -19,7 +19,7 @@ import {
   ModalContent,
   Section,
 } from 'bloomer';
-import {ErrorIconDark, NormalCart} from '../../constants/icons';
+import {EmptyCart, ErrorIconDark} from '../../constants/icons';
 import {Form, Formik} from 'formik';
 import TextField from '../../components/input/TextField';
 import {cleanString, extractErrorMessage} from '../../helpers';
@@ -29,7 +29,6 @@ import LoginUser from '../accounts/login';
 import {Link} from 'react-router-dom';
 import {AtSign, Phone, User} from 'react-feather';
 import {Helmet} from 'react-helmet';
-import {notify} from '../../helpers/views';
 import EyeVector from '../../assets/images/vectors/eye.svg';
 import {createCheckoutAction, loginUserAction} from '../../state/actions';
 import {env} from '../../config';
@@ -37,7 +36,8 @@ import {CartType, CheckoutType, ServerCartType} from '../../types';
 import {LoginUserActionPayload} from '../../state/reducers/userReducers';
 import {useAuth} from '../../network';
 import useSWR from 'swr/esm/use-swr';
-import {Loading} from '../../components';
+import ServerError from '../../assets/images/vectors/dead.svg';
+import {useNotify} from '../../hooks';
 
 const LoggedInContainer = styled.div`
   width: 100%;
@@ -84,12 +84,13 @@ const NewUserCheckoutValidationSchema = Yup.object().shape({
 
 export default function Checkout(props) {
   const api = useAuth();
+  const notify = useNotify();
 
   const isUserLoggedIn = useSelector((state: RootStateOrAny) => state.user.isLoggedIn);
   const localCart: CartType = useSelector((state: RootStateOrAny) => state.cart);
 
-  const userInfoFetcher = (...args)=> api.accounts.me().then(({data}) => data);
-  const {data: userInfo} = useSWR(isUserLoggedIn ? 'me': null, userInfoFetcher)
+  const userInfoFetcher = ()=> api.accounts.me().then(({data}) => data);
+  const {data: userInfo, error: fetchUserInfoError} = useSWR(isUserLoggedIn ? '/me': null, userInfoFetcher)
 
   const cartId = props.match.params.cartId;
 
@@ -102,7 +103,7 @@ export default function Checkout(props) {
 
   const cartInfoFetcher = (key, id) => api.cart.fetch(id).then(({data}) => data)
 
-  const {data: remoteCart, error: remoteCartError} = useSWR<ServerCartType>(
+  const {data: remoteCart, error: fetchRemoteCartError} = useSWR<ServerCartType>(
     !isLocalCart ?
       [`/cart/${cartId}`, cartId] :
       null,
@@ -113,6 +114,8 @@ export default function Checkout(props) {
   const [isLoginModalOpen, setLoginModalOpen] = useState(false);
 
   const [passwordShown, setPasswordShown] = useState(false);
+
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -157,30 +160,60 @@ export default function Checkout(props) {
   if (isLocalCart && isLocalCartEmpty) {
     // show an empty state
     return (
-      <EmptyState
-        title={'Your Cart is Empty'}
-        icon={NormalCart}
-        message={'Do some shopping and check back later. ;)'}
-        prompt={() => (
-          <Button
-            isColor={'primary'}
-            onClick={() => props.history.push('/')}
-            style={{marginTop: '12px', width: '250px'}}
-          >
-            Start Shopping
-          </Button>
-        )}
-      />
+      <Layout>
+        <EmptyState
+          title={'Your cart is empty'}
+          icon={EmptyCart}
+          iconWidth={52}
+          message={"Sadly, you can't checkout an empty cart. Do some shopping and check back later. ;)"}
+          prompt={() => (
+            <Button
+              isColor={'primary'}
+              onClick={() => props.history.push('/')}
+              style={{marginTop: '4px', width: '100%'}}
+            >
+              Start Shopping
+            </Button>
+          )}
+        />
+      </Layout>
     );
   }
 
-  if (remoteCartError) {
+  // if a 500 error occurs while fetching the
+  // user's information
+  if (fetchUserInfoError){
     return (
-      <EmptyState
-        icon={ErrorIconDark}
-        title="That doesn't look right"
-        message={'Something went wrong. Please try again later.'}
-      />
+      <Layout>
+        <EmptyState
+          style={{minWidth: 400}}
+          icon={ServerError}
+          title={"Oops. That's an error."}
+          message={'We could not reach our servers. Please try again in a short while.'}
+          prompt={()=> (
+            <Button
+              style={{width: '100%'}}
+              isColor={'primary'}>
+              Try again
+            </Button>
+          )}
+        />
+      </Layout>
+    )
+  }
+
+  // if a 500 error occurs while fetching
+  // the user's cart
+  if (fetchRemoteCartError) {
+    return (
+      <Layout>
+        <EmptyState
+          centerAlign={true}
+          icon={ErrorIconDark}
+          title="That doesn't look right"
+          message={'Something went wrong while trying to fetch your order details. Please try again later.'}
+        />
+      </Layout>
     );
   }
 
@@ -197,9 +230,11 @@ export default function Checkout(props) {
 
 
   async function submitCart(cartInfo) {
+    setIsCheckoutLoading(true);
     try {
       // @ts-ignore
       const {data} = await dispatch(api.orders.new(cartInfo));
+      setIsCheckoutLoading(false);
       if (data.tokens) {
         // if the user doesn't have an account,
         // log them in
@@ -211,8 +246,9 @@ export default function Checkout(props) {
 
       props.history.push(`/checkout/shipping/${data.order.uuid}`);
     } catch (e) {
+      setIsCheckoutLoading(false);
       const message = extractErrorMessage(e);
-      notify('error', message);
+      notify.error(message);
     }
   }
 
@@ -225,7 +261,7 @@ export default function Checkout(props) {
         <Section>
           <Container>
             <GridParent isLoggedIn={isUserLoggedIn}>
-              <Columns className="cart--flex">
+              <Columns>
                 {isUserLoggedIn ? (
                   <Column
                     isSize={{
@@ -270,185 +306,193 @@ export default function Checkout(props) {
                     </LoggedInContainer>
                   </Column>
                 ) : (
-                  <div>
-                    <Column isSize={5}>
-                      <FormParent>
-                        <h2>Your Information</h2>
-                        <p>
-                          Before we can complete your order, we need to know a few more things about
-                          you first. To find out how this data is used, please read our{' '}
-                          <Link to={'/privacy/terms-of-service'}>Terms and Conditions</Link>
-                        </p>
+                  <Column
+                    isSize={{
+                    mobile: 'full',
+                    tablet: 'full',
+                    desktop: '1/2',
+                  }}>
+                    <FormParent>
+                      <h2>Your Information</h2>
+                      <p>
+                        Before we can complete your order, we need to know a few more things about
+                        you first. To find out how this data is used, please read our{' '}
+                        <Link to={'/privacy/terms-of-service'}>Terms and Conditions</Link>
+                      </p>
+                      <div>
+                        <h4>Already Have an Account?</h4>
                         <div>
-                          <h4>Already Have an Account?</h4>
-                          <div>
-                            <Button
-                              isColor={'primary'}
-                              style={{width: '100%', fontWeight: 'bold'}}
-                              onClick={() => setLoginModalOpen(true)}
-                            >
-                              Login to an existing account
-                            </Button>
-                          </div>
+                          <Button
+                            isColor={'primary'}
+                            style={{width: '100%', fontWeight: 'bold'}}
+                            onClick={() => setLoginModalOpen(true)}
+                          >
+                            Login to an existing account
+                          </Button>
                         </div>
-                        <div>
-                          <Separator text={'OR'} />
-                        </div>
-                        <Formik
-                          initialValues={{
-                            email: 'bradstar@vivaldi.com',
-                            firstName: 'Jack',
-                            lastName: 'Orb',
-                            password: 'O4l7xfPggLXp4LmnoIudR',
-                            phoneNumber: '0728538683',
-                          }}
-                          validationSchema={NewUserCheckoutValidationSchema}
-                          onSubmit={async (values, {setSubmitting}) => {
-                            setSubmitting(true);
+                      </div>
+                      <div>
+                        <Separator text={'OR'}/>
+                      </div>
+                      <Formik
+                        initialValues={{
+                          email: 'bradstar@vivaldi.com',
+                          firstName: 'Jack',
+                          lastName: 'Orb',
+                          password: 'O4l7xfPggLXp4LmnoIudR',
+                          phoneNumber: '0728538683',
+                        }}
+                        validationSchema={NewUserCheckoutValidationSchema}
+                        onSubmit={async (values, {setSubmitting}) => {
+                          setSubmitting(true);
 
-                            // clone the object
-                            const userData = JSON.parse(JSON.stringify(values));
+                          // clone the object
+                          const userData = JSON.parse(JSON.stringify(values));
 
-                            //remove '0' from the phone number
-                            if (userData.phoneNumber.charAt(0) === '0') {
-                              userData.phoneNumber = userData.phoneNumber.substr(1);
-                            }
+                          //remove '0' from the phone number
+                          if (userData.phoneNumber.charAt(0) === '0') {
+                            userData.phoneNumber = userData.phoneNumber.substr(1);
+                          }
 
-                            const data = {
-                              userInfo: userData,
-                              cart: checkoutState,
-                            };
-                            await submitCart(data);
-                            setSubmitting(false);
-                          }}
-                        >
-                          {({setFieldValue, errors, values, isSubmitting, handleBlur}) => (
-                            <Form>
-                              <h4>Enter Your Personal Information</h4>
-                              <div>
-                                <Columns>
-                                  <Column isSize={'1/2'}>
-                                    <Field>
-                                      <TextField
-                                        name={'email'}
-                                        label={'Your email address'}
-                                        help={`A new account will be created for you with this email.`}
-                                        type={'email'}
-                                        placeholder={'email@gmail.com'}
-                                      />
-                                    </Field>
-                                  </Column>
-                                  <Column isSize={'1/2'}>
-                                    <Field>
-                                      <label>Your phone number</label>
-                                      <InputMask
-                                        mask="9999-999-999"
-                                        onBlur={handleBlur}
-                                        value={values.phoneNumber}
-                                        onChange={e => {
-                                          setFieldValue(
-                                            'phoneNumber',
-                                            cleanString(e.target.value, '')
-                                          );
-                                        }}
-                                      >
-                                        {inputProps => (
-                                          <Input
-                                            label={'Your phone number'}
-                                            name={'phoneNumber'}
-                                            placeholder={'eg. 0728-538-683'}
-                                            {...inputProps}
-                                            type="tel"
-                                          />
-                                        )}
-                                      </InputMask>
-                                      <Help>
-                                        In case we need to reach out concerning your order
-                                      </Help>
-                                      {errors.phoneNumber && (
-                                        <div
-                                          className={'error'}
-                                          style={{marginTop: 4, marginLeft: 8}}
-                                        >
-                                          <small
-                                            style={{
-                                              color: 'var(--color-error)',
-                                              fontWeight: 'bold',
-                                            }}
-                                          >
-                                            {errors.phoneNumber}
-                                          </small>
-                                        </div>
-                                      )}
-                                    </Field>
-                                  </Column>
-                                </Columns>
-                              </div>
+                          const data = {
+                            userInfo: userData,
+                            cart: checkoutState,
+                          };
+                          await submitCart(data);
+                          setSubmitting(false);
+                        }}
+                      >
+                        {({setFieldValue, errors, values, isSubmitting, handleBlur}) => (
+                          <Form>
+                            <h4>Enter Your Personal Information</h4>
+                            <div>
                               <Columns>
-                                <Column>
+                                <Column isSize={'1/2'}>
                                   <Field>
                                     <TextField
-                                      name={'password'}
-                                      type={passwordShown ? 'text' : 'password'}
-                                      label={'Your new password'}
-                                      icon={EyeVector}
-                                      buttonAction={isButtonActive => {
-                                        setPasswordShown(isButtonActive);
+                                      name={'email'}
+                                      label={'Your email address'}
+                                      help={`A new account will be created for you with this email.`}
+                                      type={'email'}
+                                      placeholder={'email@gmail.com'}
+                                    />
+                                  </Field>
+                                </Column>
+                                <Column isSize={'1/2'}>
+                                  <Field>
+                                    <label>Your phone number</label>
+                                    <InputMask
+                                      mask="9999-999-999"
+                                      onBlur={handleBlur}
+                                      value={values.phoneNumber}
+                                      onChange={e => {
+                                        setFieldValue(
+                                          'phoneNumber',
+                                          cleanString(e.target.value, ''),
+                                        );
                                       }}
-                                      placeholder={'A strong password'}
-                                    />
+                                    >
+                                      {inputProps => (
+                                        <Input
+                                          label={'Your phone number'}
+                                          name={'phoneNumber'}
+                                          placeholder={'eg. 0728-538-683'}
+                                          {...inputProps}
+                                          type="tel"
+                                        />
+                                      )}
+                                    </InputMask>
+                                    <Help>
+                                      In case we need to reach out concerning your order
+                                    </Help>
+                                    {errors.phoneNumber && (
+                                      <div
+                                        className={'error'}
+                                        style={{marginTop: 4, marginLeft: 8}}
+                                      >
+                                        <small
+                                          style={{
+                                            color: 'var(--color-error)',
+                                            fontWeight: 'bold',
+                                          }}
+                                        >
+                                          {errors.phoneNumber}
+                                        </small>
+                                      </div>
+                                    )}
                                   </Field>
                                 </Column>
                               </Columns>
-                              <Columns>
-                                <Column>
-                                  <Field>
-                                    <TextField
-                                      name={'firstName'}
-                                      type={'text'}
-                                      label={'Your first name'}
-                                      placeholder={'eg. Dominic'}
-                                    />
-                                  </Field>
-                                </Column>
+                            </div>
+                            <Columns>
+                              <Column>
+                                <Field>
+                                  <TextField
+                                    name={'password'}
+                                    type={passwordShown ? 'text' : 'password'}
+                                    label={'Your new password'}
+                                    icon={EyeVector}
+                                    buttonAction={isButtonActive => {
+                                      setPasswordShown(isButtonActive);
+                                    }}
+                                    placeholder={'A strong password'}
+                                  />
+                                </Field>
+                              </Column>
+                            </Columns>
+                            <Columns>
+                              <Column>
+                                <Field>
+                                  <TextField
+                                    name={'firstName'}
+                                    type={'text'}
+                                    label={'Your first name'}
+                                    placeholder={'eg. Dominic'}
+                                  />
+                                </Field>
+                              </Column>
 
-                                <Column>
-                                  <Field>
-                                    <TextField
-                                      name={'lastName'}
-                                      type={'text'}
-                                      label={'Your last name'}
-                                      placeholder={'eg. Fike'}
-                                    />
-                                  </Field>
-                                </Column>
-                              </Columns>
-                              <div style={{marginTop: '24px', marginBottom: '24px'}}>
-                                <Button
-                                  isColor={'primary'}
-                                  type={'submit'}
-                                  isLoading={isSubmitting}
-                                  style={{width: '100%', fontWeight: 'bold'}}
-                                >
-                                  Proceed to Payment & Delivery
-                                </Button>
-                              </div>
-                            </Form>
-                          )}
-                        </Formik>
-                      </FormParent>
-                    </Column>
-                  </div>
+                              <Column>
+                                <Field>
+                                  <TextField
+                                    name={'lastName'}
+                                    type={'text'}
+                                    label={'Your last name'}
+                                    placeholder={'eg. Fike'}
+                                  />
+                                </Field>
+                              </Column>
+                            </Columns>
+                            <div style={{marginTop: '24px', marginBottom: '24px'}}>
+                              <Button
+                                isColor={'primary'}
+                                type={'submit'}
+                                isLoading={isSubmitting}
+                                style={{width: '100%', fontWeight: 'bold'}}
+                              >
+                                Proceed to Payment & Delivery
+                              </Button>
+                            </div>
+                          </Form>
+                        )}
+                      </Formik>
+                    </FormParent>
+                  </Column>
                 )}
                 <Column isSize={{
-                  desktop: '1/2'
+                  desktop: '1/2',
                 }} className="cart--parent">
                   <div style={{maxWidth: 600, margin: '0 auto'}}>
                     <h2 style={{color: '#222'}}>Your Cart</h2>
                     <Cart
                       source={remoteCart}
                       hideCheckoutButton={!isUserLoggedIn}
-                      checkoutButtonText={'Proceed to Payment & Delivery'}
+                      checkoutButtonDisabled={Boolean(fetchUserInfoError)}
+                      checkoutButtonIsLoading={isCheckoutLoading}
+                      checkoutButtonText={
+                        !fetchUserInfoError ? 'Proceed to Payment & Delivery' :
+                          'Could not fetch your details'
+                      }
                       onCheckout={async () => {
                         const data = {
                           cart: checkoutState,
@@ -464,21 +508,21 @@ export default function Checkout(props) {
         </Section>
       </Layout>
       <Modal isActive={isLoginModalOpen} className={'modal-fx-fadeInScale'}>
-        <ModalBackground onClick={() => setLoginModalOpen(false)} />
+        <ModalBackground onClick={() => setLoginModalOpen(false)}/>
         <ModalContent>
           <div style={{background: 'white', padding: '12px 24px', borderRadius: 4}}>
             <LoginUser
               callback={(err) => {
                 if (err) return;
 
-                notify('success', 'You can now proceed to payments & delivery.');
+                notify.success('You can now proceed to payments & delivery.');
 
                 setLoginModalOpen(false);
               }}
             />
           </div>
         </ModalContent>
-        <ModalClose onClick={() => setLoginModalOpen(false)} />
+        <ModalClose onClick={() => setLoginModalOpen(false)}/>
       </Modal>
     </CheckoutParent>
   );
@@ -510,7 +554,12 @@ const CheckoutParent = styled.div`
 `;
 
 const FormParent = styled.div`
-  width: 600px;
+  max-width: 600px;
+  
+  a {
+    color: dodgerblue;
+    text-decoration: underline;
+  }
 
   @media screen and (max-width: 768px) {
        width: 100%;

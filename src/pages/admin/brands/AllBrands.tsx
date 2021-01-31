@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import Loading from '../../../components/loading';
-import EmptyState from '../../../components/empty/EmptyState';
+import {EmptyState} from '../../../components';
 import {Box, Button} from 'bloomer';
 import CreateBrandModal from './modals/CreateBrandModal';
 import errorIcon from '../../../assets/images/icons/error-text.svg';
@@ -73,41 +73,41 @@ function AllBrandsAdmin(props) {
     }
 
     if (!allBrandsState || !allBrandsState.length) {
-        return (
-            <>
-                <div style={{background: 'white', height: "100%"}}>
-                    <EmptyState title="There's nothing here yet."
-                                icon={"https://ik.imagekit.io/t25/abstract-list-is-empty_-h-8wpxpOHH.png"}
-                                width="800px"
-                                style={{display: 'grid', alignItems: 'center'}}
-                                message="No brand has been created yet. Feel free to do the honours."
-                                prompt={() => (
-                                    <div>
-                                        <Button style={{
-                                            padding: 0,
-                                            background: 'transparent',
-                                            borderBottom: '1px solid var(--color-accent)',
-                                            color: "var(--color-accent)"
-                                        }} isColor="light" onClick={() => setShowCreateBrandModal(true)}>
-                                            Create a new brand
-                                        </Button>
-                                        <CreateBrandModal
-                                            onClose={() => setShowCreateBrandModal(false)}
-                                            isActive={showCreateBrandModal}
-                                            onCreate={(brand) => {
-                                                notify('success', "Created brand successfully", {autoClose: 2500});
-                                                setShowCreateBrandModal(false);
-                                                addBrand(brand);
-                                            }}
+      return (
+        <>
+          <div style={{background: 'white', height: '100%'}}>
+            <EmptyState
+              title="There's nothing here yet."
+              icon={'https://ik.imagekit.io/t25/abstract-list-is-empty_-h-8wpxpOHH.png'}
+              style={{display: 'grid', alignItems: 'center'}}
+              message="No brand has been created yet. Feel free to do the honours."
+              prompt={() => (
+                <div>
+                  <Button style={{
+                    padding: 0,
+                    background: 'transparent',
+                    borderBottom: '1px solid var(--color-accent)',
+                    color: 'var(--color-accent)',
+                  }} isColor="light" onClick={() => setShowCreateBrandModal(true)}>
+                    Create a new brand
+                  </Button>
+                  <CreateBrandModal
+                    onClose={() => setShowCreateBrandModal(false)}
+                    isActive={showCreateBrandModal}
+                    onCreate={(brand) => {
+                      notify('success', 'Created brand successfully', {autoClose: 2500});
+                      setShowCreateBrandModal(false);
+                      addBrand(brand);
+                    }}
 
-                                        />
-                                    </div>
-                                )}
-                    />
+                  />
                 </div>
-            </>
+              )}
+            />
+          </div>
+        </>
 
-        );
+      );
     }
 
     return (

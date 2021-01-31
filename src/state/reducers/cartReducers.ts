@@ -27,8 +27,10 @@ export default (state = initialState, action: {type: string; payload}) => {
       const addToCartActionItem = action.payload.item;
       const cartItemPrice = addToCartActionItem.originalPrice || addToCartActionItem.price;
 
-      // Create a new cartId if there are no items in the cart.
-      if (!addToCartState.items.length) {
+      // Create a new cartId if there is currently no cartId set
+      // Note that the cartId remains the same unless a user completes an
+      // order with this cartId.
+      if (!addToCartState.id) {
         // we are essentially creating the user's cart for the first time
         addToCartState.id = uuidV4();
       }

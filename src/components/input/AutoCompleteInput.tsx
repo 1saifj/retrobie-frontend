@@ -216,18 +216,6 @@ const InputParent = styled.div`
   display: flex; 
   align-items: center;
   gap: 6px;
-  
-  img {
-    transition: all ease-in-out 0.25s;
-  }
-  
-  button {
-    &:hover, &:active, &:focus {
-      img {
-        filter: invert();
-      }
-    }
-  }
 `
 
 const DropdownItem = styled.li<{selected: boolean; highlighted: boolean}>`

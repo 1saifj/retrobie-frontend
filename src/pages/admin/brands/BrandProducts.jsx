@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import EmptyState from '../../../components/empty/EmptyState';
+import {EmptyState} from '../../../components';
 import PageNotFound from '../../../assets/images/icons/page-not-found.svg';
 import {Button} from 'bloomer';
 import CreateProductModal from '../products/modals/CreateProductModal';

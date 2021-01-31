@@ -1,21 +1,42 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useAuth} from '../../../../network';
 import Layout from '../../../../components/Layout/index';
 import Cart from '../../../../components/cart';
 import useSWR from 'swr/esm/use-swr';
 import Loading from '../../../../components/loading';
 import {Button, Help, Tag} from 'bloomer';
-import {capitalize} from '../../../../helpers';
+import {capitalize, extractErrorMessage} from '../../../../helpers';
 import styled from 'styled-components';
 import {Tooltip} from 'react-tippy';
-import {OrderStatus} from '../../../../types';
+import {OrderStatus, OrderType, ServerCartType} from '../../../../types';
+import {EmptyState} from '../../../../components';
+import {DeadEyes} from '../../../../constants/icons';
+import {useNotify} from '../../../../hooks';
 
 export default function({match: {params: {orderId}}}) {
 
   const api = useAuth();
+  const notify = useNotify();
 
   const orderDataFetcher = (orderId) => api.orders.getSingle(orderId).then(({data})=> data);
-  const {data: orderData} = useSWR(['order/data', orderId], (url , orderId)=> orderDataFetcher(orderId))
+  const {data: orderData, error: fetchOrderError, mutate} = useSWR<OrderType>(
+    [`/order/${orderId}`, orderId],
+    (url, orderId) => orderDataFetcher(orderId),
+  );
+
+  const [isLoading, setIsLoading] = useState(false);
+
+
+  if (fetchOrderError){
+    return (
+      <Layout>
+        <EmptyState
+          icon={DeadEyes}
+          message={'Something went wrong. Our best engineers have been informed and are working on it as you read this.'}
+          title={"Oops. That's an error"}/>
+      </Layout>
+    )
+  }
 
   if (!orderData) {
     return (
@@ -23,14 +44,48 @@ export default function({match: {params: {orderId}}}) {
     )
   }
 
+  async function cancelOrder({orderId}) {
+    setIsLoading(true);
+    try {
+      const {data} = await api.orders.cancel({
+        id: orderId,
+      });
+      // mutate so that changes show up immediately
+      await mutate(data, false);
+      notify.success("Your order has been cancelled.")
+    }catch (e){
+      const message = extractErrorMessage(e);
+      notify.error(message);
+    }
+    setIsLoading(false);
+  }
+
   function mapStatus(status: OrderStatus) {
     if (!status) return <Tag>Undefined</Tag>;
 
     switch (status) {
       case 'cancelled':
-        return <Tag isColor='danger'>Cancelled</Tag>;
+        return (
+          <Tooltip
+            theme={'light'}
+            position={'right'}
+            title={'You cancelled this order. It will not be processed.'}
+          >
+            <Tag isColor={'danger'}>Cancelled</Tag>
+          </Tooltip>
+        );
       case 'delivered':
         return <Tag isColor={'success'}>{capitalize(status)}</Tag>;
+      case 'inTransit':
+        return (
+          <Tooltip
+            theme={'light'}
+            position={'right'}
+            title={'This order has been picked up and is on its way.'}
+          >
+            <Tag>In transit</Tag>
+          </Tooltip>
+        )
       case 'incomplete':
       case 'pendingPayment':
         return (
@@ -59,7 +114,6 @@ export default function({match: {params: {orderId}}}) {
 
   return (
     <>
-      {/*@ts-ignore*/}
       <Layout style={{maxWidth: 600, margin: '0 auto'}}>
         <div style={{marginTop: 128}}>
           <div>
@@ -94,23 +148,61 @@ export default function({match: {params: {orderId}}}) {
           <div>
             <Cart
               bordered={true}
+              //@ts-ignore
               source={orderData.cart}
               hideCheckoutButton={
                 orderData.status === 'pendingConfirmation' ||
-                orderData.status === 'delivered'
+                orderData.status === 'delivered' ||
+                orderData.status === 'cancelled'
               }
               checkoutButtonText={'Complete this order'}
             />
           </div>
           <div>
-            <Help>
-              If not completed, this order will be deleted automatically after a week.{' '}
-              <Button
-                style={{borderBottom: '1px solid lightgray'}}
-                isColor={'ghost'}>
-                Delete it now
-              </Button>
-            </Help>
+            <h4>Other options</h4>
+            {
+              (
+                orderData.status !== 'incomplete' &&
+                orderData.status !== 'inTransit' &&
+                orderData.status !== 'cancelled'
+              ) && (
+                <Button
+                  onClick={async () => await cancelOrder({
+                    orderId,
+                  })}
+                  isLoading={isLoading}
+                  isColor={'ghost'}
+                >
+                  Cancel this order
+                </Button>
+              )
+            }
+            <div>
+              {
+                orderData.status === 'cancelled' && (
+                  <Help>
+                    <Button
+                      style={{borderBottom: '1px solid lightgray'}}
+                      isColor={'ghost'}>
+                      Delete this order
+                    </Button>
+                  </Help>
+                )
+              }
+            </div>
+            <div>
+              {
+                orderData.status === 'delivered' && (
+                  <Help>
+                    <Button
+                      style={{borderBottom: '1px solid lightgray'}}
+                      isColor={'ghost'}>
+                      File a new claim
+                    </Button>
+                  </Help>
+                )
+              }
+            </div>
           </div>
         </div>
       </Layout>

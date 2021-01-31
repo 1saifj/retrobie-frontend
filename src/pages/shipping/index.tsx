@@ -3,9 +3,9 @@ import Layout from '../../components/Layout';
 import styled from 'styled-components';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {addDashes, formatNumberWithCommas} from '../../helpers';
-import EmptyState from '../../components/empty/EmptyState';
+import {EmptyState} from '../../components';
 import {ErrorIconDark, NormalCart} from '../../constants/icons';
-import {Button, Column, Columns, Help} from 'bloomer';
+import {Button} from 'bloomer';
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import RadioField from '../../components/input/RadioField';
@@ -15,7 +15,6 @@ import PeaceSign from '../../assets/images/emoji/peace-sign.png';
 import PointingDown from '../../assets/images/emoji/backhand-index-pointing-down.png';
 import IndexFinger from '../../assets/images/emoji/backhand-index-pointing-up.png';
 import {ChevronRight} from 'react-feather';
-import TextField from '../../components/input/TextField';
 import SimpleMap from '../../components/map/SimpleMap';
 import Loading from '../../components/loading';
 import {useAuth} from '../../network';
@@ -25,11 +24,10 @@ import {UserState} from '../../state/reducers/userReducers';
 import {AnyAction} from 'redux';
 import {CSSTransition, SwitchTransition} from 'react-transition-group';
 import {AddressType, CheckoutType, OrderStatus, PaymentStatus} from '../../types';
-import useSwr from 'swr';
 import useSWR from 'swr/esm/use-swr';
 import {saveCheckoutAddressAction, saveShippingQuoteAction, setZoomLevelAction} from '../../state/actions';
 import {useNotify} from '../../hooks';
-import {SelectField} from '../../components/input';
+import ServerError from '../../assets/images/vectors/dead.svg';
 
 const CompleteOrderValidationSchema = Yup.object({
   deliveryLocation: Yup.string().required(),
@@ -38,31 +36,51 @@ const CompleteOrderValidationSchema = Yup.object({
 
 export default function Shipping(props) {
   const api = useAuth();
-  const dispatch: ThunkDispatch<UserState, any, AnyAction> = useDispatch();
-  const userInfoFetcher = ()=> api.accounts.me().then(({data}) => data);
-  const {data: userInfo, error} = useSwr('me', userInfoFetcher)
 
   const paramOrderId = props.match.params.orderId;
+
+  const userState: UserState = useSelector((state: RootStateOrAny)=> state.user)
+
+  const dispatch: ThunkDispatch<UserState, any, AnyAction> = useDispatch();
+  const userInfoFetcher = ()=> api.accounts.me().then(({data}) => data);
+  const {data: userInfo, error: fetchUserError} = useSWR(userState.isLoggedIn ? 'me': null, userInfoFetcher)
+
+  const orderDataFetcher = (key, orderId) => api.orders.checkStatus(orderId).then(({data})=> data);
+  const {data: orderStatusResult, error: fetchOrderStatusError} = useSWR<{
+    paymentStatus: PaymentStatus,
+    orderStatus: OrderStatus,
+    referenceNo: string
+  }>(userState.isLoggedIn ? [`orders/${paramOrderId}/status`, paramOrderId]: null, orderDataFetcher)
+
+
   const [payNowOrOnDelivery, setPayNowOrOnDelivery] = useState<"pay-on-delivery"|"pay-now">(null);
   // @ts-ignore
   const [completedOrder, setCompletedOrder] = useState({});
   const checkout: CheckoutType = useSelector((state: RootStateOrAny) => state.user.checkout);
-  const {total: checkoutTotal, delivery: checkoutDelivery} = checkout;
   const [payOnlineOrBuyGoods, setPayOnlineOrBuyGoods] = useState<"pay-online"|"buy-goods">(null);
   const [isPayOnlineModalOpen, setPayOnlineModalOpen] = useState(false);
-
-  const orderDataFetcher = (key, orderId) => api.orders.checkStatus(orderId).then(({data})=> data);
-  const {data: orderStatusResult} = useSWR<{
-    paymentStatus: PaymentStatus,
-    orderStatus: OrderStatus,
-    referenceNo: string
-  }>([`orders/${paramOrderId}/status`, paramOrderId], orderDataFetcher)
+  const [isFetchQuoteLoading, setIsFetchQuoteLoading] = useState(false);
 
   const [wardsAndLocalAreas, setWardsAndLocalAreas] = useState<Array<{label: string, value: string}>>([]);
   const notify = useNotify();
 
   function flip(value?) {
     setPayOnlineOrBuyGoods(value)
+  }
+
+  if (!orderStatusResult && !fetchUserError && !fetchOrderStatusError) {
+    return <Loading message={'Please wait...'}/>;
+  }
+  if (!userState.isLoggedIn){
+    return (
+      <Layout>
+        <EmptyState
+          icon={ServerError}
+          centerAlign={true}
+          message={"You're not logged in"}
+          title={"Please log in to proceed"}/>
+      </Layout>
+    )
   }
 
   if (!checkout.items?.length) {
@@ -95,9 +113,37 @@ export default function Shipping(props) {
     )
   }
 
-  if (!orderStatusResult) {
-    return <Loading message={'Please wait...'}/>;
+  if (fetchOrderStatusError || fetchUserError){
+    return (
+
+      <Layout>
+        <EmptyState
+          icon={ServerError}
+          title={'Sorry about that! An error occurred'}
+          message={()=> (
+            <div>
+              <p>
+                It's not you. It's us.
+              </p>
+              <p>
+                Something went wrong while trying to process your cart.
+                Our best engineers have been notified about it, and are on the case.
+              </p>
+            </div>
+          )}
+          prompt={()=> (
+            <Button
+              style={{width: "100%"}}
+              isColor={'primary'}>
+              Try again
+            </Button>
+          )}
+        />
+      </Layout>
+
+    )
   }
+
 
   if (orderStatusResult.orderStatus != 'incomplete'){
     return (
@@ -114,7 +160,8 @@ export default function Shipping(props) {
   }
 
   async function getDeliveryQuote(address: AddressType){
-    return api.deliveries.getQuote({
+    setIsFetchQuoteLoading(true);
+    return await api.deliveries.getQuote({
       location: {
         lat: address.lat,
         long: address.lng,
@@ -138,7 +185,8 @@ export default function Shipping(props) {
     if (address.lat && address.lng) {
       try {
         const {data} = await getDeliveryQuote(address);
-        dispatch(saveShippingQuoteAction(data))
+        dispatch(saveShippingQuoteAction(data));
+        setIsFetchQuoteLoading(false);
       }catch (e){
         notify.error('Could not get shipping quote')
       }
@@ -166,13 +214,19 @@ export default function Shipping(props) {
       <CompleteOrderRoot>
         <div>
           <h2>Complete your order</h2>
-          <h3>Select a Delivery Location</h3>
+          <h3>Select a location on the map below.</h3>
+          {/*
+            For now, this Formik is basically useless. If we decide
+            to add back the alternative form-filling functionality though,
+            it will be pretty handy.
+          */}
           <Formik
             initialValues={{
               constituency: '',
               wardOrLocalArea: '',
               deliveryAddress: '',
             }}
+/*
             validate={(values) => {
               const errors = {
                 deliveryAddress: '',
@@ -204,6 +258,7 @@ export default function Shipping(props) {
                 return {};
               }
             }}
+*/
             onSubmit={async (values, {setSubmitting}) => {
               setSubmitting(true);
 
@@ -241,20 +296,23 @@ export default function Shipping(props) {
                           placeId: item?.value.placeId,
                         },
                       )}/>
-                    <div>
+                    {/*<div>
                       <div>
                         <div>
-                          <h3>Detailed information</h3>
+                          <h3>Option 2: Enter your delivery information manually.</h3>
                           <p>
                             Fill in the following form if the above map doesn't work,
                             or if you wish to add any information that will make finding your location easier.
+                          </p>
+                          <p>
+                            Please note:
                           </p>
                           <Help>
                             Tip: If you don't know your constituency, try searching for
                             your ward or a well-known local area. For example,
                             searching for "Fedha" will bring up
                             "Embakasi Central", searching for
-                            "Eastleigh" will bring up "Kamkunju" and
+                            "Eastleigh" will bring up "Kamkunji" and
                             "Karen" or "Dam Estate" will bring up "Lang'ata",... etc.
                           </Help>
                         </div>
@@ -315,6 +373,10 @@ export default function Shipping(props) {
                               isClearable={true}
                               onChange={(value) => {
                                 setFieldValue('wardOrLocalArea', value);
+                                // todo: once a ward/local area has been selected
+                                //   we should send a request to the server
+                                //   to request the lat and lng of the representative
+                                //   place in order to estimate shipping costs
                               }}
                               filterOption={(option, input) => {
                                 return option.value
@@ -328,13 +390,18 @@ export default function Shipping(props) {
                           </Column>
                         </Columns>
                         <TextField
+                          label={'Street'}
+                          placeholder={"eg. Lang'ata Road"}
+                          name={'street'}
+                          type={'text'}/>
+                        <TextField
                           label={'Delivery address'}
                           placeholder={'Estate name / Building name / Block no. / Apartment no.'}
                           name={'deliveryAddress'}
                           type={'textarea'}/>
                       </div>
 
-                    </div>
+                    </div>*/}
 
 
                   </div>
@@ -637,7 +704,7 @@ export default function Shipping(props) {
                             </b>
                           </p>
                           {
-                            checkoutDelivery?.cost ? (
+                            checkout.delivery?.cost ? (
                               <div style={{display: 'flex', justifyContent: 'space-between'}}>
                                 <span>
                                   <b>
@@ -647,10 +714,12 @@ export default function Shipping(props) {
                                 &nbsp;
                                 <span>
                                     <b>
-                                      {formatNumberWithCommas(checkoutDelivery.cost)}
+                                      {formatNumberWithCommas(checkout.delivery?.cost)}
                                     </b>
                                 </span>
                               </div>
+                            ) : isFetchQuoteLoading ? (
+                              <p>Please wait...</p>
                             ) : (
                               <p>
                                 Not yet calculated
@@ -663,9 +732,9 @@ export default function Shipping(props) {
                         <h4>Total</h4>
                         <h3>Ksh.{' '}
                           {
-                            checkoutDelivery?.cost ?
-                              formatNumberWithCommas(checkoutTotal + checkoutDelivery.cost) :
-                              formatNumberWithCommas(checkoutTotal)
+                            checkout.delivery?.cost ?
+                              formatNumberWithCommas(checkout.total + checkout.delivery?.cost) :
+                              formatNumberWithCommas(checkout.total)
                           }
                         </h3>
                       </div>
@@ -684,7 +753,9 @@ export default function Shipping(props) {
                           }}>
                             <Button
                               isColor="primary"
-                              onClick={() => completeOrder({})}
+                              onClick={() => completeOrder({
+
+                              })}
                               style={{width: '100%', fontWeight: 'bold'}}
                             >
                               Complete your order

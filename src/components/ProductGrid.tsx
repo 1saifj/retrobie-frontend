@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import EmptyState from './empty/EmptyState';
+import EmptyState from './empty-state';
 import { EmptyBox, ErrorIconDark } from '../constants/icons';
 import { Link } from 'react-router-dom';
 import { formatNumberWithCommas } from '../helpers';
@@ -77,7 +77,6 @@ class ProductGrid extends Component {
                       message={
                         'No products are currently available for sale. Please check back tomorrow.'
                       }
-                      color="#353535"
                       icon={EmptyBox}
                       style={{ height: 'unset', minHeight: '450px' }}
                     />
@@ -133,7 +132,6 @@ class ProductGrid extends Component {
                             "We couldn't load product details from the server. Please try again later."
                           }
                           icon={ErrorIconDark}
-                          style={{ height: 'unset', minHeight: '450px' }}
                         />
                       </div>
                     )}

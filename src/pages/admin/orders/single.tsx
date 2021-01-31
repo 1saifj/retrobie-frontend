@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Modal, ModalBackground, ModalClose, ModalContent} from 'bloomer';
 import Loading from '../../../components/loading';
-import EmptyState from '../../../components/empty/EmptyState';
+import {EmptyState} from '../../../components';
 import TextField from '../../../components/input/TextField';
 import {Form, Formik} from 'formik';
 import useSWR from 'swr';
