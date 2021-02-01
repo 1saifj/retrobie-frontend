@@ -49,7 +49,7 @@ const DefaultFooter = () => {
                 <Link to="/policies/claims-policy">Claims policy</Link>
               </li>
               <li>
-                <Link to="/policies/return-policy">Returns policy</Link>
+                <Link to="/policies/returns-policy">Returns policy</Link>
               </li>
               <li>
                 <Link to="/policies/refund-policy">Refund policy</Link>

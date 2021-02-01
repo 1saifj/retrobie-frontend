@@ -1,66 +1,57 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Loading from '../../components/loading';
 import {addItemToCartAction, toggleSidebarAction} from '../../state/actions';
-import { formatNumberWithCommas } from '../../helpers';
+import {capitalize, formatNumberWithCommas} from '../../helpers';
 import styled from 'styled-components';
 import Layout from '../../components/Layout';
 import SEOHeader from '../../components/SEOHeader';
-import {
-  Diamond,
-  FastDelivery,
-  HelpIcon,
-  Replace,
-  Return,
-} from '../../constants/icons';
+import {DeadEyes, Diamond, FastDelivery, HelpIcon, Replace, Return} from '../../constants/icons';
 import '../../assets/style/index.scss';
-import { JsonLd } from 'react-schemaorg';
-import productJsonld, { subProduct } from './product.jsonld';
-import { Button, Delete, Modal, ModalBackground, ModalClose, ModalContent, Tag, Title } from 'bloomer';
+import {JsonLd} from 'react-schemaorg';
+import productJsonld, {subProduct} from './product.jsonld';
+import {Button, Delete, Help, Modal, ModalBackground, ModalClose, ModalContent, Tag, Title} from 'bloomer';
 import ProductSlider from '../../components/slider/ProductSlider';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
-import { isProductInStock } from '../../components/cart';
-import { useAuth } from '../../network';
-import { CartItemType, CartType, ProductType } from '../../types';
+import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
+import {isProductInStock} from '../../components/cart';
+import {useAuth} from '../../network';
+import {CartItemType, CartType, ProductType} from '../../types';
 import useSWR from 'swr';
 import {useNotify} from '../../hooks';
+import {EmptyState} from '../../components';
 
 function Product({ match }) {
   const api = useAuth();
   const dispatch = useDispatch();
-  const { id } = match.params;
+  const { slug } = match.params;
 
   const isSidebarOpen = useSelector((state: RootStateOrAny) => state.meta.isSidebarOpen);
 
   const [conditionModalOpen, setConditionModalOpen] = useState(false);
   const cart: CartType = useSelector((state: RootStateOrAny) => state.cart);
 
-  const singleDataFetcher = (_key, id) => api.products.getSingle(id).then(({ data }) => data)
-  const { data: currentProduct, error } = useSWR<ProductType>(['/orders/single', id], singleDataFetcher)
+  const singleDataFetcher = (_key, slug) => api.products.getSingle(slug).then(({ data }) => data)
+  const {data: currentProduct, error: fetchProductError} = useSWR<ProductType>(
+    [`/product/${slug}`, slug],
+    singleDataFetcher,
+  );
 
   const notify = useNotify();
 
-  // if (error) {
-  //   return (
-  //     // @ts-ignore
-  //     <Layout
-  //       style={{
-  //         display: 'flex',
-  //         height: '80vh',
-  //         alignItems: 'center',
-  //         justifyContent: 'center',
-  //       }}
-  //     >
-  //       <EmptyState
-  //         icon={ErrorIcon502Dark}
-  //         message={"It's not you. It's us. Our engineers have been notified and are on the case."}
-  //         title={'Yikes. A server error occurred.'}
-  //       />
-  //     </Layout>
-  //   );
-  // }
-
-  if (!currentProduct) {
+  if (!currentProduct && !fetchProductError) {
     return <Loading message={false} />;
+  }
+
+  if (fetchProductError) {
+    return (
+      <Layout
+      >
+        <EmptyState
+          icon={DeadEyes}
+          title={'Yikes. A server error occurred.'}
+          message={"It's not you. It's us. Our engineers have been notified and are on the case."}
+        />
+      </Layout>
+    );
   }
 
   function getProductFromCart(uuid): CartItemType | undefined {
@@ -73,7 +64,7 @@ function Product({ match }) {
 
     let cartItem: CartItemType = {
       productName: productItem.name,
-      stock: productItem.stock.usersCount,
+      inStock: productItem.inStock,
       images: productItem.images,
       uuid: productItem.uuid,
       isOnOffer: productItem.isOnOffer,
@@ -90,7 +81,6 @@ function Product({ match }) {
       if (!isSidebarOpen) {
         const toastId = notify.info( `${productItem.name} added to cart`, {
           onClick: () => {
-            notify.dismiss(toastId);
             dispatch(toggleSidebarAction({open: true}))
           },
         });
@@ -103,16 +93,21 @@ function Product({ match }) {
   }
 
 
-  function notInStock() {
-    const cartItem = getProductFromCart(id);
+  function isInStock(product: ProductType) {
+    // get the item from the user's cart
+    const cartItem = getProductFromCart(product.uuid);
+    // if it exists in the cart
     if (cartItem) {
+      // make sure the user hasn't selected more products than are in stock
       return (
-        currentProduct.stock.usersCount === 0 ||
-        cartItem.quantity >= currentProduct.stock.usersCount
+        (cartItem.inStock > 0) &&
+        (cartItem.quantity < cartItem.inStock)
       );
     }
 
-    return false;
+    // if it's not in the cart,
+    // make sure the product count from the server is greater than 0
+    return product?.inStock > 0;
   }
 
   function openModal(open) {
@@ -123,7 +118,7 @@ function Product({ match }) {
     <>
       {/* @ts-ignore*/}
       <SEOHeader title={currentProduct.name} description={currentProduct.description.copy}/>
-      <JsonLd item={{...productJsonld(currentProduct, id)}}/>
+      <JsonLd item={{...productJsonld(currentProduct, slug)}}/>
       <JsonLd item={{...subProduct(currentProduct, match.url)}}/>
 
       <Layout>
@@ -142,7 +137,7 @@ function Product({ match }) {
             <div style={{
               width: '80%',
               borderRadius: '4px',
-              marginTop: 84
+              marginTop: 84,
             }}>
               <div>
                 <ValueProposition>
@@ -153,10 +148,14 @@ function Product({ match }) {
                   </div>
                   <div>
                     <img style={{width: '50px'}} src={HelpIcon} alt={'easy payment'}/>
-                    <h4>Need help?</h4>
+                    <h4>Any questions? Need help?</h4>
                     <p>
                       Hit us up on Twitter <a href="https://twitter.com/retrbobie">@retrobie</a> or
-                      give us a call
+                      give us a call at <a
+                      href={'tel:+254-796-610-303'}
+                      type={'tel'}>
+                      +254 796 610 303
+                    </a>
                     </p>
                   </div>
                   <div>
@@ -199,35 +198,54 @@ function Product({ match }) {
                 </div>
                 <div>
                   <div>
-                    <h4>Select a size</h4>
+                    <h4>Available sizes</h4>
                   </div>
-                  {currentProduct.detail.size && (
-                    <SizesParent>
-                      <Sizes>
-                        <CustomTag>
-                          <p>{`${currentProduct.detail.size
-                          } ${currentProduct.detail.sizeCountry.toUpperCase()}`}</p>
-                        </CustomTag>
-                      </Sizes>
-                    </SizesParent>
-                  )}
+                  <SizesParent>
+                    <Sizes>
+                      <CustomTag>
+                        <p>
+                          {
+                            `
+                            ${currentProduct.detail.size} 
+                            ${currentProduct.detail.sizeCountry.toUpperCase()}
+                            `
+                          }
+                        </p>
+                      </CustomTag>
+                    </Sizes>
+                  </SizesParent>
                 </div>
 
                 <div>
                   <div>
-                    {currentProduct.stock.usersCount === 1 && (
-                      <CustomTag>
-                        <p>Only 1 in Stock</p>
-                      </CustomTag>
-                    )}
-                  </div>
-                  <div>
                     <h4>Product condition</h4>
                     <CustomTag>
-                      <p>Refurbished</p>
+                      <p>
+                        {
+                          capitalize(currentProduct.meta.condition)
+                        }
+                      </p>
                     </CustomTag>
                   </div>
                 </div>
+                {
+                  currentProduct.inStock !== null && (
+                    <div>
+                      <h4>Stock</h4>
+                      {
+                        currentProduct.inStock <= 5 ? (
+                          <CustomTag>
+                            <p>Only {currentProduct.inStock} left in stock</p>
+                          </CustomTag>
+                        ) : (
+                          <CustomTag>
+                            <p>{currentProduct.inStock} left in stock</p>
+                          </CustomTag>
+                        )
+                      }
+                    </div>
+                  )
+                }
                 <Buttons>
                   <div style={{margin: '18px 0'}}>
                     <div>
@@ -239,15 +257,31 @@ function Product({ match }) {
                             price: currentProduct.originalPrice,
                           });
                         }}
-                        disabled={notInStock()}
+                        disabled={!isInStock(currentProduct)}
                         style={{
                           width: '100%',
                           fontWeight: 'bold',
                         }}
                       >
-                        {notInStock() ? 'OUT OF STOCK' : 'ADD TO CART.'}
+                        {!isInStock(currentProduct) ? 'OUT OF STOCK' : 'ADD TO CART.'}
                       </Button>
                     </div>
+                  </div>
+                  <div>
+                    {
+                      !isInStock(currentProduct) && (
+                        <div>
+                          <Help>
+                            Want to be the first to know when this product in back in stock? {' '}
+                            <Button
+                              isColor={'ghost'}>
+                              We can let you know!
+                            </Button>
+                          </Help>
+
+                        </div>
+                      )
+                    }
                   </div>
 
                   <div>
@@ -263,14 +297,14 @@ function Product({ match }) {
                     >
                       <div style={{flex: '1 0 180px'}}>
                         <img alt={'return'} src={Return} style={{width: '48px'}}/>
-                        <h4 style={{color: '#353535'}}>Free returns within 7 days</h4>
+                        <h4 style={{color: '#353535'}}>Returns accepted within 7 days</h4>
                         <p>
                           &#10003; Direct returns - money refunded to your M-Pesa or Paypal account.
                         </p>
                       </div>
                       <div style={{flex: '1 0 180px'}}>
                         <img alt={'replace'} src={Replace} style={{width: '48px'}}/>
-                        <h4 style={{color: '#353535'}}>Free replacements within 14 days</h4>
+                        <h4 style={{color: '#353535'}}>Replacements accepted within 14 days</h4>
                         <p>&#10003; Replace your product with any other of similar value</p>
                       </div>
                     </div>
@@ -395,6 +429,11 @@ const ValueProposition = styled.div`
       margin-bottom: 6px;
     }
 
+    a {
+      color: dodgerblue;
+      text-decoration: underline;
+    }
+    
     p {
       margin: 0;
       text-align: center;

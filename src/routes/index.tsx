@@ -108,9 +108,9 @@ function Routes() {
           <Route exact path="/privacy/terms-of-service" component={TermsOfService} />
           <Route exact path="/checkout/:cartId" component={Checkout} />
           <Route path="/checkout/shipping/:orderId" component={Shipping} />
-          <Route path={'/product/:id'} component={Product} />
+          <Route path={'/product/:slug'} component={Product} />
 
-          <Route exact path="/policies/return-policy" component={ReturnsPolicy} />
+          <Route exact path="/policies/returns-policy" component={ReturnsPolicy} />
           <Route exact path="/policies/claims-policy" component={ClaimsPolicy} />
           <Route exact path="/policies/refund-policy" component={RefundPolicy} />
           <Route exact path="/policies/exchange-policy" component={ExchangePolicy} />

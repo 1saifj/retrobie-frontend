@@ -24,7 +24,7 @@ export default (state = initialState, action: {type: string; payload}) => {
     // or an item already in the cart.
     case ADD_TO_CART:
       let addToCartState = Object.assign({}, state);
-      const addToCartActionItem = action.payload.item;
+      const addToCartActionItem: CartItemType = action.payload.item;
       const cartItemPrice = addToCartActionItem.originalPrice || addToCartActionItem.price;
 
       // Create a new cartId if there is currently no cartId set
@@ -47,7 +47,7 @@ export default (state = initialState, action: {type: string; payload}) => {
           productId: addToCartActionItem.productId,
           slug: addToCartActionItem.slug,
           quantity: 1,
-          stock: addToCartActionItem.stock,
+          inStock: addToCartActionItem.inStock,
           price: addToCartActionItem.originalPrice,
           originalPrice: addToCartActionItem.originalPrice,
           thumbnailUrl: addToCartActionItem.images[0].thumbnailUrl,

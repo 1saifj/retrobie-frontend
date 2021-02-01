@@ -156,7 +156,7 @@ export default function SingleOrder(props) {
                             </div>
                           </div>
                           <div style={{marginLeft: 16}}>
-                            <p>In stock: {mapCartItemToProduct(cartItem.productId)?.stock.adminCount}</p>
+                            <p>In stock: {mapCartItemToProduct(cartItem.productId)?.adminProduct?.inStock}</p>
                           </div>
                         </div>
                       ))}

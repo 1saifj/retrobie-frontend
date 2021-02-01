@@ -81,7 +81,7 @@ const CreateProductValidationSchema = Yup.object().shape({
         .when("productType", { is: "sneaker", then: Yup.number().required(MESSAGES.REQUIRED) }),
     sizeCountry: Yup.string()
         .when("productType", { is: "sneaker", then: Yup.string().required(MESSAGES.REQUIRED) }),
-    stock: Yup.number()
+    inStock: Yup.number()
         .required(MESSAGES.REQUIRED)
         .moreThan(0, "Stock cannot be 0"),
     uuid: Yup.string()
@@ -296,7 +296,7 @@ const CreateProductModal = props => {
                                                   brand are available?</>}
                                               type="number"
                                               placeholder="eg. 10"
-                                              name="stock"/>
+                                              name="inStock"/>
                                         </Field>
 
                                     </Column>

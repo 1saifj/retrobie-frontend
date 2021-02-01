@@ -75,7 +75,7 @@ export default function ViewSingleBrand(props) {
                           renderProducts?.map((item, index) => (
                             <ProductItem
                               key={String(index)}
-                              to={`/brands/${brandNameOrId}/${item.uuid}`}
+                              to={`/brands/${brandNameOrId}/${item.slug}`}
                               style={{
                                 flex: '0 1 200px',
                                 maxHeight: 250,

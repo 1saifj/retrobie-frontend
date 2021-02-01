@@ -34,9 +34,6 @@ const CreateBrandValidationSchema = Yup.object().shape({
         .required("This field is required")
         .min(80, "SEO copy should not be less than 80 chars")
         .max(120, "SEO copy should not be more than 120 chars"),
-    stock: Yup.number()
-        .required("This field is required.")
-        .moreThan(0, "Stock cannot less than one."),
     uuid: Yup.string().required(),
     abbrev: Yup.string().required().min(2)
 
@@ -208,15 +205,6 @@ const CreateBrandModal = (
                                           type="textarea"
                                           chars={120}
                                           name="copy"/>
-                                    </Field>
-                                    <Field>
-                                        <TextField
-                                          label={<>
-                                              <span className='accented'>How many products</span> of this
-                                              brand are available?</>}
-                                          type="number"
-                                          placeholder="10"
-                                          name="stock"/>
                                     </Field>
                                     <Field>
                                         <TextField disabled

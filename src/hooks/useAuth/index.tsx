@@ -176,7 +176,7 @@ export default function() {
   const products = {
     getAll: async () => (await getAxis()).get('/products/all'),
     getFeatured: async () => (await getAxis()).get('/products/popular'),
-    getSingle: async (id) => (await getAxis()).get(`/products/${id}`),
+    getSingle: async (slug) => (await getAxis()).get(`/products/${slug}`),
     get: async (id) => (await getAxis()).get(`/products/${id}`),
     create: (data) => async () => (await getAxis()).post('/products/new', data),
     update: (id, data) => async () => (await getAxis()).put(`/products/${id}/update`, data),

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Layout, Loading} from '../../components';
+import {EmptyState, Layout, Loading} from '../../components';
 import {useAuth} from '../../hooks';
 import useSWR from 'swr/esm/use-swr';
 import ProductFilters from '../brands/components/product-filters';
@@ -8,6 +8,7 @@ import {useFiltersV2} from '../../hooks/useFiltersV2/FilterProvider';
 import {formatNumberWithCommas} from '../../helpers';
 import {ProductItem} from '../brands/Brand';
 import { Section, Container } from 'bloomer';
+import {EmptyBox} from '../../constants/icons';
 
 
 export default function({match}){
@@ -56,6 +57,20 @@ export default function({match}){
     )
   }
 
+  if (!renderProducts?.length) {
+    return (
+      <Layout>
+        <EmptyState
+          icon={EmptyBox}
+          iconWidth={52}
+          centerAlign={true}
+          title={'There\'s Nothing to see here.'}
+          message={'No products have been uploaded to this category yet. Check back again later!'}
+        />
+      </Layout>
+    );
+  }
+
 
   return (
     <Layout>
@@ -77,7 +92,7 @@ export default function({match}){
                 renderProducts?.map((item, index) => (
                   <ProductItem
                     key={String(index)}
-                    to={`/product/${item.uuid}/`}
+                    to={`/product/${item.slug}/`}
                     style={{
                       flex: '0 1 200px',
                       maxHeight: 250,

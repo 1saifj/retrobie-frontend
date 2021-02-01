@@ -11,7 +11,7 @@ export type ProductType = {
   originalPrice: number;
   slug: string;
   price: number;
-  stock: StockType;
+  inStock: number;
   uuid: string;
   images?: Array<ImageType>;
   isOnOffer: boolean;
@@ -19,6 +19,9 @@ export type ProductType = {
   meta?: ProductMetaType
   description?: DescriptionType
   currency?: string
+  adminProduct?: {
+    inStock: number
+  }
 };
 
 // This is the ProductType as represented/provided
@@ -28,6 +31,7 @@ export type FilteredProduct = {
   sex: "M" | "F",
   size: number,
   style: string,
+  slug: string,
   condition: string,
   uuid: string
   url: string,
@@ -49,11 +53,6 @@ type ProductMetaType = {
   style: string;
   condition: string;
 }
-
-export type StockType = {
-  usersCount: number;
-  adminCount: number;
-};
 
 export type ImageType = {
   fileId: string
@@ -120,7 +119,7 @@ export interface CartItemType extends ProductType {
   productName: string;
   quantity: number;
   price: number;
-  stock: number;
+  inStock: number;
   uuid?: string;
   productId: string;
   thumbnailUrl: string;

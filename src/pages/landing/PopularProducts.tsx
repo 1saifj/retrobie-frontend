@@ -10,13 +10,14 @@ import useSWR from 'swr';
 import ServerError from '../../assets/images/vectors/dead.svg';
 import {Button} from 'bloomer';
 import Layout from '../../components/Layout';
+import {ProductType} from '../../types';
 
 function PopularProducts() {
   const api = useAuth();
   const dispatch = useDispatch();
 
   const featuredProductsFetcher = () => api.products.getFeatured().then(({ data }) => data);
-  const { data: featuredProducts, error } = useSWR('/products/featured', featuredProductsFetcher)
+  const { data: featuredProducts, error } = useSWR<ProductType[]>('/products/featured', featuredProductsFetcher)
 
 
   if (error) {
@@ -45,7 +46,7 @@ function PopularProducts() {
       <BrandImagesParent>
         {featuredProducts?.length &&
           featuredProducts.map(product => (
-            <Link to={`/product/${product.uuid}`} key={product.name}>
+            <Link to={`/product/${product.slug}`} key={product.name}>
               <BrandParent>
                 <div className={'image'}>
                   <img src={product.images[0].thumbnailUrl} alt={'featured image'} />

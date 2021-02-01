@@ -18,9 +18,6 @@ export function newBrand() {
             .required(REQUIRED),
         featuredImage: Yup.object().required(REQUIRED),
         logo: Yup.object().required(REQUIRED),
-        uuid: Yup.string().required(REQUIRED),
-        stock: Yup.number()
-            .positive("Cannot be less than zero")
-            .min(1, "Cannot be zero")
+        uuid: Yup.string().required(REQUIRED)
     })
 }

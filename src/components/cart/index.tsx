@@ -46,7 +46,7 @@ export function isProductInStock(
     // re-assign it
     const cartItem: CartItemType = itemExistsInCart;
     // make sure the user hasn't selected too much
-    if (cartItem.quantity <= cartItem.stock) {
+    if (cartItem.quantity <= cartItem.inStock) {
       // add that item to our cart
       return {
         shouldAddToCart: true,
@@ -61,7 +61,7 @@ export function isProductInStock(
   } else {
     // If it's being added for the first time
     // Make sure the stock count 1 or more
-    if (cartItemClone.stock >= 1) {
+    if (cartItemClone.inStock >= 1) {
       return {
         shouldAddToCart: true,
       };
@@ -172,7 +172,7 @@ export default function Cart(
             <div
               className="cart-cartItem--parent"
               key={cartItem.uuid}
-              onClick={() => redirectOrCloseSidebar(`/product/${cartItem.productId}`)}
+              onClick={() => redirectOrCloseSidebar(`/product/${cartItem.slug}`)}
             >
               <CartItem size={size} bordered={bordered}>
                 <div style={{width: '100px', height: '80px', display: 'flex'}}>
@@ -205,7 +205,7 @@ export default function Cart(
                     {showAddButton && (
                       <Button
                         isColor="light"
-                        disabled={cartItem.quantity === cartItem.stock}
+                        disabled={cartItem.quantity < cartItem.inStock}
                         style={{padding: 0}}
                         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                           event.stopPropagation();
