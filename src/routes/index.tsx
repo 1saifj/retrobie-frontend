@@ -127,7 +127,7 @@ function Routes() {
 
           <Route exact path="/brands/" component={BrandsPage} />
           <Route exact path="/brands/:brand" component={SingleBrand} />
-          <Route exact path="/brands/:brand/:id" component={Product} />
+          <Route exact path="/brands/:brand/:slug" component={Product} />
 
           <Route path="/category/:id/" component={Category} />
           <Route path="/collection/:id/" component={Collection} />
