@@ -5,11 +5,13 @@ import styled from 'styled-components';
 import Loading from '../../components/loading';
 import {Container, Section} from 'bloomer';
 import {useAuth} from '../../network';
-import {formatNumberWithCommas} from '../../helpers';
+import {capitalize, formatNumberWithCommas} from '../../helpers';
 import {Link} from 'react-router-dom';
 import useSWR from 'swr/esm/use-swr';
 import {BrandType, FilteredProduct, ProductType} from '../../types';
 import useFiltersV2 from '../../hooks/useFiltersV2';
+import {GrimacingEmoji} from '../../constants/icons';
+import {EmptyState} from '../../components';
 
 export default function ViewSingleBrand(props) {
 
@@ -30,6 +32,20 @@ export default function ViewSingleBrand(props) {
   if (!allProducts) {
     return (
       <Loading/>
+    )
+  }
+
+  if (!allProducts.length){
+    return  (
+      <Layout>
+        <EmptyState
+          icon={GrimacingEmoji}
+          iconWidth={52}
+          centerAlign={true}
+          title={`Oops. We haven't uploaded any ${capitalize(brandData.name)} shoes yet.`}
+          message={'We\'re working on it! Check back soon!' }
+        />
+      </Layout>
     )
   }
 
@@ -65,14 +81,16 @@ export default function ViewSingleBrand(props) {
                       products={allProducts}
                       allCriteria={['sex', 'size', 'price', 'style']}
                     />
-                    <div>
+                    <div style={{width: '100%'}}>
                       <div style={{
                         display: 'flex',
                         columnGap: 24,
+                        justifyContent: renderProducts?.length < 3 ?'start': 'space-between',
+                        flexWrap: 'wrap'
                       }}
                       >
                         {
-                          renderProducts?.map((item, index) => (
+                          renderProducts?.length ? renderProducts?.map((item, index) => (
                             <ProductItem
                               key={String(index)}
                               to={`/brands/${brandNameOrId}/${item.slug}`}
@@ -95,7 +113,18 @@ export default function ViewSingleBrand(props) {
                               </div>
                             </ProductItem>
 
-                          ))
+                          )): (
+                            <EmptyState
+                              style={{
+                                width: '100%'
+                              }}
+                              icon={GrimacingEmoji}
+                              iconWidth={52}
+                              centerAlign={true}
+                              title={'There\'s Nothing to see here.'}
+                              message={'No products match that query. Try something else'}
+                            />
+                          )
 
                         }
                       </div>

@@ -8,7 +8,7 @@ import {useFiltersV2} from '../../hooks/useFiltersV2/FilterProvider';
 import {formatNumberWithCommas} from '../../helpers';
 import {ProductItem} from '../brands/Brand';
 import { Section, Container } from 'bloomer';
-import {EmptyBox} from '../../constants/icons';
+import {EmptyBox, GrimacingEmoji} from '../../constants/icons';
 
 
 export default function({match}){
@@ -57,7 +57,7 @@ export default function({match}){
     )
   }
 
-  if (!renderProducts?.length) {
+  if (!categoryData.products?.length) {
     return (
       <Layout>
         <EmptyState
@@ -86,10 +86,12 @@ export default function({match}){
             <div style={{
               display: 'flex',
               columnGap: 24,
+              justifyContent: renderProducts?.length < 3 ?'start': 'space-between',
+              flexWrap: 'wrap'
             }}
             >
               {
-                renderProducts?.map((item, index) => (
+                renderProducts?.length ? renderProducts.map((item, index) => (
                   <ProductItem
                     key={String(index)}
                     to={`/product/${item.slug}/`}
@@ -112,7 +114,18 @@ export default function({match}){
                     </div>
                   </ProductItem>
 
-                ))
+                )): (
+                  <EmptyState
+                    icon={GrimacingEmoji}
+                    style={{
+                      width: '100%'
+                    }}
+                    iconWidth={52}
+                    centerAlign={true}
+                    title={'There\'s Nothing to see here.'}
+                    message={'No match that query. Try something else'}
+                  />
+                )
 
               }
             </div>

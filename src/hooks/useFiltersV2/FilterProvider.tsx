@@ -140,18 +140,21 @@ function useProvideFilters() {
     if (qsParams && Object.keys(qsParams).length) {
 
       // if so, filter the list of simplified products
-      const filtered = transformedProducts.filter(product => {
+      if (transformedProducts){
+        const filtered = transformedProducts.filter(product => {
 
-        // and check if every value in the search params
-        // matches the values in the product object
-        return Object.keys(qsParams).every(key => {
-          // ps: make sure to cast the product value to string since some
-          // values will be numbers e.g. price
-          return String(product[key]) === qsParams[key];
-        });
-        // and map the resulting array, searching for matching products
-      }).map(filteredProduct => allProducts.find(product => product.uuid === filteredProduct.uuid));
-      setFilteredProducts(filtered);
+          // and check if every value in the search params
+          // matches the values in the product object
+          return Object.keys(qsParams).every(key => {
+            // ps: make sure to cast the product value to string since some
+            // values will be numbers e.g. price
+            return String(product[key]) === qsParams[key];
+          });
+          // and map the resulting array, searching for matching products
+        }).map(filteredProduct => allProducts.find(product => product.uuid === filteredProduct.uuid));
+        setFilteredProducts(filtered);
+      }else
+        setFilteredProducts([]);
     } else {
       // if no criteria are selected,
       // reset the filters
