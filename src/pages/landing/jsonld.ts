@@ -4,10 +4,10 @@ export default () => {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "image": [
-      "https://i.postimg.cc/YSnGKvHY/800439-1.jpg"
+      "https://retrobie.com/logo.png"
     ],
     "@id": "https://retrobie.com",
-    "name": "The 2500 Store",
+    "name": "Retrobie",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Parklands, Nairobi",

@@ -3,7 +3,7 @@ import { UserInfoType } from '../state/reducers/userReducers';
 export type DescriptionType = {
   long: string
   short: string
-  copy: string
+  seo: string
 }
 
 export type ProductType = {
@@ -13,6 +13,7 @@ export type ProductType = {
   price: number;
   inStock: number;
   uuid: string;
+  brands?: Array<BrandType>
   images?: Array<ImageType>;
   isOnOffer: boolean;
   detail?: ProductDetailType;
@@ -89,6 +90,7 @@ export interface CategoryType {
   slug: string;
   uuid: string;
   landingImage: ImageType
+  description: string
   products?: Array<ProductType>
 }
 
@@ -96,9 +98,7 @@ export interface BrandType {
   uuid: string;
   name: string
   logo: ImageType
-  description?: {
-    long: string
-  }
+  description?: DescriptionType
 }
 
 export type DeliveryType = {

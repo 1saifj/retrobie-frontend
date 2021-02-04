@@ -10,8 +10,9 @@ import {Link} from 'react-router-dom';
 import useSWR from 'swr/esm/use-swr';
 import {BrandType, FilteredProduct, ProductType} from '../../types';
 import useFiltersV2 from '../../hooks/useFiltersV2';
-import {GrimacingEmoji} from '../../constants/icons';
+import {Clown, GrimacingEmoji} from '../../constants/icons';
 import {EmptyState} from '../../components';
+import SEOHeader from '../../components/SEOHeader';
 
 export default function ViewSingleBrand(props) {
 
@@ -19,17 +20,33 @@ export default function ViewSingleBrand(props) {
 
   const api = useAuth();
   const brandFetcher = (url, name)=> api.brands.getSingle(name).then(({data})=> data);
-  const {data: brandData} = useSWR<BrandType>(['/brands/:id', brandNameOrId], brandFetcher);
+  const {data: brandData, error: fetchBrandError} = useSWR<BrandType>(
+    ['/brands/:id', brandNameOrId],
+    brandFetcher
+  );
 
   const {products: renderProducts} = useFiltersV2();
 
   const filteredProductsFetcher = (url, name) => api.brands.getFilteredProducts(name).then(({data})=> data);
-  const {data: allProducts} = useSWR<FilteredProduct[]>([
-    brandData ? `/brands/${brandData.name}/products/filtered`: undefined,
-    brandNameOrId
-  ], filteredProductsFetcher)
+  const {data: allProducts, error: fetchProductsError} = useSWR<FilteredProduct[]>([
+    brandData ? `/brands/${brandData.name}/products/filtered` : undefined,
+    brandNameOrId,
+  ], filteredProductsFetcher);
 
-  if (!allProducts) {
+
+  if (fetchBrandError || fetchProductsError) {
+    return  (
+      <Layout>
+        <EmptyState
+          icon={Clown}
+          title={'Looks like clowns took over our servers.'}
+          message={"It's not you it's us. We're working on it."}
+        />
+      </Layout>
+    )
+  }
+
+  if (!allProducts || !brandData) {
     return (
       <Loading/>
     )
@@ -51,6 +68,10 @@ export default function ViewSingleBrand(props) {
 
   return (
     <Layout>
+      <SEOHeader
+        description={brandData.description.seo}
+        path={`/brand/${brandData.name}`}
+        title={`${brandData.name} shoes`}/>
       <Section>
         <Container>
           <div>

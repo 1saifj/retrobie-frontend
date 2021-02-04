@@ -13,8 +13,9 @@ const Tos = () => {
         <CenterPageContent>
           <SupportParent>
             <SEOHeader
-              title={'Retrobie | Privacy Policy'}
-              description={'Retrobie Privacy Policy'}
+              path={'/privacy/terms-of-service'}
+              title={'Privacy Policy'}
+              description={'Curious to see how Retrobie manage your data? Here\'s all the information you need.' }
             />
             <div>
               <h2>

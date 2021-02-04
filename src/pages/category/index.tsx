@@ -9,6 +9,7 @@ import {formatNumberWithCommas} from '../../helpers';
 import {ProductItem} from '../brands/Brand';
 import { Section, Container } from 'bloomer';
 import {EmptyBox, GrimacingEmoji} from '../../constants/icons';
+import SEOHeader from '../../components/SEOHeader';
 
 
 export default function({match}){
@@ -74,6 +75,10 @@ export default function({match}){
 
   return (
     <Layout>
+      <SEOHeader
+        description={categoryData.description}
+        path={`/category/${categoryData.name}`}
+        title={`${categoryData.name} in Nairobi`}/>
       <Section>
         <Container>
           <div style={{display: 'flex', gap: 64}}>
@@ -83,51 +88,59 @@ export default function({match}){
               products={categoryData.products}
               allCriteria={['sex', 'size', 'price']}
             />
-            <div style={{
-              display: 'flex',
-              columnGap: 24,
-              justifyContent: renderProducts?.length < 3 ?'start': 'space-between',
-              flexWrap: 'wrap'
-            }}
-            >
-              {
-                renderProducts?.length ? renderProducts.map((item, index) => (
-                  <ProductItem
-                    key={String(index)}
-                    to={`/product/${item.slug}/`}
-                    style={{
-                      flex: '0 1 200px',
-                      maxHeight: 250,
-                      background: '#f5f5f5',
-                    }}>
+            <div>
+              <header>
+                <h1>
+                  {categoryData.name}
+                </h1>
+              </header>
 
-                    <div style={{height: '100%'}}>
-                      <img src={item.url} alt={item.name}/>
-                    </div>
-                    <div className={'footer'}>
-                      <p>{item.name}</p>
-                      <p>
-                        <b>
-                          Ksh. {formatNumberWithCommas(item.price)}
-                        </b>
-                      </p>
-                    </div>
-                  </ProductItem>
+              <div style={{
+                display: 'flex',
+                columnGap: 24,
+                justifyContent: renderProducts?.length < 3 ?'start': 'space-between',
+                flexWrap: 'wrap'
+              }}
+              >
+                {
+                  renderProducts?.length ? renderProducts.map((item, index) => (
+                    <ProductItem
+                      key={String(index)}
+                      to={`/product/${item.slug}/`}
+                      style={{
+                        flex: '0 1 200px',
+                        maxHeight: 250,
+                        background: '#f5f5f5',
+                      }}>
 
-                )): (
-                  <EmptyState
-                    icon={GrimacingEmoji}
-                    style={{
-                      width: '100%'
-                    }}
-                    iconWidth={52}
-                    centerAlign={true}
-                    title={'There\'s Nothing to see here.'}
-                    message={'No match that query. Try something else'}
-                  />
-                )
+                      <div style={{height: '100%'}}>
+                        <img src={item.url} alt={item.name}/>
+                      </div>
+                      <div className={'footer'}>
+                        <p>{item.name}</p>
+                        <p>
+                          <b>
+                            Ksh. {formatNumberWithCommas(item.price)}
+                          </b>
+                        </p>
+                      </div>
+                    </ProductItem>
 
-              }
+                  )): (
+                    <EmptyState
+                      icon={GrimacingEmoji}
+                      style={{
+                        width: '100%'
+                      }}
+                      iconWidth={52}
+                      centerAlign={true}
+                      title={'There\'s Nothing to see here.'}
+                      message={'No match that query. Try something else'}
+                    />
+                  )
+
+                }
+              </div>
             </div>
 
           </div>

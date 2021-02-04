@@ -28,22 +28,15 @@ import Discover from './Discover';
 import Hero from './Hero';
 import DotPattern from '../../assets/images/patterns/dots.svg';
 
-const LoaderParent = styled.div`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  padding: 4px;
-  background: gray;
-`;
-
 function Landing({ history }) {
   return (
-    <Layout style={{ maxWidth: '1684px' }}>
+    <Layout style={{maxWidth: '1684px'}}>
       <SEOHeader
-        title={'The Home of Authentic Sneakers & Sports Shoes in Kenya'}
+        path={'/'}
+        description={'We stock high-quality affordable sneakers, running shoes, sports shoes and classy men\'s shoes in Nairobi. We also accept shoe requests from repeat customers.'}
+        title={'Home of Authentic Sneakers & Sports Shoes in Kenya'}
       />
-      <JsonLd item={jsonld()} />
+      <JsonLd item={jsonld()}/>
       <div
         style={{
           display: 'grid',
@@ -53,31 +46,31 @@ function Landing({ history }) {
         }}
       >
         <Section>
-          <Hero />
+          <Hero/>
         </Section>
       </div>
       <Section>
-        <div style={{ textAlign: 'center' }}>
+        <div style={{textAlign: 'center'}}>
           <h1>Enjoy the perks of shopping with us</h1>
         </div>
         <ValueProposition>
           <div>
-            <img style={{ width: '48px' }} src={Return} alt={'easy payment'} />
-            <h4>Free Returns</h4>
+            <img style={{width: '48px'}} src={Return} alt={'easy returns'}/>
+            <h4>We accept Returns</h4>
             <p>Within 7 days of delivery.</p>
           </div>
           <div>
-            <img style={{ width: '48px' }} src={FastDelivery} alt={'Free Delivery'} />
+            <img style={{width: '48px'}} src={FastDelivery} alt={'next-day Delivery'}/>
             <h4>Next-day Delivery</h4>
             <p>Anywhere within Nairobi</p>
           </div>
           <div>
-            <img style={{ width: '48px' }} src={FreePickups} alt={'easy payment'} />
+            <img style={{width: '48px'}} src={FreePickups} alt={'free pickups payment'}/>
             <h4>Free pickups</h4>
             <p>At selected points within the CBD.</p>
           </div>
           <div>
-            <img style={{ width: '48px' }} src={Shield} alt={'easy payment'} />
+            <img style={{width: '48px'}} src={Shield} alt={'easy payment'}/>
             <h4>100% Quality Guarantee</h4>
             <p>It's real deal or no deal.</p>
           </div>
@@ -87,22 +80,22 @@ function Landing({ history }) {
       <Section>
         <Container>
           <div>
-            <div style={{ textAlign: 'center' }}>
-              <img src={Fire} alt={'fire'} style={{ width: '64px' }} />
+            <div style={{textAlign: 'center'}}>
+              <img src={Fire} alt={'fire'} style={{width: '64px'}}/>
 
               <h2>Popular Right Now.</h2>
               <p>Not sure where to start? Check out the most popular brands and models</p>
             </div>
             <div>
-              <PopularProducts />
+              <PopularProducts/>
             </div>
           </div>
         </Container>
       </Section>
 
-      <Section style={{ background: `url('${DotPattern}')` }} id="app-body">
+      <Section style={{background: `url('${DotPattern}')`}} id="app-body">
         <Container>
-          <Discover />
+          <Discover/>
         </Container>
       </Section>
 
@@ -126,11 +119,11 @@ function Landing({ history }) {
           }
         `}</style>
         <Container>
-          <div style={{ padding: '24px 0', display: 'flex' }}>
+          <div style={{padding: '24px 0', display: 'flex'}}>
             <img
               src={Orbit}
               alt="stand for something"
-              style={{ width: 65, alignSelf: 'flex-start', padding: 8 }}
+              style={{width: 65, alignSelf: 'flex-start', padding: 8}}
             />
             <div>
               <h2 style={{marginBottom: 0}}>What we stand for</h2>
@@ -142,33 +135,48 @@ function Landing({ history }) {
           </div>
           <Values>
             <div>
-              <img src={Scope} alt={'fire'} style={{ width: '100%' }} />
+              <img src={Scope} alt={'fire'} style={{width: '100%'}}/>
               <h4>Discovery</h4>
               <div>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-              </div>
-            </div>
-            <div>
-              <img src={Expression} alt={'fire'} style={{ width: '100%' }} />
-              <h4>Self-Expression</h4>
-              <div>
-                <p>Duis gravida dignissim elit ut vehicula. Morbi pellentesque eleifend feugiat.</p>
-              </div>
-            </div>
-            <div>
-              <img src={Authenticity} alt={'fire'} style={{ width: '100%' }} />
-              <h4>Authenticity</h4>
-              <div>
                 <p>
-                  Suspendisse ullamcorper odio congue urna porta lobortis. Donec id molestie lacus.
+                  We want to help you discover the best of what the world has to offer - the best sneakers,
+                  the best quality and the best service.
                 </p>
               </div>
             </div>
             <div>
-              <img src={Originality} alt={'fire'} style={{ width: '100%' }} />
+              <img src={Expression} alt={'fire'} style={{width: '100%'}}/>
+              <h4>Self-Expression</h4>
+              <div>
+                <p>
+                  Express yourself through the freshest kicks & the dopest tees in Nairobi.
+                  Nothing is more important than being yourself.
+                </p>
+              </div>
+            </div>
+            <div>
+              <img src={Authenticity} alt={'fire'} style={{width: '100%'}}/>
+              <h4>Authenticity</h4>
+              <div>
+                <p>
+                  Our motto is - "all that is authentic is good." We'll be real with you if you're
+                  real with us. And we'll always be real with you.{' '}
+                  <span>
+                    <img
+                      alt={'mischevious wink'}
+                      src={WinkingEmoji}
+                      style={{width: 18, verticalAlign: 'sub'}}/>
+                  </span>
+                </p>
+              </div>
+            </div>
+            <div>
+              <img src={Originality} alt={'fire'} style={{width: '100%'}}/>
               <h4>Originality</h4>
               <div>
-                <p>Maecenas consequat felis nec ipsum lobortis, eget tincidunt dolor auctor.</p>
+                <p>
+                  Do what you want, when you want. If you're doing you, you're doing it right.
+                </p>
               </div>
             </div>
           </Values>
@@ -177,7 +185,7 @@ function Landing({ history }) {
 
       <Section>
         <Container>
-          <Categories />
+          <Categories/>
         </Container>
       </Section>
       {/*<Section>*/}
@@ -189,10 +197,10 @@ function Landing({ history }) {
       <Section>
         <Container>
           <Partners>
-            <h2 style={{ margin: 0 }}>We accept</h2>
+            <h2 style={{margin: 0}}>We accept</h2>
             <div className="images">
               <div>
-                <img title="M-Pesa" src={MPesaLogo} alt="mpesa logo" />
+                <img title="M-Pesa" src={MPesaLogo} alt="mpesa logo"/>
               </div>
             </div>
           </Partners>
@@ -206,7 +214,7 @@ function Landing({ history }) {
                   alt={'coffee'}
                 />
               </div>
-              <div id="mc_embed_signup" style={{ display: 'flex', alignItems: 'center' }}>
+              <div id="mc_embed_signup" style={{display: 'flex', alignItems: 'center'}}>
                 <form
                   action="https://store.us15.list-manage.com/subscribe/post?u=6ec31ce43b70efd818395b2ae&amp;id=159a07cdbd"
                   method="post"
@@ -224,7 +232,7 @@ function Landing({ history }) {
                           If you've got good taste (of course you do), you'll love our newsletter
                           <span>
                             <img
-                              style={{ width: '16px', verticalAlign: 'sub' }}
+                              style={{width: '16px', verticalAlign: 'sub'}}
                               src={WinkingEmoji}
                               alt={'winking emoji'}
                             />
@@ -250,7 +258,7 @@ function Landing({ history }) {
                         />
                         <Button
                           isColor="primary"
-                          style={{ padding: '10px 24px', fontSize: '14px' }}
+                          style={{padding: '10px 24px', fontSize: '14px'}}
                           defaultValue="Subscribe"
                           name="subscribe"
                           id="mc-embedded-subscribe"
@@ -260,14 +268,14 @@ function Landing({ history }) {
                       </div>
                     </div>
                     <div id="mce-responses" className="clear">
-                      <div className="response" id="mce-error-response" style={{ display: 'none' }} />
+                      <div className="response" id="mce-error-response" style={{display: 'none'}}/>
                       <div
                         className="response"
                         id="mce-success-response"
-                        style={{ display: 'none' }}
+                        style={{display: 'none'}}
                       />
                     </div>
-                    <div style={{ position: 'absolute', left: '-5000px' }} aria-hidden="true">
+                    <div style={{position: 'absolute', left: '-5000px'}} aria-hidden="true">
                       <input
                         type="text"
                         name="b_6ec31ce43b70efd818395b2ae_159a07cdbd"
@@ -285,7 +293,7 @@ function Landing({ history }) {
 
       <Section>
         <Container>
-          <div style={{ textAlign: 'center' }}>
+          <div style={{textAlign: 'center'}}>
             <h2>Do you still have questions?</h2>
             <Button isColor="primary" onClick={() => history.push('/support')}>
               Check out the FAQs

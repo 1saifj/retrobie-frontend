@@ -41,7 +41,7 @@ function useProvideFilters() {
   // this hook is called when allProducts or allCriteria change
   // i.e. when they are set (at any point)
   useEffect(() => {
-    const newCriteria = new Map(criteriaValues);
+    const newCriteria = new Map<string, Set<string | number>>();
 
     // grab the criteria we need to sort by from each product
     // we need a list of flat products with only the required criteria

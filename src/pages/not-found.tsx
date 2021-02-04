@@ -7,7 +7,10 @@ import {ErrorIcon404Dark} from '../constants/icons';
 function NotFound() {
   return (
     <Layout>
-      <SEOHeader title={'404 Error. Not Found'}/>
+      <SEOHeader
+        description={`Oops. We couldn't find that page`}
+        path={'/not-found'}
+        title={'404 Error. Not Found'}/>
       <EmptyState
         style={{minHeight: '90vh', display: 'flex', alignItems: 'center'}}
         icon={()=> (

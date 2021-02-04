@@ -2,9 +2,9 @@ class Env {
   getApiHost() {
     return this.isDev()
       ? 'http://localhost:2500/api'
-      : this.isStaging
-      ? 'https://api.staging.retrobie.com/api'
-      : 'https://api.retrobie.com/api';
+      : this.isStaging()
+        ? 'https://api.staging.retrobie.com/api'
+        : 'https://api.retrobie.com/api';
   }
 
   getApiVersion() {
@@ -29,8 +29,15 @@ class Env {
 
   isStaging() {
     return (
-      window.location.hostname.includes('netlify') || window.location.hostname.includes('vercel')
+      // @ts-ignore
+      process.env.NODE_ENV === 'staging' ||
+      window.location.hostname.includes('netlify') ||
+      window.location.hostname.includes('vercel')
     );
+  }
+
+  isProduction(){
+    return process.env.NODE_ENV === 'production'
   }
 }
 

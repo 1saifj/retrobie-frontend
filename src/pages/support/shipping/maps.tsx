@@ -9,9 +9,9 @@ export default function ShippingMaps(){
       <div style={{margin: '128px auto', maxWidth: 800}}>
         <div>
           <div>
-            <h2>
+            <h1>
               Retrobie and Your Location Data
-            </h2>
+            </h1>
           </div>
           <div>
             <h3>

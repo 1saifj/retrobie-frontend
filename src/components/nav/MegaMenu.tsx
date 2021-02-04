@@ -10,7 +10,7 @@ import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { useAuth } from '../../hooks';
 import RetroImage from '../image';
 import { ChevronDown } from 'react-feather';
-import { Tooltip } from 'react-tippy';
+import Tooltip from '../tooltip';
 import styled from 'styled-components';
 import { UserState } from '../../state/reducers/userReducers';
 import { env } from '../../config';
@@ -71,24 +71,27 @@ const MegaMenu = () => {
                     newItems.map((item, index) => (
                       <div className="submenu-flex" key={String(index)}>
                         <li className="promo-container">
-                          <a tabIndex={0}
+                          <Link tabIndex={0}
                              role="menuitem"
-                             className="promo-imglink" href={item.to}
+                             className="promo-imglink"
+                             to={item.to}
                              title={item.title}>
                             <RetroImage
                               alt={item.title}
                               src={item.image}
                             />
-                          </a>
+                          </Link>
                         </li>
                       </div>
                     ))
                   }
                 </ul>
               )}>
-              <a className="nav-toplink " href="#" title="New">
+              <Link
+                className="nav-toplink "
+                to="#" title="New">
                 New
-              </a>
+              </Link>
             </Tooltip>
           </li>
 
@@ -120,44 +123,44 @@ const MegaMenu = () => {
                     <li
                       style={{listStyle: 'none'}}
                       className="promo-container">
-                      <a tabIndex={0} role="menuitem" className="promo-imglink" href="/sale"
+                      <Link tabIndex={0} role="menuitem" className="promo-imglink" to="/sale"
                          title="Promo">
                         <RetroImage
                           alt="Promo"
                           src={'https://ik.imagekit.io/t25/v2/landing/architecture-buildings-business-car-331990_Ht9UI78PA.webp?tr=w-250'}
                         />
-                      </a>
+                      </Link>
                     </li>
                     <li
                       style={{listStyle: 'none'}}
                       className="promo-container">
-                      <a tabIndex={0} role="menuitem" className="promo-imglink" href="/sale"
+                      <Link tabIndex={0} role="menuitem" className="promo-imglink" to="/sale"
                          title="Promo">
                         <RetroImage
                           alt="Promo"
                           src={'https://ik.imagekit.io/t25/v2/landing/architecture-buildings-business-car-331990_Ht9UI78PA.webp?tr=w-250'}
                         />
-                      </a>
+                      </Link>
                     </li>
                     <li
                       style={{listStyle: 'none'}}
                       className="promo-container">
-                      <a tabIndex={0} role="menuitem" className="promo-imglink" href="/sale"
+                      <Link tabIndex={0} role="menuitem" className="promo-imglink" to="/sale"
                          title="Promo">
                         <RetroImage
                           alt="Promo"
                           src={'https://ik.imagekit.io/t25/v2/landing/architecture-buildings-business-car-331990_Ht9UI78PA.webp?tr=w-250'}
                         />
-                      </a>
+                      </Link>
                     </li>
 
                   </div>
 
                 </ul>
               )}>
-              <a className="nav-toplink " tabIndex={0} href="#" title="Sale">
+              <Link className="nav-toplink " tabIndex={0} to="#" title="Sale">
                 Sale
-              </a>
+              </Link>
 
             </Tooltip>
 
@@ -171,9 +174,11 @@ const MegaMenu = () => {
 
           </li>
           <li className="default">
-            <a className="nav-toplink"
+            <Button
+              isColor={'ghost'}
+              className="nav-toplink"
                onClick={() => openOrCloseSidebar(true)}
-               tabIndex={0} href="#"
+               tabIndex={0}
                title="Sale">
               <div style={{
                 marginBottom: '4px', display: 'inherit',
@@ -182,7 +187,7 @@ const MegaMenu = () => {
                    data-badge={cartCount}>
                 <img style={{width: '24px'}} className={'cart'} src={CartIcon} alt={'cart'}/>
               </div>
-            </a>
+            </Button>
             <Drawer open={isDrawerOpen}
                     duration={'.25s'}
                     placement={'left'}
@@ -237,7 +242,6 @@ const MegaMenu = () => {
                 <>
                   <Tooltip
                     // options
-                    title="Welcome to React"
                     position="bottom"
                     theme={'light'}
                     interactive={true}
@@ -252,14 +256,14 @@ const MegaMenu = () => {
                           margin: 0,
                         }}>
                           <li style={{padding: '0 8px'}}>
-                            <a href={'/accounts/me'}>
+                            <Link to={'/accounts/me'}>
                               Your account
-                            </a>
+                            </Link>
                           </li>
                           <li style={{padding: '0 8px'}}>
-                            <a href={'/accounts/me/orders'}>
+                            <Link to={'/accounts/me/orders'}>
                               Your orders
-                            </a>
+                            </Link>
                           </li>
                           <li style={{padding: '0 8px'}}>
                             <Button
@@ -344,18 +348,18 @@ const NavbarItem = ({title, links, featured, style}) => {
                                   borderBottom: "1px solid #d8d8d8",
                                   paddingBottom: 8
                               }}>
-                                  <a
+                                  <Link
                                     tabIndex={0}
-                                     href={category.to} title={category.title}>
+                                     to={category.to} title={category.title}>
                                       {category.title}
-                                  </a>
+                                  </Link>
                               </li>
                               {
                                   category.items?.map(item => (
                                     <li key={item.title}>
-                                        <a tabIndex={0} href={item.to} title={item.title}>
+                                        <Link tabIndex={0} to={item.to} title={item.title}>
                                             {item.title}
-                                        </a>
+                                        </Link>
                                     </li>
                                   ))
                               }
@@ -368,22 +372,22 @@ const NavbarItem = ({title, links, featured, style}) => {
                         <div className="submenu-flex">
 
                             <li className="promo-container">
-                                <a
+                                <Link
                                   tabIndex={0}
                                   role="menuitem"
-                                  className="promo-imglink" href={featured.link}
+                                  className="promo-imglink" to={featured.link}
                                    title={`${title} promo`}>
                                     <img tabIndex={-1} alt={`Shop ${title}`} src={featured.image} width="340" height="580"/>
-                                </a>
+                                </Link>
                             </li>
 
                         </div>
                     }
                 </ul>
               )}>
-                <a className="nav-toplink " tabIndex={0} href="#" title={title}>
+                <Link className="nav-toplink " tabIndex={0} to="#" title={title}>
                     {title}
-                </a>
+                </Link>
             </Tooltip>
         </li>
     );

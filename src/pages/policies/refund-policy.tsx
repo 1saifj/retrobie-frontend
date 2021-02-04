@@ -2,6 +2,7 @@ import React from 'react';
 import {CenterPageContent} from '../support';
 import {Layout} from '../../components';
 import {SupportParent} from './shipping-policy';
+import {Refund, Return} from '../../constants/icons';
 
 export default function() {
 
@@ -9,15 +10,20 @@ export default function() {
     <Layout>
       <CenterPageContent>
         <SupportParent>
-          <h2>
-            Refund policy
-          </h2>
+          <header>
+            <img style={{width: 48}}
+              src={Refund} alt={'returns icon'}/>
+            <h1>
+              Refund policy
+            </h1>
+          </header>
           <p>
             A refund involves Us (Retrobie) sending the customer an amount of money equivalent to the cost of an order previously paid to us. All refunds made on
             our platform are done so in accordance with the following terms.
           </p>
           <div>
-            <h4>Terms and conditions</h4>
+            <h2>Terms and conditions</h2>
+            <h4>All refunds are made to the original customer.</h4>
             <p>
               All refunds will be made to the same mobile/card number that was used
               during the order checkout, unless otherwise requested by the customer.
@@ -29,9 +35,10 @@ export default function() {
               One such proof would involve setting and confirming the new mobile number
               against their Retrobie account, and no further action will be taken on our end.
             </p>
+            <h4>Refunds cost the same as the delivery fee.</h4>
             <p>
-              When a claim is successfully processed, a processing fee, which is usually,
-              but not always, equal to the amount of money charged for the delivery of
+              When a claim is successfully processed, a processing fee, which is usually
+              equal to the amount of money charged for the delivery of
               the order against which the claim was lodged,
               will be subtracted
               against the amount of money requested for the refund by the customer,

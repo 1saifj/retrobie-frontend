@@ -10,7 +10,8 @@ function About() {
   return (
     <Layout>
       <SEOHeader
-        title={'About'}
+        title={'About us'}
+        path={'/company/about-us'}
         description={
           'Retrobie is a premium online sneaker store in Nairobi offering great deals on new and second-hand shoes.'
         }

@@ -6,19 +6,13 @@ import {env} from '../config';
 function SEOHeader(
   {
       description,
-      author,
-      lang,
-      meta,
       title,
-      canonicalSlug
+      path
   }:
     {
-        description?: string,
-        author?: string,
-        lang?: string,
-        meta?,
+        description: string,
         title: string,
-        canonicalSlug?: string
+        path: string
     }
 ) {
 
@@ -27,15 +21,14 @@ function SEOHeader(
     return (
         <Helmet
             htmlAttributes={{
-                lang,
+                lang: 'en',
             }}
-            title={`Retrobie | ${title}`}
-
-            titleTemplate={`%s | ${site.siteMetadata.title}`}
+            title={`${title}`}
+            titleTemplate={`${site.siteMetadata.title} | %s  `}
             link={[
                 {
                     rel: 'canonical',
-                    href: `${env.getClientBaseUrl()}product/${canonicalSlug}`
+                    href: env.getClientBaseUrl() + path
                 }
             ]}
             meta={[
@@ -43,42 +36,9 @@ function SEOHeader(
                     name: `description`,
                     content: metaDescription,
                 },
-                {
-                    property: `og:title`,
-                    content: title,
-                },
-                {
-                    property: `og:description`,
-                    content: metaDescription,
-                },
-                {
-                    property: `og:type`,
-                    content: `website`,
-                },
-                {
-                    name: `twitter:card`,
-                    content: `summary`,
-                },
-                {
-                    name: `twitter:creator`,
-                    content: author || site.siteMetadata.author,
-                },
-                {
-                    name: `twitter:title`,
-                    content: title,
-                },
-                {
-                    name: `twitter:description`,
-                    content: metaDescription,
-                },
-            ].concat(meta)}
+            ]}
         />
     )
 }
 
-SEOHeader.defaultProps = {
-    lang: `en`,
-    meta: [],
-    description: ``,
-};
 export default SEOHeader;

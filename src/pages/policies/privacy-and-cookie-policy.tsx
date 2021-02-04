@@ -10,6 +10,7 @@ const PrivacyAndCookiePolicy = () => {
       <CenterPageContent>
         <SupportParent>
           <SEOHeader
+            path={'/privacy/cookie-policy'}
             title={'Cookie Policy for Retrobie'}
             description={'Discover how we store and process your data.'}
           />

@@ -2,11 +2,17 @@ import React from 'react';
 import {Layout} from '../../components';
 import {CenterPageContent} from '../support';
 import {SupportParent} from './shipping-policy';
+import SEOHeader from '../../components/SEOHeader';
 
 export default function() {
 
   return (
     <Layout>
+      <SEOHeader
+        description={'If you aren\'t satisfied with the shoes or sneakers we delivered, we can exchange them for you in 7 days.'}
+        title={'Exchange policy'}
+        path={'/policies/exchange-policy'}
+      />
       <CenterPageContent>
         <SupportParent>
           <h2>

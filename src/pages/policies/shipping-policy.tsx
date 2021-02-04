@@ -5,17 +5,23 @@ import styled from 'styled-components';
 import {FastDelivery} from '../../constants/icons';
 import {Section} from 'bloomer';
 import {Link} from 'react-router-dom';
+import SEOHeader from '../../components/SEOHeader';
 
 
-export default function ShippingPolicy() {
+export default function ShippingPolicy(props) {
   return (
     <Layout>
+      <SEOHeader
+        title={'Shipping & Delivery Policy'}
+        path={'/policies/shipping-policy'}
+        description={'We accept returns on your goods within 7 days.'}
+      />
       <CenterPageContent>
         <SupportParent>
-          <div style={{marginTop: '48px'}}>
-            <img style={{width: '45px'}} src={FastDelivery}/>
-            <h2>Shipping policy</h2>
-          </div>
+          <header>
+            <img alt={'fast delivery'} style={{width: 48}} src={FastDelivery}/>
+            <h1>Shipping policy</h1>
+          </header>
           <p>
             Thank you for visiting and shopping at Retrobie. The following are the terms and
             conditions that constitute our Shipping Policy.
@@ -43,7 +49,8 @@ export default function ShippingPolicy() {
             Business District, and can only be displayed to you at the checkout page.
           </p>
           <p>
-            However, high-order values cost less to deliver, and all orders above Ksh. 8,000 are free.
+            However, high-value orders allow us to subsidize the shipping cost and thus
+            cost less to deliver. All all orders valued above Ksh. 8,000 are free.
           </p>
           <h4>
             Shipment confirmation & Order tracking
@@ -66,11 +73,11 @@ export default function ShippingPolicy() {
             Returns & Refunds
           </h4>
           <p>
-            For more information, see our{" "}
+            For more information, see our{' '}
             <Link to={'/policies/returns-policy'}>
               returns policy
-            </Link>{" "}
-            and{" "}
+            </Link>{' '}
+            and{' '}
             <Link to={'/policies/refund-policy'}>
               refund policy
             </Link>.

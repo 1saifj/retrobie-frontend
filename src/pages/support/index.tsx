@@ -14,7 +14,7 @@ function Support() {
               </div>
 
               <h1>What do you need help with?</h1>
-              <Link to={'/support/making-an-order'}>
+              <Link to={'/support/making-an-order-for-shoes-sneakers-nairobi'}>
                   <HelpItem>
                       <p>Making an order</p>
                       <img src={chevron} alt={'chevron'}/>

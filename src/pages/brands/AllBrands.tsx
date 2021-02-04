@@ -26,6 +26,7 @@ function AllBrandsComponent() {
       <>
           <Layout>
                 <SEOHeader
+                  path={'/brands/'}
                   title={'Browse Shoes By Brand'}
                   description={'Browse your favorite Nike, Jordan, Adidas, Yeezy and more shoes by brand in our Nairobi shop.'}
                 />

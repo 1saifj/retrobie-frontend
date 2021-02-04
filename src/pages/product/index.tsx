@@ -116,10 +116,14 @@ function Product({ match }) {
 
   return (
     <>
-      {/* @ts-ignore*/}
-      <SEOHeader title={currentProduct.name} description={currentProduct.description.copy}/>
-      <JsonLd item={{...productJsonld(currentProduct, slug)}}/>
-      <JsonLd item={{...subProduct(currentProduct, match.url)}}/>
+      <SEOHeader
+        path={`/product/${currentProduct.slug}`}
+        title={currentProduct.name}
+        description={currentProduct.description.seo}
+      />
+
+      <JsonLd item={{...productJsonld(currentProduct)}}/>
+      <JsonLd item={{...subProduct(currentProduct)}}/>
 
       <Layout>
         <ProductRoot>
@@ -168,11 +172,10 @@ function Product({ match }) {
             </div>
 
             <ProductParent className="product--parent">
-              {/*// @ts-ignore*/}
               <SEOHeader
-                description={`${currentProduct.description.copy}`}
-                canonicalSlug={currentProduct.slug}
-                title={currentProduct.name}
+                description={`${currentProduct.description.seo}`}
+                path={`/product/${slug}`}
+                title={`${currentProduct.name} shoes in Nairobi`}
               />
               <DescriptionParent>
                 <h1>{currentProduct.name}</h1>
@@ -184,10 +187,9 @@ function Product({ match }) {
                     }`
                   }
                 </h2>
-                <p>{currentProduct.description.short}</p>
                 <div>
                   <h4>Description</h4>
-                  <p>{currentProduct.description.copy}</p>
+                  <p>{currentProduct.description.short}</p>
                   <InDepth>
                     <div
                       dangerouslySetInnerHTML={{

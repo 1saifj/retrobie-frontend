@@ -30,9 +30,16 @@ export default function(
     setAllProducts,
   } = useFiltersV2();
 
+  const criteriaLength = allCriteria.length;
+
   useEffect(() => {
-    setAllCriteria(allCriteria);
-  }, []);
+    if (allCriteria?.length) {
+      setAllCriteria(allCriteria)
+    }
+  },
+    // a bit hacky, but it renders forever otherwise
+    [criteriaLength]
+  );
 
   useEffect(() => {
     if (products) {
