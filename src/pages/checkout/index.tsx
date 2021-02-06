@@ -19,7 +19,7 @@ import {
   ModalContent,
   Section,
 } from 'bloomer';
-import {EmptyCart, ErrorIconDark} from '../../constants/icons';
+import {EmptyCart, ErrorIconDark, Eye} from '../../constants/icons';
 import {Form, Formik} from 'formik';
 import TextField from '../../components/input/TextField';
 import {cleanString, extractErrorMessage} from '../../helpers';
@@ -29,7 +29,6 @@ import LoginUser from '../accounts/login';
 import {Link} from 'react-router-dom';
 import {AtSign, Phone, User} from 'react-feather';
 import {Helmet} from 'react-helmet';
-import EyeVector from '../../assets/images/vectors/eye.svg';
 import {createCheckoutAction, loginUserAction} from '../../state/actions';
 import {env} from '../../config';
 import {CartType, CheckoutType, LoginResponseType, ServerCartType} from '../../types';
@@ -430,7 +429,7 @@ export default function Checkout(props) {
                                     name={'password'}
                                     type={passwordShown ? 'text' : 'password'}
                                     label={'Your new password'}
-                                    icon={EyeVector}
+                                    icon={Eye}
                                     buttonAction={isButtonActive => {
                                       setPasswordShown(isButtonActive);
                                     }}

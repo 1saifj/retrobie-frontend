@@ -26,7 +26,7 @@ const TextField: ({label, chars, buttonAction, help, ...props}: {
     prefix,
     ...props
   }) => {
-  // @ts-ignore
+
   const [field, meta] = useField(props);
   const [charRemaining, setRemaining] = useState(chars);
   const [tooHigh, setTooHigh] = useState(false);
@@ -48,7 +48,7 @@ const TextField: ({label, chars, buttonAction, help, ...props}: {
         }
       }
     }
-  }, [field.value]);
+  }, [field.value, chars, type]);
 
   if (type === 'textarea') {
     return (
@@ -73,7 +73,7 @@ const TextField: ({label, chars, buttonAction, help, ...props}: {
 
   if (type === 'phone') {
     return (
-      <div>
+      <InputParent className={hasError ? 'has-error' : ''} isButtonActive={isButtonActive}>
         <label>{label}</label>
         <InputMask
           mask="9999-999-999"
@@ -83,7 +83,6 @@ const TextField: ({label, chars, buttonAction, help, ...props}: {
               props.onBlur(e);
             }
           }}
-          value={field.value}
           onChange={e => {
             field.onChange(e);
             if (typeof props.onChange === 'function') {
@@ -93,15 +92,20 @@ const TextField: ({label, chars, buttonAction, help, ...props}: {
         >
           {inputProps => (
             <Input
-              label={'Your phone number'}
-              name={'phoneNumber'}
-              placeholder={'eg. 0728-538-683'}
+              name={props.name}
+              placeholder={props.placeholder}
+              {...props}
               {...inputProps}
               type="tel"
             />
           )}
         </InputMask>
-      </div>
+        {hasError ? (
+          <div className="error">
+            <small>{meta.error}</small>
+          </div>
+        ) : null}
+      </InputParent>
     )
   }
 
@@ -144,7 +148,7 @@ const TextField: ({label, chars, buttonAction, help, ...props}: {
           {props.icon && (
             <img
               src={props.icon}
-              alt={'input image'}
+              alt={'input icon'}
               onClick={() => {
                 setButtonActive(!isButtonActive);
                 buttonAction(isButtonActive);
