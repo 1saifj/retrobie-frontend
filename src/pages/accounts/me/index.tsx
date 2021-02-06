@@ -8,6 +8,10 @@ import {useAuth} from '../../../network';
 import useSWR from 'swr/esm/use-swr';
 import {env} from '../../../config';
 import {Tooltip} from 'react-tippy';
+import {RootStateOrAny, useSelector} from 'react-redux';
+import {UserState} from '../../../state/reducers/userReducers';
+import {EmptyState} from '../../../components';
+import {DeadEyes2} from '../../../constants/icons';
 
 
 const tabs = [
@@ -38,11 +42,26 @@ const tabs = [
 export default function UserProfile() {
   const api = useAuth();
 
-  const userInfoFetcher = (...args)=> api.accounts.me().then(({data}) => data).catch(err => err);
-  const {data: userInfo} = useSWR('me', userInfoFetcher)
+  const user: UserState = useSelector((state: RootStateOrAny) => state.user);
 
-  const [accountTabs, setAccountTabs] = useState(tabs);
+  const userInfoFetcher = ()=> api.accounts.me().then(({data}) => data).catch(err => err);
+  const {data: userInfo} = useSWR(user?.isLoggedIn ? '/accounts/me': null, userInfoFetcher)
+
+  const [accountTabs, ] = useState(tabs);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
+
+  if (!user?.isLoggedIn){
+    return (
+      <Layout>
+        <EmptyState
+          icon={DeadEyes2}
+          centerAlign={true}
+          title={'How did you get here?'}
+          message={'You have to be logged in to view this page.'}
+        />
+      </Layout>
+    )
+  }
 
   if (!userInfo) {
     return (
@@ -86,7 +105,7 @@ export default function UserProfile() {
           <Tabs style={{marginBottom: 0}}>
             <TabList>
               {
-                accountTabs.map(({icon: Icon, isActive, name}, index)=> {
+                accountTabs.map(({icon: Icon, name}, index)=> {
                   return (
                     <>
                       <Tab

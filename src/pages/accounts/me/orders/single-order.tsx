@@ -8,24 +8,39 @@ import {Button, Help, Tag} from 'bloomer';
 import {capitalize, extractErrorMessage} from '../../../../helpers';
 import styled from 'styled-components';
 import {Tooltip} from 'react-tippy';
-import {OrderStatus, OrderType, ServerCartType} from '../../../../types';
+import {OrderStatus, OrderType} from '../../../../types';
 import {EmptyState} from '../../../../components';
-import {DeadEyes} from '../../../../constants/icons';
+import {DeadEyes, DeadEyes2} from '../../../../constants/icons';
 import {useNotify} from '../../../../hooks';
+import {UserState} from '../../../../state/reducers/userReducers';
+import {RootStateOrAny, useSelector} from 'react-redux';
 
 export default function({match: {params: {orderId}}}) {
 
   const api = useAuth();
   const notify = useNotify();
 
+
+  const user: UserState = useSelector((state: RootStateOrAny)=> state.user)
   const orderDataFetcher = (orderId) => api.orders.getSingle(orderId).then(({data})=> data);
   const {data: orderData, error: fetchOrderError, mutate} = useSWR<OrderType>(
-    [`/order/${orderId}`, orderId],
+    user?.isLoggedIn ? [`/order/${orderId}`, orderId]: null,
     (url, orderId) => orderDataFetcher(orderId),
   );
 
   const [isLoading, setIsLoading] = useState(false);
 
+  if (!user?.isLoggedIn){
+    return (
+      <Layout>
+        <EmptyState
+          icon={DeadEyes2}
+          title={'You must be lost'}
+          message={'You have to be logged in to view this'}
+        />
+      </Layout>
+    )
+  }
 
   if (fetchOrderError){
     return (
