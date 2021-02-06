@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import RegisterVector from '../../assets/images/vectors/register.svg';
 import {Form, Formik} from 'formik';
 import TextField from '../../components/input/TextField';
-import {extractErrorMessage} from '../../helpers';
+import {extractErrorMessage, replaceNonAlphanumeric} from '../../helpers';
 import {notify} from '../../helpers/views';
 import {Eye} from '../../constants/icons';
 import * as Yup from 'yup';
@@ -33,8 +33,9 @@ const RegisterValidationSchema = Yup.object().shape({
     .required(MESSAGES.REQUIRED)
     .email('Please provide a valid email'),
   phoneNumber: Yup.string()
-    .required(MESSAGES.REQUIRED)
-    .matches(/^0(7(?:(?:[129][0-9])|(?:0[0-8])|(4[0-1]))[0-9]{6})$/, 'Please provide a valid phone number.'),
+    .required(MESSAGES.REQUIRED),
+  // fixme
+    // .matches(/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/, 'Please provide a valid phone number.'),
   password: Yup.string().required(MESSAGES.REQUIRED)
     .min(8, 'Your password should be at least 8 characters long')
     .max(128, MESSAGES.TOO_LONG)
@@ -151,19 +152,20 @@ const RegisterUser = (props) => {
                         // }}
                         validationSchema={RegisterValidationSchema}
                         onSubmit={async (values, {setSubmitting, setFieldError}) => {
-                            setSubmitting(true);
                             try {
-                                // {message: "", accessToken: "", refreshToken: ""}
-                                // @ts-ignore
-                                const {data} = await dispatch(api.accounts.register(values));
-                                notify('success', data.message);
-                                setUserLoggedIn(data);
-                                setSubmitting(false);
-                                // // The user is effectively logged in at this point.
-                                // // We redirect them to the 'verify your account' page
-                                // // But if they navigate away, they will still be able to
-                                // // Access certain sections of the app.
-                                props.history.push('/accounts/verify');
+                              // {message: "", accessToken: "", refreshToken: ""}
+
+                              values.phoneNumber = replaceNonAlphanumeric(values.phoneNumber, '');
+                              // @ts-ignore
+                              const {data} = await dispatch(api.accounts.register(values));
+                              notify('success', data.message);
+                              setUserLoggedIn(data);
+                              setSubmitting(false);
+                              // // The user is effectively logged in at this point.
+                              // // We redirect them to the 'verify your account' page
+                              // // But if they navigate away, they will still be able to
+                              // // Access certain sections of the app.
+                              props.history.push('/accounts/verify');
 
                             } catch (e) {
                                 if (e.response && e.response.data.errors) {
