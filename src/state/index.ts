@@ -5,12 +5,13 @@ import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import rootReducer from './combineReducers';
+import { env } from '../config';
 
 const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || compose;
 
-export default function() {
+const rootState = function() {
   const persistConfig = {
-    key: 'redux',
+    key: env.isProduction() ? 'redux': `redux:${env.getEnvironment()}`,
     storage: storage,
     stateReconciler: autoMergeLevel2, // see "Merge Process" section for details.
     whitelist: ['cart', 'meta', 'user'],
@@ -47,3 +48,4 @@ export default function() {
   const persistor = persistStore(store);
   return {store, persistor};
 }
+export default rootState;

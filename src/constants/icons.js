@@ -72,6 +72,8 @@ import ConverseWhiteLogo from '../assets/images/logos/shoes/converse-white.svg';
 
 import Minus from '../assets/images/icons/icons8-minus.svg';
 import Plus from '../assets/images/icons/icons8-plus.svg';
+import Eye from '../assets/images/icons/eye.svg';
+import EyeX from '../assets/images/icons/eye-x.svg';
 
 import CoolPeach from '../assets/images/icons/cool-peach.svg';
 import LifePreserver from '../assets/images/icons/life-preserver.svg';
@@ -127,6 +129,8 @@ export {
   ErrorIcon404Light,
   ErrorIcon502Dark,
   ErrorIcon502Light,
+  Eye,
+  EyeX,
   GrimacingEmoji,
   InfoDark,
   InfoLight,
