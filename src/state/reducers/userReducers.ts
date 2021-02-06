@@ -8,7 +8,7 @@ import {
   SAVE_SHIPPING_QUOTE,
   SAVE_ZOOM_LEVEL,
 } from '../actions/constants';
-import {AddressType, CartType, CheckoutType} from '../../types';
+import {AddressType, CartType, CheckoutType, LoginResponseType} from '../../types';
 
 export type UserInfoType = {
   email: string;
@@ -63,10 +63,10 @@ export type LoginUserActionPayload = {
   refreshToken: string
 };
 
-export default (state = initialState, action) => {
+const userReducers = (state = initialState, action) => {
   switch (action.type) {
     case LOG_IN_USER:
-      const loginUserPayload: LoginUserActionPayload = action.payload;
+      const loginUserPayload: LoginResponseType = action.payload;
       let loginUserState = Object.assign({}, state);
       loginUserState = {
         ...loginUserState,
@@ -177,3 +177,5 @@ export default (state = initialState, action) => {
       return state;
   }
 };
+
+export default userReducers;

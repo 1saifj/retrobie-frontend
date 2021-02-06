@@ -177,5 +177,7 @@ export interface SchemaProps {
 export type LoginResponseType = {
   accessToken: string;
   refreshToken: string;
-  avatar: ImageType
+  avatar: ImageType;
+  isVerified: boolean
+  message?: string
 }

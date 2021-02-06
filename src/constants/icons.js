@@ -95,6 +95,7 @@ import Verify from '../assets/images/icons/verify.svg';
 import Listing from '../assets/images/icons/listing.svg';
 import Password from '../assets/images/icons/password.svg';
 import Tick from '../assets/images/icons/tick.svg';
+import TickDark from '../assets/images/icons/tick-dark.svg';
 import Refund from '../assets/images/icons/refund.svg'
 
 import JJY from '../assets/images/marketing/Air-Jordan-1-Hi-85-Varsity-Red.webp';
@@ -172,6 +173,7 @@ export {
   Return,
   Refund,
   Tick,
+  TickDark,
   TwitterLogoWhite,
   VansBlackLogo,
   VansWhiteLogo,
