@@ -83,6 +83,7 @@ const TextField: ({label, chars, buttonAction, help, ...props}: {
               props.onBlur(e);
             }
           }}
+          value={field.value !== "____-___-___" ? field.value: undefined}
           onChange={e => {
             field.onChange(e);
             if (typeof props.onChange === 'function') {
