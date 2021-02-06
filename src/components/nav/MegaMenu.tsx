@@ -31,10 +31,14 @@ const MegaMenu = () => {
 
   const logout = () => {
     if (userState.isLoggedIn) {
-      dispatch(api.accounts.logOut({
-        accessToken: userState.tokens?.accessToken,
-      }))
-        .then(() => history.push('/'));
+      dispatch(
+        api.accounts.logOut({
+          accessToken: userState.tokens?.accessToken,
+          refreshToken: userState.tokens.refreshToken
+        }),
+      ).then(() => {
+        history.push('/')
+      });
     }
   };
 
