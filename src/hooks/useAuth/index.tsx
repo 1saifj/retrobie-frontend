@@ -6,6 +6,13 @@ import {UserState} from '../../state/reducers/userReducers';
 import {AuthenticatedUser} from '../../types';
 import jwtDecode from 'jwt-decode';
 
+type TOTPRequestBody = {
+  email: string;
+  phoneNumber?: string
+  purpose: 'verify-account' | 'reset-password',
+  clientStrategy: 'email' | 'sms' | 'api'
+}
+
 function isExpiredOrCloseToExpiry(token: string) {
   const decoded: AuthenticatedUser = jwtDecode(token);
   const expiryTime =  decoded.exp * 1000;
@@ -191,6 +198,7 @@ export default function() {
   const accounts = {
     register: (data) => async () => (await getAxis()).post('auth/register', data),
     requestPasswordReset: (data) => async () => (await getAxis()).post('auth/request-password-reset', data),
+    requestTOTP: (data: TOTPRequestBody) => async () => (await getAxis()).post('auth/totp/request', data),
     resetPassword: (data) => async () => (await getAxis()).post('auth/reset-password', data),
     verify: (data) => async () => (await getAxis()).post('auth/verify-account', data),
     me: async () => (await getAxis()).get('accounts/me'),

@@ -12,8 +12,7 @@ import {
   SAVE_SHIPPING_QUOTE,
   SAVE_ZOOM_LEVEL, FETCH_REMOTE_CART, EMPTY_CART,
 } from './constants';
-import {AddressType, CartItemType, CartType} from '../../types';
-import {LoginUserActionPayload} from '../reducers/userReducers';
+import {AddressType, CartItemType, CartType, LoginResponseType} from '../../types';
 
 const createAction = (type: string, payload?: any) => ({type, payload});
 
@@ -37,7 +36,7 @@ export const createCheckoutAction = (payload: CartType) => createAction(CREATE_C
 export const deleteCheckoutAction = () => createAction(DELETE_CHECKOUT);
 
 //user
-export const loginUserAction = (payload: LoginUserActionPayload) =>
+export const loginUserAction = (payload: LoginResponseType) =>
   createAction(LOG_IN_USER, payload);
 export const logoutUserAction = () => createAction(LOG_OUT_USER);
 export const saveCheckoutAddressAction = (data: {address: AddressType})=> createAction(SAVE_CHECKOUT_ADDRESS, data)

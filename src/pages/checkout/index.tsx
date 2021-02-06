@@ -32,8 +32,7 @@ import {Helmet} from 'react-helmet';
 import EyeVector from '../../assets/images/vectors/eye.svg';
 import {createCheckoutAction, loginUserAction} from '../../state/actions';
 import {env} from '../../config';
-import {CartType, CheckoutType, ServerCartType} from '../../types';
-import {LoginUserActionPayload} from '../../state/reducers/userReducers';
+import {CartType, CheckoutType, LoginResponseType, ServerCartType} from '../../types';
 import {useAuth} from '../../network';
 import useSWR from 'swr/esm/use-swr';
 import ServerError from '../../assets/images/vectors/dead.svg';
@@ -99,7 +98,7 @@ export default function Checkout(props) {
   // Does the cart in the redux store have the same
   // id as the param in the url?
   // Notice that localCart.id will realistically never be null
-  const isLocalCart = localCart.id == cartId;   // TODO: verifying if valid guid will save us a few requests
+  const isLocalCart = localCart.id === cartId;   // TODO: verifying if valid guid will save us a few requests
 
   const cartInfoFetcher = (key, id) => api.cart.fetch(id).then(({data}) => data)
 
@@ -119,7 +118,7 @@ export default function Checkout(props) {
 
   const dispatch = useDispatch();
 
-  const setUserLoggedIn = (payload: LoginUserActionPayload) => dispatch(loginUserAction(payload));
+  const setUserLoggedIn = (payload: LoginResponseType) => dispatch(loginUserAction(payload));
 
   const createCheckout = (payload: CartType) => dispatch(createCheckoutAction(payload));
 
@@ -239,8 +238,8 @@ export default function Checkout(props) {
         // if the user doesn't have an account,
         // log them in
         setUserLoggedIn({
-          ...data.tokens,
-          avatar: data.avatar,
+          ...data.tokens, //fixme
+          ...data,
         });
       }
 
