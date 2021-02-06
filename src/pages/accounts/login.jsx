@@ -56,8 +56,8 @@ export default function LoginUser(props) {
             >
                 <FormParent>
                     <Formik initialValues={{
-                      login: 'bradstar@vivaldi.com',
-                      password: 'O4l7xfPggLXp4LmnoIudR',
+                      login: '',
+                      password: '',
                     }}
                             onSubmit={async (values, {setSubmitting}) => {
                                 setSubmitting(true);
