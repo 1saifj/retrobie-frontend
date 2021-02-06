@@ -7,7 +7,9 @@ import useSWR from 'swr/esm/use-swr';
 import {useAuth} from '../../../../hooks';
 import {EmptyState, Layout, Loading, RetroImage} from '../../../../components';
 import {OrderType} from '../../../../types';
-import {DeadEyes, EmptyBox} from '../../../../constants/icons';
+import {DeadEyes, EmptyBox, GrimacingEmoji} from '../../../../constants/icons';
+import {UserState} from '../../../../state/reducers/userReducers';
+import {RootStateOrAny, useSelector} from 'react-redux';
 
 const OrderItem = styled.div`
   padding: 12px 24px;
@@ -27,6 +29,8 @@ export default function() {
 
   const api = useAuth();
 
+  const user: UserState = useSelector((state: RootStateOrAny) => state.user)
+
   const myOrderFetcher = () => api.orders.mine('CartProducts').then(({data})=> {
     if (data) {
       return data.map((order) => {
@@ -41,7 +45,22 @@ export default function() {
       });
     }
   });
-  const {data: userOrders, error: fetchOrdersError} = useSWR<OrderType[]>('/orders/mine', myOrderFetcher);
+  const {data: userOrders, error: fetchOrdersError} = useSWR<OrderType[]>(
+    user?.isLoggedIn ? '/orders/mine': null,
+    myOrderFetcher
+  );
+
+  if (!user.isLoggedIn){
+    return (
+      <Layout>
+        <EmptyState
+          icon={GrimacingEmoji}
+          title={`We don't know each other like that`}
+          message={'You have to be logged in to view this page.'}
+        />
+      </Layout>
+    )
+  }
 
   if (fetchOrdersError){
     return (
@@ -147,7 +166,7 @@ export default function() {
                               <p>
                                 {
                                   //only show the quantity if there's one item
-                                  order.cart.count == 1 && (
+                                  order.cart.count === 1 && (
                                     <span>
                                       X {order.cart.items[0].quantity}
                                     </span>

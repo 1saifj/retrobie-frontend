@@ -204,7 +204,7 @@ export default function() {
     me: async () => (await getAxis()).get('accounts/me'),
     login: (data: {login: string, password: string}) =>
       async () => (await getAxis()).post('auth/login', data),
-    logOut: (data: {accessToken: string}) => async (dispatch) => {
+    logOut: (data: {accessToken: string, refreshToken: string}) => async (dispatch) => {
       dispatch(logoutUserAction());
       return (await getAxis()).post('/accounts/logout', data);
     },
