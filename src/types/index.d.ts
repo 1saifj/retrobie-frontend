@@ -181,3 +181,5 @@ export type LoginResponseType = {
   isVerified: boolean
   message?: string
 }
+
+export type RoleType = 'ROLE_USER' | 'ROLE_ADMIN'

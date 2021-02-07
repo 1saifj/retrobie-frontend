@@ -247,6 +247,11 @@ const adminRoutes = [
     component: AdminHome
   },
   {
+    path: "/company/admin/dashboard/products",
+    exact: true,
+    component: AdminProductsHome
+  },
+  {
     path: "/company/admin/dashboard/products/all",
     exact: true,
     component: AdminAllProducts
