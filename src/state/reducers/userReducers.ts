@@ -8,13 +8,13 @@ import {
   SAVE_SHIPPING_QUOTE,
   SAVE_ZOOM_LEVEL,
 } from '../actions/constants';
-import {AddressType, CartType, CheckoutType, LoginResponseType} from '../../types';
+import {AddressType, CartType, CheckoutType, LoginResponseType, RoleType} from '../../types';
 
 export type UserInfoType = {
   email: string;
   username: string;
   isVerified: string;
-  role: 'user'
+  role: RoleType
   is2FAEnabled: string;
   firstName: string;
   lastName: string;
@@ -30,7 +30,7 @@ export type UserState =  {
   firstName?: string,
   lastName?: string,
   phoneNumber?: string,
-  role: 'ROLE_USER'|'ROLE_ADMIN',
+  role: RoleType,
   isVerified: boolean;
   addresses: Array<AddressType>,
   avatar: {
@@ -70,7 +70,7 @@ const userReducers = (state = initialState, action) => {
       let loginUserState = Object.assign({}, state);
       loginUserState = {
         ...loginUserState,
-        role: action.payload.role || 'user',
+        role: action.payload.role || 'ROLE_USER',
         tokens: {
           accessToken: loginUserPayload.accessToken,
           refreshToken: loginUserPayload.refreshToken,
