@@ -30,7 +30,7 @@ export type UserState =  {
   firstName?: string,
   lastName?: string,
   phoneNumber?: string,
-  role: 'user',
+  role: 'ROLE_USER'|'ROLE_ADMIN',
   isVerified: boolean;
   addresses: Array<AddressType>,
   avatar: {
@@ -49,7 +49,7 @@ const initialState: UserState = {
   firstName: '',
   lastName: '',
   phoneNumber: '',
-  role: 'user',
+  role: 'ROLE_USER',
   isVerified: null,
   avatar: null,
   tokens: null,
