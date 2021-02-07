@@ -24,35 +24,46 @@ export default function({isActive, onClose}){
             <Formik
               initialValues={{
                 name: '',
-                landingImage: null
+                landingImage: null,
+                description: ''
               }}
               onSubmit={async (values, {setSubmitting}) => {
                 setSubmitting(true);
-                await dispatch<any>(api.category.create(values));
+                await dispatch<any>(api.category.create({
+                  ...values,
+                  description: {
+                    seo: values.description
+                  }
+                }));
                 setSubmitting(false);
                 onClose();
               }}>
-              {({values, setFieldValue, isSubmitting})=>(
+              {({values, setFieldValue, isSubmitting}) => (
                 <Form>
                   <CustomImageUploader
                     id={slugify(values.name, {strict: true})}
                     onInit={(images => {
                       if (images && images.length) {
-                        setFieldValue('landingImage', images[0])
+                        setFieldValue('landingImage', images[0]);
                       }
                     })}
                     onUpload={(err, images) => {
-                      if (!err){
-                        setFieldValue('landingImage', images[0])
+                      if (!err) {
+                        setFieldValue('landingImage', images[0]);
                       }
                     }}
-                    allowMultiple={false}/>
+                    allowMultiple={false} />
                   <TextField
                     type={'text'}
                     label={'Category Name'}
                     name={'name'}
                     placeholder={'eg. Men\'s Shoes'}
                   />
+                  <TextField
+                    label={'Description'}
+                    name={'description'}
+                    placeholder={'eg. dope shoes'}
+                    type={'textarea'} />
 
                   <div style={{marginTop: 12}}>
                     <Button
