@@ -6,7 +6,7 @@
     "@sentry/browser": "^5.27.4",
     "@tippyjs/react": "^4.2.0",
     "@types/node": "^14.14.9",
-    "@types/react": "^16.14.1",
+    "@types/react": "^17.0.1",
     "@types/react-dom": "^16.9.10",
     "axios": "^0.21.0",
     "bloomer": "^0.6.5",
@@ -22,11 +22,12 @@
     "md5": "^2.3.0",
     "mocker-data-generator": "^2.10.0",
     "ms": "^2.1.2",
+    "next": "^10.0.6",
     "node-sass": "^4.13.1",
     "qs": "^6.9.4",
     "rc-drawer": "^3.2.0",
     "rc-progress": "^2.6.1",
-    "react": "^16.14.0",
+    "react": "^17.0.1",
     "react-alice-carousel": "^2.2.1",
     "react-autosuggest": "^10.0.3",
     "react-avatar": "^3.9.7",
@@ -64,7 +65,7 @@
     "yup": "^0.28.5"
   },
   "scripts": {
-    "start": "PORT=7001 BROWSER=none DISABLE_NEW_JSX_TRANSFORM=true react-scripts start",
+    "start": "next dev",
     "build": "DISABLE_NEW_JSX_TRANSFORM=true react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
