@@ -64,10 +64,12 @@
     "yup": "^0.28.5"
   },
   "scripts": {
-    "start": "PORT=7001 BROWSER=none DISABLE_NEW_JSX_TRANSFORM=true react-scripts start",
+    "prebuild": "npm run generate-sitemap",
+    "start": "PORT=7001 BROWSER=none react-scripts start",
     "build": "DISABLE_NEW_JSX_TRANSFORM=true react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "generate-sitemap": "node src/utils/generate-sitemap"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -96,11 +98,13 @@
     "@types/redux-state-sync": "^3.1.1",
     "@types/styled-components": "^5.1.7",
     "@types/yup": "^0.29.9",
+    "dotenv": "^8.2.0",
     "husky": "^4.3.0",
     "node-sass": "^4.14.1",
     "pretty-quick": "^2.0.2",
     "prop-types": "^15.7.2",
     "react-hot-loader": "^4.13.0",
-    "redux-devtools-extension": "^2.13.8"
+    "redux-devtools-extension": "^2.13.8",
+    "xml2json": "^0.12.0"
   }
 }
