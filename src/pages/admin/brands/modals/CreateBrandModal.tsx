@@ -5,8 +5,7 @@
  *  - Get 'add more' working
  */
 
-import React, {useEffect, useState} from 'react';
-import PropTypes from 'prop-types';
+import React, {useEffect} from 'react';
 import {Button, Checkbox, Field, Modal, ModalBackground, ModalClose, ModalContent} from 'bloomer';
 import {Form, Formik, useFormikContext} from 'formik';
 import {Persist} from 'formik-persist';
@@ -33,7 +32,7 @@ const CreateBrandValidationSchema = Yup.object().shape({
     copy: Yup.string()
         .required("This field is required")
         .min(80, "SEO copy should not be less than 80 chars")
-        .max(120, "SEO copy should not be more than 120 chars"),
+        .max(130, "SEO copy should not be more than 130 chars"),
     uuid: Yup.string().required(),
     abbrev: Yup.string().required().min(2)
 
@@ -200,10 +199,10 @@ const CreateBrandModal = (
                                         <TextField
                                           label={<>With suitable keywords, write an <span
                                             className="accented">SEO copy</span> for
-                                              this product in 80 - 120 chars</>}
+                                              this product in 80 - 130 chars</>}
                                           placeholder="Copy"
                                           type="textarea"
-                                          chars={120}
+                                          chars={130}
                                           name="copy"/>
                                     </Field>
                                     <Field>
