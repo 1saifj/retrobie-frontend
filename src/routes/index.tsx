@@ -3,7 +3,7 @@ import React, {Suspense} from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import Loading from '../components/loading';
 import AdminDashboard from '../pages/admin/dashboard';
-
+import jwtDecode from 'jwt-decode';
 import {regularRoutes, adminRoutes} from './routes-list'
 import NotFound from '../pages/not-found';
 import {UserState} from '../state/reducers/userReducers';
@@ -16,7 +16,9 @@ function Routes() {
 
     const user: UserState = useSelector((state: RootStateOrAny) => state.user);
 
-    if (!user?.isLoggedIn || user?.role !== "ROLE_ADMIN"){
+    const decodedAccessToken = jwtDecode(user?.tokens?.accessToken);
+
+    if (!user?.isLoggedIn || decodedAccessToken.role !== 'ROLE_ADMIN'){
       return (
         <NotFound/>
       )
