@@ -1,0 +1,119 @@
+[
+  {
+    "path": "/",
+    "exact": true
+  },
+  {
+    "path": "/accounts/register",
+    "exact": true
+  },
+  {
+    "path": "/accounts/login",
+    "exact": true
+  },
+  {
+    "path": "/accounts/forgot-password",
+    "exact": true
+  },
+  {
+    "path": "/accounts/reset-password",
+    "exact": true
+  },
+  {
+    "path": "/company/about",
+    "exact": true
+  },
+  {
+    "path": "/company/blog",
+    "exact": true
+  },
+  {
+    "path": "/privacy/privacy-and-cookie-policy",
+    "exact": true
+  },
+  {
+    "path": "/privacy/terms-of-service",
+    "exact": true
+  },
+  {
+    "path": "/product/:slug",
+    "exact": false,
+    "apiPath": "/products/all"
+  },
+  {
+    "path": "/policies/returns-policy",
+    "exact": true
+  },
+  {
+    "path": "/policies/claims-policy",
+    "exact": true
+  },
+  {
+    "path": "/policies/refund-policy",
+    "exact": true
+  },
+  {
+    "path": "/policies/exchange-policy",
+    "exact": true
+  },
+  {
+    "path": "/policies/shipping-policy",
+    "exact": true
+  },
+  {
+    "path": "/support",
+    "exact": true
+  },
+  {
+    "path": "/support/custom-requests",
+    "exact": true
+  },
+  {
+    "path": "/support/shipping/maps",
+    "exact": true
+  },
+  {
+    "path": "/support/delivery/maps",
+    "exact": true
+  },
+  {
+    "path": "/support/get-in-touch",
+    "exact": true
+  },
+  {
+    "path": "/support/paying-for-an-order",
+    "exact": true
+  },
+  {
+    "path": "/support/making-an-order-for-shoes-sneakers-nairobi",
+    "exact": true
+  },
+  {
+    "path": "/support/cancelling-an-order",
+    "exact": true
+  },
+  {
+    "path": "/brands/",
+    "exact": true
+  },
+  {
+    "path": "/brands/:slug",
+    "exact": false,
+    "apiPath": "/brands/all"
+  },
+  {
+    "path": "/brands/:name/:slug",
+    "exact": false,
+    "apiPath": "/brands/all/",
+    "apiPath1": "/brands/:name/products"
+  },
+  {
+    "path": "/category/:slug/",
+    "exact": false,
+    "apiPath": "/categories"
+  },
+  {
+    "path": "/collection/:slug/",
+    "exact": false
+  }
+]
