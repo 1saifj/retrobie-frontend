@@ -3,15 +3,15 @@ import styled from 'styled-components';
 import SEOHeader from '../../components/SEOHeader';
 
 import {Button, Container, Input, Section} from 'bloomer';
-import Return from '../../../src/assets/images/icons/return.svg';
-import FastDelivery from '../../../src/assets/images/icons/delivery.svg';
-import FreePickups from '../../../src/assets/images/icons/pickup.svg';
-import Shield from '../../../src/assets/images/icons/guarantee.svg';
-import Fire from '../../../src/assets/images/icons/fire.svg';
-import Blob from '../../assets/images/vectors/blob.svg';
-import Blob2 from '../../assets/images/vectors/blob-2.svg';
-import Orbit from '../../assets/images/icons/orbit.svg';
-import WinkingEmoji from '../../assets/images/emoji/wink.webp';
+import Return from '../../../public/assets/images/icons/return.svg';
+import FastDelivery from '../../../public/assets/images/icons/delivery.svg';
+import FreePickups from '../../../public/assets/images/icons/pickup.svg';
+import Shield from '../../../public/assets/images/icons/guarantee.svg';
+import Fire from '../../../public/assets/images/icons/fire.svg';
+import Blob from '../../../public/assets/images/vectors/blob.svg';
+import Blob2 from '../../../public/assets/images/vectors/blob-2.svg';
+import Orbit from '../../../public/assets/images/icons/orbit.svg';
+import WinkingEmoji from '../../../public/assets/images/emoji/wink.webp';
 
 import jsonld from './jsonld';
 
@@ -19,14 +19,14 @@ import {MPesaLogo} from '../../constants/icons';
 import {JsonLd} from 'react-schemaorg';
 import Layout from '../../components/Layout';
 import PopularProducts from './PopularProducts';
-import Scope from '../../../src/assets/images/vectors/DancingDoodle.svg';
-import Expression from '../../../src/assets/images/vectors/SelfieDoodle.svg';
-import Authenticity from '../../../src/assets/images/vectors/LovingDoodle.svg';
-import Originality from '../../../src/assets/images/vectors/RollingDoodle.svg';
+import Scope from '../../../public/assets/images/vectors/DancingDoodle.svg';
+import Expression from '../../../public/assets/images/vectors/SelfieDoodle.svg';
+import Authenticity from '../../../public/assets/images/vectors/LovingDoodle.svg';
+import Originality from '../../../public/assets/images/vectors/RollingDoodle.svg';
 import Categories from './Categories';
 import Discover from './Discover';
 import Hero from './Hero';
-import DotPattern from '../../assets/images/patterns/dots.svg';
+import DotPattern from '../../../public/assets/images/patterns/dots.svg';
 
 function Landing({ history }) {
   return (

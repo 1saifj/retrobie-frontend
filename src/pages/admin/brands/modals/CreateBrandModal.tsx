@@ -10,7 +10,7 @@ import {Button, Checkbox, Field, Modal, ModalBackground, ModalClose, ModalConten
 import {Form, Formik, useFormikContext} from 'formik';
 import {Persist} from 'formik-persist';
 import TextField from '../../../../components/input/TextField';
-import '../../../../assets/style/bulma-fx';
+import '../../../../../public/assets/style/bulma-fx';
 import {v4 as uuidv4} from 'uuid';
 import {notify} from '../../../../helpers/views';
 import {cleanString, extractErrorMessage} from '../../../../helpers';

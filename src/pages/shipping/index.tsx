@@ -9,11 +9,11 @@ import {Button} from 'bloomer';
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import RadioField from '../../components/input/RadioField';
-import LipaNaMpesa from '../../assets/images/logos/lipa-na-mpesa.png';
-import MpesaLogo from '../../assets/images/logos/mpesa.svg';
-import PeaceSign from '../../assets/images/emoji/peace-sign.png';
-import PointingDown from '../../assets/images/emoji/backhand-index-pointing-down.png';
-import IndexFinger from '../../assets/images/emoji/backhand-index-pointing-up.png';
+import LipaNaMpesa from '../../../public/assets/images/logos/lipa-na-mpesa.png';
+import MpesaLogo from '../../../public/assets/images/logos/mpesa.svg';
+import PeaceSign from '../../../public/assets/images/emoji/peace-sign.png';
+import PointingDown from '../../../public/assets/images/emoji/backhand-index-pointing-down.png';
+import IndexFinger from '../../../public/assets/images/emoji/backhand-index-pointing-up.png';
 import {ChevronRight} from 'react-feather';
 import SimpleMap from '../../components/map/SimpleMap';
 import Loading from '../../components/loading';
@@ -27,7 +27,7 @@ import {AddressType, CheckoutType, OrderStatus, PaymentStatus} from '../../types
 import useSWR from 'swr/esm/use-swr';
 import {saveCheckoutAddressAction, saveShippingQuoteAction, setZoomLevelAction} from '../../state/actions';
 import {useNotify} from '../../hooks';
-import ServerError from '../../assets/images/vectors/dead.svg';
+import ServerError from '../../../public/assets/images/vectors/dead.svg';
 
 const CompleteOrderValidationSchema = Yup.object({
   deliveryLocation: Yup.string().required(),

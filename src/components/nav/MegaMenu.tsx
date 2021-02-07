@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './megamenu.scoped.css';
 import { Link, useHistory } from 'react-router-dom';
 import { getBrandLinks, menuItems, newItems, sortBrands } from './Items';
-import CartIcon from '../../assets/images/icons/cart.svg';
+import CartIcon from '../../../public/assets/images/icons/cart.svg';
 import Drawer from 'rc-drawer';
 import { Button, Container, Section } from 'bloomer';
 import Cart from '../cart';

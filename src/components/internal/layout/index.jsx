@@ -4,7 +4,7 @@ import Sidebar from '../../../pages/admin/sidebar';
 import AuthenticatedMenu from '../../nav/AuthenticatedMenu';
 import {Box as LayoutBox} from 'bloomer';
 import {Anchor, BarChart2, Box, Flag, Home, Settings, Truck, Users} from 'react-feather';
-import {ReactComponent as SidebarShoe} from '../../../assets/images/icons/shoe.svg';
+import {ReactComponent as SidebarShoe} from '../../../../public/assets/images/icons/shoe.svg';
 
 
 class InternalLayout extends React.Component {

@@ -1,11 +1,11 @@
 import {Container, Section} from 'bloomer';
 import AnimatedLogo from '../logo/AnimatedLogo';
-import Man from '../../assets/images/icons/man.svg';
-import Woman from '../../assets/images/icons/woman.svg';
-import Boy from '../../assets/images/icons/baby-boy.svg';
-import Dollar from '../../assets/images/icons/dollar-symbol.svg';
-import Jordan1Icon from '../../assets/images/icons/jordan1.svg';
-import TShirtIcon from '../../assets/images/icons/tshirt.svg';
+import Man from '../../../public/assets/images/icons/man.svg';
+import Woman from '../../../public/assets/images/icons/woman.svg';
+import Boy from '../../../public/assets/images/icons/baby-boy.svg';
+import Dollar from '../../../public/assets/images/icons/dollar-symbol.svg';
+import Jordan1Icon from '../../../public/assets/images/icons/jordan1.svg';
+import TShirtIcon from '../../../public/assets/images/icons/tshirt.svg';
 import {Archive, Smartphone} from 'react-feather';
 import Drawer from 'rc-drawer';
 import React from 'react';

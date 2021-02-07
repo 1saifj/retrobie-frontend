@@ -1,4 +1,4 @@
-import '../assets/style/index.scss';
+import '../../public/assets/style/index.scss';
 import React, {Suspense} from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import Loading from '../components/loading';

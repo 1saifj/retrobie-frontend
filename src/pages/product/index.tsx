@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import Layout from '../../components/Layout';
 import SEOHeader from '../../components/SEOHeader';
 import {DeadEyes, Diamond, FastDelivery, HelpIcon, Replace, Return} from '../../constants/icons';
-import '../../assets/style/index.scss';
+import '../../../public/assets/style/index.scss';
 import {JsonLd} from 'react-schemaorg';
 import productJsonld, {subProduct} from './product.jsonld';
 import {Button, Delete, Help, Modal, ModalBackground, ModalClose, ModalContent, Tag, Title} from 'bloomer';

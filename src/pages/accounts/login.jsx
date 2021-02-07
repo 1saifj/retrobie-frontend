@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Layout from '../../components/Layout';
 import {Button, Checkbox} from 'bloomer';
 import styled from 'styled-components';
-import LoginVector from '../../assets/images/vectors/login.svg';
+import LoginVector from '../../../public/assets/images/vectors/login.svg';
 import {Link} from 'react-router-dom';
 import {Form, Formik} from 'formik';
 import TextField from '../../components/input/TextField';

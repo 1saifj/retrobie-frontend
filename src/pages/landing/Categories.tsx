@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import CategoryTitle from '../../assets/images/vectors/sneaker 1.svg';
-import ChevronRight from '../../assets/images/icons/chevron-right.svg';
+import CategoryTitle from '../../../public/assets/images/vectors/sneaker 1.svg';
+import ChevronRight from '../../../public/assets/images/icons/chevron-right.svg';
 import {Link} from 'react-router-dom';
 import {useAuth} from '../../hooks';
 import useSWR from 'swr/esm/use-swr';
 import {EmptyState, Loading} from '../../components';
 import {CategoryType} from '../../types';
-import ServerError from '../../assets/images/vectors/dead.svg';
+import ServerError from '../../../public/assets/images/vectors/dead.svg';
 
 const Categories = () => {
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Button, Column, Columns } from 'bloomer';
-import FeaturedSneaker from '../../assets/images/vectors/featured-sneaker.svg';
+import FeaturedSneaker from '../../../public/assets/images/vectors/featured-sneaker.svg';
 import RetroImage from '../../components/image';
 
 const Hero = props => {

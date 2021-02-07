@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Layout from '../../components/Layout';
 import {Button, Column, Columns} from 'bloomer';
 import styled from 'styled-components';
-import RegisterVector from '../../assets/images/vectors/register.svg';
+import RegisterVector from '../../../public/assets/images/vectors/register.svg';
 import {Form, Formik} from 'formik';
 import TextField from '../../components/input/TextField';
 import {extractErrorMessage, replaceNonAlphanumeric} from '../../helpers';

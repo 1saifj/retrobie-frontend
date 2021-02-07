@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import chevron from '../../assets/images/icons/chevron-right.svg';
+import chevron from '../../../public/assets/images/icons/chevron-right.svg';
 import {Link} from 'react-router-dom';
 import Layout from '../../components/Layout';
 import {HelpIcon} from '../../constants/icons';

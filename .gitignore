@@ -25,7 +25,7 @@ yarn-error.log*
 /.idea
 *.7z
 *.zip
-/src/assets/images/Shoes/
-/src/assets/style/.sass-cache/
+/public/assets/images/Shoes/
+/public/assets/style/.sass-cache/
 
 .eslintcache

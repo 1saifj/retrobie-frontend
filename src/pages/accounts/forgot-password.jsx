@@ -2,7 +2,7 @@ import React from 'react';
 import Layout from '../../components/Layout';
 import styled from 'styled-components';
 import {Button} from 'bloomer';
-import ForgotPasswordVector from '../../assets/images/vectors/forgot-password.svg';
+import ForgotPasswordVector from '../../../public/assets/images/vectors/forgot-password.svg';
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {extractErrorMessage} from '../../helpers';

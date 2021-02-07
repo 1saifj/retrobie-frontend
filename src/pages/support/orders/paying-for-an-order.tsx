@@ -1,7 +1,7 @@
 import React from 'react';
 import Layout from '../../../components/Layout';
 import {CenterPageContent} from '../index';
-import Payment from '../../../assets/images/icons/online-payment.webp';
+import Payment from '../../../../public/assets/images/icons/online-payment.webp';
 import SEOHeader from '../../../components/SEOHeader';
 
 function PayingForAnOrder() {

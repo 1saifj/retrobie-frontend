@@ -34,7 +34,7 @@ import {env} from '../../config';
 import {CartType, CheckoutType, LoginResponseType, ServerCartType} from '../../types';
 import {useAuth} from '../../network';
 import useSWR from 'swr/esm/use-swr';
-import ServerError from '../../assets/images/vectors/dead.svg';
+import ServerError from '../../../public/assets/images/vectors/dead.svg';
 import {useNotify} from '../../hooks';
 
 const LoggedInContainer = styled.div`

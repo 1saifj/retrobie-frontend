@@ -11,7 +11,7 @@ import {
 } from '../../state/actions';
 import PropTypes from 'prop-types';
 import {Button} from 'bloomer';
-import Manga from '../../assets/images/icons/marginalia-online-shopping.png';
+import Manga from '../../../public/assets/images/icons/marginalia-online-shopping.png';
 import {EmptyState} from '../../components';
 import {notify} from '../../helpers/views';
 import {useHistory} from 'react-router';

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import {Button, Column, Columns, Input} from 'bloomer';
 import {notify} from '../../helpers/views';
 import {extractErrorMessage} from '../../helpers';
-import VerifiedIcon from '../../assets/images/icons/verified.svg';
+import VerifiedIcon from '../../../public/assets/images/icons/verified.svg';
 import jwtDecode from 'jwt-decode';
 import * as Yup from 'yup';
 import InputMask from 'react-input-mask';

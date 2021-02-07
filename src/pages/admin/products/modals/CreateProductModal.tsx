@@ -10,7 +10,7 @@ import Select from 'react-select';
 import {Button, Checkbox, Column, Columns, Field, Modal, ModalBackground, ModalClose, ModalContent} from 'bloomer';
 import {Form, Formik, useFormikContext} from 'formik';
 import TextField from '../../../../components/input/TextField';
-import '../../../../assets/style/bulma-fx';
+import '../../../../../public/assets/style/bulma-fx';
 import {v4 as uuidv4} from 'uuid';
 import {capitalize, cleanString, extractErrorMessage, slugify} from '../../../../helpers';
 import 'react-quill/dist/quill.snow.css';

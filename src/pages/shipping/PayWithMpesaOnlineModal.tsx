@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {Button, Help} from 'bloomer';
 import {addDashes, extractErrorMessage, formatNumberWithCommas} from '../../helpers';
-import MpesaLogo from '../../assets/images/logos/mpesa.svg';
+import MpesaLogo from '../../../public/assets/images/logos/mpesa.svg';
 import CustomModal from '../../components/CustomModal';
 import {useAuth} from '../../network';
 import {AxiosResponse} from 'axios';
