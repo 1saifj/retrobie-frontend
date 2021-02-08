@@ -6,6 +6,7 @@ import {useAuth} from '../../network';
 import MD5 from 'md5';
 import {useDispatch} from 'react-redux';
 import {useNotify} from '../../hooks';
+import {env} from '../../config';
 
 type LocalImageType = {
     // a random string
@@ -124,13 +125,17 @@ function CustomImageUploader(
     const [selectedImagesState, setSelectedImagesState] = useState<Array<LocalImageType>>([]);
     const [uploadedImagesState, setUploadedImagesState] = useState<Array<UploadedImageType>>(uploadedImagesArray);
 
+    const uploadedImagesArrayLength = uploadedImagesArray?.length;
 
     useEffect(() => {
         if (typeof onInit === 'function') {
             onInit(uploadedImagesArray);
         }
         setUploadedImagesState(uploadedImagesArray);
-    }, [id]);
+    }, [
+      id,
+      uploadedImagesArrayLength
+    ]);
 
     async function onChange(e) {
         const addedFiles: Array<File> = e.target.files;
