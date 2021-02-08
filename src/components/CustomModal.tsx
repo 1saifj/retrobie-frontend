@@ -1,6 +1,6 @@
 import React, {ReactElement} from 'react';
 import {Modal, ModalBackground, ModalClose, ModalContent} from 'bloomer';
-
+import '../assets/style/bulma-fx';
 
 export default function CustomModal(
   {
@@ -16,7 +16,7 @@ export default function CustomModal(
   }){
 
   return (
-    <Modal isActive={isActive}>
+    <Modal isActive={isActive} className={'modal-fx-3dFlipVertical'}>
       <ModalBackground onClick={!closeOnClickBackground ? undefined: onClose}/>
       <ModalContent>
         <div style={{background: 'white', borderRadius: 4}}>
