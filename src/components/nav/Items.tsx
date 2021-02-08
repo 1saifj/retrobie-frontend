@@ -1,132 +1,132 @@
 import {capitalize} from '../../helpers';
 
-const links = [
-  {
-    title: 'Clothing',
-    to: '/',
-    items: [
-      {
-        title: 'Shorts',
-        to: '/link',
-      },
-      {
-        title: 'T-shirts',
-        to: '/link',
-      },
-      {
-        title: 'Trousers',
-        to: '/link',
-      },
-      {
-        title: 'Streetwear',
-        to: '/link',
-      },
-      {
-        title: 'Trench Coats',
-        to: '/link',
-      },
-      {
-        title: 'Polo shirts',
-        to: '/link',
-      },
-      {
-        title: 'Sportswear',
-        to: '/link',
-      },
-      {
-        title: 'Link',
-        to: '/link',
-      },
-    ],
-  },
-  {
-    title: 'Footwear',
-    to: '/',
-    items: [
-      {
-        title: 'Nike',
-        to: '/link',
-      },
-      {
-        title: 'Adidas',
-        to: '/link',
-      },
-      {
-        title: 'Yeezy',
-        to: '/link',
-      },
-      {
-        title: 'Converse',
-        to: '/link',
-      },
-      {
-        title: 'Link',
-        to: '/link',
-      },
-      {
-        title: 'Link',
-        to: '/link',
-      },
-      {
-        title: 'Link',
-        to: '/link',
-      },
-      {
-        title: 'Link',
-        to: '/link',
-      },
-    ],
-  },
-  {
-    title: 'Accessories',
-    to: '/',
-    items: [
-      {
-        title: 'Sunglasses',
-        to: '/link',
-      },
-      {
-        title: 'Keychains',
-        to: '/link',
-      },
-      {
-        title: 'Actual chains',
-        to: '/link',
-      },
-      {
-        title: 'Laces',
-        to: '/link',
-      },
-      {
-        title: 'Link',
-        to: '/link',
-      },
-      {
-        title: 'Link',
-        to: '/link',
-      },
-      {
-        title: 'Link',
-        to: '/link',
-      },
-    ],
-  },
-];
+// const links = [
+//   {
+//     title: 'Clothing',
+//     to: '/',
+//     items: [
+//       {
+//         title: 'Shorts',
+//         to: '/link',
+//       },
+//       {
+//         title: 'T-shirts',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Trousers',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Streetwear',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Trench Coats',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Polo shirts',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Sportswear',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Link',
+//         to: '/link',
+//       },
+//     ],
+//   },
+//   {
+//     title: 'Footwear',
+//     to: '/',
+//     items: [
+//       {
+//         title: 'Nike',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Adidas',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Yeezy',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Converse',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Link',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Link',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Link',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Link',
+//         to: '/link',
+//       },
+//     ],
+//   },
+//   {
+//     title: 'Accessories',
+//     to: '/',
+//     items: [
+//       {
+//         title: 'Sunglasses',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Keychains',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Actual chains',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Laces',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Link',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Link',
+//         to: '/link',
+//       },
+//       {
+//         title: 'Link',
+//         to: '/link',
+//       },
+//     ],
+//   },
+// ];
 
 const menuItems = [
   // note: having these items preloaded here
   // makes sure they don't jump around the page
   // if dynamically loaded
-  {
-    title: 'Brands',
-    featured: false,
-    links: [],
-    style: {
-      minWidth: 600,
-      padding: '12px',
-      rowGap: 8
-    }
-  }
+  // {
+  //   title: 'Brands',
+  //   featured: false,
+  //   links: [],
+  //   style: {
+  //     minWidth: 600,
+  //     padding: '12px',
+  //     rowGap: 8
+  //   }
+  // }
   // {
   //     title: "Mens",
   //     featured: {
@@ -171,49 +171,53 @@ const newItems = [
 
 export {menuItems, newItems};
 
-export function sortBrands(brands: any): Map<any, any> {
-  // If no brands, return an empty array
-  if (!brands?.length) return new Map<any, any>();
-  // Capitalize the brand names
-  const brandNames = brands.map(brand => capitalize(brand.name));
-  // and sort them
-  brandNames.sort();
+export function menuItemsToMap(items: any[], nameKey: string): Map<any, {name: string, slug: string}[]> {
+  // If no items, return an empty array
+  if (!items?.length) return new Map<any, any>();
+  // Capitalize the item names
+  const itemCharMap = new Map();
 
-  const brandCharMap = new Map();
+  items.sort((a, b)=> a[nameKey] < b[nameKey] ? -1 : a[nameKey] === b[nameKey] ? 0 : 1)
 
-  // For every brand, grab the first letter,
-  brandNames.forEach(brand => {
-    // check if that key exists in the map.
-    // if not, create it as an array
-    // and push the brand name into the array, sorting it
-    // Our map will look like {"A": ["Adidas"], "N": ["Nike"]}
-    let char = brand.charAt(0);
-
-    if (brandCharMap.has(char)) {
-      brandCharMap.set(char, [...brandCharMap.get(char), brand].sort());
+  items.forEach(item=> {
+    let char = item[nameKey].charAt(0).toUpperCase();
+    let itemName = capitalize(item[nameKey]);
+    // if the map already has this char,
+    if (itemCharMap.has(char)) {
+      // append the new item to the end
+      itemCharMap.set(char,
+        [
+          ...itemCharMap.get(char), {
+          name: itemName,
+          slug: item.slug,
+        },
+        ].sort());
     } else {
-      brandCharMap.set(char, [brand]);
+      // otherwise, set it to the map
+      itemCharMap.set(char, [{
+        name: itemName,
+        slug: item.slug
+      }]);
     }
-  });
+  })
 
-  return brandCharMap;
+  return itemCharMap;
 }
 
-export function getBrandLinks(brandCharMap: Map<any, any>){
+export function getMenuItemLinks(menuItemCharMap: Map<any, {name: string, slug: string}[]>, {
+  url,
+  withTitle
+}){
 
   // @ts-ignore
-  return [...brandCharMap.keys()].map(key => {
+  return [...menuItemCharMap.keys()].map(key => {
     return {
-      title: key.toUpperCase(),
+      title: withTitle ? key: undefined,
       to: '#',
-      items: brandCharMap.get(key)?.map(item => ({
-        title: capitalize(item),
-        to: `/brands/${item
-          .trim()
-          .toLowerCase()
-          .replace(new RegExp(' ', 'g'), '-')}`,
+      items: menuItemCharMap.get(key)?.map(item => ({
+        title: capitalize(item.name),
+        to: `/${url}/${item.slug}`,
       })),
     }
   });
-
 }
