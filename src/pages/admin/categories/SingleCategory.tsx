@@ -53,6 +53,7 @@ export default function({match}){
               <div>
                 <div>
                   <CustomImageUploader
+                    folder={`/category/${match.params.slug}`}
                     onInit={(images)=> {
                       if (images?.length) {
                         setUploadedImage(images[0]);

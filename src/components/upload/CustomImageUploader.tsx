@@ -95,7 +95,7 @@ function CustomImageUploader(
       initialImages?: UploadedImageType[],
       instantUpload?: boolean,
       deferredUpload?: boolean,
-      folder?: string,
+      folder: string,
       onUpload: (err, images: Array<UploadedImageType>)=> void,
       onClickSelectedImage?: (e)=> void,
       allowMultiple: boolean,
@@ -209,7 +209,8 @@ function CustomImageUploader(
                 });
                 formData.append('file', currentFile.file);
                 formData.append('fileName', currentFile.file.name);
-                formData.append('folder', folder);
+                const environment = env.getEnvironment()
+                formData.append('folder', environment === 'production' ? folder: `${environment}/${folder}`);
 
                 const {data: uploadData} = await dispatch<any>(api.imageKit.upload(formData, {
                   // TODO: We should account for the 'current'
