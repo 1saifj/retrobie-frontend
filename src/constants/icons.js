@@ -20,6 +20,7 @@ import EmptyBox from '../assets/images/icons/empty-box.webp';
 import EmptyCart from '../assets/images/icons/empty-cart.svg';
 import PaymentCart from '../assets/images/icons/online-payment.webp';
 import NormalCart from '../assets/images/icons/cart.svg';
+import AddToCart from '../assets/images/icons/add-to-cart.svg';
 import Replace from '../assets/images/icons/replace.svg';
 import FreeDelivery from '../assets/images/icons/free-delivery.webp';
 import FastDelivery from '../assets/images/icons/delivery.svg';
@@ -100,9 +101,14 @@ import Tick from '../assets/images/icons/tick.svg';
 import TickDark from '../assets/images/icons/tick-dark.svg';
 import Refund from '../assets/images/icons/refund.svg'
 
+import SoundWaves from '../assets/images/icons/sound-waves.svg';
+import LocationIcon from '../assets/images/icons/location-pin.svg';
+import Confetti from '../assets/images/icons/confetti.svg';
+
 import JJY from '../assets/images/marketing/Air-Jordan-1-Hi-85-Varsity-Red.webp';
 
 export {
+  AddToCart,
   AdidasBlackLogo,
   AdidasWhiteLogo,
   AdidasOriginalsLogo,
@@ -115,6 +121,7 @@ export {
   CloseIcon,
   CloseIconSimple,
   Clown,
+  Confetti,
   ConverseLogo,
   ConverseWhiteLogo,
   CoolPeach,
@@ -154,6 +161,7 @@ export {
   LandingImage3,
   LebronLogo,
   LebronWhiteLogo,
+  LocationIcon,
   LifePreserver,
   Listing,
   Logo,
@@ -176,6 +184,7 @@ export {
   Replace,
   Return,
   Refund,
+  SoundWaves,
   Tick,
   TickDark,
   TwitterLogoWhite,
