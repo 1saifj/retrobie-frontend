@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import { Button, Column, Columns } from 'bloomer';
 import FeaturedSneaker from '../../assets/images/vectors/featured-sneaker.svg';
 import RetroImage from '../../components/image';
+import HowItWorksModal from './modals/HowItWorksModal';
 
-const Hero = props => {
+const Hero = () => {
   const images = {
     landing: {
       //The image container has a max-width: 752px;
@@ -27,6 +28,7 @@ const Hero = props => {
   };
 
   const [imageState] = useState(images);
+  const [isHowItWorksModalActive, setIsHowItWorksModalActive] = useState(false);
 
   function scrollToAppBody() {
     let appBody = document.getElementById('app-body');
@@ -99,13 +101,18 @@ const Hero = props => {
             </Button>
             <Button
               isOutlined
-              style={{ margin: '4px 4px', minWidth: '200px' }}
-              onClick={() => scrollToAppBody()}
+              style={{margin: '4px 4px', minWidth: '200px'}}
+              onClick={() => setIsHowItWorksModalActive(true)}
             >
               Learn more
             </Button>
           </div>
         </Column>
+        <HowItWorksModal
+          isActive={isHowItWorksModalActive}
+          onClose={() => {
+            setIsHowItWorksModalActive(false);
+          }} />
       </HeroSection>
     </>
   );
@@ -128,7 +135,6 @@ const HeroSection = styled(Columns)`
   }
 
   h1,
-  p,
   header {
     margin: 0;
     padding: 8px 16px;
