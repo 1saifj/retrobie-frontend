@@ -55,7 +55,7 @@ export default function Shipping(props) {
 
   const [payNowOrOnDelivery, setPayNowOrOnDelivery] = useState<"pay-on-delivery"|"pay-now">(null);
   // @ts-ignore
-  const [completedOrder, setCompletedOrder] = useState({});
+  const [, setCompletedOrder] = useState({});
   const checkout: CheckoutType = useSelector((state: RootStateOrAny) => state.user.checkout);
   const [payOnlineOrBuyGoods, setPayOnlineOrBuyGoods] = useState<"pay-online"|"buy-goods">(null);
   const [isPayOnlineModalOpen, setPayOnlineModalOpen] = useState(false);
@@ -145,7 +145,7 @@ export default function Shipping(props) {
   }
 
 
-  if (orderStatusResult.orderStatus != 'incomplete'){
+  if (orderStatusResult.orderStatus !== 'incomplete'){
     return (
       <div>
         <p>Other status</p>
@@ -264,7 +264,7 @@ export default function Shipping(props) {
 
             }}
           >
-            {({values, setFieldValue, errors, handleBlur}) => (
+            {() => (
               <Form>
                 <div>
                   <div>
@@ -580,19 +580,22 @@ export default function Shipping(props) {
                                                       </h2>
                                                       <div className={'boxes'}>
                                                         <div>
-                                                          <div>1</div>
+                                                          <div>5</div>
                                                         </div>
                                                         <div>
-                                                          <div>4</div>
+                                                          <div>6</div>
                                                         </div>
                                                         <div>
-                                                          <div>4</div>
+                                                          <div>7</div>
+                                                        </div>
+                                                        <div>
+                                                          <div>8</div>
                                                         </div>
                                                         <div>
                                                           <div>5</div>
                                                         </div>
                                                         <div>
-                                                          <div>9</div>
+                                                          <div>1</div>
                                                         </div>
                                                         <div>
                                                           <div>1</div>
