@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {axis, useAuth} from '../../../network';
 import Loading from '../../../components/loading';
 import styled from 'styled-components';
@@ -35,8 +35,8 @@ const UpdateProductValidationSchema = Yup.object().shape({
   sex: Yup.string()
     .oneOf(['M', 'F'])
     .required(),
-  adminStock: Yup.number().required(),
-  usersStock: Yup.number().required(),
+  adminStock: Yup.number().optional(),
+  usersStock: Yup.number().optional(),
   brand: Yup.string().required(),
   currency: Yup.string().required(),
   originalPrice: Yup.number().required(),
@@ -90,7 +90,6 @@ export default function SingleProduct(props) {
     )
   }
 
-
   const conditions = [
     {
       label: 'New',
@@ -142,7 +141,7 @@ export default function SingleProduct(props) {
             sizeCountry: "UK",
             brand: capitalize(thisProductData.brand),
           }}
-          onSubmit={async (values, {setFieldValue}) => {
+          onSubmit={async (values, {setFieldValue, setSubmitting}) => {
             //fixme
             setFieldValue('images', thisProductData.images)
             // When updating a product, we only want to send details that have changed
@@ -173,7 +172,7 @@ export default function SingleProduct(props) {
 
             try {
               // @ts-ignore
-              const {data} = await dispatch(api.products.update(productId, diff));
+              const {data} = await dispatch(api.products.update(thisProductData.uuid, diff));
               // Delete the now uploaded images
               localStorage.removeItem(componentName);
               notify('success', data.message);
@@ -182,9 +181,11 @@ export default function SingleProduct(props) {
               const message = extractErrorMessage(e);
               notify('error', 'An error occurred.', message);
             }
+
+            setSubmitting(false);
           }}
         >
-          {({setFieldValue, submitForm, values}) => (
+          {({setFieldValue, submitForm, isSubmitting, values}) => (
             <Form>
               <FormItemsParent>
                 <h3>Main Details</h3>
@@ -523,7 +524,12 @@ export default function SingleProduct(props) {
                   </div>
 */}
                 <div style={{marginTop: 24}}>
-                  <Button isColor={'info'} style={{width: '100%'}} type={'submit'}>
+                  <Button
+                    isLoading={isSubmitting}
+                    isColor={'info'}
+                    style={{width: '100%'}}
+                    onClick={()=> submitForm()}
+                  >
                     Update
                   </Button>
                 </div>
@@ -543,22 +549,6 @@ export default function SingleProduct(props) {
     </div>
   );
 }
-
-const UploadedImageParent = styled.div`
-  position: relative;
-
-  button {
-    position: absolute !important;
-    padding: 0 !important;
-    right: 0;
-
-    background: transparent;
-    &:hover {
-      cursor: pointer;
-      background: transparent !important;
-    }
-  }
-`;
 
 const FormItemsParent = styled.div`
   border: 1px solid lightgrey;
@@ -581,7 +571,7 @@ const FormItemsParent = styled.div`
   }
   
   .rdw-dropdownoption-default {
-    divor: #767676;
+    color: #767676;
     font-size: 14px;
   }
   
