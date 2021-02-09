@@ -22,7 +22,7 @@ function AvatarComponent({src, name, ...props}: {
           </AvatarParent>
         ) : (
           <Initials>
-            {name?.split(' ').map((n) => n[0]).join('.')}
+            {name?.charAt(0).toUpperCase() || "-"}
           </Initials>
         )
       }
