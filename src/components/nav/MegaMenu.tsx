@@ -11,12 +11,11 @@ import { useAuth } from '../../hooks';
 import RetroImage from '../image';
 import { ChevronDown } from 'react-feather';
 import Tooltip from '../tooltip';
-import styled from 'styled-components';
 import { UserState } from '../../state/reducers/userReducers';
-import { env } from '../../config';
 import useSWR from 'swr/esm/use-swr';
 import { toggleSidebarAction } from '../../state/actions';
 import {CategoryType, PromiseThunk} from '../../types';
+import AvatarComponent from '../avatar';
 
 const MegaMenu = () => {
   const api = useAuth();
@@ -257,13 +256,14 @@ const MegaMenu = () => {
                       </div>
                     }
                   >
-                    <AvatarComponent>
-                      <ChevronDown width={18} />
-
-                      <div>
-                        <img src={env.getApiBaseUrl() + userState.avatar.thumbnailUrl} alt={'avatar'} />
-                      </div>
-                    </AvatarComponent>
+                    <div>
+                      <AvatarComponent
+                        name={`${userState.firstName} ${userState.lastName}`}
+                        src={userState.avatar}
+                      >
+                        <ChevronDown width={18} />
+                      </AvatarComponent>
+                    </div>
                   </Tooltip>
 
                 </>
@@ -278,22 +278,22 @@ const MegaMenu = () => {
 
 MegaMenu.propTypes = {};
 
-const AvatarComponent = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-
-  img {
-    border: 2px solid seagreen;
-    padding: 2px;
-    border-radius: 50%;
-    max-width: 40px;
-  }
-
-  &:hover {
-    cursor:pointer;
-  }
-`
+// const AvatarComponent = styled.div`
+//   display: flex;
+//   align-items: center;
+//   gap: 4px;
+//
+//   img {
+//     border: 2px solid seagreen;
+//     padding: 2px;
+//     border-radius: 50%;
+//     max-width: 40px;
+//   }
+//
+//   &:hover {
+//     cursor:pointer;
+//   }
+// `
 
 const NavbarItem = ({title, links, featured, style}: {
   title,

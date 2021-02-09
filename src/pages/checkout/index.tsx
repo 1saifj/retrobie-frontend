@@ -4,7 +4,7 @@ import Layout from '../../components/Layout';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import Cart from '../../components/cart';
 import InputMask from 'react-input-mask';
-import {EmptyState, Loading} from '../../components';
+import {Avatar, EmptyState, Loading} from '../../components';
 import {
   Button,
   Column,
@@ -30,12 +30,12 @@ import {Link} from 'react-router-dom';
 import {AtSign, Phone, User} from 'react-feather';
 import {Helmet} from 'react-helmet';
 import {createCheckoutAction, loginUserAction} from '../../state/actions';
-import {env} from '../../config';
 import {CartType, CheckoutType, LoginResponseType, ServerCartType} from '../../types';
 import {useAuth} from '../../network';
 import useSWR from 'swr/esm/use-swr';
 import ServerError from '../../assets/images/vectors/dead.svg';
 import {useNotify} from '../../hooks';
+import {UserInfoType} from '../../state/reducers/userReducers';
 
 const LoggedInContainer = styled.div`
   width: 100%;
@@ -88,7 +88,7 @@ export default function Checkout(props) {
   const localCart: CartType = useSelector((state: RootStateOrAny) => state.cart);
 
   const userInfoFetcher = ()=> api.accounts.me().then(({data}) => data);
-  const {data: userInfo, error: fetchUserInfoError} = useSWR(isUserLoggedIn ? '/me': null, userInfoFetcher)
+  const {data: userInfo, error: fetchUserInfoError} = useSWR<UserInfoType>(isUserLoggedIn ? '/me': null, userInfoFetcher)
 
   const cartId = props.match.params.cartId;
 
@@ -294,10 +294,7 @@ export default function Checkout(props) {
                           display: "flex",
                           alignItems: "center"
                         }}>
-                          <img
-                            src={env.getApiBaseUrl() + userInfo?.avatar?.url}
-                            alt={'random avatar'}
-                          />
+                          <Avatar src={userInfo.avatar} name={`${userInfo.firstName} ${userInfo.lastName}`}/>
                         </div>
                         <div className={'user-info'}>
                           <div>
