@@ -1,5 +1,4 @@
-import React, {useEffect, useState} from 'react';
-import PropTypes from 'prop-types';
+import React, {useState} from 'react';
 import Drawer from 'rc-drawer';
 import Nav from '../nav/nav';
 import {Link} from 'react-router-dom';
@@ -20,64 +19,55 @@ const Header = ({style, withoutNav, topRightButton, rootStyle}: {
     rootStyle?
 }) => {
 
-    const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-    useEffect(() => {
-        const burger = document.getElementsByClassName('navbar-burger')[0];
-        burger.addEventListener('click', () => setDrawerOpen(true))
-    }, []);
+  return (
+    <>
+      <div style={{...headerStyling, ...rootStyle}}>
+        <NavbarContainer>
+          <Navbar style={{...style, alignItems: 'center'}}>
+            <NavbarBrand style={{alignItems: 'center', justifyContent: 'center', marginTop: 36}}>
+              <NavbarItem className={'logo'}>
+                <Link to="/"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        lineHeight: 'normal',
+                      }}>
+                  <AnimatedLogo color="#444" />
+                </Link>
+              </NavbarItem>
+              <NavbarBurger onClick={()=> setDrawerOpen(true)}/>
+            </NavbarBrand>
+            <NavbarMenu style={{marginTop: 48, justifyContent: 'flex-end'}}>
+              {
+                !withoutNav && <Nav />
+              }
 
+              {
+                withoutNav && topRightButton && (
+                  <div>
+                    {topRightButton()}
+                  </div>
+                )
+              }
 
-    return (
-        <>
-            <div style={{...headerStyling, ...rootStyle}}>
-                <NavbarContainer>
-                    <Navbar style={{...style, alignItems: 'center'}}>
-                        <NavbarBrand style={{alignItems: 'center', justifyContent: 'center', marginTop: 36}}>
-                            <NavbarItem className={'logo'}>
-                                <Link to="/"
-                                      style={{
-                                          display: "flex",
-                                          alignItems: "center",
-                                          lineHeight: 'normal'
-                                      }}>
-                                    <AnimatedLogo color="#444"/>
-                                </Link>
-                            </NavbarItem>
-                            <NavbarBurger/>
-                        </NavbarBrand>
-                        <NavbarMenu style={{marginTop: 48, justifyContent: 'flex-end'}}>
-                            {
-                                !withoutNav && <Nav/>
-                            }
+            </NavbarMenu>
+          </Navbar>
+        </NavbarContainer>
+      </div>
 
-                            {
-                                withoutNav && topRightButton && (
-                                    <div>
-                                        {topRightButton()}
-                                    </div>
-                                )
-                            }
+      <Drawer
+        open={drawerOpen}
+        duration={'.25s'}
+        placement={'left'}
+        handler={false}
+        onClose={() => setDrawerOpen(false)}>
+        <MobileSidebar onClose={()=> setDrawerOpen(false)} />
+      </Drawer>
+    </>
 
-                        </NavbarMenu>
-                    </Navbar>
-                </NavbarContainer>
-            </div>
-
-            <Drawer open={drawerOpen}
-                    duration={'.25s'}
-                    placement={"left"}
-                    handler={false}
-                    onClose={() => setDrawerOpen(false)}>
-                <MobileSidebar/>
-            </Drawer>
-        </>
-
-    );
-};
-
-Header.propTypes = {
-    title: PropTypes.string,
+  );
 };
 
 export default Header;
