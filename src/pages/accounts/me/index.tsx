@@ -45,10 +45,20 @@ export default function UserProfile() {
   const user: UserState = useSelector((state: RootStateOrAny) => state.user);
 
   const userInfoFetcher = ()=> api.accounts.me().then(({data}) => data).catch(err => err);
-  const {data: userInfo} = useSWR(user?.isLoggedIn ? '/accounts/me': null, userInfoFetcher)
+  const {data: userInfo, error: userInfoError} = useSWR<UserInfoType>(user?.isLoggedIn ? '/accounts/me': null, userInfoFetcher)
 
   const [accountTabs, ] = useState(tabs);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
+
+  if (userInfoError){
+    return (
+      <Layout>
+        <EmptyState
+          message={`Oops. That shouldn't have happened. We're working on it.`}
+          title={'Well this is embarassing. An error occurred'} />
+      </Layout>
+    );
+  }
 
   if (!user?.isLoggedIn){
     return (
