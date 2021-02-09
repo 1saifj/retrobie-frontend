@@ -19,7 +19,7 @@ import {
   ModalContent,
   Section,
 } from 'bloomer';
-import {EmptyCart, ErrorIconDark, Eye, GrimacingEmoji} from '../../constants/icons';
+import {EmptyCart, ErrorIconDark, Eye} from '../../constants/icons';
 import {Form, Formik} from 'formik';
 import TextField from '../../components/input/TextField';
 import {cleanString, extractErrorMessage} from '../../helpers';
@@ -153,20 +153,6 @@ export default function Checkout(props) {
     remoteCart,
     isLocalCart
   ]);
-
-  // if (!isUserLoggedIn){
-  //   return (
-  //     <Layout>
-  //       <EmptyState
-  //         icon={GrimacingEmoji}
-  //         iconWidth={52}
-  //         centerAlign={true}
-  //         title={`We don't know each other like that`}
-  //         message={'You have to be logged in to view this page.'}
-  //       />
-  //     </Layout>
-  //   )
-  // }
 
 
   // if it's a local cart and it's empty
