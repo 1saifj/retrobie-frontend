@@ -42,6 +42,7 @@ function Routes() {
           {
             regularRoutes.map(route => (
               <Route
+                key={route.path}
                 exact={route.exact}
                 path={route.path}
                 component={route.component}/>
@@ -51,6 +52,7 @@ function Routes() {
           {
             adminRoutes.map(route => (
               <AdminRoute
+                key={route.path}
                 exact={route.exact}
                 path={route.path}
                 component={route.component}/>

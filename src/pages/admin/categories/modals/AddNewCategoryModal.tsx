@@ -25,15 +25,15 @@ export default function({isActive, onClose}){
               initialValues={{
                 name: '',
                 landingImage: null,
-                description: ''
+                description: '',
               }}
               onSubmit={async (values, {setSubmitting}) => {
                 setSubmitting(true);
                 await dispatch<any>(api.category.create({
                   ...values,
                   description: {
-                    seo: values.description
-                  }
+                    seo: values.description,
+                  },
                 }));
                 setSubmitting(false);
                 onClose();
@@ -41,6 +41,7 @@ export default function({isActive, onClose}){
               {({values, setFieldValue, isSubmitting}) => (
                 <Form>
                   <CustomImageUploader
+                    folder={`/category/${slugify(values.name, {strict: true})}`}
                     id={slugify(values.name, {strict: true})}
                     onInit={(images => {
                       if (images && images.length) {

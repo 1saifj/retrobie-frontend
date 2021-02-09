@@ -649,6 +649,13 @@ b {
 .drawer-content {
   scrollbar-width: none;
 }
+
+.navbar-burger, .navbar-close {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 .buttons .button {
   margin: unset;
 }

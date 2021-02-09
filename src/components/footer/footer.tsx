@@ -5,7 +5,7 @@ import {FacebookLogoDark, GithibLogoDark, InstagramLogoDark, TwitterLogoDark} fr
 import AnimatedLogo from '../logo/AnimatedLogo';
 import {Footer} from 'bloomer';
 
-const DefaultFooter = () => {
+const DefaultFooter = ({internal}) => {
   return (
     <div>
       <Foot>
@@ -29,6 +29,31 @@ const DefaultFooter = () => {
               </SocialButtons>
             </SocialButtonsParent>
           </div>
+          {
+            !internal && (
+              <div
+                style={{
+                  textAlign: 'left',
+                  maxWidth: 600,
+                  margin: '0 auto'
+                }}>
+                <p>
+                  Retrobie is a relatively young brand and sneaker shop,
+                  founded in 2018 with the goal of providing authentic sneakers,
+                  high-quality sports shoes and unique apparel to everyone in Nairobi.
+                </p>
+                <p>
+                  Aside from sneakers in Nairobi, we are also passionate
+                  about sports, with out main area of expertise being basketball. We've
+                  got everything you'll need on the court - Air Jordans, Lebrons, Kyries, Currys,
+                  KDs, PGs, CP3s and even rare treats like Iversons.
+                </p>
+                <p>
+                  Try us out. You won't be disappointed.
+                </p>
+              </div>
+            )
+          }
           <ListParent>
             <ul>
               <p>The Company</p>
@@ -70,6 +95,21 @@ const DefaultFooter = () => {
                 <Link to="/privacy/terms-of-service">Terms of use</Link>
               </li>
             </ul>
+            <ul>
+              <p>Popular categories</p>
+              <li>
+                <Link to="/brands/adidas">Adidas shoes</Link>
+              </li>
+              <li>
+                <Link to="/brands/nike">Nike shoes</Link>
+              </li>
+              <li>
+                <Link to="/brands/air-force-1">Nike Air Force 1 sneakers</Link>
+              </li>
+              <li>
+                <Link to="/category/basketball-shoes">Basketball shoes</Link>
+              </li>
+            </ul>
           </ListParent>
           <div style={{textAlign: 'center'}}>
             <p style={{marginBottom: 0, fontSize: '14px', paddingBottom: '12px'}}>
@@ -101,7 +141,9 @@ const SocialButtonsParent = styled.div`
 const ListParent = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 64px 0;
 `;
 
 const Foot = styled(Footer)`
@@ -114,7 +156,7 @@ const Foot = styled(Footer)`
     list-style: none;
     margin: 0;
     padding: 0;
-    flex: 0 1 250px;
+    flex: 0 1 185px;
     
     li, p {
       margin: 0;

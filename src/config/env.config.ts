@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 class Env {
   getApiHost() {
     return this.isDev()
@@ -20,7 +23,7 @@ class Env {
   }
 
   getEnvironment() {
-    return process.env.NODE_ENV;
+    return process.env.REACT_APP_ENV;
   }
 
   isDev() {
@@ -29,8 +32,7 @@ class Env {
 
   isStaging() {
     return (
-      // @ts-ignore
-      process.env.NODE_ENV === 'staging' ||
+      process.env.REACT_APP_ENV === 'staging' ||
       window.location.hostname.includes('netlify') ||
       window.location.hostname.includes('vercel')
     );

@@ -6,6 +6,7 @@ import {useAuth} from '../../network';
 import MD5 from 'md5';
 import {useDispatch} from 'react-redux';
 import {useNotify} from '../../hooks';
+import {env} from '../../config';
 
 type LocalImageType = {
     // a random string
@@ -95,7 +96,7 @@ function CustomImageUploader(
       initialImages?: UploadedImageType[],
       instantUpload?: boolean,
       deferredUpload?: boolean,
-      folder?: string,
+      folder: string,
       onUpload: (err, images: Array<UploadedImageType>)=> void,
       onClickSelectedImage?: (e)=> void,
       allowMultiple: boolean,
@@ -124,13 +125,17 @@ function CustomImageUploader(
     const [selectedImagesState, setSelectedImagesState] = useState<Array<LocalImageType>>([]);
     const [uploadedImagesState, setUploadedImagesState] = useState<Array<UploadedImageType>>(uploadedImagesArray);
 
+    const uploadedImagesArrayLength = uploadedImagesArray?.length;
 
     useEffect(() => {
         if (typeof onInit === 'function') {
             onInit(uploadedImagesArray);
         }
         setUploadedImagesState(uploadedImagesArray);
-    }, [id]);
+    }, [
+      id,
+      uploadedImagesArrayLength
+    ]);
 
     async function onChange(e) {
         const addedFiles: Array<File> = e.target.files;
@@ -209,7 +214,8 @@ function CustomImageUploader(
                 });
                 formData.append('file', currentFile.file);
                 formData.append('fileName', currentFile.file.name);
-                formData.append('folder', folder);
+                const environment = env.getEnvironment()
+                formData.append('folder', environment === 'production' ? folder: `${environment}/${folder}`);
 
                 const {data: uploadData} = await dispatch<any>(api.imageKit.upload(formData, {
                   // TODO: We should account for the 'current'

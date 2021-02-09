@@ -8,7 +8,7 @@ import {
   SAVE_SHIPPING_QUOTE,
   SAVE_ZOOM_LEVEL,
 } from '../actions/constants';
-import {AddressType, CartType, CheckoutType, LoginResponseType, RoleType} from '../../types';
+import {AddressType, CartType, CheckoutType, ImageType, LoginResponseType, RoleType} from '../../types';
 
 export type UserInfoType = {
   email: string;
@@ -19,10 +19,7 @@ export type UserInfoType = {
   firstName: string;
   lastName: string;
   addresses:  string;
-  avatar: {
-    url: string,
-    thumbnailUrl: string;
-  },
+  avatar: ImageType,
   phoneNumber: string;
 }
 

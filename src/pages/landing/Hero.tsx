@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import { Button, Column, Columns } from 'bloomer';
 import FeaturedSneaker from '../../assets/images/vectors/featured-sneaker.svg';
 import RetroImage from '../../components/image';
+import HowItWorksModal from './modals/HowItWorksModal';
 
-const Hero = props => {
+const Hero = () => {
   const images = {
     landing: {
       //The image container has a max-width: 752px;
@@ -27,14 +28,11 @@ const Hero = props => {
   };
 
   const [imageState] = useState(images);
+  const [isHowItWorksModalActive, setIsHowItWorksModalActive] = useState(false);
 
   function scrollToAppBody() {
     let appBody = document.getElementById('app-body');
     appBody.scrollIntoView();
-  }
-
-  function getScreenWidth() {
-    return window.screen.availWidth;
   }
 
   return (
@@ -59,7 +57,7 @@ const Hero = props => {
                     (max-width: 630px) 500px,
                     (max-width: 1024px) 550px,
                     1140px
-                `
+                `,
               }}
             />
             {/*<picture>*/}
@@ -74,18 +72,22 @@ const Hero = props => {
         <Column className={'description'}>
           <div>
             <header>
-              <div style={{ width: '48px', marginLeft: '8px' }}>
+              <div style={{width: '48px', marginLeft: '8px'}}>
                 <img src={FeaturedSneaker} alt="just a sneaker" />
               </div>
               <small className={'secondary'}>ABOUT US</small>
             </header>
             <h1>
-              Home of <span> authentic </span> sneakers and apparel
+              Home of <span> authentic,</span> exclusive sneakers in Nairobi
             </h1>
-            <p className={'secondary'}>
-              Find and discover the best brands and <span> original </span> designer shoes, hoodies,
-              t-shirts and many more fashion pieces from all over the world.
-            </p>
+            <div style={{padding: "8px 16px"}}>
+              <p className={'secondary'}>
+                Find and discover your favorite brands - from Air Jordans to Yeezys -{' '}
+                <span>original sneakers</span>,{' '}
+                basketball shoes, and many more fashion pieces
+                at the best sneaker shop in Nairobi.
+              </p>
+            </div>
           </div>
           <div className={'ctas'}>
             <Button
@@ -99,13 +101,18 @@ const Hero = props => {
             </Button>
             <Button
               isOutlined
-              style={{ margin: '4px 4px', minWidth: '200px' }}
-              onClick={() => scrollToAppBody()}
+              style={{margin: '4px 4px', minWidth: '200px'}}
+              onClick={() => setIsHowItWorksModalActive(true)}
             >
               Learn more
             </Button>
           </div>
         </Column>
+        <HowItWorksModal
+          isActive={isHowItWorksModalActive}
+          onClose={() => {
+            setIsHowItWorksModalActive(false);
+          }} />
       </HeroSection>
     </>
   );
@@ -128,7 +135,6 @@ const HeroSection = styled(Columns)`
   }
 
   h1,
-  p,
   header {
     margin: 0;
     padding: 8px 16px;

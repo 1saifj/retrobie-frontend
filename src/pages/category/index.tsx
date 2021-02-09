@@ -3,12 +3,12 @@ import {EmptyState, Layout, Loading} from '../../components';
 import {useAuth} from '../../hooks';
 import useSWR from 'swr/esm/use-swr';
 import ProductFilters from '../brands/components/product-filters';
-import {CategoryType, FilteredProduct} from '../../types';
+import {CategoryType} from '../../types';
 import {useFiltersV2} from '../../hooks/useFiltersV2/FilterProvider';
 import {formatNumberWithCommas} from '../../helpers';
 import {ProductItem} from '../brands/Brand';
 import { Section, Container } from 'bloomer';
-import {EmptyBox, GrimacingEmoji} from '../../constants/icons';
+import {DeadEyes2, EmptyBox, GrimacingEmoji} from '../../constants/icons';
 import SEOHeader from '../../components/SEOHeader';
 
 
@@ -34,22 +34,27 @@ export default function({match}){
         size: item.detail.size,
         condition: item.meta.condition,
         style: item.meta.style,
-        url: item.images[0].url,
-        thumbnailUrl: item.images[0].thumbnailUrl,
+        url: item.images[0]?.url,
+        thumbnailUrl: item.images[0]?.thumbnailUrl,
       }
     })
     return ret;
   });
-  const {data: categoryData, error} = useSWR<CategoryType>([`/category/${categoryId}`, categoryId], categoryFetcher)
+  const {data: categoryData, error: fetchCategoryError} = useSWR<CategoryType>(
+    [`/category/${categoryId}`, categoryId],
+    categoryFetcher,
+  );
 
-  if (error) {
+  if (fetchCategoryError) {
     return (
-      <div>
-        <p>
-          An error occurred
-        </p>
-      </div>
-    )
+      <Layout>
+        <EmptyState
+          icon={DeadEyes2}
+          title={`Oof. That's an error`}
+          message={`Something went wrong. We're working on it as you read this.`}
+        />
+      </Layout>
+    );
   }
 
   if (!categoryData) {

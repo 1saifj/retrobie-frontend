@@ -6,11 +6,10 @@ import {Tab, TabLink, TabList, Tabs} from 'bloomer';
 import {UserDetails} from './components';
 import {useAuth} from '../../../network';
 import useSWR from 'swr/esm/use-swr';
-import {env} from '../../../config';
 import {Tooltip} from 'react-tippy';
 import {RootStateOrAny, useSelector} from 'react-redux';
-import {UserState} from '../../../state/reducers/userReducers';
-import {EmptyState} from '../../../components';
+import {UserInfoType, UserState} from '../../../state/reducers/userReducers';
+import {Avatar, EmptyState} from '../../../components';
 import {DeadEyes2} from '../../../constants/icons';
 
 
@@ -45,10 +44,20 @@ export default function UserProfile() {
   const user: UserState = useSelector((state: RootStateOrAny) => state.user);
 
   const userInfoFetcher = ()=> api.accounts.me().then(({data}) => data).catch(err => err);
-  const {data: userInfo} = useSWR(user?.isLoggedIn ? '/accounts/me': null, userInfoFetcher)
+  const {data: userInfo, error: userInfoError} = useSWR<UserInfoType>(user?.isLoggedIn ? '/accounts/me': null, userInfoFetcher)
 
   const [accountTabs, ] = useState(tabs);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
+
+  if (userInfoError){
+    return (
+      <Layout>
+        <EmptyState
+          message={`Oops. That shouldn't have happened. We're working on it.`}
+          title={'Well this is embarassing. An error occurred'} />
+      </Layout>
+    );
+  }
 
   if (!user?.isLoggedIn){
     return (
@@ -80,7 +89,7 @@ export default function UserProfile() {
 
   return (
     <>
-      <Layout>
+      <Layout internal>
         <div style={{maxWidth: '800px', margin: '120px auto'}}>
           <div style={{display: 'flex', gap: 12, alignItems: 'center'}}>
             <Tooltip
@@ -89,13 +98,14 @@ export default function UserProfile() {
               arrow={true}
               title={'Systematically generated from your name'}
             >
-              <img
-                style={{borderRadius: 4}}
-                alt={'avatar'}
-                src={env.getApiBaseUrl() + userInfo.avatar.thumbnailUrl}/>
+
+              <Avatar
+                src={userInfo.avatar}
+                name={`${userInfo.firstName} ${userInfo.lastName}`}
+              />
             </Tooltip>
             <div>
-              <Users style={{display: 'inline', marginRight: 8}}/>
+              <Users style={{display: 'inline', marginRight: 8}} />
               <h2 style={{display: 'inline'}}>
                 {userInfo?.firstName}&nbsp;
                 {userInfo?.lastName}
@@ -105,14 +115,14 @@ export default function UserProfile() {
           <Tabs style={{marginBottom: 0}}>
             <TabList>
               {
-                accountTabs.map(({icon: Icon, name}, index)=> {
+                accountTabs.map(({icon: Icon, name}, index) => {
                   return (
                     <>
                       <Tab
                         isActive={index === activeTabIndex}
                         onClick={() => setAccountTabActive(index)}>
                         <TabLink>
-                          <Icon width={18} style={{marginRight: 8}}/>
+                          <Icon width={18} style={{marginRight: 8}} />
                           <span>{name}</span>
                         </TabLink>
                       </Tab>
