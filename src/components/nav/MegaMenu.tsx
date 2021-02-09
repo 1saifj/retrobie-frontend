@@ -180,12 +180,10 @@ const MegaMenu = () => {
               }}>
                 <Section>
                   <Container>
-                    <h2>
-                      Your Cart
-                    </h2>
                     <div>
                       <Cart
                         size={'L'}
+                        title={true}
                         showAddButton={true}
                         showRemoveButton={true}
                         bordered={false}
@@ -276,25 +274,6 @@ const MegaMenu = () => {
     </>
   );
 };
-
-MegaMenu.propTypes = {};
-
-// const AvatarComponent = styled.div`
-//   display: flex;
-//   align-items: center;
-//   gap: 4px;
-//
-//   img {
-//     border: 2px solid seagreen;
-//     padding: 2px;
-//     border-radius: 50%;
-//     max-width: 40px;
-//   }
-//
-//   &:hover {
-//     cursor:pointer;
-//   }
-// `
 
 const NavbarItem = ({title, links, featured, style}: {
   title,

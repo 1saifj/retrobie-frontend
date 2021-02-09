@@ -165,6 +165,8 @@ export default function({match: {params: {orderId}}}) {
           <div>
             <Cart
               bordered={true}
+              hideCloseButton={true}
+              title={true}
               //@ts-ignore
               source={orderData.cart}
               hideCheckoutButton={

@@ -486,6 +486,7 @@ export default function Checkout(props) {
                     <h2 style={{color: '#222'}}>Your Cart</h2>
                     <Cart
                       source={remoteCart}
+                      hideCloseButton={true}
                       hideCheckoutButton={!isUserLoggedIn}
                       checkoutButtonDisabled={Boolean(fetchUserInfoError)}
                       checkoutButtonIsLoading={isCheckoutLoading}
