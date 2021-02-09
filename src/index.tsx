@@ -19,10 +19,15 @@ toast.configure({
     draggable: false,
 });
 
-if (!env.isDev()) {
-    //Only launch Sentry in production
-    Sentry.init({dsn: "https://b9c3bf6a03da4740afaa0f1d8bd931e9@sentry.io/1886895"});
-}
+Sentry.init({
+  dsn: "https://ce7ae6b92e4645a6a1953a96530ea6a5@o100480.ingest.sentry.io/5626843",
+// @ts-ignore
+  integrations: [new Integrations.BrowserTracing()],
+  environment: env.getEnvironment(),
+  // We recommend adjusting this value in production, or using tracesSampler
+  // for finer control
+  tracesSampleRate: 1.0,
+});
 
 const Root = styled.div`
   display: flex;
