@@ -17,6 +17,8 @@ import {HelpIcon, TickDark} from '../../constants/icons';
 import {Link} from 'react-router-dom';
 import {loginUserAction} from '../../state/actions';
 import {LoginResponseType} from '../../types';
+import qs from 'qs'
+import ConfirmSendVerifyCodeModal from './modals/ConfirmSendVerifyCodeModal';
 
 const FormParent = styled.div`
   display: flex;
@@ -71,6 +73,7 @@ export default function VerifyAccount(props) {
   const user: UserState = useSelector((state: RootStateOrAny) => state.user);
 
   const [isRequestingTOTP, setIsRequestingTOTP] = useState(false);
+  const [isConfirmModalEmailOpen, setIsConfirmModalEmailOpen] = useState(false);
 
   const accessToken = user?.tokens?.accessToken
   const decodedAccessToken = accessToken ? jwtDecode(accessToken): undefined;
@@ -92,6 +95,19 @@ export default function VerifyAccount(props) {
 
     return undefined;
   });
+
+  const searchQuery = props.history.location.search;
+
+  useEffect(()=> {
+    if (searchQuery){
+      const sendCodeOnMount = qs.parse(searchQuery?.slice(1));
+      if (Boolean(sendCodeOnMount?.sendCode)){
+        setIsConfirmModalEmailOpen(true)
+      }
+    }
+  }, [
+    searchQuery
+  ])
 
   if (!user?.isLoggedIn){
     return (
@@ -129,6 +145,33 @@ export default function VerifyAccount(props) {
 
   function startTimer() {
     setTimeRemaining(countdownTime);
+  }
+
+  async function sendResetCode(){
+    setIsRequestingTOTP(true);
+    // Only request for a new code if a
+    // token exits locally
+    if (decodedAccessToken) {
+      try {
+        // @ts-ignore
+        const {data} = await dispatch(
+          api.accounts.requestTOTP({
+            email: decodedAccessToken.email,
+            purpose: 'verify-account',
+            clientStrategy: 'email',
+          }),
+        );
+        notify('success', data.message);
+      } catch (e) {
+        const message = extractErrorMessage(e);
+        notify('error', message);
+      }
+
+      setIsRequestingTOTP(false);
+      // Restart the countdown timer.
+      setFormSubmitted(true);
+      startTimer();
+    }
   }
 
   const setUserLoggedIn = (payload: LoginResponseType) => dispatch(loginUserAction(payload));
@@ -171,8 +214,8 @@ export default function VerifyAccount(props) {
                 notify('success', data.message);
                 setSubmitting(false);
                 startTimer();
-                setUserLoggedIn(data)
-                props.history.push('/')
+                setUserLoggedIn(data);
+                props.history.push('/');
               } catch (e) {
                 setSubmitting(false);
                 const message = extractErrorMessage(e);
@@ -240,32 +283,7 @@ export default function VerifyAccount(props) {
                     <Button
                       isColor={'secondary'}
                       isLoading={isRequestingTOTP}
-                      onClick={async () => {
-                        setIsRequestingTOTP(true);
-                        // Only request for a new code if a
-                        // token exits locally
-                        if (decodedAccessToken) {
-                          try {
-                            // @ts-ignore
-                            const {data} = await dispatch(
-                              api.accounts.requestTOTP({
-                                email: decodedAccessToken.email,
-                                purpose: 'verify-account',
-                                clientStrategy: 'email',
-                              }),
-                            );
-                            notify('success', data.message);
-                          } catch (e) {
-                            const message = extractErrorMessage(e);
-                            notify('error', message);
-                          }
-
-                          setIsRequestingTOTP(false);
-                          // Restart the countdown timer.
-                          setFormSubmitted(true);
-                          startTimer();
-                        }
-                      }}
+                      onClick={async () => sendResetCode()}
                       disabled={timeRemaining !== 0 && submitted}
                       style={{minWidth: 250}}
                     >
@@ -282,6 +300,15 @@ export default function VerifyAccount(props) {
 
           </Formik>
         </FormParent>
+        <ConfirmSendVerifyCodeModal
+          email={decodedAccessToken.email}
+          isActive={isConfirmModalEmailOpen}
+          onClose={() => setIsConfirmModalEmailOpen(false)}
+          onConfirm={() => {
+            sendResetCode()
+            setIsConfirmModalEmailOpen(false);
+          }}
+        />
       </Layout>
     </>
   );
