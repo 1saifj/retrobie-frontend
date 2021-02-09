@@ -113,7 +113,9 @@ export default function() {
 
   return (
     <div>
-      <Layout style={{width: '80%', margin: '0 auto', marginTop: 148}}>
+      <Layout
+        internal
+        style={{width: '80%', margin: '0 auto', marginTop: 148}}>
         <div style={{margin: "24px 48px"}}>
           <div>
             <h2>Your Orders</h2>

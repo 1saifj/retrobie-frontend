@@ -5,9 +5,7 @@ import {Provider} from 'react-redux';
 import configureStore from './state';
 import Routes from './routes';
 import {toast} from 'react-toastify';
-import * as Sentry from '@sentry/browser';
 import styled from 'styled-components';
-import {env} from './config';
 import ScrollToTop from './components/ScrollToTop';
 import {PersistGate} from 'redux-persist/integration/react';
 import {FilterProviderV2} from './hooks/useFiltersV2';
@@ -19,15 +17,6 @@ toast.configure({
     draggable: false,
 });
 
-Sentry.init({
-  dsn: "https://ce7ae6b92e4645a6a1953a96530ea6a5@o100480.ingest.sentry.io/5626843",
-// @ts-ignore
-  integrations: [new Integrations.BrowserTracing()],
-  environment: env.getEnvironment(),
-  // We recommend adjusting this value in production, or using tracesSampler
-  // for finer control
-  tracesSampleRate: 1.0,
-});
 
 const Root = styled.div`
   display: flex;

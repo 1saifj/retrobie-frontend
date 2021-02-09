@@ -44,105 +44,107 @@ export default function LoginUser(props) {
   const setUserLoggedIn = (payload) => dispatch(loginUserAction(payload));
 
   return (
-        <>
-            <Layout withoutNav={true}
-                    topRightButton={() => (
-                        <Link to={'/accounts/register'}>
-                            <Button>
-                                Create a New Account
-                            </Button>
-                        </Link>
-                    )}
-            >
-                <FormParent>
-                    <Formik initialValues={{
-                      login: '',
-                      password: '',
-                    }}
-                            onSubmit={async (values, {setSubmitting}) => {
-                                setSubmitting(true);
-                                try {
-                                    const {data} = await dispatch(api.accounts.login(values));
-                                    setSubmitting(false);
+    <>
+      <Layout
+        internal
+        withoutNav={true}
+        topRightButton={() => (
+          <Link to={'/accounts/register'}>
+            <Button>
+              Create a New Account
+            </Button>
+          </Link>
+        )}
+      >
+        <FormParent>
+          <Formik initialValues={{
+            login: '',
+            password: '',
+          }}
+                  onSubmit={async (values, {setSubmitting}) => {
+                    setSubmitting(true);
+                    try {
+                      const {data} = await dispatch(api.accounts.login(values));
+                      setSubmitting(false);
 
-                                  if (data.accessToken && data.refreshToken) {
-                                    // This user doesn't have MFA enabled
-                                    setUserLoggedIn(data);
-                                    if (props.callback && typeof props.callback === 'function') {
-                                      props.callback(null, data);
-                                    } else {
-                                      props.history.push('/');
-                                    }
-                                  } else {
-                                    //todo: two factor authentication
-                                  }
+                      if (data.accessToken && data.refreshToken) {
+                        // This user doesn't have MFA enabled
+                        setUserLoggedIn(data);
+                        if (props.callback && typeof props.callback === 'function') {
+                          props.callback(null, data);
+                        } else {
+                          props.history.push('/');
+                        }
+                      } else {
+                        //todo: two factor authentication
+                      }
 
-                                } catch (e) {
-                                  setSubmitting(false);
-                                  const message = extractErrorMessage(e);
-                                  notify('error', message);
-                                  if (props.callback && typeof props.callback === 'function') {
-                                    props.callback(e, null);
-                                  }
-                                }
+                    } catch (e) {
+                      setSubmitting(false);
+                      const message = extractErrorMessage(e);
+                      notify('error', message);
+                      if (props.callback && typeof props.callback === 'function') {
+                        props.callback(e, null);
+                      }
+                    }
+                  }}
+                  validationSchema={UserLoginSchema}
+          >
+            {({isSubmitting}) => (
+              <Form>
+                <div>
+                  <img src={LoginVector} alt={'login vector'} />
+                  <h2>
+                    Sign in.
+                  </h2>
+                  <h4 style={{color: 'var(--color-description)', fontWeight: 400}}>
+                    Login to your account
+                  </h4>
+                </div>
+
+                <div style={{marginBottom: 24}}>
+                  <TextField placeholder={'eg. jackierobinson@gmail.com'}
+                             label={'Email address'}
+                             name={'login'}
+                             type={'email'}
+                  />
+                </div>
+                <div>
+                  <TextField type={'password'}
+                             placeholder={`●●●●●●●●●●●●`}
+                             name={'password'}
+                             label={'Password'}
+                  />
+                </div>
+                <div style={{marginTop: 8}}>
+
+                  <Checkbox checked={staySignedIn}
+                            onChange={(e) => {
+                              setStaySignedIn(e.target.checked);
                             }}
-                            validationSchema={UserLoginSchema}
-                    >
-                        {({isSubmitting}) => (
-                            <Form>
-                                <div>
-                                    <img src={LoginVector} alt={'login vector'}/>
-                                    <h2>
-                                        Sign in.
-                                    </h2>
-                                    <h4 style={{color: 'var(--color-description)', fontWeight: 400}}>
-                                        Login to your account
-                                    </h4>
-                                </div>
-
-                                <div style={{marginBottom: 24}}>
-                                    <TextField placeholder={'eg. jackierobinson@gmail.com'}
-                                               label={"Email address"}
-                                               name={"login"}
-                                               type={"email"}
-                                    />
-                                </div>
-                                <div>
-                                    <TextField type={'password'}
-                                               placeholder={`●●●●●●●●●●●●`}
-                                               name={'password'}
-                                               label={'Password'}
-                                    />
-                                </div>
-                                <div style={{marginTop: 8}}>
-
-                                    <Checkbox checked={staySignedIn}
-                                              onChange={(e) => {
-                                                  setStaySignedIn(e.target.checked)
-                                              }}
-                                    >
-                                        <label>Keep me signed in</label>
-                                    </Checkbox>
-                                </div>
-                                <div style={{marginTop: 16, textAlign: 'center'}}>
-                                    <Button isColor={'primary'}
-                                            type={'submit'}
-                                            isLoading={isSubmitting}
-                                            style={{minWidth: 250}}>
-                                        Sign in
-                                    </Button>
-                                    <p>
-                                        Forgot your password? &nbsp;
-                                        <a href={'/accounts/forgot-password'}>
-                                            Reset it
-                                        </a>
-                                    </p>
-                                </div>
-                            </Form>
-                        )}
-                    </Formik>
-                </FormParent>
-            </Layout>
-        </>
-    );
+                  >
+                    <label>Keep me signed in</label>
+                  </Checkbox>
+                </div>
+                <div style={{marginTop: 16, textAlign: 'center'}}>
+                  <Button isColor={'primary'}
+                          type={'submit'}
+                          isLoading={isSubmitting}
+                          style={{minWidth: 250}}>
+                    Sign in
+                  </Button>
+                  <p>
+                    Forgot your password? &nbsp;
+                    <a href={'/accounts/forgot-password'}>
+                      Reset it
+                    </a>
+                  </p>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </FormParent>
+      </Layout>
+    </>
+  );
 }

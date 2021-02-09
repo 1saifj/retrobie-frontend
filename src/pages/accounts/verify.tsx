@@ -135,7 +135,9 @@ export default function VerifyAccount(props) {
 
   return (
     <>
-      <Layout withoutNav={true}>
+      <Layout
+        internal
+        withoutNav={true}>
         <FormParent>
           <Formik
             initialValues={{

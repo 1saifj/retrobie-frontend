@@ -89,7 +89,7 @@ export default function UserProfile() {
 
   return (
     <>
-      <Layout>
+      <Layout internal>
         <div style={{maxWidth: '800px', margin: '120px auto'}}>
           <div style={{display: 'flex', gap: 12, alignItems: 'center'}}>
             <Tooltip

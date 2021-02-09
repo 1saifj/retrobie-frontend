@@ -129,7 +129,9 @@ export default function({match: {params: {orderId}}}) {
 
   return (
     <>
-      <Layout style={{maxWidth: 600, margin: '0 auto'}}>
+      <Layout
+        internal
+        style={{maxWidth: 600, margin: '0 auto'}}>
         <div style={{marginTop: 128}}>
           <div>
             <h2>Your Order</h2>

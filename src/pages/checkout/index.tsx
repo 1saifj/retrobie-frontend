@@ -154,19 +154,19 @@ export default function Checkout(props) {
     isLocalCart
   ]);
 
-  if (!isUserLoggedIn){
-    return (
-      <Layout>
-        <EmptyState
-          icon={GrimacingEmoji}
-          iconWidth={52}
-          centerAlign={true}
-          title={`We don't know each other like that`}
-          message={'You have to be logged in to view this page.'}
-        />
-      </Layout>
-    )
-  }
+  // if (!isUserLoggedIn){
+  //   return (
+  //     <Layout>
+  //       <EmptyState
+  //         icon={GrimacingEmoji}
+  //         iconWidth={52}
+  //         centerAlign={true}
+  //         title={`We don't know each other like that`}
+  //         message={'You have to be logged in to view this page.'}
+  //       />
+  //     </Layout>
+  //   )
+  // }
 
 
   // if it's a local cart and it's empty
@@ -346,11 +346,11 @@ export default function Checkout(props) {
                       </div>
                       <Formik
                         initialValues={{
-                          email: 'bradstar@vivaldi.com',
-                          firstName: 'Jack',
-                          lastName: 'Orb',
-                          password: 'O4l7xfPggLXp4LmnoIudR',
-                          phoneNumber: '0728538683',
+                          email: '',
+                          firstName: '',
+                          lastName: '',
+                          password: '',
+                          phoneNumber: '',
                         }}
                         validationSchema={NewUserCheckoutValidationSchema}
                         onSubmit={async (values, {setSubmitting}) => {

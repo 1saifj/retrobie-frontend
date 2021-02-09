@@ -89,7 +89,7 @@ export default function(props) {
                                         {props.children}
                                     </LayoutParent>
                                     <div style={{marginTop: 48}}>
-                                        <Footer/>
+                                        <Footer internal={props.internal}/>
                                     </div>
                                 </div>
                             </div>
