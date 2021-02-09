@@ -265,7 +265,7 @@ const adminRoutes = [
     component: AdminDeliveries
   },
   {
-    path: "/company/admin/dashboard/product/:id",
+    path: "/company/admin/dashboard/products/:slug",
     component: AdminSingleProduct
   },
   {

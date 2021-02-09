@@ -53,9 +53,9 @@ export default function SingleProduct(props) {
   const [showImageModal, setImageModalShown] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
 
-  const productId = props.match.params.id;
+  const productSlug = props.match.params.slug;
 
-  const componentName = `custom_uploader_${productId}`;
+  const componentName = `custom_uploader_${productSlug}`;
 
   const singleProductFetcher = (key, id) => api.products.get(id).then(({data}) => ({
       name: data.name,
@@ -82,7 +82,7 @@ export default function SingleProduct(props) {
       sportsType: data.meta.sportsType,
     }
   ));
-  const {data: thisProductData} = useSWR([`/product/${productId}`, productId], singleProductFetcher);
+  const {data: thisProductData} = useSWR([`/product/${productSlug}`, productSlug], singleProductFetcher);
 
   if (!thisProductData) {
     return (
@@ -191,7 +191,8 @@ export default function SingleProduct(props) {
                 <div>
                   <CustomImageUploader
                     allowMultiple={true}
-                    id={productId}
+                    id={productSlug}
+                    folder={thisProductData.brand}
                     initialImages={values.images}
                     onClickSelectedImage={images => {
                       setImageModalShown(!showImageModal);
@@ -533,7 +534,7 @@ export default function SingleProduct(props) {
         <div style={{textAlign: 'center'}}>
           <Button
             style={{width: '25%', marginTop: '24px'}}
-            onClick={() => deleteProduct(productId)}
+            onClick={() => deleteProduct(productSlug)}
           >
             Delete this product
           </Button>
