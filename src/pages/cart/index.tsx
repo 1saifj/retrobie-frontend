@@ -1,6 +1,5 @@
 import React from 'react';
 import Layout from '../../components/Layout';
-import {connect, RootStateOrAny, useSelector} from 'react-redux';
 import styled from 'styled-components';
 import Cart from '../../components/cart';
 import {EmptyState} from '../../components';
@@ -8,7 +7,6 @@ import {EmptyCart} from '../../constants/icons';
 import {Button} from 'bloomer';
 
 function CartPage(props) {
-  const cart = useSelector((state: RootStateOrAny) => state.cart);
   return (
     <Layout>
       <CartItemParent>
@@ -16,13 +14,12 @@ function CartPage(props) {
           {
             props.state.cart.items && props.state.cart.items.length ?
               <CartParent>
-                <header style={{marginLeft: '12px'}}>
-                  <h2 style={{color: '#222'}}>Your Cart</h2>
-                </header>
-
-                <Cart size={'L'}
-                      bordered
-                      showRemoveButton={true}
+                <Cart
+                  title={true}
+                  hideCloseButton={true}
+                  size={'L'}
+                  bordered
+                  showRemoveButton={true}
                 />
                 <small style={{margin: '8px 0'}}>*Total not inclusive of delivery fee, if
                   present</small>
@@ -46,9 +43,7 @@ function CartPage(props) {
   );
 }
 
-export default connect(state => ({
-    state
-}), null)(CartPage);
+export default CartPage;
 
 const CartItemParent = styled.div`
   display: grid;
@@ -59,7 +54,7 @@ const CartItemParent = styled.div`
 
 
 const CartParent = styled.div`
-    width: 800px;
+    width: 600px;
 
     @media screen and (max-width: 768px) {
       width: 100%;    

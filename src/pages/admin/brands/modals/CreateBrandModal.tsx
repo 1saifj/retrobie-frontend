@@ -142,6 +142,7 @@ const CreateBrandModal = (
                                     <div style={{border: '1px solid grey', padding: '12px 8px'}}>
                                         <h4>Upload a logo</h4>
                                         <CustomImageUploader
+                                          folder={values.name}
                                           id={values.name}
                                           onUpload={(err, images) => {
                                               setFieldValue('logo', images[0]);

@@ -56,7 +56,7 @@ type ProductMetaType = {
 }
 
 export type ImageType = {
-  fileId: string
+  fileId?: string
   url: string;
   thumbnailUrl: string;
 };

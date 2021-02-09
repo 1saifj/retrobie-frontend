@@ -4,7 +4,7 @@ import Layout from '../../components/Layout';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import Cart from '../../components/cart';
 import InputMask from 'react-input-mask';
-import {EmptyState, Loading} from '../../components';
+import {Avatar, EmptyState, Loading} from '../../components';
 import {
   Button,
   Column,
@@ -19,10 +19,10 @@ import {
   ModalContent,
   Section,
 } from 'bloomer';
-import {EmptyCart, ErrorIconDark, Eye, GrimacingEmoji} from '../../constants/icons';
+import {EmptyCart, ErrorIconDark, Eye} from '../../constants/icons';
 import {Form, Formik} from 'formik';
 import TextField from '../../components/input/TextField';
-import {cleanString, extractErrorMessage} from '../../helpers';
+import {addDashes, cleanString, extractErrorMessage} from '../../helpers';
 import * as Yup from 'yup';
 import Separator from '../../components/Separator';
 import LoginUser from '../accounts/login';
@@ -30,12 +30,12 @@ import {Link} from 'react-router-dom';
 import {AtSign, Phone, User} from 'react-feather';
 import {Helmet} from 'react-helmet';
 import {createCheckoutAction, loginUserAction} from '../../state/actions';
-import {env} from '../../config';
 import {CartType, CheckoutType, LoginResponseType, ServerCartType} from '../../types';
 import {useAuth} from '../../network';
 import useSWR from 'swr/esm/use-swr';
 import ServerError from '../../assets/images/vectors/dead.svg';
 import {useNotify} from '../../hooks';
+import {UserInfoType} from '../../state/reducers/userReducers';
 
 const LoggedInContainer = styled.div`
   width: 100%;
@@ -88,7 +88,7 @@ export default function Checkout(props) {
   const localCart: CartType = useSelector((state: RootStateOrAny) => state.cart);
 
   const userInfoFetcher = ()=> api.accounts.me().then(({data}) => data);
-  const {data: userInfo, error: fetchUserInfoError} = useSWR(isUserLoggedIn ? '/me': null, userInfoFetcher)
+  const {data: userInfo, error: fetchUserInfoError} = useSWR<UserInfoType>(isUserLoggedIn ? '/me': null, userInfoFetcher)
 
   const cartId = props.match.params.cartId;
 
@@ -153,20 +153,6 @@ export default function Checkout(props) {
     remoteCart,
     isLocalCart
   ]);
-
-  if (!isUserLoggedIn){
-    return (
-      <Layout>
-        <EmptyState
-          icon={GrimacingEmoji}
-          iconWidth={52}
-          centerAlign={true}
-          title={`We don't know each other like that`}
-          message={'You have to be logged in to view this page.'}
-        />
-      </Layout>
-    )
-  }
 
 
   // if it's a local cart and it's empty
@@ -267,7 +253,9 @@ export default function Checkout(props) {
 
   return (
     <CheckoutParent>
-      <Layout>
+      <Layout
+        withoutNav
+      >
         <Helmet>
           <title>Retrobie | Checkout</title>
         </Helmet>
@@ -294,10 +282,9 @@ export default function Checkout(props) {
                           display: "flex",
                           alignItems: "center"
                         }}>
-                          <img
-                            src={env.getApiBaseUrl() + userInfo?.avatar?.url}
-                            alt={'random avatar'}
-                          />
+                          <Avatar
+                            src={userInfo?.avatar}
+                            name={`${userInfo?.firstName}`}/>
                         </div>
                         <div className={'user-info'}>
                           <div>
@@ -308,7 +295,7 @@ export default function Checkout(props) {
                           </div>
                           <div>
                             <Phone />
-                            <p>+254-{userInfo?.phoneNumber}</p>
+                            <p>+254-{addDashes(userInfo?.phoneNumber)}</p>
                           </div>
                           <div>
                             <AtSign />
@@ -321,10 +308,10 @@ export default function Checkout(props) {
                 ) : (
                   <Column
                     isSize={{
-                    mobile: 'full',
-                    tablet: 'full',
-                    desktop: '1/2',
-                  }}>
+                      mobile: 'full',
+                      tablet: 'full',
+                      desktop: '1/2',
+                    }}>
                     <FormParent>
                       <h2>Your Information</h2>
                       <p>
@@ -345,15 +332,15 @@ export default function Checkout(props) {
                         </div>
                       </div>
                       <div>
-                        <Separator text={'OR'}/>
+                        <Separator text={'OR'} />
                       </div>
                       <Formik
                         initialValues={{
-                          email: 'bradstar@vivaldi.com',
-                          firstName: 'Jack',
-                          lastName: 'Orb',
-                          password: 'O4l7xfPggLXp4LmnoIudR',
-                          phoneNumber: '0728538683',
+                          email: '',
+                          firstName: '',
+                          lastName: '',
+                          password: '',
+                          phoneNumber: '',
                         }}
                         validationSchema={NewUserCheckoutValidationSchema}
                         onSubmit={async (values, {setSubmitting}) => {
@@ -499,6 +486,7 @@ export default function Checkout(props) {
                     <h2 style={{color: '#222'}}>Your Cart</h2>
                     <Cart
                       source={remoteCart}
+                      hideCloseButton={true}
                       hideCheckoutButton={!isUserLoggedIn}
                       checkoutButtonDisabled={Boolean(fetchUserInfoError)}
                       checkoutButtonIsLoading={isCheckoutLoading}
@@ -521,7 +509,7 @@ export default function Checkout(props) {
         </Section>
       </Layout>
       <Modal isActive={isLoginModalOpen} className={'modal-fx-fadeInScale'}>
-        <ModalBackground onClick={() => setLoginModalOpen(false)}/>
+        <ModalBackground onClick={() => setLoginModalOpen(false)} />
         <ModalContent>
           <div style={{background: 'white', padding: '12px 24px', borderRadius: 4}}>
             <LoginUser
@@ -535,7 +523,7 @@ export default function Checkout(props) {
             />
           </div>
         </ModalContent>
-        <ModalClose onClick={() => setLoginModalOpen(false)}/>
+        <ModalClose onClick={() => setLoginModalOpen(false)} />
       </Modal>
     </CheckoutParent>
   );

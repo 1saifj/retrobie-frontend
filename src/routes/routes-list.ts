@@ -27,7 +27,6 @@ const SupportMaps = lazy(() => import('../pages/support/shipping/maps'));
 
 const Checkout = lazy(() => import('../pages/checkout'));
 const Shipping = lazy(() => import('../pages/shipping'));
-const NotFound = lazy(() => import('../pages/not-found'));
 
 //Admin
 const AdminLogin = lazy(() => import('../pages/admin/login'));
@@ -52,7 +51,6 @@ const BrandsPage = lazy(() => import('../pages/brands/AllBrands'));
 
 const SingleBrand = lazy(() => import('../pages/brands/Brand'));
 // User
-const UserDashboard = lazy(() => import('../pages/user/dashboard'));
 const UserProfile = lazy(() => import('../pages/accounts/me'));
 const UserOrders = lazy(() => import('../pages/accounts/me/orders'));
 
@@ -126,12 +124,12 @@ const regularRoutes = [
     exact: true
   },
   {
-    path: "/checkout/:cartId",
-    component: Checkout,
-  },
-  {
     path: "/checkout/shipping/:orderId",
     component: Shipping,
+  },
+  {
+    path: "/checkout/:cartId",
+    component: Checkout,
   },
   {
     path: "/privacy/privacy-and-cookie-policy",
@@ -267,7 +265,7 @@ const adminRoutes = [
     component: AdminDeliveries
   },
   {
-    path: "/company/admin/dashboard/product/:id",
+    path: "/company/admin/dashboard/products/:slug",
     component: AdminSingleProduct
   },
   {

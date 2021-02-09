@@ -35,7 +35,9 @@ export default function ForgotPassword(props) {
     return (
         <>
             <div>
-                <Layout withoutNav={true}>
+                <Layout
+                  internal
+                  withoutNav={true}>
                     <FormParent>
                         <Formik initialValues={{}}
                                 validationSchema={ResetPasswordSchema}

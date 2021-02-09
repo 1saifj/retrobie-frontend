@@ -65,76 +65,7 @@ class HowItWorks extends React.Component {
               </p>
             </div>
           </div>
-          {/*<div>*/}
-          {/*    <div>*/}
-          {/*        <h2>How It Works</h2>*/}
-          {/*        <p>Not sure how to get started? Here's how it works</p>*/}
 
-          {/*        <p style={{color: "#353535"}}>*/}
-          {/*            Buying stuff on our store is a simple 5-step process. If you're still confused*/}
-          {/*            after this, feel free to reach us at customer.support@retrobie.com. We're always online.*/}
-          {/*        </p>*/}
-          {/*    </div>*/}
-
-          {/*    <div style={{display: 'flex'}}>*/}
-          {/*        <img src={SoundWave} style={{width: "64px", marginRight: "12px"}}/>*/}
-          {/*        <div>*/}
-          {/*            <h4 style={{marginBottom: 0}}>Step 1</h4>*/}
-          {/*            <p style={{color: "#353535"}}>Find Something you vibe with.</p>*/}
-          {/*        </div>*/}
-          {/*    </div>*/}
-          {/*    <div style={{display: 'flex'}}>*/}
-          {/*        <img src={CartLove} style={{width: "64px", marginRight: "12px"}}/>*/}
-          {/*        <div>*/}
-          {/*            <h4 style={{marginBottom: 0}}>Step 2</h4>*/}
-          {/*            <p style={{color: "#353535"}}>Add it to your cart</p>*/}
-          {/*        </div>*/}
-          {/*    </div>*/}
-          {/*    <div style={{display: 'flex'}}>*/}
-          {/*        <img src={DeliveryLocation} style={{width: "64px", marginRight: "12px"}}/>*/}
-          {/*        <div>*/}
-          {/*            <h4 style={{marginBottom: 0}}>Step 3</h4>*/}
-          {/*            <p style={{color: "#353535"}}>Pick a delivery location convenient for you.</p>*/}
-          {/*        </div>*/}
-          {/*    </div>*/}
-          {/*    <div style={{display: 'flex'}}>*/}
-          {/*        <img src={DeliveryA} style={{width: "64px", marginRight: "12px"}}/>*/}
-          {/*        <div>*/}
-          {/*            <h4 style={{marginBottom: 0}}>Step 3</h4>*/}
-          {/*            <p style={{color: "#353535"}}>Wait for the deliveryman or pick up your order*/}
-          {/*                directly.</p>*/}
-          {/*        </div>*/}
-          {/*    </div>*/}
-          {/*    <div style={{display: 'flex'}}>*/}
-          {/*        <img src={CoolPeach} style={{width: "64px", marginRight: "12px"}}/>*/}
-
-          {/*        <div>*/}
-          {/*            <h4>Step 5</h4>*/}
-          {/*            <p style={{color: "#353535"}}>*/}
-          {/*                Rock your new kicks and keep being a cool peach. You earned it.*/}
-          {/*            </p>*/}
-          {/*        </div>*/}
-          {/*    </div>*/}
-          {/*    <div style={{display: 'flex'}}>*/}
-          {/*        <img src={Party} style={{width: "64px", marginRight: "12px"}}/>*/}
-
-          {/*        <div>*/}
-          {/*            <h4>Step 5: Profit??</h4>*/}
-          {/*            <p style={{color: "#353535"}}>Pop one on us, and spread the word if you enjoyed*/}
-          {/*                the experience.</p>*/}
-          {/*        </div>*/}
-          {/*    </div>*/}
-
-          {/*    <p style={{textAlign: 'center'}}>*/}
-          {/*        Still have questions?*/}
-          {/*        &nbsp;*/}
-          {/*        <Button appearance={'ghost'}*/}
-          {/*                onClick={() => this.props.history.push("/support")}>*/}
-          {/*            Check out the FAQs*/}
-          {/*        </Button>*/}
-
-          {/*    </p>*/}
-          {/*</div>*/}
         </HowItWorksLanding>
 
         <FurtherValueProposition>

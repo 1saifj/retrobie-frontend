@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './megamenu.scoped.css';
 import { Link, useHistory } from 'react-router-dom';
-import { getBrandLinks, menuItems, newItems, sortBrands } from './Items';
+import {getMenuItemLinks, newItems, menuItemsToMap} from './Items';
 import CartIcon from '../../assets/images/icons/cart.svg';
 import Drawer from 'rc-drawer';
 import { Button, Container, Section } from 'bloomer';
@@ -11,12 +11,11 @@ import { useAuth } from '../../hooks';
 import RetroImage from '../image';
 import { ChevronDown } from 'react-feather';
 import Tooltip from '../tooltip';
-import styled from 'styled-components';
 import { UserState } from '../../state/reducers/userReducers';
-import { env } from '../../config';
 import useSWR from 'swr/esm/use-swr';
 import { toggleSidebarAction } from '../../state/actions';
-import { PromiseThunk } from '../../types';
+import {CategoryType, PromiseThunk} from '../../types';
+import AvatarComponent from '../avatar';
 
 const MegaMenu = () => {
   const api = useAuth();
@@ -26,8 +25,10 @@ const MegaMenu = () => {
   const dispatch = useDispatch<PromiseThunk<any>>();
 
   const allBrandsFetcher = () => api.brands.getAll().then(({data}) => data);
+  const allCategoriesFetcher = () => api.category.getAll().then(({data}) => data);
   const {data: allBrands} = useSWR('/brands/all', allBrandsFetcher);
-  const [menuList, setMenuList] = useState(menuItems);
+  const {data: allCategories} = useSWR<CategoryType[]>('/categories', allCategoriesFetcher);
+  const [menuList, setMenuList] = useState([]);
 
   const logout = () => {
     if (userState.isLoggedIn) {
@@ -46,14 +47,47 @@ const MegaMenu = () => {
   const theme = useSelector((state: RootStateOrAny) => state.meta.theme);
 
   useEffect(() => {
+    const newList = [...menuList];
+
     if (allBrands) {
-      const sortedBrands = sortBrands(allBrands);
-      const newList = [...menuList];
-      newList[0].links = getBrandLinks(sortedBrands);
+      const brandMenuItemsMap = menuItemsToMap(allBrands, 'name');
+      // setting the array index like this is a bit hacky, but it works
+      // better than pushing, which pushes 'brands' and 'categories' every
+      // time the server is queried
+      newList[0] =({
+        title: 'Brands',
+        featured: false,
+        links: getMenuItemLinks(brandMenuItemsMap, {
+          url: 'brands',
+          withTitle: true
+        }),
+        style: {
+          minWidth: 600,
+          padding: '12px',
+          rowGap: 8
+        }
+      });
       setMenuList(newList);
     }
 
-  }, [allBrands]);
+    if (allCategories){
+      const categoryItemMenuMap = menuItemsToMap(allCategories, 'name');
+      newList[1] =({
+        title: 'Categories',
+        featured: false,
+        style: undefined,
+        links: getMenuItemLinks(categoryItemMenuMap, {
+          url: 'category',
+          withTitle: false
+        })
+      })
+      setMenuList(newList)
+    }
+
+  }, [
+    allCategories,
+    allBrands,
+  ]);
 
   const openOrCloseSidebar = (open) => dispatch(toggleSidebarAction({open}));
 
@@ -66,9 +100,9 @@ const MegaMenu = () => {
               interactive={true}
               theme={'light'}
               arrow={true}
+              placement={'bottom'}
               inertia={true}
-              position={'bottom'}
-              html={(
+              content={(
                 <ul style={{display: 'flex', listStyle: 'none', gap: 12, padding: 0}}>
 
                   {
@@ -76,11 +110,12 @@ const MegaMenu = () => {
                       <div className="submenu-flex" key={String(index)}>
                         <li className="promo-container">
                           <Link tabIndex={0}
-                             role="menuitem"
-                             className="promo-imglink"
-                             to={item.to}
-                             title={item.title}>
+                                role="menuitem"
+                                className="promo-imglink"
+                                to={item.to}
+                                title={item.title}>
                             <RetroImage
+                              style={{minWidth: 200, height: 'auto'}}
                               alt={item.title}
                               src={item.image}
                             />
@@ -107,69 +142,10 @@ const MegaMenu = () => {
                 title={item.title}
                 links={item.links}
                 style={item.style}
-                featured={item.featured}/>
+                featured={item.featured}
+              />
             ))
           }
-
-          <li className="default">
-
-            <Tooltip
-              interactive={true}
-              theme={'light'}
-              arrow={true}
-              inertia={true}
-              position={'bottom'}
-              html={(
-                <ul className="submenu" style={{padding: 0}}>
-
-                  <div style={{display: 'flex', gap: 12}}>
-
-                    <li
-                      style={{listStyle: 'none'}}
-                      className="promo-container">
-                      <Link tabIndex={0} role="menuitem" className="promo-imglink" to="/sale"
-                         title="Promo">
-                        <RetroImage
-                          alt="Promo"
-                          src={'https://ik.imagekit.io/t25/v2/landing/architecture-buildings-business-car-331990_Ht9UI78PA.webp?tr=w-250'}
-                        />
-                      </Link>
-                    </li>
-                    <li
-                      style={{listStyle: 'none'}}
-                      className="promo-container">
-                      <Link tabIndex={0} role="menuitem" className="promo-imglink" to="/sale"
-                         title="Promo">
-                        <RetroImage
-                          alt="Promo"
-                          src={'https://ik.imagekit.io/t25/v2/landing/architecture-buildings-business-car-331990_Ht9UI78PA.webp?tr=w-250'}
-                        />
-                      </Link>
-                    </li>
-                    <li
-                      style={{listStyle: 'none'}}
-                      className="promo-container">
-                      <Link tabIndex={0} role="menuitem" className="promo-imglink" to="/sale"
-                         title="Promo">
-                        <RetroImage
-                          alt="Promo"
-                          src={'https://ik.imagekit.io/t25/v2/landing/architecture-buildings-business-car-331990_Ht9UI78PA.webp?tr=w-250'}
-                        />
-                      </Link>
-                    </li>
-
-                  </div>
-
-                </ul>
-              )}>
-              <Link className="nav-toplink " tabIndex={0} to="#" title="Sale">
-                Sale
-              </Link>
-
-            </Tooltip>
-
-
-          </li>
           <li className="default">
 
             <Link className="nav-toplink " tabIndex={0} to="/company/blog" title="Blog">
@@ -181,15 +157,15 @@ const MegaMenu = () => {
             <Button
               isColor={'ghost'}
               className="nav-toplink"
-               onClick={() => openOrCloseSidebar(true)}
-               tabIndex={0}
-               title="Sale">
+              onClick={() => openOrCloseSidebar(true)}
+              tabIndex={0}
+              title="Sale">
               <div style={{
                 marginBottom: '4px', display: 'inherit',
               }}
                    className="has-badge-rounded"
                    data-badge={cartCount}>
-                <img style={{width: '24px'}} className={'cart'} src={CartIcon} alt={'cart'}/>
+                <img style={{width: '24px'}} className={'cart'} src={CartIcon} alt={'cart'} />
               </div>
             </Button>
             <Drawer open={isDrawerOpen}
@@ -204,12 +180,10 @@ const MegaMenu = () => {
               }}>
                 <Section>
                   <Container>
-                    <h2>
-                      Your Cart
-                    </h2>
                     <div>
                       <Cart
                         size={'L'}
+                        title={true}
                         showAddButton={true}
                         showRemoveButton={true}
                         bordered={false}
@@ -246,12 +220,12 @@ const MegaMenu = () => {
                 <>
                   <Tooltip
                     // options
-                    position="bottom"
                     theme={'light'}
                     interactive={true}
                     arrow={true}
+                    placement={'bottom'}
                     trigger={'click'}
-                    html={
+                    content={
                       <div>
                         <ul style={{
                           padding: '4px',
@@ -280,13 +254,15 @@ const MegaMenu = () => {
                       </div>
                     }
                   >
-                    <AvatarComponent>
-                      <ChevronDown width={18}/>
-
-                      <div>
-                        <img src={env.getApiBaseUrl() + userState.avatar.thumbnailUrl} alt={'avatar'}/>
-                      </div>
-                    </AvatarComponent>
+                    <div>
+                      <AvatarComponent
+                        size={"S"}
+                        name={`${userState.firstName}`}
+                        src={userState.avatar}
+                      >
+                        <ChevronDown width={18} />
+                      </AvatarComponent>
+                    </div>
                   </Tooltip>
 
                 </>
@@ -299,102 +275,94 @@ const MegaMenu = () => {
   );
 };
 
-MegaMenu.propTypes = {};
+const NavbarItem = ({title, links, featured, style}: {
+  title,
+  links,
+  featured?,
+  style?
+}) => {
+  return (
+    <li className="default">
 
-const AvatarComponent = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
+      <Tooltip
+        interactive={true}
+        theme={'light'}
+        placement={'bottom'}
+        arrow={true}
+        inertia={true}
+        content={(
+          <ul style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            padding: '0 12px',
+            listStyle: 'none',
+            ...style,
+          }}>
 
-  img {
-    border: 2px solid seagreen;
-    padding: 2px;
-    border-radius: 50%;
-    max-width: 40px;
-  }
+            {
+              links &&
+              links.map(category => (
+                <div style={{
+                  flex: '1 0 150px',
+                  textAlign: 'left',
+                  maxWidth: '100%',
+                  margin: '0 0.5rem',
+                }} key={category.title}>
+                  {
+                    category.title && (
+                      <li style={{
+                        fontWeight: 'bold',
+                        margin: '0 0 0.625rem',
+                        borderBottom: '1px solid #d8d8d8',
+                        paddingBottom: 8,
+                      }}>
+                        <Link
+                          to={category.to}
+                          title={category.title}>
+                          {category.title}
+                        </Link>
+                      </li>
+                    )
+                  }
+                  {
+                    category.items?.map(item => (
+                      <li key={item.title}>
+                        <Link
+                          to={item.to}
+                          title={item.title}>
+                          {item.title}
+                        </Link>
+                      </li>
+                    ))
+                  }
+                </div>
+              ))
+            }
 
-  &:hover {
-    cursor:pointer;
-  }
-`
+            {
+              featured &&
+              <div className="submenu-flex">
 
-const NavbarItem = ({title, links, featured, style}) => {
-    return (
-        <li className="default">
+                <li className="promo-container">
+                  <Link
+                    tabIndex={0}
+                    role="menuitem"
+                    className="promo-imglink" to={featured.link}
+                    title={`${title} promo`}>
+                    <img tabIndex={-1} alt={`Shop ${title}`} src={featured.image} width="340" height="580" />
+                  </Link>
+                </li>
 
-            <Tooltip
-              interactive={true}
-              theme={'light'}
-              arrow={true}
-              inertia={true}
-              position={'bottom'}
-              html={(
-                <ul style={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    padding: "0 12px",
-                    listStyle: 'none',
-                    ...style
-                }}>
-
-                    {
-                        links &&
-                        links.map(category => (
-                          <div style={{
-                              flex: '1 0 150px',
-                              textAlign: 'left',
-                              maxWidth: "100%",
-                              margin: "0 0.5rem",
-                          }} key={category.title}>
-                              <li style={{
-                                  fontWeight: "bold",
-                                  margin: "0 0 0.625rem",
-                                  borderBottom: "1px solid #d8d8d8",
-                                  paddingBottom: 8
-                              }}>
-                                  <Link
-                                    tabIndex={0}
-                                     to={category.to} title={category.title}>
-                                      {category.title}
-                                  </Link>
-                              </li>
-                              {
-                                  category.items?.map(item => (
-                                    <li key={item.title}>
-                                        <Link tabIndex={0} to={item.to} title={item.title}>
-                                            {item.title}
-                                        </Link>
-                                    </li>
-                                  ))
-                              }
-                          </div>
-                        ))
-                    }
-
-                    {
-                        featured &&
-                        <div className="submenu-flex">
-
-                            <li className="promo-container">
-                                <Link
-                                  tabIndex={0}
-                                  role="menuitem"
-                                  className="promo-imglink" to={featured.link}
-                                   title={`${title} promo`}>
-                                    <img tabIndex={-1} alt={`Shop ${title}`} src={featured.image} width="340" height="580"/>
-                                </Link>
-                            </li>
-
-                        </div>
-                    }
-                </ul>
-              )}>
-                <Link className="nav-toplink " tabIndex={0} to="#" title={title}>
-                    {title}
-                </Link>
-            </Tooltip>
-        </li>
-    );
+              </div>
+            }
+          </ul>
+        )}>
+        <Link className="nav-toplink " tabIndex={0} to="#" title={title}>
+          {title}
+        </Link>
+      </Tooltip>
+    </li>
+  );
 };
 
 export default MegaMenu;

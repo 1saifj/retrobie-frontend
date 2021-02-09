@@ -15,7 +15,7 @@ import Manga from '../../assets/images/icons/marginalia-online-shopping.png';
 import {EmptyState} from '../../components';
 import {notify} from '../../helpers/views';
 import {useHistory} from 'react-router';
-import {Minus, Plus} from 'react-feather';
+import {Minus, Plus, X} from 'react-feather';
 import {CartItemType, CartType, ServerCartType} from '../../types';
 import Loading from '../loading';
 
@@ -81,6 +81,8 @@ export default function Cart(
     showRemoveButton,
     showAddButton,
     hideCheckoutButton,
+    hideCloseButton,
+    title,
     onCheckout,
     checkoutButtonLink,
     checkoutButtonText,
@@ -93,6 +95,8 @@ export default function Cart(
     showRemoveButton?: boolean;
     showAddButton?: boolean;
     hideCheckoutButton?: boolean;
+    hideCloseButton?: boolean
+    title?: boolean
     onCheckout?: ((event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement, MouseEvent>) => void) & ((event: React.MouseEvent<HTMLElement, MouseEvent>) => void);
     checkoutButtonLink?: string;
     checkoutButtonText?: string;
@@ -166,6 +170,26 @@ export default function Cart(
 
   return (
     <CartParent>
+      {
+        !hideCloseButton && (
+          <div
+            style={{display: 'flex'}}
+            onClick={()=> openOrCloseSidebar(false)}
+            className={'navbar-close'}
+          >
+            <div style={{marginLeft: 'auto'}}>
+              <X/>
+            </div>
+          </div>
+        )
+      }
+      {
+        title && (
+          <header>
+            <h2 style={{color: '#222'}}>Your Cart</h2>
+          </header>
+        )
+      }
       {cart.items && cart.items.length ? (
         <CartContent>
           {cart.items.map(cartItem => (
