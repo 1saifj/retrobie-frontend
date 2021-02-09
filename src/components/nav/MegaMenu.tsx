@@ -258,7 +258,8 @@ const MegaMenu = () => {
                   >
                     <div>
                       <AvatarComponent
-                        name={`${userState.firstName} ${userState.lastName}`}
+                        size={"S"}
+                        name={`${userState.firstName}`}
                         src={userState.avatar}
                       >
                         <ChevronDown width={18} />
