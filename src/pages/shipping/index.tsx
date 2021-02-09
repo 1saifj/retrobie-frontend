@@ -209,7 +209,10 @@ export default function Shipping(props) {
   }
 
   return (
-    <Layout>
+    <Layout
+      internal
+      withoutNav
+    >
       {/*only one child*/}
       <CompleteOrderRoot>
         <div>

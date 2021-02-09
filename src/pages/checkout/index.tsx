@@ -22,7 +22,7 @@ import {
 import {EmptyCart, ErrorIconDark, Eye} from '../../constants/icons';
 import {Form, Formik} from 'formik';
 import TextField from '../../components/input/TextField';
-import {cleanString, extractErrorMessage} from '../../helpers';
+import {addDashes, cleanString, extractErrorMessage} from '../../helpers';
 import * as Yup from 'yup';
 import Separator from '../../components/Separator';
 import LoginUser from '../accounts/login';
@@ -253,7 +253,9 @@ export default function Checkout(props) {
 
   return (
     <CheckoutParent>
-      <Layout>
+      <Layout
+        withoutNav
+      >
         <Helmet>
           <title>Retrobie | Checkout</title>
         </Helmet>
@@ -280,7 +282,9 @@ export default function Checkout(props) {
                           display: "flex",
                           alignItems: "center"
                         }}>
-                          <Avatar src={userInfo.avatar} name={`${userInfo.firstName} ${userInfo.lastName}`}/>
+                          <Avatar
+                            src={userInfo?.avatar}
+                            name={`${userInfo?.firstName}`}/>
                         </div>
                         <div className={'user-info'}>
                           <div>
@@ -291,7 +295,7 @@ export default function Checkout(props) {
                           </div>
                           <div>
                             <Phone />
-                            <p>+254-{userInfo?.phoneNumber}</p>
+                            <p>+254-{addDashes(userInfo?.phoneNumber)}</p>
                           </div>
                           <div>
                             <AtSign />
@@ -304,10 +308,10 @@ export default function Checkout(props) {
                 ) : (
                   <Column
                     isSize={{
-                    mobile: 'full',
-                    tablet: 'full',
-                    desktop: '1/2',
-                  }}>
+                      mobile: 'full',
+                      tablet: 'full',
+                      desktop: '1/2',
+                    }}>
                     <FormParent>
                       <h2>Your Information</h2>
                       <p>
@@ -328,7 +332,7 @@ export default function Checkout(props) {
                         </div>
                       </div>
                       <div>
-                        <Separator text={'OR'}/>
+                        <Separator text={'OR'} />
                       </div>
                       <Formik
                         initialValues={{
@@ -504,7 +508,7 @@ export default function Checkout(props) {
         </Section>
       </Layout>
       <Modal isActive={isLoginModalOpen} className={'modal-fx-fadeInScale'}>
-        <ModalBackground onClick={() => setLoginModalOpen(false)}/>
+        <ModalBackground onClick={() => setLoginModalOpen(false)} />
         <ModalContent>
           <div style={{background: 'white', padding: '12px 24px', borderRadius: 4}}>
             <LoginUser
@@ -518,7 +522,7 @@ export default function Checkout(props) {
             />
           </div>
         </ModalContent>
-        <ModalClose onClick={() => setLoginModalOpen(false)}/>
+        <ModalClose onClick={() => setLoginModalOpen(false)} />
       </Modal>
     </CheckoutParent>
   );
