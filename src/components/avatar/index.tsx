@@ -4,9 +4,10 @@ import styled from 'styled-components';
 import {env} from '../../config';
 
 
-function AvatarComponent({src, name, ...props}: {
+function AvatarComponent({src, name, size, ...props}: {
   src: Omit<ImageType, 'fileId'>,
   name: string,
+  size?: "S" | "L"
   [key: string]: any
 }) {
 
@@ -14,14 +15,14 @@ function AvatarComponent({src, name, ...props}: {
     <div>
       {
         src?.url ? (
-          <AvatarParent>
+          <AvatarParent size={size}>
             {props.children}
             <img
               src={env.getApiBaseUrl() + src.thumbnailUrl}
               alt={'avatar'} />
           </AvatarParent>
         ) : (
-          <Initials>
+          <Initials size={size}>
             {name?.charAt(0).toUpperCase() || "-"}
           </Initials>
         )
@@ -30,9 +31,9 @@ function AvatarComponent({src, name, ...props}: {
   );
 }
 
-const Initials = styled.div`
-  width: 85px;
-  height: 85px;
+const Initials = styled.div<{size?: "S" | "L"}>`
+  width: ${props=> props.size === "S"? "65px": "85px"};
+  height: ${props=> props.size === "S"? "65px": "85px"};
   background: dodgerblue;
   border-radius: 4px;
   font-size: 24px;
@@ -43,7 +44,7 @@ const Initials = styled.div`
   align-items: center;
 `
 
-const AvatarParent = styled.div`
+const AvatarParent = styled.div<{size?: "S" | "L"}>`
   display: flex;
   align-items: center;
   gap: 4px;
