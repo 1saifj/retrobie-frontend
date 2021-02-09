@@ -63,6 +63,7 @@ export default function({match}){
                       {
                         ...thisCategory.landingImage,
                         md5: null,
+                        fileId: thisCategory.landingImage.fileId,
                         uploaded: true,
                         id: null
                       }
