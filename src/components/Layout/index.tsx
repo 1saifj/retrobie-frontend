@@ -3,19 +3,26 @@ import styled from 'styled-components';
 import Header from '../header/header';
 import Footer from '../footer/footer';
 import {Delete, Notification} from 'bloomer';
-import {Helmet} from 'react-helmet';
 import {Transition} from 'react-transition-group';
 import {ErrorIconDark} from '../../constants/icons';
 import {RootStateOrAny, useSelector} from 'react-redux';
+import {UserState} from '../../state/reducers/userReducers';
+import {Link} from 'react-router-dom';
 
-export default function(props) {
-    const warning = sessionStorage.getItem('hide-beta-warning');
+const Layout = function(props) {
+    const warning = sessionStorage.getItem('hide-unverified-email-warning');
 
     const [hideWarning, setWarningHidden] = useState(Boolean(warning));
 
-    const currentTheme = useSelector((state: RootStateOrAny) => state.meta.theme)
+    const currentTheme = useSelector((state: RootStateOrAny) => state.meta.theme);
+    const user: UserState = useSelector((state: RootStateOrAny)=> state.user)
 
     const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
 
     const defaultStyle = {
         transition: `opacity 250ms ease-in-out`,
@@ -32,73 +39,67 @@ export default function(props) {
         exited: {opacity: 0},
     };
 
-    function hideBetaWarning() {
+    function hideUnverifiedEmailWarning() {
         setWarningHidden(true);
-        sessionStorage.setItem('hide-beta-warning', String(true));
+        sessionStorage.setItem('hide-unverified-email-warning', String(true));
     }
 
-    useEffect(() => {
-
-        setMounted(true);
-
-        const element = document.getElementById('feedback-trigger');
-
-        window['ATL_JQ_PAGE_PROPS'] = {
-            "triggerFunction": function (showCollectorDialog) {
-                element.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    showCollectorDialog();
-
-                });
-            }
-        };
-
-    }, []);
-
     return (
-        <>
-            <Transition in={mounted} timeout={100}>
-                {
-                    state => (
-                        <div style={{...defaultStyle, ...transitionStyles[state]}}>
-                            <div className='layout--root'>
-                                <div>
-                                    <Helmet>
-                                        <script type="text/javascript"
-                                                src="https://retrobie.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-zafpfn/b/23/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=1b12b0dd"/>
-                                    </Helmet>
-                                    <Notification isColor={'warning'}
-                                                  style={{display: Boolean(hideWarning) ? 'none' : 'block'}}>
-                                        <Delete onClick={() => hideBetaWarning()}/>
-                                        <div style={{display: 'flex'}}>
-                                            <img src={ErrorIconDark}
-                                                 style={{width: '24px', margin: '0 12px', display: 'inline'}}
-                                                 alt="error icon"/>
-                                            <p>
-                                                We are in the process of redesigning our website. Some things don't work
-                                                yet and others might break occasionally.
-                                                If you notice anything broken or have any general feedback, feel free to
-                                                report it <a id='feedback-trigger' href="#">here</a>
-                                            </p>
-                                        </div>
-                                    </Notification>
+      <>
+          <Transition
+            in={mounted}
+            timeout={100}>
+              {
+                  state => (
+                    <div
+                      style={{...defaultStyle, ...transitionStyles[state]}}>
+                        <div
+                          className='layout--root'>
+                            <div>
+                                {
+                                    user.isLoggedIn && !user.isVerified && (
+                                      <Notification
+                                        style={{display: Boolean(hideWarning) ? 'none' : 'block'}}
+                                        isColor={'warning'}>
+                                          <Delete onClick={() => hideUnverifiedEmailWarning()} />
+                                          <div style={{display: 'flex'}}>
+                                              <img src={ErrorIconDark}
+                                                   style={{width: '24px', margin: '0 12px', display: 'inline'}}
+                                                   alt="error icon" />
+                                              <p>
+                                                  Psst. You haven't verified your email yet.
+                                                  Some functionality will be limited until you do.
+                                              </p>
+                                              <p>
+                                                  To confirm your email address, visit{" "}
+                                                  <Link to={'/accounts/verify?sendCode=true'}>
+                                                      this link
+                                                  </Link>
+                                              </p>
+                                          </div>
+                                      </Notification>
+                                    )
+                                }
 
-                                    <Header withoutNav={props.withoutNav}
-                                            topRightButton={props.topRightButton}/>
-                                    <LayoutParent className='layout--parent' {...props} style={{...props.style}}>
-                                        {props.children}
-                                    </LayoutParent>
-                                    <div style={{marginTop: 48}}>
-                                        <Footer internal={props.internal}/>
-                                    </div>
+                                <Header
+                                  withoutNav={props.withoutNav}
+                                  topRightButton={props.topRightButton} />
+                                <LayoutParent
+                                  className='layout--parent' {...props}
+                                  style={{...props.style}}>
+                                    {props.children}
+                                </LayoutParent>
+                                <div style={{marginTop: 48}}>
+                                    <Footer internal={props.internal} />
                                 </div>
                             </div>
                         </div>
-                    )
-                }
-            </Transition>
+                    </div>
+                  )
+              }
+          </Transition>
 
-        </>
+      </>
     );
 
 }
@@ -106,3 +107,5 @@ export default function(props) {
 const LayoutParent = styled.div`
   margin-top: 48px;
 `;
+
+export default Layout;
