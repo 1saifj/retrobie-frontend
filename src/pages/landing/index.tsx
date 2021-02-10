@@ -37,18 +37,9 @@ function Landing({ history }) {
         title={'Home of Authentic Sneakers & Sports Shoes in Kenya'}
       />
       <JsonLd item={jsonld()}/>
-      <div
-        style={{
-          display: 'grid',
-          alignItems: 'center',
-          marginTop: '64px',
-          position: 'relative',
-        }}
-      >
-        <Section>
-          <Hero/>
-        </Section>
-      </div>
+      <Section>
+        <Hero/>
+      </Section>
       <Section>
         <div style={{textAlign: 'center'}}>
           <h1>Enjoy the perks of shopping with us</h1>
