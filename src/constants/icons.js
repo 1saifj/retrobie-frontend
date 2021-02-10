@@ -3,6 +3,7 @@ import P100 from '../assets/images/emoji/100.png';
 
 import GrimacingEmoji from '../assets/images/icons/grimacing.svg';
 import WinkingEmoji from '../assets/images/emoji/wink.webp';
+import SmilingWithEyesEmoji from '../assets/images/emoji/smiling-with-eyes.png'
 
 import ErrorIconDark from '../assets/images/icons/warning.svg';
 import ErrorIconLight from '../assets/images/icons/warning-light.svg';
@@ -104,6 +105,7 @@ import Refund from '../assets/images/icons/refund.svg'
 import SoundWaves from '../assets/images/icons/sound-waves.svg';
 import LocationIcon from '../assets/images/icons/location-pin.svg';
 import Confetti from '../assets/images/icons/confetti.svg';
+import SecurityGuard from '../assets/images/icons/security-guard.svg';
 
 import JJY from '../assets/images/marketing/Air-Jordan-1-Hi-85-Varsity-Red.webp';
 
@@ -185,6 +187,8 @@ export {
   Return,
   Refund,
   SoundWaves,
+  SecurityGuard,
+  SmilingWithEyesEmoji,
   Tick,
   TickDark,
   TwitterLogoWhite,
