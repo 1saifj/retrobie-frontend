@@ -27,6 +27,7 @@ const SupportMaps = lazy(() => import('../pages/support/shipping/maps'));
 
 const Checkout = lazy(() => import('../pages/checkout'));
 const Shipping = lazy(() => import('../pages/shipping'));
+const OrderCompleted = lazy(() => import('../pages/shipping/order-completed'));
 
 //Admin
 const AdminLogin = lazy(() => import('../pages/admin/login'));
@@ -122,6 +123,10 @@ const regularRoutes = [
     path: "/cart",
     component: Cart,
     exact: true
+  },
+  {
+    path: "/checkout/shipping/order-completed/:orderId",
+    component: OrderCompleted,
   },
   {
     path: "/checkout/shipping/:orderId",
