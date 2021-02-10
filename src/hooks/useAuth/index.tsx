@@ -125,7 +125,8 @@ export default function() {
     new: (data) => async () => (await getAxis()).post('/orders/new', data),
     mine: async (params) => (await getAxis()).get(`/orders/mine?include=${params}`),
     checkStatus: async (id)=> (await getAxis()).get(`/orders/${id}/status`),
-    complete: (data: {cartId: string, address})=> async () => (await getAxis()).post(`/orders/${data.cartId}/complete`, data),
+    complete: (data: {cartId: string, address, paymentType: 'pay-now' | 'pay-on-delivery'})=>
+      async () => (await getAxis()).post(`/orders/${data.cartId}/complete`, data),
     cancel: async (data) => (await getAxis()).post(`/orders/${data.id}/cancel`),
   };
 

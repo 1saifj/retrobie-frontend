@@ -31,7 +31,7 @@ import ServerError from '../../assets/images/vectors/dead.svg';
 
 const CompleteOrderValidationSchema = Yup.object({
   deliveryLocation: Yup.string().required(),
-  paymentMethod: Yup.string().required(),
+  paymentType: Yup.string().required(),
 });
 
 export default function Shipping(props) {
