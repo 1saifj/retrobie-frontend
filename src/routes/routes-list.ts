@@ -53,9 +53,9 @@ const BrandsPage = lazy(() => import('../pages/brands/AllBrands'));
 const SingleBrand = lazy(() => import('../pages/brands/Brand'));
 // User
 const UserProfile = lazy(() => import('../pages/accounts/me'));
-const UserOrders = lazy(() => import('../pages/accounts/me/orders'));
+const UserOrders = lazy(() => import('../pages/orders'));
 
-const UserSingleOrder = lazy(() => import('../pages/accounts/me/orders/single-order'));
+const UserSingleOrder = lazy(() => import('../pages/orders/single-order'));
 // auth
 const RegisterUser = lazy(() => import('../pages/accounts/register'));
 const LoginUser = lazy(() => import('../pages/accounts/login'));

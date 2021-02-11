@@ -2,13 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import {Tag} from 'bloomer';
 import {Link} from 'react-router-dom';
-import {capitalize} from '../../../../helpers';
+import {capitalize} from '../../helpers';
 import useSWR from 'swr/esm/use-swr';
-import {useAuth} from '../../../../hooks';
-import {EmptyState, Layout, Loading, RetroImage} from '../../../../components';
-import {OrderType} from '../../../../types';
-import {DeadEyes, EmptyBox, GrimacingEmoji} from '../../../../constants/icons';
-import {UserState} from '../../../../state/reducers/userReducers';
+import {useAuth} from '../../hooks';
+import {EmptyState, Layout, Loading, RetroImage} from '../../components';
+import {OrderType} from '../../types';
+import {DeadEyes, EmptyBox, GrimacingEmoji} from '../../constants/icons';
+import {UserState} from '../../state/reducers/userReducers';
 import {RootStateOrAny, useSelector} from 'react-redux';
 
 const OrderItem = styled.div`

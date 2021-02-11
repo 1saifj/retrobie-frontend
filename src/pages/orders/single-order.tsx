@@ -1,18 +1,18 @@
 import React, {useState} from 'react';
-import {useAuth} from '../../../../network';
-import Layout from '../../../../components/Layout/index';
-import Cart from '../../../../components/cart';
+import {useAuth} from '../../network';
+import Layout from '../../components/Layout';
+import Cart from '../../components/cart';
 import useSWR from 'swr/esm/use-swr';
-import Loading from '../../../../components/loading';
+import Loading from '../../components/loading';
 import {Button, Help, Tag} from 'bloomer';
-import {capitalize, extractErrorMessage} from '../../../../helpers';
+import {capitalize, extractErrorMessage} from '../../helpers';
 import styled from 'styled-components';
 import {Tooltip} from 'react-tippy';
-import {OrderStatus, OrderType} from '../../../../types';
-import {EmptyState} from '../../../../components';
-import {DeadEyes, DeadEyes2} from '../../../../constants/icons';
-import {useNotify} from '../../../../hooks';
-import {UserState} from '../../../../state/reducers/userReducers';
+import {OrderStatus, OrderType} from '../../types';
+import {EmptyState} from '../../components';
+import {DeadEyes, DeadEyes2} from '../../constants/icons';
+import {useNotify} from '../../hooks';
+import {UserState} from '../../state/reducers/userReducers';
 import {RootStateOrAny, useSelector} from 'react-redux';
 
 export default function({match: {params: {orderId}}}) {
