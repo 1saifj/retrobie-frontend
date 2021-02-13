@@ -4,7 +4,7 @@ import {EmptyState} from '../components';
 import SEOHeader from '../components/SEOHeader';
 import {ErrorIcon404Dark} from '../constants/icons';
 
-function NotFound() {
+function NotFound(props) {
   return (
     <Layout>
       <SEOHeader
@@ -22,7 +22,7 @@ function NotFound() {
           </div>
         )}
         title="Whoa! Looks like you're lost..."
-        message="We couldn't find what you're looking for."/>
+        message={props.message || "We couldn't find what you're looking for."}/>
     </Layout>
   );
 }
