@@ -221,12 +221,12 @@ const regularRoutes = [
     component: BrandsPage
   },
   {
-    path: "/brands/:brand",
-    component: SingleBrand
-  },
-  {
     path: "/brands/:brand/:slug",
     component: Product,
+  },
+  {
+    path: "/brands/:brand",
+    component: SingleBrand
   },
   {
     path: "/category/:id/",
@@ -288,7 +288,7 @@ const adminRoutes = [
     component: AdminSingleCategory
   },
   {
-    path: "/company/admin/dashboard/order/:id",
+    path: "/company/admin/dashboard/orders/:id",
     component: AdminSingleOrder
   },
   {
