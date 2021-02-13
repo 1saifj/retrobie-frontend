@@ -29,7 +29,7 @@ let gettingTokenPromise = null;
  * NOTE: Non-idempotent requests (POST, PUT, etc) are thunks. GET requests are normal
  * async functions
  */
-export default function() {
+const useAuth = function() {
 
   const dispatch = useDispatch();
   const userState: UserState = useSelector((state: RootStateOrAny) => state.user);
@@ -125,7 +125,8 @@ export default function() {
     new: (data) => async () => (await getAxis()).post('/orders/new', data),
     mine: async (params) => (await getAxis()).get(`/orders/mine?include=${params}`),
     checkStatus: async (id)=> (await getAxis()).get(`/orders/${id}/status`),
-    complete: (data: {cartId: string, address})=> async () => (await getAxis()).post(`/orders/${data.cartId}/complete`, data),
+    complete: (data: {orderId: string, address: {latLng: [number, number]}, paymentType: 'pay-now' | 'pay-on-delivery'})=>
+      async () => (await getAxis()).post(`/orders/${data.orderId}/complete`, data),
     cancel: async (data) => (await getAxis()).post(`/orders/${data.id}/cancel`),
   };
 
@@ -186,6 +187,7 @@ export default function() {
     getSingle: async (slug) => (await getAxis()).get(`/products/${slug}`),
     get: async (id) => (await getAxis()).get(`/products/${id}`),
     create: (data) => async () => (await getAxis()).post('/products/new', data),
+    reIndex: (data)=> async ()=> (await getAxis()).get(`/search/re-index/${data.index}`),
     update: (id, data) => async () => (await getAxis()).put(`/products/${id}/update`, data),
   };
 
@@ -234,3 +236,5 @@ export default function() {
     ping,
   };
 };
+
+export default useAuth;

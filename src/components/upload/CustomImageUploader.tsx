@@ -102,7 +102,7 @@ function CustomImageUploader(
       allowMultiple: boolean,
       id: string,
       onBeforeChange?: (e)=> void,
-      onUploadProgress?: (progress: number)=> void
+      onUploadProgress?: ({percentCompleted, fileId}: {percentCompleted: number, fileId: string})=> void
 
   }) {
 
@@ -112,7 +112,9 @@ function CustomImageUploader(
 
     const inputRef = useRef(null);
     // Only load these variables if 'componentName' is defined
-    const uploadedImagesStorageName = `custom_uploader/${id}`;
+  const uploadedImagesStorageName = env.getEnvironment() !== 'production' ?
+    `${env.getEnvironment()}/custom_uploader/${id}` :
+    `custom_uploader/${id}`;
     const uploadedImagesStorageJSON = localStorage.getItem(uploadedImagesStorageName);
     const uploadedImagesArray = useMemo(
       () => uploadedImagesStorageJSON ?
@@ -201,9 +203,11 @@ function CustomImageUploader(
     async function upload(files: Array<LocalImageType>) {
         let selectedImages = [];
         const uploaded = [...uploadedImagesState];
+        // for each of the files to be uploaded
         for (let i = 0; i < files.length; i++) {
             const currentFile = files[i];
 
+            // get an image signature from out servers
             const {data: signatureData} = await dispatch<any>(api.imageKit.getSignature());
 
             if (signatureData) {
@@ -218,18 +222,13 @@ function CustomImageUploader(
                 formData.append('folder', environment === 'production' ? folder: `${environment}/${folder}`);
 
                 const {data: uploadData} = await dispatch<any>(api.imageKit.upload(formData, {
-                  // TODO: We should account for the 'current'
-                  //  upload, rather than use a general callback like this.
                   onUploadProgress: (progressEvent)=> {
                     const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
                     if (typeof onUploadProgress === 'function') {
-                      onUploadProgress(percentCompleted);
-                    } else {
-                      if (percentCompleted < 100) {
-                        notify.progress(percentCompleted, {toastId: currentFile.id});
-                      } else {
-                        notify.dismiss(currentFile.id);
-                      }
+                      onUploadProgress({
+                        percentCompleted,
+                        fileId: currentFile.md5
+                      });
                     }
                   }
                 }));
@@ -244,19 +243,16 @@ function CustomImageUploader(
                         uploaded: true,
                     };
 
-                    // Delete uploaded item from uploading queue
-                    selectedImages = removeItemFromArray(selectedImagesState, item => item.id === currentFile.md5);
+                    // remove the uploaded item from the list of selected images
+                    selectedImages = removeItemFromArray(selectedImagesState,
+                        item => item.id === currentFile.id
+                    );
                     setSelectedImagesState(selectedImages);
 
                     uploaded.push(uploadedData);
                     setUploadedImagesState(uploaded);
 
                     localStorage.setItem(uploadedImagesStorageName, JSON.stringify(uploaded));
-
-                    // Delete from selected items
-                    let selected = [...selectedImagesState];
-                    selected = removeItemFromArray(selected, item => item.id === currentFile.id);
-                    setSelectedImagesState(selected);
 
                     if (typeof onUpload === 'function') {
                         await onUpload(null, uploaded);

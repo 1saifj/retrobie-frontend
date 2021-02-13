@@ -27,6 +27,7 @@ const SupportMaps = lazy(() => import('../pages/support/shipping/maps'));
 
 const Checkout = lazy(() => import('../pages/checkout'));
 const Shipping = lazy(() => import('../pages/shipping'));
+const OrderCompleted = lazy(() => import('../pages/shipping/order-completed'));
 
 //Admin
 const AdminLogin = lazy(() => import('../pages/admin/login'));
@@ -52,9 +53,9 @@ const BrandsPage = lazy(() => import('../pages/brands/AllBrands'));
 const SingleBrand = lazy(() => import('../pages/brands/Brand'));
 // User
 const UserProfile = lazy(() => import('../pages/accounts/me'));
-const UserOrders = lazy(() => import('../pages/accounts/me/orders'));
+const UserOrders = lazy(() => import('../pages/orders'));
 
-const UserSingleOrder = lazy(() => import('../pages/accounts/me/orders/single-order'));
+const UserSingleOrder = lazy(() => import('../pages/orders/single-order'));
 // auth
 const RegisterUser = lazy(() => import('../pages/accounts/register'));
 const LoginUser = lazy(() => import('../pages/accounts/login'));
@@ -122,6 +123,10 @@ const regularRoutes = [
     path: "/cart",
     component: Cart,
     exact: true
+  },
+  {
+    path: "/checkout/shipping/order-completed/:orderId",
+    component: OrderCompleted,
   },
   {
     path: "/checkout/shipping/:orderId",
@@ -216,12 +221,12 @@ const regularRoutes = [
     component: BrandsPage
   },
   {
-    path: "/brands/:brand",
-    component: SingleBrand
-  },
-  {
     path: "/brands/:brand/:slug",
     component: Product,
+  },
+  {
+    path: "/brands/:brand",
+    component: SingleBrand
   },
   {
     path: "/category/:id/",
@@ -283,7 +288,7 @@ const adminRoutes = [
     component: AdminSingleCategory
   },
   {
-    path: "/company/admin/dashboard/order/:id",
+    path: "/company/admin/dashboard/orders/:id",
     component: AdminSingleOrder
   },
   {

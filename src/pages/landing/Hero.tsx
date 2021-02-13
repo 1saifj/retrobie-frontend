@@ -80,7 +80,7 @@ const Hero = () => {
             <h1>
               Home of <span> authentic,</span> exclusive sneakers in Nairobi
             </h1>
-            <div style={{padding: "8px 16px"}}>
+            <div>
               <p className={'secondary'}>
                 Find and discover your favorite brands - from Air Jordans to Yeezys -{' '}
                 <span>original sneakers</span>,{' '}
@@ -137,7 +137,6 @@ const HeroSection = styled(Columns)`
   h1,
   header {
     margin: 0;
-    padding: 8px 16px;
   }
 
   h4 {
@@ -189,7 +188,6 @@ const HeroSection = styled(Columns)`
     .ctas {
       display: flex;
       margin-top: 12px;
-      padding: 8px 16px;
 
       button {
         margin-left: 0;
@@ -233,7 +231,6 @@ const HeroSection = styled(Columns)`
     p,
     header {
       margin: 0;
-      padding: 8px 4px;
     }
 
     .image {
@@ -248,7 +245,6 @@ const HeroSection = styled(Columns)`
     }
 
     .description {
-      width: 90%;
       margin-bottom: 24px;
 
       .ctas {

@@ -2,9 +2,9 @@ import React, {useState} from 'react';
 import Layout from '../../components/Layout';
 import styled from 'styled-components';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
-import {addDashes, formatNumberWithCommas} from '../../helpers';
+import {addDashes, extractErrorMessage, formatNumberWithCommas} from '../../helpers';
 import {EmptyState} from '../../components';
-import {ErrorIconDark, NormalCart} from '../../constants/icons';
+import {ErrorIconDark, GrimacingEmoji, NormalCart} from '../../constants/icons';
 import {Button} from 'bloomer';
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
@@ -25,14 +25,19 @@ import {AnyAction} from 'redux';
 import {CSSTransition, SwitchTransition} from 'react-transition-group';
 import {AddressType, CheckoutType, OrderStatus, PaymentStatus} from '../../types';
 import useSWR from 'swr/esm/use-swr';
-import {saveCheckoutAddressAction, saveShippingQuoteAction, setZoomLevelAction} from '../../state/actions';
+import {
+  deleteCartAction,
+  saveCheckoutAddressAction,
+  saveShippingQuoteAction,
+  setZoomLevelAction,
+} from '../../state/actions';
 import {useNotify} from '../../hooks';
 import ServerError from '../../assets/images/vectors/dead.svg';
 
-const CompleteOrderValidationSchema = Yup.object({
-  deliveryLocation: Yup.string().required(),
-  paymentMethod: Yup.string().required(),
-});
+// const CompleteOrderValidationSchema = Yup.object({
+//   deliveryLocation: Yup.string().required(),
+//   paymentType: Yup.string().required(),
+// });
 
 export default function Shipping(props) {
   const api = useAuth();
@@ -68,19 +73,21 @@ export default function Shipping(props) {
     setPayOnlineOrBuyGoods(value)
   }
 
-  if (!orderStatusResult && !fetchUserError && !fetchOrderStatusError) {
-    return <Loading message={'Please wait...'}/>;
-  }
   if (!userState.isLoggedIn){
     return (
       <Layout>
         <EmptyState
-          icon={ServerError}
+          iconWidth={52}
+          icon={GrimacingEmoji}
           centerAlign={true}
-          message={"You're not logged in"}
-          title={"Please log in to proceed"}/>
+          title={"We don't know each other like that."}
+          message={"You need to be logged in to view this page. Please log in to proceed"}/>
       </Layout>
     )
+  }
+
+  if (!orderStatusResult && !fetchUserError && !fetchOrderStatusError) {
+    return <Loading message={'Please wait...'}/>;
   }
 
   if (!checkout.items?.length) {
@@ -153,10 +160,35 @@ export default function Shipping(props) {
     )
   }
 
-  function completeOrder(order) {
-    if (!order?.payNowOrOnDelivery) {
+  async function completeOrder(order: {
+    orderId: string,
+    paymentType: 'pay-now' | 'pay-on-delivery',
+    address: AddressType
+  }) {
+    if (!order?.paymentType) {
       notify.info('Please select a payment method to proceed');
+      return undefined;
     }
+
+    try {
+      const {data} = await dispatch(api.orders.complete({
+        address: {
+          latLng: [order.address.lat, order.address.lng]
+        },
+        paymentType: order.paymentType,
+        orderId: order.orderId,
+      }));
+
+      notify.success(data.message);
+      dispatch(deleteCartAction())
+
+      props.history.push(`/checkout/shipping/order-completed/${data.uuid}`)
+
+    }catch (e){
+      const message = extractErrorMessage(e);
+      notify.error(message);
+    }
+
   }
 
   async function getDeliveryQuote(address: AddressType){
@@ -759,8 +791,10 @@ export default function Shipping(props) {
                           }}>
                             <Button
                               isColor="primary"
-                              onClick={() => completeOrder({
-
+                              onClick={async () => await completeOrder({
+                                orderId: paramOrderId,
+                                paymentType: payNowOrOnDelivery,
+                                address: checkout.delivery?.address
                               })}
                               style={{width: '100%', fontWeight: 'bold'}}
                             >
@@ -781,6 +815,7 @@ export default function Shipping(props) {
           isActive={isPayOnlineModalOpen}
           onClose={() => setPayOnlineModalOpen(false)}
           meta={{
+            orderId: paramOrderId,
             phoneNumber: userInfo?.phoneNumber,
             referenceNo: orderStatusResult.referenceNo,
             paymentStatus: orderStatusResult.paymentStatus
