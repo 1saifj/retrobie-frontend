@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Modal, ModalBackground, ModalClose, ModalContent} from 'bloomer';
+import React, {useState} from 'react';
+import {Button} from 'bloomer';
 import Loading from '../../../components/loading';
 import {EmptyState} from '../../../components';
 import TextField from '../../../components/input/TextField';
@@ -9,7 +9,7 @@ import {useAuth} from '../../../network';
 import {CartItemType, OrderType, ProductType} from '../../../types';
 import CustomModal from '../../../components/CustomModal';
 import {env} from '../../../config';
-import {formatNumberWithCommas} from '../../../helpers';
+import {addDashes, formatNumberWithCommas} from '../../../helpers';
 
 
 export default function SingleOrder(props) {
@@ -119,7 +119,7 @@ export default function SingleOrder(props) {
                         </p>
                       </div>
                       <div>
-                        <p>{thisOrderData.customer.phoneNumber}</p>
+                        <p>+254-{addDashes(thisOrderData.customer.phoneNumber)}</p>
                       </div>
                       <div>
                         <p>{thisOrderData.customer.email}</p>
@@ -128,12 +128,39 @@ export default function SingleOrder(props) {
                     <div>
                       <h2>Delivery Information</h2>
                       <p>{
-                        thisOrderData.delivery ? thisOrderData.delivery.address.location
+                        thisOrderData.delivery ? (
+                          <div>
+                            <p>Cost: Ksh. {thisOrderData.delivery.cost}</p>
+                            <p>
+                              Delivery id: {thisOrderData.delivery.courierOrderNo}
+                            </p>
+                            <div>
+                              <h4>
+                                Address
+                              </h4>
+                              <div>
+                                <p>
+                                  Location:
+                                  <p>
+                                    Lat: {thisOrderData.delivery.address.latLng[0]}
+                                  </p>
+                                  <p>
+                                    lng: {thisOrderData.delivery.address.latLng[1]}
+                                  </p>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )
                           : "No address provided"
                       }</p>
                     </div>
                     <div>
                       <h2>Payment Information</h2>
+                      <div>
+                        {thisOrderData.paymentMethod}
+                        {thisOrderData.paymentType}
+                      </div>
                     </div>
                   </div>
                   {thisOrderData.cart.items.length && (

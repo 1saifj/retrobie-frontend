@@ -25,8 +25,12 @@ export default function AdminOrders() {
     )
   }
 
-  function getCompletedOrders() {
+  function getPaidOrders() {
     return allOrders?.filter(order => order.status === "pendingConfirmation");
+  }
+
+  function getPendingPaymentOrders() {
+    return allOrders?.filter(order => order.status === "pendingPayment");
   }
 
   function getIncompleteOrders() {
@@ -38,11 +42,30 @@ export default function AdminOrders() {
       <div>
         <div>
           <div>
-            <h2>Completed orders</h2>
-            {getCompletedOrders()?.length ? (
-              getCompletedOrders().map((order, index) => (
+            <h2>Pending payment orders</h2>
+            {getPendingPaymentOrders()?.length ? (
+              getPendingPaymentOrders().map((order, index) => (
                 <SingleOrder key={order.uuid}>
-                  <Link to={`orders/single/${order.uuid}`}>
+                  <Link to={`orders/${order.uuid}`}>
+                    <div>
+                      <p>Order # {index}</p>
+                      <p>Order value: {order.cart.total}</p>
+                    </div>
+                  </Link>
+                </SingleOrder>
+              ))
+            ) : (
+              <div>
+                <p>No pending payment orders</p>
+              </div>
+            )}
+          </div>
+          <div>
+            <h2>Paid orders</h2>
+            {getPaidOrders()?.length ? (
+              getPaidOrders().map((order, index) => (
+                <SingleOrder key={order.uuid}>
+                  <Link to={`orders/${order.uuid}`}>
                     <div>
                       <p>Order # {index}</p>
                       <p>Order value: {order.cart.total}</p>
@@ -60,7 +83,7 @@ export default function AdminOrders() {
             <h2>Incomplete orders</h2>
             {getIncompleteOrders()?.map((order, index) => (
               <SingleOrder key={order.uuid}>
-                <Link to={`orders/single/${order.uuid}`}>
+                <Link to={`orders/${order.uuid}`}>
                   <div>
                     <p>Order # {index}</p>
                     <p>Order value: {formatNumberWithCommas(order.cart.total)}</p>
