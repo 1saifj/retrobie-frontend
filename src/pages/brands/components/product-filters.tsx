@@ -14,7 +14,7 @@ import useFiltersV2 from '../../../hooks/useFiltersV2';
  * These should be the same as the set of keys in the {@link ProductType} object.
  * @param {ProductType[]} props.products - a list of products to be filtered through
  */
-export default function(
+const ProductFilters =  function(
   {
     allCriteria,
     products,
@@ -100,6 +100,8 @@ export default function(
     </>
   );
 };
+
+export default ProductFilters;
 
 const FilterItem = styled.div<{applied?: boolean}>`
   border: 1px solid ${p => p.applied ? 'var(--color-primary)' : 'var(--color-border-gray)'};
