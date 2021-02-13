@@ -25,14 +25,19 @@ import {AnyAction} from 'redux';
 import {CSSTransition, SwitchTransition} from 'react-transition-group';
 import {AddressType, CheckoutType, OrderStatus, PaymentStatus} from '../../types';
 import useSWR from 'swr/esm/use-swr';
-import {saveCheckoutAddressAction, saveShippingQuoteAction, setZoomLevelAction} from '../../state/actions';
+import {
+  deleteCartAction,
+  saveCheckoutAddressAction,
+  saveShippingQuoteAction,
+  setZoomLevelAction,
+} from '../../state/actions';
 import {useNotify} from '../../hooks';
 import ServerError from '../../assets/images/vectors/dead.svg';
 
-const CompleteOrderValidationSchema = Yup.object({
-  deliveryLocation: Yup.string().required(),
-  paymentType: Yup.string().required(),
-});
+// const CompleteOrderValidationSchema = Yup.object({
+//   deliveryLocation: Yup.string().required(),
+//   paymentType: Yup.string().required(),
+// });
 
 export default function Shipping(props) {
   const api = useAuth();
@@ -781,6 +786,7 @@ export default function Shipping(props) {
           isActive={isPayOnlineModalOpen}
           onClose={() => setPayOnlineModalOpen(false)}
           meta={{
+            orderId: paramOrderId,
             phoneNumber: userInfo?.phoneNumber,
             referenceNo: orderStatusResult.referenceNo,
             paymentStatus: orderStatusResult.paymentStatus
