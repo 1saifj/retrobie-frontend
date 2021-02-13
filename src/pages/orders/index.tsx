@@ -25,7 +25,7 @@ const OrderItem = styled.div`
   }
 `
 
-export default function() {
+const AllOrders = function() {
 
   const api = useAuth();
 
@@ -104,6 +104,8 @@ export default function() {
         return <Tag isColor={'success'}>Fulfilled</Tag>;
       case 'incomplete':
         return <Tag>Incomplete</Tag>;
+      case 'pendingPayment':
+        return <Tag>Not yet paid</Tag>;
       default:
         return <Tag>{capitalize(status)}</Tag>;
       case 'finalized':
@@ -197,3 +199,5 @@ export default function() {
     </div>
   );
 };
+
+export default AllOrders;
