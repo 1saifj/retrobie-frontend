@@ -79,6 +79,7 @@ export type ServerCartType = {
 export type PromiseThunk<T> = (payload) => Promise<T>
 
 export type AddressType = {
+  latLng?: [number, number]
   placeId?: string
   location?: string;
   lat: number;
@@ -149,8 +150,15 @@ export interface OrderType {
   uuid: string;
   cart: CartType;
   products?: Array<ProductType>;
+  payment?: PaymentType
+  paymentType?: string
+  paymentMethod?: string
   customer?: UserInfoType
   delivery?: DeliveryType
+}
+
+export interface PaymentType {
+
 }
 
 export interface AuthenticatedUser {
