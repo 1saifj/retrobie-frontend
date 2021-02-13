@@ -15,6 +15,7 @@ export default function PayWithMpesaOnlineModal(
     isActive,
     onClose,
     meta: {
+      orderId,
       phoneNumber,
       referenceNo,
       paymentStatus
@@ -25,6 +26,7 @@ export default function PayWithMpesaOnlineModal(
     onClose: ()=> void,
     onPaymentInitiated: ()=> void,
     meta: {
+      orderId: string
       phoneNumber: string,
       referenceNo: string,
       // we will retrieve a payment status from the server
@@ -69,12 +71,13 @@ export default function PayWithMpesaOnlineModal(
     }
   }
 
-  async function completeOrder(cartId: string, address: AddressType){
+  async function completeOrder(orderId: string, address: AddressType){
     setIsCompleteOrderLoading(true);
     try {
       setIsCompleteOrderLoading(false);
       await dispatch(api.orders.complete({
-          cartId,
+          paymentType: 'pay-now',
+          orderId,
           address: {
             latLng: [address.lat, address.lng],
           },
@@ -159,7 +162,7 @@ export default function PayWithMpesaOnlineModal(
                     isLoading={isPaymentLoading || isCompleteOrderLoading}
                     isColor={'primary'}
                     onClick={async () => {
-                      await completeOrder(checkout.id, checkout.delivery.address);
+                      await completeOrder(orderId, checkout.delivery.address);
                     }}
                   >
                     Complete your order

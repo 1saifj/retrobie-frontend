@@ -2,13 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import {Tag} from 'bloomer';
 import {Link} from 'react-router-dom';
-import {capitalize} from '../../../../helpers';
+import {capitalize} from '../../helpers';
 import useSWR from 'swr/esm/use-swr';
-import {useAuth} from '../../../../hooks';
-import {EmptyState, Layout, Loading, RetroImage} from '../../../../components';
-import {OrderType} from '../../../../types';
-import {DeadEyes, EmptyBox, GrimacingEmoji} from '../../../../constants/icons';
-import {UserState} from '../../../../state/reducers/userReducers';
+import {useAuth} from '../../hooks';
+import {EmptyState, Layout, Loading, RetroImage} from '../../components';
+import {OrderType} from '../../types';
+import {DeadEyes, EmptyBox, GrimacingEmoji} from '../../constants/icons';
+import {UserState} from '../../state/reducers/userReducers';
 import {RootStateOrAny, useSelector} from 'react-redux';
 
 const OrderItem = styled.div`
@@ -25,7 +25,7 @@ const OrderItem = styled.div`
   }
 `
 
-export default function() {
+const AllOrders = function() {
 
   const api = useAuth();
 
@@ -104,6 +104,8 @@ export default function() {
         return <Tag isColor={'success'}>Fulfilled</Tag>;
       case 'incomplete':
         return <Tag>Incomplete</Tag>;
+      case 'pendingPayment':
+        return <Tag>Not yet paid</Tag>;
       default:
         return <Tag>{capitalize(status)}</Tag>;
       case 'finalized':
@@ -197,3 +199,5 @@ export default function() {
     </div>
   );
 };
+
+export default AllOrders;

@@ -1,6 +1,6 @@
 import mapboxgl, {Map, Marker} from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import PropTypes from 'prop-types';
 import {Button, Help} from 'bloomer';
 import {extractErrorMessage} from '../../helpers';
@@ -113,16 +113,21 @@ export default function SimpleMap(
     }
   }
 
-  useEffect(() => {
-
-    mapboxgl.accessToken = 'pk.eyJ1IjoiYnJhZGxleWtpbmd6IiwiYSI6ImNrMW9vbGJ0ajBtZ2IzbXRpZTZkbm81YTIifQ.AMi4cIv4A-q8hBjBPUS1JQ';
-    const map = new Map({
+  const mapInstance = useCallback(()=> {
+    return new Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/streets-v11',
-      zoom: initialZoom ? initialZoom : userLng && userLat? 15 : 13,
+      zoom: initialZoom ? initialZoom : userLng && userLat ? 15 : 13,
       center: userLng && userLat ? [userLng, userLat] : [nairobiLongitude, nairobiLatitude],
       maxBounds: kenyaBoundingBox,
     });
+  }, [initialZoom, userLat, userLng])
+
+  useEffect(() => {
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYnJhZGxleWtpbmd6IiwiYSI6ImNrMW9vbGJ0ajBtZ2IzbXRpZTZkbm81YTIifQ.AMi4cIv4A-q8hBjBPUS1JQ';
+
+    const map = mapInstance();
 
     if (userLng && userLat) {
       const marker = new Marker({
@@ -161,7 +166,7 @@ export default function SimpleMap(
       map.fitBounds(nairobiBoundingBox);
     }
 
-  }, [userLng, userLat, checkoutLng, checkoutLat]);
+  }, [mapInstance, userLng, userLat, checkoutLng, checkoutLat]);
 
   function locateUser() {
     if (navigator.geolocation) {

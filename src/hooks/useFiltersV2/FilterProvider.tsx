@@ -68,7 +68,7 @@ function useProvideFilters() {
         }
 
         // and sort the entries
-        Array.from(newCriteria.entries()).map(([key, set]) => {
+        Array.from(newCriteria.entries()).forEach(([key, set]) => {
           const arr = Array.from(set).sort();
           newCriteria.set(key, new Set<string | number>(arr));
         });
@@ -126,7 +126,7 @@ function useProvideFilters() {
     // return filteredProducts;
   }
 
-  function filterByCriteria(criteria: 'size' | 'sex' | 'style', value) {
+  function filterByCriteria(criteria: string, value) {
     // first, change the url params
     alterUrlParams(criteria, value);
     filterChangedProducts();
