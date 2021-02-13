@@ -97,7 +97,7 @@ function CustomImageUploader(
       instantUpload?: boolean,
       deferredUpload?: boolean,
       folder: string,
-      onUpload: (err, images: Array<UploadedImageType>)=> void,
+      onUpload: (err, {images, uploaderId}: {images: Array<UploadedImageType>, uploaderId: string})=> void,
       onClickSelectedImage?: (e)=> void,
       allowMultiple: boolean,
       id: string,
@@ -255,7 +255,7 @@ function CustomImageUploader(
                     localStorage.setItem(uploadedImagesStorageName, JSON.stringify(uploaded));
 
                     if (typeof onUpload === 'function') {
-                        await onUpload(null, uploaded);
+                        await onUpload(null, {images: uploaded, uploaderId: id});
                     }
 
                 } else {
