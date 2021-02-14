@@ -144,7 +144,7 @@ const CreateBrandModal = (
                                         <CustomImageUploader
                                           folder={values.name}
                                           id={values.name}
-                                          onUpload={(err, images) => {
+                                          onUpload={(err, {images}) => {
                                               setFieldValue('logo', images[0]);
                                           }}
                                           allowMultiple={false}/>

@@ -48,7 +48,7 @@ export default function({isActive, onClose}){
                         setFieldValue('landingImage', images[0]);
                       }
                     })}
-                    onUpload={(err, images) => {
+                    onUpload={(err, {images}) => {
                       if (!err) {
                         setFieldValue('landingImage', images[0]);
                       }

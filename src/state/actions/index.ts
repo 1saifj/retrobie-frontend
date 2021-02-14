@@ -10,9 +10,10 @@ import {
   TOGGLE_SIDEBAR,
   SAVE_CHECKOUT_ADDRESS,
   SAVE_SHIPPING_QUOTE,
-  SAVE_ZOOM_LEVEL, FETCH_REMOTE_CART, EMPTY_CART,
+  SAVE_ZOOM_LEVEL, FETCH_REMOTE_CART, EMPTY_CART, IMAGE_UPLOADED, REMOVE_UPLOADED_IMAGE,
 } from './constants';
 import {AddressType, CartItemType, CartType, LoginResponseType} from '../../types';
+import {UploadedImageType} from '../../components/upload/CustomImageUploader';
 
 const createAction = (type: string, payload?: any) => ({type, payload});
 
@@ -49,3 +50,7 @@ export const setZoomLevelAction = (payload: {level: number}) => createAction(SAV
 // meta
 export const toggleSidebarAction = (payload: {open: boolean}) =>
   createAction(TOGGLE_SIDEBAR, payload);
+export const imageUploadedAction = (payload: {image: UploadedImageType, uploaderId: string}) =>
+  createAction(IMAGE_UPLOADED, payload);
+export const deleteUploadedImageAction = (payload: {uploaderId: string}) =>
+  createAction(REMOVE_UPLOADED_IMAGE, payload);

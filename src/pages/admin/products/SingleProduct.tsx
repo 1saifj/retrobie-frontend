@@ -200,7 +200,7 @@ export default function SingleProduct(props) {
                       setSelectedImages(images);
                     }}
                     onInit={images => setFieldValue('images', images)}
-                    onUpload={(err, all) => {
+                    onUpload={(err, {images: all}) => {
                       if (err) {
                         notify('error', 'Failed to upload one or more of your images');
                         return;

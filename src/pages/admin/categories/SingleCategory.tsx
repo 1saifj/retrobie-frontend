@@ -68,7 +68,7 @@ export default function({match}){
                         id: null
                       }
                     ]}
-                    onUpload={async (err, images) => await uploadLandingImage(images[0])}
+                    onUpload={async (err, {images}) => await uploadLandingImage(images[0])}
                     allowMultiple={false}
                     id={`category/${match.params.slug}`}/>
                 </div>

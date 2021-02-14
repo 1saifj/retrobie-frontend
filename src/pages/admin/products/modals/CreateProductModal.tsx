@@ -18,12 +18,14 @@ import Editor from '../../brands/Editor';
 import CustomImageUploader from '../../../../components/upload/CustomImageUploader';
 import * as Yup from 'yup';
 import SelectField from '../../../../components/input/SelectField';
-import {notify} from '../../../../helpers/views';
 import {useAuth} from '../../../../network';
-import {useDispatch} from 'react-redux';
+import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import useSWR from 'swr/esm/use-swr';
 import CreatableSelect from 'react-select/creatable';
 import {BrandType, CategoryType} from '../../../../types';
+import {MetaState} from '../../../../state/reducers/metaReducers';
+import {deleteUploadedImageAction} from '../../../../state/actions';
+import {useNotify} from '../../../../hooks';
 
 
 const conditions = [
@@ -121,9 +123,17 @@ function Monitor({brand}) {
 }
 
 const CreateProductModal = props => {
-    const api = useAuth();
-    const dispatch = useDispatch();
-    const thisBrand = props.brand;
+  const api = useAuth();
+  const dispatch = useDispatch();
+  const thisBrand = props.brand;
+
+  const notify = useNotify();
+
+  const [uploaderId, setUploaderId] = useState(null);
+
+  const metaState: MetaState = useSelector((state: RootStateOrAny) => state.meta);
+
+  const uploadedImages = metaState.components.imageUploader[uploaderId];
 
     const allBrandsFetcher = () => api.brands.getAll().then(({data}) => data);
     const {data: allBrands} = useSWR<BrandType[]>('/brands/all', allBrandsFetcher);
@@ -183,19 +193,23 @@ const CreateProductModal = props => {
                 };
 
                 setSubmitting(true);
-                const uploaderId = `custom_uploader/${values.brand}/${values.slug}`;
-                values.images = JSON.parse(localStorage.getItem(uploaderId));
+                values.images = uploadedImages;
+
+                if (!uploadedImages){
+                  notify.warning("Please select a few images before proceeding.")
+                  return;
+                }
 
                 const {data, ...rest} = await dispatch<any>(api.products.create(values));
 
                 if (data) {
                   setSubmitting(false);
-                  localStorage.removeItem(uploaderId);
-                  notify('success', data.message);
+                  dispatch(deleteUploadedImageAction({uploaderId}))
+                  notify.success(data.message);
                 } else {
                   setSubmitting(false);
                   const message = extractErrorMessage(rest);
-                  notify('error', message);
+                  notify.error(message);
                 }
 
               }}
@@ -206,10 +220,11 @@ const CreateProductModal = props => {
                     <h4>Product images</h4>
                     <CustomImageUploader
                       allowMultiple={true}
-                      id={`${values.brand}/${values.slug}`}
+                      id={`ProductUploader`}
                       folder={values.folder}
                       instantUpload={false}
-                      onUpload={() => {
+                      onUpload={(err, {uploaderId}) => {
+                        setUploaderId(uploaderId);
                       }}
                       onClickSelectedImage={(images) => {
                         props.onClickSelectedImage(images);
