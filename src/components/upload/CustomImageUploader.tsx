@@ -4,9 +4,11 @@ import styled from 'styled-components';
 import {Button, Delete} from 'bloomer';
 import {useAuth} from '../../network';
 import MD5 from 'md5';
-import {useDispatch} from 'react-redux';
+import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {useNotify} from '../../hooks';
 import {env} from '../../config';
+import {imageUploadedAction} from '../../state/actions';
+import {MetaState} from '../../state/reducers/metaReducers';
 
 type LocalImageType = {
     // a random string
@@ -17,7 +19,7 @@ type LocalImageType = {
     md5: string,
 }
 
-type UploadedImageType = {
+export type UploadedImageType = {
     // a random string
     id: string,
     uploaded: true,
@@ -80,211 +82,197 @@ const Root = styled.div`
 
 function CustomImageUploader(
   {
-      onInit,
-      initialImages,
-      instantUpload,
-      deferredUpload,
-      onUpload,
-      onClickSelectedImage,
-      allowMultiple,
-      folder,
-      id,
-      onBeforeChange,
-      onUploadProgress
+    onInit,
+    initialImages,
+    instantUpload,
+    deferredUpload,
+    onUpload,
+    onClickSelectedImage,
+    allowMultiple,
+    folder,
+    id,
+    onBeforeChange,
+    onUploadProgress,
   }: {
-      onInit?: (images: Array<UploadedImageType>)=> void,
-      initialImages?: UploadedImageType[],
-      instantUpload?: boolean,
-      deferredUpload?: boolean,
-      folder: string,
-      onUpload: (err, {images, uploaderId}: {images: Array<UploadedImageType>, uploaderId: string})=> void,
-      onClickSelectedImage?: (e)=> void,
-      allowMultiple: boolean,
-      id: string,
-      onBeforeChange?: (e)=> void,
-      onUploadProgress?: ({percentCompleted, fileId}: {percentCompleted: number, fileId: string})=> void
+
+    // useful for showing images that have been uploaded to the image server
+    // but likely not to our own
+    onInit?: (images: Array<UploadedImageType>) => void,
+    initialImages?: UploadedImageType[],
+    instantUpload?: boolean,
+    deferredUpload?: boolean,
+    folder: string,
+    onUpload: (err, {images, uploaderId}: {images: Array<UploadedImageType>, uploaderId: string}) => void,
+    onClickSelectedImage?: (e) => void,
+    allowMultiple: boolean,
+    id: string,
+    onBeforeChange?: (e) => void,
+    onUploadProgress?: ({percentCompleted, fileId}: {percentCompleted: number, fileId: string}) => void
 
   }) {
 
-    const api = useAuth();
-    const dispatch = useDispatch();
-    const notify = useNotify();
+  const api = useAuth();
+  const dispatch = useDispatch();
+  const notify = useNotify();
 
-    const inputRef = useRef(null);
-    // Only load these variables if 'componentName' is defined
-  const uploadedImagesStorageName = env.getEnvironment() !== 'production' ?
-    `${env.getEnvironment()}/custom_uploader/${id}` :
-    `custom_uploader/${id}`;
-    const uploadedImagesStorageJSON = localStorage.getItem(uploadedImagesStorageName);
-    const uploadedImagesArray = useMemo(
-      () => uploadedImagesStorageJSON ?
-        // show the uploaded images or props.initialImages else []
-        // presumably, uploaded images and initial images will be the same.
-        JSON.parse(uploadedImagesStorageJSON) : initialImages ? initialImages : [],
-      [uploadedImagesStorageJSON, initialImages],
-    );
+  const inputRef = useRef(null);
 
-    const [selectedImagesState, setSelectedImagesState] = useState<Array<LocalImageType>>([]);
-    const [uploadedImagesState, setUploadedImagesState] = useState<Array<UploadedImageType>>(uploadedImagesArray);
+  const uploaderId = `RetroImageUploader-${id}`;
 
-    const uploadedImagesArrayLength = uploadedImagesArray?.length;
+  const metaState: MetaState = useSelector((state: RootStateOrAny) => state.meta);
+  const uploadedImages: UploadedImageType[] = metaState.components.imageUploader[uploaderId];
 
-    useEffect(() => {
-        if (typeof onInit === 'function') {
-            onInit(uploadedImagesArray);
+  const uploadedImagesArray = useMemo(
+    () => uploadedImages?.length ?
+      // show the uploaded images or props.initialImages else []
+      // presumably, uploaded images and initial images will be the same.
+      uploadedImages : initialImages ? initialImages : [],
+    [uploadedImages, initialImages],
+  );
+
+  const [selectedImagesState, setSelectedImagesState] = useState<Array<LocalImageType>>([]);
+
+  const uploadedImagesLength = uploadedImagesArray?.length;
+  useEffect(() => {
+    onInit?.(uploadedImagesArray);
+  }, [uploaderId, uploadedImagesLength]);
+
+  async function onChange(e) {
+    const addedFiles: Array<File> = e.target.files;
+    const files: Array<File> = [...addedFiles];
+    const selectedImages: Array<LocalImageType> = [];
+
+    if (FileReader && files.length) {
+      for (let i = 0; i < files.length; i++) {
+        const currentFile = files[i];
+        const md5 = MD5(currentFile.name);
+        // If this file does not already exists in our list, add it.
+        const objectAlreadySelected = selectedImages.filter(obj => obj.md5 === md5).length;
+        const objectUploaded = uploadedImagesArray?.filter(obj => obj.md5 === md5).length;
+
+        if (objectUploaded) {
+          notify.info(`An image you've selected has already been uploaded`);
+          continue;
         }
-        setUploadedImagesState(uploadedImagesArray);
-    }, [
-      id,
-      uploadedImagesArrayLength
-    ]);
 
-    async function onChange(e) {
-        const addedFiles: Array<File> = e.target.files;
-        const files: Array<File> = [...addedFiles];
-        const selectedImages: Array<LocalImageType> = [];
+        if (!objectAlreadySelected) {
+          const newSource = URL.createObjectURL(files[i]);
 
-        if (FileReader && files.length) {
-            for (let i = 0; i < files.length; i++) {
-                const currentFile = files[i];
-                const md5 = MD5(currentFile.name);
-                // If this file does not already exists in our list, add it.
-                const objectAlreadySelected = selectedImages.filter(obj => obj.md5 === md5).length;
-                const objectUploaded = uploadedImagesState.filter(obj => obj.md5 === md5).length;
+          selectedImages.push({
+            id: generateRandomString(8),
+            uploaded: false,
+            src: newSource,
+            file: currentFile,
+            md5,
+          });
 
-                if (objectUploaded) {
-                    notify.info(`An image you've selected has already been uploaded`);
-                    continue;
-                }
-
-              if (!objectAlreadySelected) {
-                const newSource = URL.createObjectURL(files[i]);
-
-                selectedImages.push({
-                  id: generateRandomString(8),
-                  uploaded: false,
-                  src: newSource,
-                  file: currentFile,
-                  md5,
-                });
-
-                setSelectedImagesState(selectedImages);
-                if (instantUpload && !deferredUpload) {
-                  await upload(selectedImages);
-                }
-              } else {
-                console.log("Already selected. Not adding")
-              }
-
-            }
-        }
-    }
-
-    function removeItemFromArray<T>(array: T[], predicate: (item) => boolean) {
-        const clonedArray: T[] = JSON.parse(JSON.stringify(array));
-        const doneUploadingIndex = clonedArray.findIndex(predicate);
-        clonedArray.splice(doneUploadingIndex, 1);
-        return clonedArray;
-    }
-
-    async function onDelete(image) {
-        if (image.uploaded) {
-            notify.info('Not yet implemented');
+          setSelectedImagesState(selectedImages);
+          if (instantUpload && !deferredUpload) {
+            await upload(selectedImages);
+          }
         } else {
-            const selectedForDeleteIndex = selectedImagesState
-              .findIndex(single => single.md5 === image.md5);
-
-            const selected = [...selectedImagesState];
-            selected.splice(selectedForDeleteIndex, 1);
-            setSelectedImagesState(selected);
+          console.log('Already selected. Not adding');
         }
+
+      }
     }
+  }
 
-    async function upload(files: Array<LocalImageType>) {
-        let selectedImages = [];
-        const uploaded = [...uploadedImagesState];
-        // for each of the files to be uploaded
-        for (let i = 0; i < files.length; i++) {
-            const currentFile = files[i];
+  async function onDelete(image) {
+    if (image.uploaded) {
+      notify.info('Not yet implemented');
+    } else {
+      const selectedForDeleteIndex = selectedImagesState
+        .findIndex(single => single.md5 === image.md5);
 
-            // get an image signature from out servers
-            const {data: signatureData} = await dispatch<any>(api.imageKit.getSignature());
+      const selected = [...selectedImagesState];
+      selected.splice(selectedForDeleteIndex, 1);
+      setSelectedImagesState(selected);
+    }
+  }
 
-            if (signatureData) {
-                const formData = new FormData();
-                // Append all the keys-values provided by the api
-                Object.keys(signatureData).forEach(key => {
-                    formData.append(key, signatureData[key]);
+
+  async function upload(files: Array<LocalImageType>) {
+    let selectedImages = [...selectedImagesState];
+    const uploaded = [...uploadedImagesArray];
+    // for each of the files to be uploaded
+    // we loop backwards because of 'splice', used below,
+    for (let i = files.length - 1; i >= 0; i--) {
+      const currentFile = files[i];
+
+      // get an image signature from out servers
+      const {data: signatureData} = await dispatch<any>(api.imageKit.getSignature());
+
+      if (signatureData) {
+        const formData = new FormData();
+        // Append all the keys-values provided by the api
+        Object.keys(signatureData).forEach(key => {
+          formData.append(key, signatureData[key]);
+        });
+        formData.append('file', currentFile.file);
+        formData.append('fileName', currentFile.file.name);
+        const environment = env.getEnvironment();
+        formData.append('folder', environment === 'production' ? folder : `${environment}/${folder}`);
+
+        const {data: uploadData} = await dispatch<any>(api.imageKit.upload(formData, {
+            onUploadProgress: (progressEvent) => {
+              const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+              if (typeof onUploadProgress === 'function') {
+                onUploadProgress({
+                  percentCompleted,
+                  fileId: currentFile.md5,
                 });
-                formData.append('file', currentFile.file);
-                formData.append('fileName', currentFile.file.name);
-                const environment = env.getEnvironment()
-                formData.append('folder', environment === 'production' ? folder: `${environment}/${folder}`);
+              }
+            },
+          }),
+        );
 
-                const {data: uploadData} = await dispatch<any>(api.imageKit.upload(formData, {
-                  onUploadProgress: (progressEvent)=> {
-                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-                    if (typeof onUploadProgress === 'function') {
-                      onUploadProgress({
-                        percentCompleted,
-                        fileId: currentFile.md5
-                      });
-                    }
-                  }
-                }));
+        if (uploadData) {
+          const uploadedData: UploadedImageType = {
+            id: currentFile.id,
+            md5: currentFile.md5,
+            fileId: uploadData.fileId,
+            thumbnailUrl: uploadData.thumbnailUrl,
+            url: uploadData.url,
+            uploaded: true,
+          };
 
-                if (uploadData) {
-                    const uploadedData: UploadedImageType = {
-                        id: currentFile.id,
-                        md5: currentFile.md5,
-                        fileId: uploadData.fileId,
-                        thumbnailUrl: uploadData.thumbnailUrl,
-                        url: uploadData.url,
-                        uploaded: true,
-                    };
+          // remove the uploaded item from the list of selected images
+          selectedImages.splice(i, 1);
+          setSelectedImagesState(selectedImages);
 
-                    // remove the uploaded item from the list of selected images
-                    selectedImages = removeItemFromArray(selectedImagesState,
-                        item => item.id === currentFile.id
-                    );
-                    setSelectedImagesState(selectedImages);
+          uploaded.push(uploadedData);
 
-                    uploaded.push(uploadedData);
-                    setUploadedImagesState(uploaded);
+          await onUpload?.(null, {images: uploaded, uploaderId});
+          dispatch(imageUploadedAction({image: uploadedData, uploaderId}));
 
-                    localStorage.setItem(uploadedImagesStorageName, JSON.stringify(uploaded));
-
-                    if (typeof onUpload === 'function') {
-                        await onUpload(null, {images: uploaded, uploaderId: id});
-                    }
-
-                } else {
-                    console.log('No upload data');
-                }
-            } else {
-                console.log('No signature data');
-                // const message = extractErrorMessage(rest);
-                // notify('error', );
-            }
+        } else {
+          console.log('No upload data');
         }
+      } else {
+        console.log('No signature data');
+        // const message = extractErrorMessage(rest);
+        // notify('error', );
+      }
     }
+  }
 
   return (
     <>
       <Root>
         {
-          uploadedImagesState?.length ? (
+          uploadedImagesArray?.length ? (
             <div className={'preview'}>
               <div className={'header'}>
                 <h4>Uploaded images</h4>
               </div>
               <div className={'preview--files'}>
                 {
-                  uploadedImagesState?.map((image, index) => (
+                  uploadedImagesArray?.map((image, index) => (
                     <div key={String(index)}>
                       <div style={{position: 'relative'}}>
                         {/*<Delete onClick={()=> onDelete(image)}/>*/}
-                        <img style={{maxWidth: 150}} src={image.thumbnailUrl} alt={''}/>
+                        <img style={{maxWidth: 150}} src={image.thumbnailUrl} alt={''} />
                       </div>
                     </div>
                   ))
@@ -310,7 +298,7 @@ function CustomImageUploader(
                   selectedImagesState?.map((image, index) => (
                     <SelectedImage>
                       <div style={{position: 'relative'}}>
-                        <Delete onClick={() => onDelete(image)}/>
+                        <Delete onClick={() => onDelete(image)} />
                         <img src={image.src}
                              alt={''}
                              onClick={() => {
@@ -339,7 +327,7 @@ function CustomImageUploader(
                 )
               }
             </div>
-          ) : <span/>
+          ) : <span />
         }
         <input type="file"
                style={{display: 'none'}}
