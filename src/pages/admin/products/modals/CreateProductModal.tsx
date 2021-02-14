@@ -110,7 +110,7 @@ function Monitor({brand}) {
       }
 
       if (values.brand && values.slug) {
-        values.folder = `${values.brand.toLowerCase()}/${values.slug}/`;
+        values.folder = `products/${values.brand.toLowerCase()}/${values.slug}/`;
       }
 
     } else {
@@ -223,6 +223,7 @@ const CreateProductModal = props => {
                       id={`ProductUploader`}
                       folder={values.folder}
                       instantUpload={false}
+                      isSelectDisabled={!values.brand || !values.name}
                       onUpload={(err, {uploaderId}) => {
                         setUploaderId(uploaderId);
                       }}
@@ -256,17 +257,21 @@ const CreateProductModal = props => {
                     gridTemplateColumns: '1fr 1fr',
                     gridGap: '18px',
                   }}>
-                    <SelectField
-                      label={<>What <span
-                        className="accented">brand</span> is this product assigned to?</>}
-                      placeholder="eg. Adidas"
-                      options={allBrands?.map(item => ({
-                        label: capitalize(item.name),
-                        value: item.name,
-                      }))}
-                      disabled={!!thisBrand}
-                      type="text"
-                      name="brand" />
+                    <div>
+                      <label>
+                        What brand is this product assigned to?
+                      </label>
+                      <Select
+                        placeholder="eg. Adidas"
+                        options={allBrands?.map(item => ({
+                          label: capitalize(item.name),
+                          value: item.name,
+                        }))}
+                        onChange={({value})=> setFieldValue('brand', value)}
+                        disabled={!!thisBrand}
+                        type="text"
+                        name="brand" />
+                    </div>
 
                     <TextField label={<>Which <span className="accented">folder </span>
                       will the images be saved in?</>}

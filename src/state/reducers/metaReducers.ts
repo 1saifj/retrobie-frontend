@@ -30,12 +30,13 @@ const metaReducers = (state = initialState, action) => {
     case IMAGE_UPLOADED:
       let imageUploadedState = Object.assign({}, state);
       const {uploaderId, image: uploadedImage}: {image: UploadedImageType, uploaderId: string} = action.payload;
-      imageUploadedState.components.imageUploader[uploaderId] = [
-        ...imageUploadedState.components.imageUploader[uploaderId]
-      ];
       // todo: make sure there are no duplicates within an uploader
       //  ie: check uploaderId for the existence of images with similar ids
       //   before pushing them
+      const thisUploader = imageUploadedState.components.imageUploader[uploaderId];
+      if (!thisUploader){
+        imageUploadedState.components.imageUploader[uploaderId] = [];
+      }
       imageUploadedState.components.imageUploader[uploaderId].push(uploadedImage);
       return imageUploadedState;
 
