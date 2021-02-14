@@ -40,51 +40,13 @@ const SelectedImage = styled.div`
    }
 `
 
-const Root = styled.div`
-    padding: 12px 0;
-    padding-bottom: 24px;
-    .preview {
-      border: 1px solid #cccccc;
-      border-radius: 4px;
-      padding: 8px 12px;
-      margin-bottom: 12px;
-      
-      .header {
-        padding-top: 24px;
-        padding-left: 12px;
-      }
-      
-      .preview--files {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        justify-items: center;
-        grid-row-gap: 24px;
-        margin-top: 24px;
-        
-        & > div {
-          display: grid;
-          align-items: center;
-        }
-        
-        .delete {
-            position: absolute;
-            right: -7px;
-            top: -8px;
-            z-index: 1;
-        }
-        
-        img {
-          border-radius: 4px;
-        }
-      }
-    }
-`
 
 function CustomImageUploader(
   {
     onInit,
     initialImages,
     instantUpload,
+    isSelectDisabled,
     deferredUpload,
     onUpload,
     onClickSelectedImage,
@@ -100,6 +62,7 @@ function CustomImageUploader(
     onInit?: (images: Array<UploadedImageType>) => void,
     initialImages?: UploadedImageType[],
     instantUpload?: boolean,
+    isSelectDisabled?: boolean,
     deferredUpload?: boolean,
     folder: string,
     onUpload: (err, {images, uploaderId}: {images: Array<UploadedImageType>, uploaderId: string}) => void,
@@ -198,6 +161,7 @@ function CustomImageUploader(
     // for each of the files to be uploaded
     // we loop backwards because of 'splice', used below,
     for (let i = files.length - 1; i >= 0; i--) {
+      console.log("Attempting to upload file at index: ", i)
       const currentFile = files[i];
 
       // get an image signature from out servers
@@ -342,11 +306,13 @@ function CustomImageUploader(
                }}
         />
         <div>
-          <Button isColor={'primary'}
-                  isSize={'small'}
-                  onClick={() => {
-                    inputRef.current.click();
-                  }}
+          <Button
+            isColor={'primary'}
+            isSize={'small'}
+            disabled={isSelectDisabled}
+            onClick={() => {
+              inputRef.current.click();
+            }}
           >
             {allowMultiple ? 'Select images' : 'Select image'}
           </Button>
@@ -355,5 +321,46 @@ function CustomImageUploader(
     </>
   );
 }
+
+const Root = styled.div`
+    padding: 12px 0;
+    padding-bottom: 24px;
+    .preview {
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      
+      .header {
+        padding-top: 24px;
+        padding-left: 12px;
+      }
+      
+      .preview--files {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        justify-items: center;
+        grid-row-gap: 24px;
+        margin-top: 24px;
+        
+        & > div {
+          display: grid;
+          align-items: center;
+        }
+        
+        .delete {
+            position: absolute;
+            right: -7px;
+            top: -8px;
+            z-index: 1;
+        }
+        
+        img {
+          border-radius: 4px;
+        }
+      }
+    }
+`
+
 
 export default CustomImageUploader;
