@@ -16,7 +16,7 @@ import * as Yup from 'yup';
 import defaultHelpers, {
   capitalize,
   cleanString,
-  extractErrorMessage,
+  extractErrorMessage, slugify,
 } from '../../../helpers';
 import {useDispatch} from 'react-redux';
 import useSWR from 'swr/esm/use-swr';
@@ -183,7 +183,7 @@ export default function SingleProduct(props) {
                   <CustomImageUploader
                     allowMultiple={true}
                     id={productSlug}
-                    folder={`products/${thisProductData.brand.toLowerCase()}/${productSlug}`}
+                    folder={`products/${thisProductData.brand.toLowerCase()}/${slugify(values.name)}`}
                     initialImages={values.images}
                     onClickSelectedImage={images => {
                       setImageModalShown(!showImageModal);
@@ -249,7 +249,6 @@ export default function SingleProduct(props) {
                       <Field>
                         <TextField
                           prefix={`https://retrobie.com/products/${values.brand}/`}
-                          disabled={true}
                           type={'text'}
                           label={"This product's slug"}
                           placeholder={'eg. adidas-superstar'}
