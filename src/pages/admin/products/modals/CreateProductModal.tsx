@@ -220,7 +220,7 @@ const CreateProductModal = props => {
                     <h4>Product images</h4>
                     <CustomImageUploader
                       allowMultiple={true}
-                      id={`ProductUploader`}
+                      id={`create-product-uploader`}
                       folder={values.folder}
                       instantUpload={false}
                       isSelectDisabled={!values.brand || !values.name}
