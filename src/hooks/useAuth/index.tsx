@@ -189,6 +189,7 @@ const useAuth = function() {
     create: (data) => async () => (await getAxis()).post('/products/new', data),
     reIndex: (data)=> async ()=> (await getAxis()).get(`/search/re-index/${data.index}`),
     update: (id, data) => async () => (await getAxis()).put(`/products/${id}/update`, data),
+    deleteImage: async ({productId, fileId})=> (await getAxis()).delete(`/products/${productId}/image/${fileId}`),
   };
 
   const deliveries = {

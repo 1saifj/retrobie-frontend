@@ -49,6 +49,7 @@ function CustomImageUploader(
     isSelectDisabled,
     deferredUpload,
     onUpload,
+    onDeleteUploadedImage,
     onClickSelectedImage,
     allowMultiple,
     folder,
@@ -66,6 +67,7 @@ function CustomImageUploader(
     deferredUpload?: boolean,
     folder: string,
     onUpload: (err, {images, uploaderId}: {images: Array<UploadedImageType>, uploaderId: string}) => void,
+    onDeleteUploadedImage?: ({fileId})=> Promise<void>
     onClickSelectedImage?: (e) => void,
     allowMultiple: boolean,
     id: string,
@@ -80,7 +82,7 @@ function CustomImageUploader(
 
   const inputRef = useRef(null);
 
-  const uploaderId = `RetroImageUploader-${id}`;
+  const uploaderId = `retro-image-uploader-${id}`;
 
   const metaState: MetaState = useSelector((state: RootStateOrAny) => state.meta);
   const uploadedImages: UploadedImageType[] = metaState.components.imageUploader[uploaderId];
@@ -142,8 +144,10 @@ function CustomImageUploader(
   }
 
   async function onDelete(image) {
-    if (image.uploaded) {
-      notify.info('Not yet implemented');
+    if (image.uploaded || image.fileId) {
+      await onDeleteUploadedImage?.({
+        fileId: image.fileId
+      })
     } else {
       const selectedForDeleteIndex = selectedImagesState
         .findIndex(single => single.md5 === image.md5);
@@ -235,6 +239,7 @@ function CustomImageUploader(
                   uploadedImagesArray?.map((image, index) => (
                     <div key={String(index)}>
                       <div style={{position: 'relative'}}>
+                        <Delete onClick={() => onDelete(image)} />
                         {/*<Delete onClick={()=> onDelete(image)}/>*/}
                         <img style={{maxWidth: 150}} src={image.thumbnailUrl} alt={''} />
                       </div>

@@ -20,6 +20,7 @@ import defaultHelpers, {
 } from '../../../helpers';
 import {useDispatch} from 'react-redux';
 import useSWR from 'swr/esm/use-swr';
+import {deleteUploadedImageAction} from '../../../state/actions';
 
 const UpdateProductValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
@@ -55,8 +56,6 @@ export default function SingleProduct(props) {
 
   const productSlug = props.match.params.slug;
 
-  const componentName = `custom_uploader_${productSlug}`;
-
   const singleProductFetcher = (key, id) => api.products.get(id).then(({data}) => ({
       name: data.name,
       slug: data.slug,
@@ -82,7 +81,7 @@ export default function SingleProduct(props) {
       sportsType: data.meta.sportsType,
     }
   ));
-  const {data: thisProductData} = useSWR([`/product/${productSlug}`, productSlug], singleProductFetcher);
+  const {data: thisProductData, mutate} = useSWR([`/product/${productSlug}`, productSlug], singleProductFetcher);
 
   if (!thisProductData) {
     return (
@@ -116,18 +115,6 @@ export default function SingleProduct(props) {
       })
       .catch(err => {
         notify('error', "That didn't work out");
-      });
-  }
-
-  function deleteImage(image) {
-    let {file_id} = image;
-    axis
-      .delete(`/products/single/images/${file_id}`)
-      .then(response => {
-        notify('success', response.data.message);
-      })
-      .catch(err => {
-        notify('error', 'Whoa there, tiger! Not so fast.');
       });
   }
 
@@ -174,7 +161,10 @@ export default function SingleProduct(props) {
               // @ts-ignore
               const {data} = await dispatch(api.products.update(thisProductData.uuid, diff));
               // Delete the now uploaded images
-              localStorage.removeItem(componentName);
+              dispatch(deleteUploadedImageAction({
+                uploaderId: 'retro-image-uploader-' + productSlug,
+              }));
+              await mutate(null, true);
               notify('success', data.message);
             } catch (e) {
               console.error(e);
@@ -193,14 +183,28 @@ export default function SingleProduct(props) {
                   <CustomImageUploader
                     allowMultiple={true}
                     id={productSlug}
-                    folder={thisProductData.brand}
+                    folder={`products/${thisProductData.brand.toLowerCase()}/${productSlug}`}
                     initialImages={values.images}
                     onClickSelectedImage={images => {
                       setImageModalShown(!showImageModal);
                       setSelectedImages(images);
                     }}
+                    onDeleteUploadedImage={async ({fileId})=> {
+                      try {
+                        await api.products.deleteImage({
+                          productId: thisProductData.uuid,
+                          fileId,
+                        });
+                        await mutate(null, true)
+                        notify('success', "Image deleted")
+                      }catch (e){
+                        const message = extractErrorMessage(e);
+                        notify('error', message)
+                      }
+                    }}
                     onInit={images => setFieldValue('images', images)}
                     onUpload={(err, {images: all}) => {
+                      notify('success', "Image uploaded successfully.")
                       if (err) {
                         notify('error', 'Failed to upload one or more of your images');
                         return;
