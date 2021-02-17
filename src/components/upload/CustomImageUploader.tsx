@@ -9,6 +9,8 @@ import {useNotify} from '../../hooks';
 import {env} from '../../config';
 import {imageUploadedAction} from '../../state/actions';
 import {MetaState} from '../../state/reducers/metaReducers';
+import { CircularProgressbar } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 
 type LocalImageType = {
     // a random string
@@ -17,6 +19,8 @@ type LocalImageType = {
     src: string,
     file: File,
     md5: string,
+    isUploading?: boolean
+    uploadPercent?: number
 }
 
 export type UploadedImageType = {
@@ -30,6 +34,7 @@ export type UploadedImageType = {
 }
 
 const SelectedImage = styled.div`
+  position: relative;
 
    img {
      max-width: 150px;
@@ -96,6 +101,7 @@ function CustomImageUploader(
   );
 
   const [selectedImagesState, setSelectedImagesState] = useState<Array<LocalImageType>>([]);
+  const [uploadingPercent, setUploadingPercent] = useState(0);
 
   const uploadedImagesLength = uploadedImagesArray?.length;
   useEffect(() => {
@@ -165,7 +171,6 @@ function CustomImageUploader(
     // for each of the files to be uploaded
     // we loop backwards because of 'splice', used below,
     for (let i = files.length - 1; i >= 0; i--) {
-      console.log("Attempting to upload file at index: ", i)
       const currentFile = files[i];
 
       // get an image signature from out servers
@@ -182,9 +187,18 @@ function CustomImageUploader(
         const environment = env.getEnvironment();
         formData.append('folder', environment === 'production' ? folder : `${environment}/${folder}`);
 
+        const selectedImageIndex = selectedImages.findIndex(file => file.md5 === currentFile.md5);
+
         const {data: uploadData} = await dispatch<any>(api.imageKit.upload(formData, {
             onUploadProgress: (progressEvent) => {
               const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+              const progressImage = selectedImages[selectedImageIndex];
+              progressImage.isUploading = true;
+              selectedImages[selectedImageIndex] = progressImage;
+              setSelectedImagesState(selectedImages);
+
+              setUploadingPercent(percentCompleted);
+
               if (typeof onUploadProgress === 'function') {
                 onUploadProgress({
                   percentCompleted,
@@ -210,6 +224,7 @@ function CustomImageUploader(
           setSelectedImagesState(selectedImages);
 
           uploaded.push(uploadedData);
+          setUploadingPercent(0);
 
           await onUpload?.(null, {images: uploaded, uploaderId});
           dispatch(imageUploadedAction({image: uploadedData, uploaderId}));
@@ -266,6 +281,23 @@ function CustomImageUploader(
                 {
                   selectedImagesState?.map((image, index) => (
                     <SelectedImage>
+                      {
+                        image.isUploading && (
+                          <div style={{
+                            position: 'absolute',
+                            height: "100%",
+                            width: "100%",
+                            zIndex: 1,
+                            background: "rgba(0,0,0,0.5)",
+                            display: "flex",
+                            alignItems: "center"
+                          }}>
+                            <CircularProgressbar
+                              value={uploadingPercent}
+                              text={`${uploadingPercent}%`} />;
+                          </div>
+                        )
+                      }
                       <div style={{position: 'relative'}}>
                         <Delete onClick={() => onDelete(image)} />
                         <img src={image.src}

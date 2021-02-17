@@ -170,6 +170,11 @@ export default function Shipping(props) {
       return undefined;
     }
 
+    if (!order?.address){
+      notify.info('Please select a delivery location to proceed');
+      return undefined;
+    }
+
     try {
       const {data} = await dispatch(api.orders.complete({
         address: {

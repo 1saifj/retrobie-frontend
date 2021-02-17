@@ -4,22 +4,22 @@ import Layout from '../../components/Layout';
 import Cart from '../../components/cart';
 import useSWR from 'swr/esm/use-swr';
 import Loading from '../../components/loading';
-import {Button, Help, Tag} from 'bloomer';
-import {capitalize, extractErrorMessage} from '../../helpers';
+import {Button, Help} from 'bloomer';
+import {extractErrorMessage} from '../../helpers';
 import styled from 'styled-components';
-import {Tooltip} from 'react-tippy';
-import {OrderStatus, OrderType} from '../../types';
+import {OrderType} from '../../types';
 import {EmptyState} from '../../components';
 import {DeadEyes, DeadEyes2} from '../../constants/icons';
 import {useNotify} from '../../hooks';
 import {UserState} from '../../state/reducers/userReducers';
 import {RootStateOrAny, useSelector} from 'react-redux';
+import {mapStatus} from './index';
+import CustomModal from '../../components/CustomModal';
 
 const SingleOrder= function({match: {params: {orderId}}}) {
 
   const api = useAuth();
   const notify = useNotify();
-
 
   const user: UserState = useSelector((state: RootStateOrAny)=> state.user)
   const orderDataFetcher = (orderId) => api.orders.getSingle(orderId).then(({data})=> data);
@@ -29,6 +29,7 @@ const SingleOrder= function({match: {params: {orderId}}}) {
   );
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isCancelOrderModalOpen, setIsCancelOrderModalOpen] = useState(false);
 
   if (!user?.isLoggedIn){
     return (
@@ -75,66 +76,6 @@ const SingleOrder= function({match: {params: {orderId}}}) {
     setIsLoading(false);
   }
 
-  function mapStatus(status: OrderStatus) {
-    if (!status) return <Tag>Undefined</Tag>;
-
-    switch (status) {
-      case 'cancelled':
-        return (
-          <Tooltip
-            theme={'light'}
-            position={'right'}
-            title={'You cancelled this order. It will not be processed.'}
-          >
-            <Tag isColor={'danger'}>Cancelled</Tag>
-          </Tooltip>
-        );
-      case 'delivered':
-        return <Tag isColor={'success'}>{capitalize(status)}</Tag>;
-      case 'inTransit':
-        return (
-          <Tooltip
-            theme={'light'}
-            position={'right'}
-            title={'This order has been picked up and is on its way.'}
-          >
-            <Tag>In transit</Tag>
-          </Tooltip>
-        )
-      case 'incomplete':
-        return (
-          <Tooltip
-            theme={'light'}
-            position={'right'}
-            title={'You have not paid for this order. It will not be processed.'}
-          >
-            <Tag>Incomplete</Tag>
-          </Tooltip>
-        );
-      case 'pendingPayment':
-        return (
-          <Tooltip
-            theme={'light'}
-            position={'right'}
-            title={'You have not paid for this order. It will not be processed.'}
-          >
-            <Tag>Not yet paid</Tag>
-          </Tooltip>
-        );
-      default:
-        return <Tag>{capitalize(status)}</Tag>;
-      case 'pendingConfirmation':
-        return (
-          <Tooltip
-            theme={'light'}
-            position={'right'}
-            title={'Your payment has been received. We will call you to confirm delivery details.'}
-          >
-            <Tag isColor={'info'}>Pending Confirmation</Tag>
-          </Tooltip>
-        );
-    }
-  }
 
   return (
     <>
@@ -156,6 +97,22 @@ const SingleOrder= function({match: {params: {orderId}}}) {
                 {orderData.orderNo}
               </p>
             </div>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+            }}>
+              <h4>
+                Payment type:
+              </h4>
+              <p>
+                {
+                  !orderData.paymentType ? 'Not selected' :
+                    orderData.paymentType === 'pay-on-delivery' ? 'Pay on delivery' :
+                      'Pay online'
+                }
+              </p>
+            </div>
           </div>
           <div style={{
             display: 'flex',
@@ -167,7 +124,12 @@ const SingleOrder= function({match: {params: {orderId}}}) {
             </h4>
             <OnHover>
               {
-                mapStatus(orderData.status)
+                mapStatus(orderData.status, {
+                  pendingConfirmation: orderData.paymentType === 'pay-on-delivery' ? null :
+                    // if the user opted to pay online, 'pendingConfirmation' means we've received their
+                    // payment
+                    'We have received your payment. We\'ll call you in an hour or two to confirm this order.',
+                })
               }
             </OnHover>
           </div>
@@ -195,10 +157,7 @@ const SingleOrder= function({match: {params: {orderId}}}) {
                 orderData.status !== 'cancelled'
               ) && (
                 <Button
-                  onClick={async () => await cancelOrder({
-                    orderId,
-                  })}
-                  isLoading={isLoading}
+                  onClick={() => setIsCancelOrderModalOpen(true)}
                   isColor={'ghost'}
                 >
                   Cancel this order
@@ -233,6 +192,42 @@ const SingleOrder= function({match: {params: {orderId}}}) {
             </div>
           </div>
         </div>
+        <CustomModal
+          isActive={isCancelOrderModalOpen}
+          onClose={() => setIsCancelOrderModalOpen(false)}>
+          <div>
+            <h2>Cancel this order?</h2>
+            <p>
+              You are about to cancel your order. This action can not be reversed.
+            </p>
+            <p>
+              Do you want to proceed?
+            </p>
+            <div>
+              <Button
+                style={{marginRight: 12}}
+                isColor={'primary'}
+                isLoading={isLoading}
+                onClick={async () => {
+                  try {
+                    await cancelOrder({
+                      orderId,
+                    });
+                    setIsCancelOrderModalOpen(false);
+                    setIsLoading(false);
+                  } catch (e) {
+                    const message = extractErrorMessage(e);
+                    notify.error(message);
+                  }
+                }}>
+                Cancel your order
+              </Button>
+              <Button>
+                Exit
+              </Button>
+            </div>
+          </div>
+        </CustomModal>
       </Layout>
     </>
   );

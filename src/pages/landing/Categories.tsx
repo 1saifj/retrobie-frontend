@@ -54,11 +54,12 @@ const Categories = () => {
                                 <div>
                                     <div style={{
                                         background:
-                                        // a bit hacky, but it works
+                                        // a bit hacky, but it works for now
                                           item.slug.includes("women") ? "#45c0c7"
                                           : item.slug.includes("men") ? "#ba3f38"
                                           : item.slug.includes("kids") ? "#d13b78"
                                           : item.slug.includes("affordable") ? "#fdb813"
+                                          : item.slug.includes("popular") ? "#f5f5f5"
                                             : "",
                                         textAlign: 'center',
                                         borderRadius: '2px',

@@ -787,3 +787,8 @@ b {
     border-bottom: 1px solid currentColor;
   }
 }
+
+.alice-carousel__dots {
+  display: flex;
+  justify-content: center;
+}

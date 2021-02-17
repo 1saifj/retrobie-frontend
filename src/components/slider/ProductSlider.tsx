@@ -90,7 +90,7 @@ const Dot = styled.div<{
     margin-right: 8px;
     margin-bottom: 8px;
     max-width: ${p => (p.isNarrow ? '40px' : '70px')};
-    min-height: 52px;
+    min-height: 64px;
     -webkit-transition: all 0.25s ease-in-out;
     transition: all 0.25s ease-in-out;
     display: -webkit-box;
