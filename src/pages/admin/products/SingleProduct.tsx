@@ -67,6 +67,7 @@ export default function SingleProduct(props) {
       sizeCountry: data.detail.sizeCountry,
       sex: data.detail.sex,
       inStock: data.inStock,
+      inStockAdmin: data.admin.inStock,
       brand: capitalize(data.brands[0].name),
       images: data.images,
       currency: 'Ksh.',
@@ -374,7 +375,7 @@ export default function SingleProduct(props) {
                           label={'Users stock count'}
                           placeholder={'eg. 25'}
                           type={'number'}
-                          name={'usersStock'}
+                          name={'inStock'}
                         />
                       </Column>
                       <Column isSize={{desktop: '1/2'}}>
@@ -382,7 +383,7 @@ export default function SingleProduct(props) {
                           label={'Admin stock count'}
                           placeholder={'eg. 30'}
                           type={'number'}
-                          name={'adminStock'}
+                          name={'inStockAdmin'}
                         />
                       </Column>
                     </Columns>

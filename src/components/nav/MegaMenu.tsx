@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {CSSProperties, useEffect, useState} from 'react';
 import './megamenu.scoped.css';
 import { Link, useHistory } from 'react-router-dom';
 import {getMenuItemLinks, newItems, menuItemsToMap} from './Items';
@@ -17,6 +17,18 @@ import { toggleSidebarAction } from '../../state/actions';
 import {CategoryType, PromiseThunk} from '../../types';
 import AvatarComponent from '../avatar';
 
+type NavbarItemType = {
+  to: string
+  title: string,
+  links: {
+    title: string;
+    items: {to: string, title: string}[];
+    to: string
+  }[],
+  featured?,
+  style?: CSSProperties
+}
+
 const MegaMenu = () => {
   const api = useAuth();
   const history = useHistory();
@@ -28,7 +40,7 @@ const MegaMenu = () => {
   const allCategoriesFetcher = () => api.category.getAll().then(({data}) => data);
   const {data: allBrands} = useSWR('/brands/all', allBrandsFetcher);
   const {data: allCategories} = useSWR<CategoryType[]>('/categories', allCategoriesFetcher);
-  const [menuList, setMenuList] = useState([]);
+  const [menuList, setMenuList] = useState<NavbarItemType[]>([]);
 
   const logout = () => {
     if (userState.isLoggedIn) {
@@ -57,9 +69,10 @@ const MegaMenu = () => {
       newList[0] =({
         title: 'Brands',
         featured: false,
+        to: '/brands',
         links: getMenuItemLinks(brandMenuItemsMap, {
           url: 'brands',
-          withTitle: true
+          withTitle: true,
         }),
         style: {
           minWidth: 600,
@@ -73,12 +86,13 @@ const MegaMenu = () => {
     if (allCategories){
       const categoryItemMenuMap = menuItemsToMap(allCategories, 'name');
       newList[1] =({
+        to: '/categories',
         title: 'Categories',
         featured: false,
         style: undefined,
         links: getMenuItemLinks(categoryItemMenuMap, {
           url: 'category',
-          withTitle: false
+          withTitle: false,
         })
       })
       setMenuList(newList)
@@ -138,6 +152,7 @@ const MegaMenu = () => {
             menuList.map((item, index) => (
               item &&
               <NavbarItem
+                to={item.to}
                 key={String(index)}
                 title={item.title}
                 links={item.links}
@@ -275,12 +290,7 @@ const MegaMenu = () => {
   );
 };
 
-const NavbarItem = ({title, links, featured, style}: {
-  title,
-  links,
-  featured?,
-  style?
-}) => {
+const NavbarItem = ({title, links, featured, style, to}: NavbarItemType) => {
   return (
     <li className="default">
 
@@ -301,31 +311,28 @@ const NavbarItem = ({title, links, featured, style}: {
 
             {
               links &&
-              links.map(category => (
+              links.map(link => (
                 <div style={{
                   flex: '1 0 150px',
                   textAlign: 'left',
                   maxWidth: '100%',
                   margin: '0 0.5rem',
-                }} key={category.title}>
+                }} key={link.title}>
+                  <li style={{
+                    fontWeight: 'bold',
+                    margin: '0 0 0.625rem',
+                    borderBottom: '1px solid #d8d8d8',
+                    paddingBottom: 8,
+                  }}>
+                    <Link
+                      to={link.to}
+                      title={link.title}>
+                      {link.title}
+                    </Link>
+                  </li>
+
                   {
-                    category.title && (
-                      <li style={{
-                        fontWeight: 'bold',
-                        margin: '0 0 0.625rem',
-                        borderBottom: '1px solid #d8d8d8',
-                        paddingBottom: 8,
-                      }}>
-                        <Link
-                          to={category.to}
-                          title={category.title}>
-                          {category.title}
-                        </Link>
-                      </li>
-                    )
-                  }
-                  {
-                    category.items?.map(item => (
+                    link.items?.map(item => (
                       <li key={item.title}>
                         <Link
                           to={item.to}
@@ -357,7 +364,7 @@ const NavbarItem = ({title, links, featured, style}: {
             }
           </ul>
         )}>
-        <Link className="nav-toplink " tabIndex={0} to="#" title={title}>
+        <Link className="nav-toplink " tabIndex={0} to={to} title={title}>
           {title}
         </Link>
       </Tooltip>

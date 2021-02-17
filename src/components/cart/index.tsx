@@ -229,7 +229,7 @@ export default function Cart(
                     {showAddButton && (
                       <Button
                         isColor="light"
-                        disabled={cartItem.quantity <= cartItem.inStock}
+                        disabled={cartItem.quantity >= cartItem.inStock}
                         style={{padding: 0}}
                         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                           event.stopPropagation();

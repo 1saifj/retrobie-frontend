@@ -6,10 +6,11 @@ import {capitalize} from '../../helpers';
 import useSWR from 'swr/esm/use-swr';
 import {useAuth} from '../../hooks';
 import {EmptyState, Layout, Loading, RetroImage} from '../../components';
-import {OrderType} from '../../types';
+import {OrderStatus, OrderType} from '../../types';
 import {DeadEyes, EmptyBox, GrimacingEmoji} from '../../constants/icons';
 import {UserState} from '../../state/reducers/userReducers';
 import {RootStateOrAny, useSelector} from 'react-redux';
+import {Tooltip} from 'react-tippy';
 
 const OrderItem = styled.div`
   padding: 12px 24px;
@@ -24,6 +25,70 @@ const OrderItem = styled.div`
     cursor: pointer;
   }
 `
+
+export   function mapStatus(status: OrderStatus, message?: {
+   [T: string]: string
+}) {
+  if (!status) return <Tag>Undefined</Tag>;
+
+  switch (status) {
+    case 'cancelled':
+      return (
+        <Tooltip
+          theme={'light'}
+          position={'right'}
+          title={'You cancelled this order. It will not be processed.'}
+        >
+          <Tag isColor={'danger'}>Cancelled</Tag>
+        </Tooltip>
+      );
+    case 'delivered':
+      return <Tag isColor={'success'}>{capitalize(status)}</Tag>;
+    case 'inTransit':
+      return (
+        <Tooltip
+          theme={'light'}
+          position={'right'}
+          title={'This order has been picked up and is on its way.'}
+        >
+          <Tag>In transit</Tag>
+        </Tooltip>
+      )
+    case 'incomplete':
+      return (
+        <Tooltip
+          theme={'light'}
+          position={'right'}
+          title={'You have not selected a payment method. This order will not be processed.'}
+        >
+          <Tag>Incomplete</Tag>
+        </Tooltip>
+      );
+    case 'pendingPayment':
+      return (
+        <Tooltip
+          theme={'light'}
+          position={'right'}
+          title={'You have not paid for this order. It will not be processed.'}
+        >
+          <Tag>Not yet paid</Tag>
+        </Tooltip>
+      );
+    default:
+      return <Tag>{capitalize(status)}</Tag>;
+    case 'pendingConfirmation':
+      return (
+        <Tooltip
+          theme={'light'}
+          position={'right'}
+          title={message?.[status] || 'We will call you to confirm the delivery details.'}
+        >
+          <Tag isColor={'info'}>Not yet confirmed</Tag>
+        </Tooltip>
+      );
+  }
+}
+
 
 const AllOrders = function() {
 
@@ -92,25 +157,6 @@ const AllOrders = function() {
         />
       </Layout>
     )
-  }
-
-  function mapStatus(status) {
-    if (!status) return <Tag>Undefined</Tag>;
-
-    switch (status) {
-      case 'cancelled':
-        return <Tag isColor='danger'>Cancelled</Tag>;
-      case 'fulfilled':
-        return <Tag isColor={'success'}>Fulfilled</Tag>;
-      case 'incomplete':
-        return <Tag>Incomplete</Tag>;
-      case 'pendingPayment':
-        return <Tag>Not yet paid</Tag>;
-      default:
-        return <Tag>{capitalize(status)}</Tag>;
-      case 'finalized':
-        return <Tag isColor={'info'}>Finalized</Tag>;
-    }
   }
 
   return (

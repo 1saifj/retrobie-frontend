@@ -31,6 +31,7 @@
     "react-alice-carousel": "^2.2.1",
     "react-autosuggest": "^10.0.3",
     "react-avatar": "^3.9.7",
+    "react-circular-progressbar": "^2.0.3",
     "react-color-extractor": "^1.1.2",
     "react-dates": "^21.8.0",
     "react-dom": "~16.13.1",

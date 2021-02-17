@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import Layout from '../../components/Layout';
 import ProductFilters from './components/product-filters';
 import styled from 'styled-components';
@@ -8,7 +8,7 @@ import {useAuth} from '../../network';
 import {capitalize, formatNumberWithCommas} from '../../helpers';
 import {Link} from 'react-router-dom';
 import useSWR from 'swr/esm/use-swr';
-import {BrandType, FilteredProduct, ProductType} from '../../types';
+import {BrandType, FilteredProduct} from '../../types';
 import useFiltersV2 from '../../hooks/useFiltersV2';
 import {Clown, GrimacingEmoji} from '../../constants/icons';
 import {EmptyState} from '../../components';
@@ -96,18 +96,26 @@ export default function ViewSingleBrand(props) {
                     </div>
                     <hr/>
                   </BrandHeader>
-                  <div style={{display: 'flex', gap: 64}}>
+                  <div style={{
+                    display: 'flex',
+                    gap: 64,
+                    flexWrap: 'wrap',
+                  }}>
 
                     <ProductFilters
                       products={allProducts}
                       allCriteria={['sex', 'size', 'price', 'style']}
                     />
-                    <div style={{width: '100%'}}>
+                    <div style={{
+                      width: '100%',
+                      flex: '1 0',
+                    }}>
                       <div style={{
-                        display: 'flex',
+                        display: 'grid',
                         columnGap: 24,
+                        rowGap: 72,
+                        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
                         justifyContent: renderProducts?.length < 3 ?'start': 'space-between',
-                        flexWrap: 'wrap'
                       }}
                       >
                         {
@@ -197,6 +205,8 @@ export const ProductItem = styled(Link)`
     height: 100%;
     object-fit: contain;
     max-width: 250px;
+    margin: 0 auto;
+    display: block;
   }
 
   header {
