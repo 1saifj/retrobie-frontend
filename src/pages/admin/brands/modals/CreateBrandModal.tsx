@@ -89,159 +89,160 @@ const CreateBrandModal = (
     const api = useAuth();
     const dispatch = useDispatch<PromiseThunk<any>>();
 
-    return (
-      <>
-          <div>
-              <Modal isActive={isActive} className={'modal-fx-fadeInScale'}>
-                  <ModalBackground onClick={() => onClose()}/>
-                  <ModalContent>
-                      <div style={{
-                          background: 'white',
-                          display: isActive ? 'block' : 'none',
-                          padding: '24px',
-                          borderRadius: '4px',
-                          textAlign: 'left',
-                      }}>
-                          <h2>Create a new brand</h2>
+  return (
+    <>
+      <div>
+        <Modal isActive={isActive} className={'modal-fx-fadeInScale'}>
+          <ModalBackground onClick={() => onClose()} />
+          <ModalContent>
+            <div style={{
+              background: 'white',
+              display: isActive ? 'block' : 'none',
+              padding: '24px',
+              borderRadius: '4px',
+              textAlign: 'left',
+            }}>
+              <h2>Create a new brand</h2>
 
-                          <Formik
-                            initialValues={{
-                                name: '',
-                                uuid,
-                                logo: null
-                            }}
-                            validationSchema={CreateBrandValidationSchema}
-                            onSubmit={async (values, {setSubmitting, setFieldError}) => {
-                                setSubmitting(true);
-                                try {
-                                    setSubmitting(false);
-                                    const response = await dispatch(api.brands.create(values));
-                                    if (typeof onCreate === 'function') {
-                                        onCreate(response.data);
-                                    }
-                                } catch (e) {
-                                    setSubmitting(false);
-                                    const message = extractErrorMessage(e);
-                                    notify('error', message);
+              <Formik
+                initialValues={{
+                  name: '',
+                  uuid,
+                  slug: '',
+                  logo: null,
+                }}
+                validationSchema={CreateBrandValidationSchema}
+                onSubmit={async (values, {setSubmitting, setFieldError}) => {
+                  setSubmitting(true);
+                  try {
+                    setSubmitting(false);
+                    const response = await dispatch(api.brands.create(values));
+                    if (typeof onCreate === 'function') {
+                      onCreate(response.data);
+                    }
+                  } catch (e) {
+                    setSubmitting(false);
+                    const message = extractErrorMessage(e);
+                    notify('error', message);
 
-                                    if (e.response && e.response.data.errors) {
-                                        if (typeof onError === 'function') {
-                                            onError(e.response.data);
-                                        }
-                                        const responseErrors = e.response.data.errors;
-                                        responseErrors.forEach(error => {
-                                            const field = error.path;
-                                            setFieldError(field, error.message);
-                                        });
-                                    }
-                                }
-                            }}
-                          >
-                              {({values, setFieldValue}) => (
-                                <Form>
-                                    <div style={{border: '1px solid grey', padding: '12px 8px'}}>
-                                        <h4>Upload a logo</h4>
-                                        <CustomImageUploader
-                                          folder={values.name}
-                                          id={values.name}
-                                          onUpload={(err, {images}) => {
-                                              setFieldValue('logo', images[0]);
-                                          }}
-                                          allowMultiple={false}/>
-                                    </div>
-                                    <Field isGrouped style={{
-                                        display: 'grid',
-                                        gridTemplateColumns: '2fr 1fr',
-                                        gridGap: '18px',
-                                    }}>
-                                        <TextField
-                                          label="Name"
-                                          placeholder="Name"
-                                          type="text"
-                                          name="name"/>
+                    if (e.response && e.response.data.errors) {
+                      if (typeof onError === 'function') {
+                        onError(e.response.data);
+                      }
+                      const responseErrors = e.response.data.errors;
+                      responseErrors.forEach(error => {
+                        const field = error.path;
+                        setFieldError(field, error.message);
+                      });
+                    }
+                  }
+                }}
+              >
+                {({values, setFieldValue}) => (
+                  <Form>
+                    <div style={{border: '1px solid grey', padding: '12px 8px'}}>
+                      <h4>Upload a logo</h4>
+                      <CustomImageUploader
+                        folder={`logos/${values.slug}`}
+                        id={values.slug}
+                        onUpload={(err, {images}) => {
+                          setFieldValue('logo', images[0]);
+                        }}
+                        allowMultiple={false} />
+                    </div>
+                    <Field isGrouped style={{
+                      display: 'grid',
+                      gridTemplateColumns: '2fr 1fr',
+                      gridGap: '18px',
+                    }}>
+                      <TextField
+                        label="Name"
+                        placeholder="Name"
+                        type="text"
+                        name="name" />
 
-                                        <TextField
-                                          label="Abbreviation"
-                                          placeholder="Abbrev"
-                                          type="text"
-                                          name="abbrev"/>
-                                    </Field>
-                                    <Monitor/>
-                                    <Field>
-                                        <TextField label={'Where this brand will be accessible from'}
-                                                   disabled
-                                                   prefix={'https://retrobie.com/brands/'}
-                                                   placeholder={'eg./nike'} name={'slug'}
-                                                   type={'text'}/>
-                                    </Field>
+                      <TextField
+                        label="Abbreviation"
+                        placeholder="Abbrev"
+                        type="text"
+                        name="abbrev" />
+                    </Field>
+                    <Monitor />
+                    <Field>
+                      <TextField label={'Where this brand will be accessible from'}
+                                 disabled
+                                 prefix={'https://retrobie.com/brands/'}
+                                 placeholder={'eg./nike'} name={'slug'}
+                                 type={'text'} />
+                    </Field>
 
-                                    <Field>
-                                        <TextField
-                                          label={<>Provide a <span
-                                            className='accented'>general description</span> of
-                                              this brand. TODO Add link to example</>}
-                                          placeholder="Description"
-                                          type="textarea"
-                                          chars={320}
-                                          name="long"/>
-                                    </Field>
-                                    <Field>
-                                        <TextField
-                                          label={<>Describe <span
-                                            className='accented'>who this product is ideal for</span> in 80
-                                              chars or
-                                              less</>}
-                                          placeholder="Short description"
-                                          type="textarea"
-                                          chars={80}
-                                          name="short"/>
-                                    </Field>
-                                    <Field>
-                                        <TextField
-                                          label={<>With suitable keywords, write an <span
-                                            className="accented">SEO copy</span> for
-                                              this product in 80 - 130 chars</>}
-                                          placeholder="Copy"
-                                          type="textarea"
-                                          chars={130}
-                                          name="copy"/>
-                                    </Field>
-                                    <Field>
-                                        <TextField disabled
-                                                   placeholder={'uuid'}
-                                                   label={<>Don't worry. This is filled <span
-                                                     className='accented'>automatically</span>.</>}
-                                                   type="text"
-                                                   name="uuid"/>
+                    <Field>
+                      <TextField
+                        label={<>Provide a <span
+                          className='accented'>general description</span> of
+                          this brand.</>}
+                        placeholder="Description"
+                        type="textarea"
+                        chars={320}
+                        name="long" />
+                    </Field>
+                    <Field>
+                      <TextField
+                        label={<>Describe <span
+                          className='accented'>who this product is ideal for</span> in 80
+                          chars or
+                          less</>}
+                        placeholder="Short description"
+                        type="textarea"
+                        chars={80}
+                        name="short" />
+                    </Field>
+                    <Field>
+                      <TextField
+                        label={<>With suitable keywords, write an <span
+                          className="accented">SEO copy</span> for
+                          this product in 80 - 130 chars</>}
+                        placeholder="Copy"
+                        type="textarea"
+                        chars={130}
+                        name="copy" />
+                    </Field>
+                    <Field>
+                      <TextField disabled
+                                 placeholder={'uuid'}
+                                 label={<>Don't worry. This is filled <span
+                                   className='accented'>automatically</span>.</>}
+                                 type="text"
+                                 name="uuid" />
 
-                                    </Field>
-                                    <Field>
-                                        <Persist name="new-brand-form"/>
-                                    </Field>
-                                    <div style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        flexDirection: 'column',
-                                    }}>
-                                        <Button isColor="primary" type="submit">
-                                            Submit
-                                        </Button>
-                                        <div style={{margin: '8px 12px', display: 'flex'}}>
-                                            <Checkbox style={{marginRight: '8px'}}/>
-                                            <label>Add more</label>
-                                        </div>
-                                    </div>
-                                </Form>
-                              )}
-                          </Formik>
+                    </Field>
+                    <Field>
+                      <Persist name="new-brand-form" />
+                    </Field>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'column',
+                    }}>
+                      <Button isColor="primary" type="submit">
+                        Submit
+                      </Button>
+                      <div style={{margin: '8px 12px', display: 'flex'}}>
+                        <Checkbox style={{marginRight: '8px'}} />
+                        <label>Add more</label>
                       </div>
-                  </ModalContent>
-                  <ModalClose onClick={() => onClose()}/>
-              </Modal>
-          </div>
-      </>
-    );
+                    </div>
+                  </Form>
+                )}
+              </Formik>
+            </div>
+          </ModalContent>
+          <ModalClose onClick={() => onClose()} />
+        </Modal>
+      </div>
+    </>
+  );
 };
 
 export default CreateBrandModal;
