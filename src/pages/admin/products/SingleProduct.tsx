@@ -184,7 +184,7 @@ export default function SingleProduct(props) {
                   <CustomImageUploader
                     allowMultiple={true}
                     id={productSlug}
-                    folder={`products/${thisProductData.brand.toLowerCase()}/${slugify(values.name)}`}
+                    folder={`products/${slugify(thisProductData.brand, {lower: true})}/${slugify(values.name)}`}
                     initialImages={values.images}
                     onClickSelectedImage={images => {
                       setImageModalShown(!showImageModal);
