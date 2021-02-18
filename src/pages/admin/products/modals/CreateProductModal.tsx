@@ -106,11 +106,11 @@ function Monitor({brand}) {
       });
       if (brand && brand.name) {
         values.brand = brand.name;
-        values.folder = `${brand.name}/${values.slug}`;
+        values.folder = `products/${slugify(values.brand, {lower: true})}}/${values.slug}`;
       }
 
       if (values.brand && values.slug) {
-        values.folder = `products/${values.brand.toLowerCase()}/${values.slug}/`;
+        values.folder = `products/${slugify(values.brand, {lower: true})}/${values.slug}/`;
       }
 
     } else {
