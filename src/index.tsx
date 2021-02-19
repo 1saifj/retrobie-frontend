@@ -9,6 +9,8 @@ import styled from 'styled-components';
 import ScrollToTop from './components/ScrollToTop';
 import {PersistGate} from 'redux-persist/integration/react';
 import {FilterProviderV2} from './hooks/useFiltersV2';
+import posthog from 'posthog-js';
+import {env} from './config';
 
 require('react-hot-loader/patch');
 
@@ -16,6 +18,12 @@ toast.configure({
     autoClose: 5000,
     draggable: false,
 });
+
+if (env.isProduction()){
+  posthog.init('sI0h0X9GF-eLhMUhO1xvl998gfRStpLYm3dlVRDiFLQ', {
+    api_host: 'https://app.posthog.com',
+  });
+}
 
 
 const Root = styled.div`

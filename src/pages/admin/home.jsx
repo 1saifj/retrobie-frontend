@@ -10,16 +10,16 @@ class AdminHome extends Component {
       >
         <h1>Home sweet home</h1>
         <div style={{minHeight: '45vh'}}>
-          <Link to={'products'}>
+          <Link to={'dashboard/products'}>
             <p>Products</p>
           </Link>
-          <Link to={'orders'}>
+          <Link to={'dashboard/orders'}>
             <p>Orders</p>
           </Link>
-          <Link to={'misc'}>
+          <Link to={'dashboard/misc'}>
             <p>Misc</p>
           </Link>
-          <Link to={'brands'}>
+          <Link to={'dashboard/brands'}>
             <p>Brands</p>
           </Link>
         </div>

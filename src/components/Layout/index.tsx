@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {CSSProperties, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import Header from '../header/header';
 import Footer from '../footer/footer';
@@ -9,27 +9,40 @@ import {RootStateOrAny, useSelector} from 'react-redux';
 import {UserState} from '../../state/reducers/userReducers';
 import {Link} from 'react-router-dom';
 
-const Layout = function(props) {
+const Layout = function(
+  {
+      withoutNav,
+      topRightButton,
+      children,
+      style,
+      internal,
+  }: {
+      withoutNav?: boolean,
+      topRightButton?: boolean | Function,
+      children,
+      style?: Partial<CSSProperties>,
+      internal?: boolean,
+  }, ...props) {
+
     const warning = sessionStorage.getItem('hide-unverified-email-warning');
 
     const [hideWarning, setWarningHidden] = useState(Boolean(warning));
 
     const currentTheme = useSelector((state: RootStateOrAny) => state.meta.theme);
-    const user: UserState = useSelector((state: RootStateOrAny)=> state.user)
+    const user: UserState = useSelector((state: RootStateOrAny) => state.user);
 
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        setMounted(true);
+      setMounted(true);
     }, []);
-
 
     const defaultStyle = {
         transition: `opacity 250ms ease-in-out`,
         opacity: 0,
         background: currentTheme === 'dark' ?
-            'var(--color-background--dark)' :
-            'var(--color-background--light)'
+          'var(--color-background--dark)' :
+          'var(--color-background--light)',
     };
 
     const transitionStyles = {
@@ -71,7 +84,7 @@ const Layout = function(props) {
                                                   Some functionality will be limited until you do.
                                               </p>
                                               <p>
-                                                  To confirm your email address, visit{" "}
+                                                  To confirm your email address, visit{' '}
                                                   <Link to={'/accounts/verify?sendCode=true'}>
                                                       this link
                                                   </Link>
@@ -82,15 +95,15 @@ const Layout = function(props) {
                                 }
 
                                 <Header
-                                  withoutNav={props.withoutNav}
-                                  topRightButton={props.topRightButton} />
+                                  withoutNav={withoutNav}
+                                  topRightButton={topRightButton} />
                                 <LayoutParent
                                   className='layout--parent' {...props}
-                                  style={{...props.style}}>
-                                    {props.children}
+                                  style={{...style}}>
+                                    {children}
                                 </LayoutParent>
                                 <div style={{marginTop: 48}}>
-                                    <Footer internal={props.internal} />
+                                    <Footer internal={internal} />
                                 </div>
                             </div>
                         </div>
@@ -102,7 +115,7 @@ const Layout = function(props) {
       </>
     );
 
-}
+};
 
 const LayoutParent = styled.div`
   margin-top: 48px;
