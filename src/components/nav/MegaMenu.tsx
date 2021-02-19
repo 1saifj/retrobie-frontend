@@ -312,24 +312,21 @@ const NavbarItem = ({title, links, featured, style, to}: NavbarItemType) => {
             {
               links &&
               links.map(link => (
-                <div style={{
-                  flex: '1 0 150px',
-                  textAlign: 'left',
-                  maxWidth: '100%',
-                  margin: '0 0.5rem',
-                }} key={link.title}>
-                  <li style={{
-                    fontWeight: 'bold',
-                    margin: '0 0 0.625rem',
-                    borderBottom: '1px solid #d8d8d8',
-                    paddingBottom: 8,
-                  }}>
-                    <Link
-                      to={link.to}
-                      title={link.title}>
-                      {link.title}
-                    </Link>
-                  </li>
+                <div className={'link--parent'} key={link.title}>
+                  {
+                    link.title && (
+                      <li style={{
+                        fontWeight: 'bold',
+                        margin: '0 0 0.625rem',
+                        borderBottom: '1px solid #d8d8d8',
+                        paddingBottom: 8,
+                      }}>
+                        <h5>
+                          {link.title}
+                        </h5>
+                      </li>
+                    )
+                  }
 
                   {
                     link.items?.map(item => (
@@ -364,7 +361,10 @@ const NavbarItem = ({title, links, featured, style, to}: NavbarItemType) => {
             }
           </ul>
         )}>
-        <Link className="nav-toplink " tabIndex={0} to={to} title={title}>
+        <Link
+          className="nav-toplink "
+          tabIndex={0}
+          to={to} title={title}>
           {title}
         </Link>
       </Tooltip>

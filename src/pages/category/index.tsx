@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {EmptyState, Layout, Loading} from '../../components';
 import {useAuth} from '../../hooks';
 import useSWR from 'swr/esm/use-swr';
@@ -7,9 +7,10 @@ import {CategoryType} from '../../types';
 import {useFiltersV2} from '../../hooks/useFiltersV2/FilterProvider';
 import {formatNumberWithCommas} from '../../helpers';
 import {ProductItem} from '../brands/Brand';
-import { Section, Container } from 'bloomer';
+import { Section, Container, Button } from 'bloomer';
 import {DeadEyes2, EmptyBox, GrimacingEmoji} from '../../constants/icons';
 import SEOHeader from '../../components/SEOHeader';
+import DrawerWrapper from 'rc-drawer';
 
 
 export default function({match}){
@@ -17,6 +18,8 @@ export default function({match}){
   const categoryId = match.params.id;
 
   const api = useAuth();
+
+  const [isFiltersDrawerOpen, setIsFiltersDrawerOpen] = useState(false);
 
   const {products: renderProducts} = useFiltersV2();
 
@@ -83,29 +86,51 @@ export default function({match}){
       <SEOHeader
         description={categoryData.description}
         path={`/category/${categoryData.name}`}
-        title={`${categoryData.name} in Nairobi`}/>
+        title={`${categoryData.name} in Nairobi`} />
       <Section>
         <Container>
-          <div style={{display: 'flex', gap: 64}}>
+          <div>
+            <header>
+              <h1>
+                {categoryData.name}
+              </h1>
+            </header>
+          </div>
+          <div className={'product__filters'}>
 
-            <ProductFilters
-              // @ts-ignore
-              products={categoryData.products}
-              allCriteria={['sex', 'size', 'price']}
-            />
-            <div>
-              <header>
-                <h1>
-                  {categoryData.name}
-                </h1>
-              </header>
-
-              <div style={{
-                display: 'flex',
-                columnGap: 24,
-                justifyContent: renderProducts?.length < 3 ?'start': 'space-between',
-                flexWrap: 'wrap'
-              }}
+            <div className={'product__filters--desktop'}>
+              <ProductFilters
+                // @ts-ignore
+                products={categoryData.products}
+                allCriteria={['sex', 'size', 'price']}
+              />
+            </div>
+            <div className={'product__filters--mobile'}>
+              <DrawerWrapper
+                onClose={()=> setIsFiltersDrawerOpen(false)}
+                handler={null}
+                open={isFiltersDrawerOpen}>
+                <Section>
+                  <Container>
+                    <ProductFilters
+                      // @ts-ignore
+                      products={categoryData.products}
+                      allCriteria={['sex', 'size', 'price']}
+                    />
+                  </Container>
+                </Section>
+              </DrawerWrapper>
+              <Button
+                onClick={()=> setIsFiltersDrawerOpen(true)}
+                style={{marginRight: 12}}>
+                Filters
+              </Button>
+            </div>
+            <div className={'product__filters--products-parent'}>
+              <div
+                style={{
+                  justifyContent: renderProducts?.length < 3 ? 'start' : 'space-between',
+                }}
               >
                 {
                   renderProducts?.length ? renderProducts.map((item, index) => (
@@ -119,7 +144,7 @@ export default function({match}){
                       }}>
 
                       <div style={{height: '100%'}}>
-                        <img src={item.url} alt={item.name}/>
+                        <img src={item.url} alt={item.name} />
                       </div>
                       <div className={'footer'}>
                         <p>{item.name}</p>
@@ -131,11 +156,11 @@ export default function({match}){
                       </div>
                     </ProductItem>
 
-                  )): (
+                  )) : (
                     <EmptyState
                       icon={GrimacingEmoji}
                       style={{
-                        width: '100%'
+                        width: '100%',
                       }}
                       iconWidth={52}
                       centerAlign={true}
