@@ -1,6 +1,6 @@
 import {Button, Container, Section} from 'bloomer';
 import AnimatedLogo from '../logo/AnimatedLogo';
-import {Archive, Smartphone, X} from 'react-feather';
+import {Archive, ChevronRight, Smartphone, X} from 'react-feather';
 import React from 'react';
 import {UserState} from '../../state/reducers/userReducers';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
@@ -53,6 +53,12 @@ export default function MobileSidebar(props){
       <Section>
         <Container>
           <AnimatedLogo plain color={'#444'}/>
+          <div style={{margin: '1em 0'}}>
+            <Link to={'/brands'}>
+              <h4 style={{display: 'inline'}}>Brands</h4>
+              <ChevronRight size={20} style={{verticalAlign: 'middle'}}/>
+            </Link>
+          </div>
           <div>
             <h4>Categories</h4>
             <div>

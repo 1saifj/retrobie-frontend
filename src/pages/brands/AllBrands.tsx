@@ -55,7 +55,7 @@ function AllBrandsComponent() {
                     <div className={'image--parent'}>
                       <img src={brand.logo ? brand.logo.thumbnailUrl : ''}
                            alt={`${brand.name} logo`} />
-                      <div>
+                      <div style={{marginTop: 12}}>
                         <p>
                           {capitalize(brand.name)}
                         </p>
@@ -78,12 +78,8 @@ function AllBrandsComponent() {
 const LogosParent = styled.div`
   display: grid; 
   flex-wrap: wrap;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   grid-gap: 24px;
-  
-  p {
-    color: #353535;
-  }
   
   a {
     text-decoration: none;
@@ -92,12 +88,10 @@ const LogosParent = styled.div`
   .image--parent {
     display: flex;
     align-items: center;
-    height: 180px;
-    width: 180px;
     transition: border 0.25s cubic-bezier(0.77, 0.2, 0.05, 1.0);
     border: 1px solid transparent;
-    border-radius: 4px;
-    padding: 24px;
+    border-radius: 2px;
+    padding: 16px;
     flex-direction: column;
     justify-content: center;
     text-align: center;
@@ -109,8 +103,8 @@ const LogosParent = styled.div`
     }
   }
   
-  Img {
-    width: 100%;
+  img {
+    max-width: 100%;
   }
 `;
 
