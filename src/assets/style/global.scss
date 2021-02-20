@@ -792,3 +792,41 @@ b {
   display: flex;
   justify-content: center;
 }
+
+.product__filters {
+  display: flex;
+  gap: 64px;
+  flex-wrap: wrap;
+
+  @media screen and (max-width: 800px){
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .product__filters--desktop {
+    @media screen and (max-width: 800px){
+      display: none;
+    }
+  }
+
+  .product__filters--mobile {
+    display: none;
+    @media screen and (max-width: 800px){
+      display: block;
+    }
+  }
+
+  .product__filters--products-parent {
+    width: 100%;
+    flex: 1 0;
+
+    & > div {
+      display: grid;
+      column-gap: 24px;
+      row-gap: 72px;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      justify-content: space-between;
+    }
+  }
+}
+

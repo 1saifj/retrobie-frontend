@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Layout from '../../components/Layout';
 import ProductFilters from './components/product-filters';
 import styled from 'styled-components';
 import Loading from '../../components/loading';
-import {Container, Section} from 'bloomer';
+import {Button, Container, Section} from 'bloomer';
 import {useAuth} from '../../network';
 import {capitalize, formatNumberWithCommas} from '../../helpers';
 import {Link} from 'react-router-dom';
@@ -13,10 +13,13 @@ import useFiltersV2 from '../../hooks/useFiltersV2';
 import {Clown, GrimacingEmoji} from '../../constants/icons';
 import {EmptyState} from '../../components';
 import SEOHeader from '../../components/SEOHeader';
+import DrawerWrapper from 'rc-drawer';
 
 export default function ViewSingleBrand(props) {
 
   const brandNameOrId = props.match.params.brand;
+
+  const [isFiltersDrawerOpen, setIsFiltersDrawerOpen] = useState(false);
 
   const api = useAuth();
   const brandFetcher = (url, name)=> api.brands.getSingle(name).then(({data})=> data);
@@ -80,14 +83,22 @@ export default function ViewSingleBrand(props) {
                 <div>
                   <BrandHeader>
                     <div
-                      style={{display: 'flex', justifyContent: 'space-around', alignItems: 'center'}}>
-                      <div>
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        justifyContent: 'space-around',
+                        alignItems: 'center',
+                        gap: '3rem'
+                      }}>
+                      <div style={{
+                        flex: '0 1 150px'
+                      }}>
                         <img style={{borderRadius: "4px"}}
                              src={brandData.logo?.thumbnailUrl}
                              alt={brandData.name}/>
                       </div>
 
-                      <div style={{marginRight: '64px', maxWidth: '70%'}}>
+                      <div style={{flex: '2 0 300px'}}>
                         <h1>About {brandData.name}</h1>
                         <p>
                           {brandData.description.long}
@@ -96,25 +107,53 @@ export default function ViewSingleBrand(props) {
                     </div>
                     <hr/>
                   </BrandHeader>
-                  <div style={{
-                    display: 'flex',
-                    gap: 64,
-                    flexWrap: 'wrap',
-                  }}>
+                  <div className={'product__filters'}>
+                    <div className={'product__filters--desktop'}>
+                      <ProductFilters
+                        // @ts-ignore
+                        products={allProducts}
+                        allCriteria={['sex', 'size', 'price', 'style']}
+                      />
+                    </div>
+                    <div className={'product__filters--mobile'}>
+                      <DrawerWrapper
+                        onClose={()=> setIsFiltersDrawerOpen(false)}
+                        handler={null}
+                        open={isFiltersDrawerOpen}>
+                        <Section>
+                          <Container>
+                            <ProductFilters
+                              // @ts-ignore
+                              products={allProducts}
+                              allCriteria={['sex', 'size', 'price']}
+                            />
 
-                    <ProductFilters
-                      products={allProducts}
-                      allCriteria={['sex', 'size', 'price', 'style']}
-                    />
-                    <div style={{
-                      width: '100%',
-                      flex: '1 0',
-                    }}>
+                            <div>
+                              <Button
+                                style={{width: '100%', marginTop: 24}}
+                                onClick={()=> {
+                                  setIsFiltersDrawerOpen(false)
+                                }}>
+                                Apply filters
+                              </Button>
+                            </div>
+                          </Container>
+                        </Section>
+                      </DrawerWrapper>
+
+                      <Button
+                        onClick={()=> {
+                          setIsFiltersDrawerOpen(true)
+                        }}
+                        style={{marginRight: 12}}>
+                        Filters
+                      </Button>
+                    </div>
+
+                    <div
+                      id={'filter--products'}
+                      className={'product__filters--products-parent'}>
                       <div style={{
-                        display: 'grid',
-                        columnGap: 24,
-                        rowGap: 72,
-                        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
                         justifyContent: renderProducts?.length < 3 ?'start': 'space-between',
                       }}
                       >

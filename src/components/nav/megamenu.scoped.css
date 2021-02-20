@@ -162,6 +162,13 @@
     fill: #232323;
 }
 
+.navbar .link--parent {
+    flex: 1 0 150px;
+    text-align: left;
+    max-width: 100%;
+    margin: 0 0.5rem;
+}
+
 .navbar .nav-toplink {
     display: flex;
     text-transform: uppercase;

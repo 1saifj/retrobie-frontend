@@ -24,6 +24,7 @@
     "mocker-data-generator": "^2.10.0",
     "ms": "^2.1.2",
     "node-sass": "^4.13.1",
+    "posthog-js": "^1.8.7",
     "qs": "^6.9.4",
     "rc-drawer": "^3.2.0",
     "rc-progress": "^2.6.1",
