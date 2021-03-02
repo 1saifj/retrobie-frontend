@@ -185,7 +185,7 @@ const useAuth = function() {
     getAll: async () => (await getAxis()).get('/products/all'),
     getFeatured: async () => (await getAxis()).get('/products/popular'),
     getSingle: async (slug) => (await getAxis()).get(`/products/${slug}`),
-    get: async (id) => (await getAxis()).get(`/products/${id}`),
+    get: async (slug) => (await getAxis()).get(`/products/${slug}`),
     create: (data) => async () => (await getAxis()).post('/products/new', data),
     reIndex: (data)=> async ()=> (await getAxis()).get(`/search/re-index/${data.index}`),
     update: (id, data) => async () => (await getAxis()).put(`/products/${id}/update`, data),

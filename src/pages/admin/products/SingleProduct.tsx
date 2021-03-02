@@ -21,6 +21,13 @@ import defaultHelpers, {
 import {useDispatch} from 'react-redux';
 import useSWR from 'swr/esm/use-swr';
 import {deleteUploadedImageAction} from '../../../state/actions';
+import {BrandType} from '../../../types';
+
+const MESSAGES ={
+  REQUIRED: "This field is required.",
+  TOO_SHORT: "This field is too short.",
+  TOO_LONG: "This field is too long."
+}
 
 const UpdateProductValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
@@ -36,8 +43,12 @@ const UpdateProductValidationSchema = Yup.object().shape({
   sex: Yup.string()
     .oneOf(['M', 'F'])
     .required(),
-  adminStock: Yup.number().optional(),
-  usersStock: Yup.number().optional(),
+  inStock: Yup.number()
+    .required(MESSAGES.REQUIRED)
+    .min(0),
+  inStockAdmin: Yup.number()
+    .required(MESSAGES.REQUIRED)
+    .min(0),
   brand: Yup.string().required(),
   currency: Yup.string().required(),
   originalPrice: Yup.number().required(),
@@ -54,9 +65,12 @@ export default function SingleProduct(props) {
   const [showImageModal, setImageModalShown] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
 
+  const allBrandsFetcher = () => api.brands.getAll().then(({data}) => data);
+  const {data: allBrands} = useSWR<BrandType[]>('/brands/all', allBrandsFetcher);
+
   const productSlug = props.match.params.slug;
 
-  const singleProductFetcher = (key, id) => api.products.get(id).then(({data}) => ({
+  const singleProductFetcher = (key, slug) => api.products.get(slug).then(({data}) => ({
       name: data.name,
       slug: data.slug,
       uuid: data.uuid,
@@ -67,7 +81,7 @@ export default function SingleProduct(props) {
       sizeCountry: data.detail.sizeCountry,
       sex: data.detail.sex,
       inStock: data.inStock,
-      inStockAdmin: data.admin.inStock,
+      inStockAdmin: data.admin?.inStock,
       brand: capitalize(data.brands[0].name),
       images: data.images,
       currency: 'Ksh.',
@@ -126,12 +140,11 @@ export default function SingleProduct(props) {
           validationSchema={UpdateProductValidationSchema}
           initialValues={{
             ...thisProductData,
-            sizeCountry: "UK",
-            brand: capitalize(thisProductData.brand),
+            sizeCountry: 'UK',
           }}
           onSubmit={async (values, {setFieldValue, setSubmitting}) => {
             //fixme
-            setFieldValue('images', thisProductData.images)
+            setFieldValue('images', thisProductData.images);
             // When updating a product, we only want to send details that have changed
             // And ignore the rest
             // Note: arrays always show up
@@ -141,7 +154,7 @@ export default function SingleProduct(props) {
             // Any new categories?
             let noNewCategories = defaultHelpers.arraysEqual(
               thisProductData.categories,
-              values.categories
+              values.categories,
             );
 
             // Delete them from the object if they don't exist
@@ -190,22 +203,22 @@ export default function SingleProduct(props) {
                       setImageModalShown(!showImageModal);
                       setSelectedImages(images);
                     }}
-                    onDeleteUploadedImage={async ({fileId})=> {
+                    onDeleteUploadedImage={async ({fileId}) => {
                       try {
                         await api.products.deleteImage({
                           productId: thisProductData.uuid,
                           fileId,
                         });
-                        await mutate(null, true)
-                        notify('success', "Image deleted")
-                      }catch (e){
+                        await mutate(null, true);
+                        notify('success', 'Image deleted');
+                      } catch (e) {
                         const message = extractErrorMessage(e);
-                        notify('error', message)
+                        notify('error', message);
                       }
                     }}
                     onInit={images => setFieldValue('images', images)}
                     onUpload={(err, {images: all}) => {
-                      notify('success', "Image uploaded successfully.")
+                      notify('success', 'Image uploaded successfully.');
                       if (err) {
                         notify('error', 'Failed to upload one or more of your images');
                         return;
@@ -226,7 +239,7 @@ export default function SingleProduct(props) {
                       <Field>
                         <TextField
                           type={'text'}
-                          label={"This product's name "}
+                          label={'This product\'s name '}
                           placeholder={'Name'}
                           name="name"
                         />
@@ -234,12 +247,26 @@ export default function SingleProduct(props) {
                     </Column>
                     <Column isSize={{desktop: '1/2'}}>
                       <Field>
-                        <TextField
-                          placeholder={'eg. Nike'}
-                          type={'text'}
-                          label={"This product's brand name"}
-                          name={'brand'}
-                        />
+                        <label>
+                          This product's brand name
+                        </label>
+                        <Select
+                          placeholder="eg. Adidas"
+                          options={allBrands?.map(item => ({
+                            label: capitalize(item.name),
+                            value: item.name,
+                          }))}
+                          isOptionSelected={
+                            ({value}) => value.toLowerCase() ===
+                              thisProductData.brand.toLowerCase()
+                          }
+                          defaultValue={thisProductData && {
+                            label: capitalize(thisProductData?.brand),
+                            value: thisProductData?.brand,
+                          }}
+                          onChange={({value}) => setFieldValue('brand', value)}
+                          type="text"
+                          name="brand" />
                       </Field>
                     </Column>
                   </Columns>
@@ -251,7 +278,8 @@ export default function SingleProduct(props) {
                         <TextField
                           prefix={`https://retrobie.com/products/${values.brand}/`}
                           type={'text'}
-                          label={"This product's slug"}
+                          disabled
+                          label={'This product\'s slug'}
                           placeholder={'eg. adidas-superstar'}
                           name="slug"
                         />
@@ -286,7 +314,7 @@ export default function SingleProduct(props) {
                       <label>Categories</label>
                       <CreatableSelect
                         isMulti={true}
-                        placeholder={"eg. Sneakers, Men's shoes`"}
+                        placeholder={'eg. Sneakers, Men\'s shoes`'}
                         onChange={values => {
                           const categories = values.map(item => ({name: item.label}));
                           setFieldValue('categories', categories);
@@ -307,11 +335,11 @@ export default function SingleProduct(props) {
                           },
                           {
                             value: 'mens-shoes',
-                            label: "Men's shoes",
+                            label: 'Men\'s shoes',
                           },
                           {
                             value: 'womens-shoes',
-                            label: "Women's shoes",
+                            label: 'Women\'s shoes',
                           },
                           {
                             value: 'popular',
@@ -334,7 +362,8 @@ export default function SingleProduct(props) {
                     type={'textarea'}
                     rows={5}
                     name={'seo'}
-                    label={'seo'}
+                    label={'SEO description'}
+                    chars={150}
                     componentClass="textarea"
                   />
                   <Editor
@@ -431,7 +460,7 @@ export default function SingleProduct(props) {
                           <label>Are these shoes better suited for men or women?</label>
                           <Select
                             defaultValue={{
-                              value: 'M'
+                              value: 'M',
                             }}
                             value={
                               values.sex && {
@@ -532,7 +561,7 @@ export default function SingleProduct(props) {
                     isLoading={isSubmitting}
                     isColor={'info'}
                     style={{width: '100%'}}
-                    onClick={()=> submitForm()}
+                    onClick={() => submitForm()}
                   >
                     Update
                   </Button>
