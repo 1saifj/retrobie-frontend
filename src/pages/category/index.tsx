@@ -7,7 +7,7 @@ import {CategoryType} from '../../types';
 import {useFiltersV2} from '../../hooks/useFiltersV2/FilterProvider';
 import {formatNumberWithCommas} from '../../helpers';
 import {ProductItem} from '../brands/Brand';
-import { Section, Container, Button } from 'bloomer';
+import {Section, Container, Button, Tag} from 'bloomer';
 import {DeadEyes2, EmptyBox, GrimacingEmoji} from '../../constants/icons';
 import SEOHeader from '../../components/SEOHeader';
 import DrawerWrapper from 'rc-drawer';
@@ -142,11 +142,34 @@ export default function({match}){
                         maxHeight: 250,
                         background: '#f5f5f5',
                       }}>
-
-                      <div style={{height: '100%'}}>
+                      {
+                        !item.isInStock && (
+                          <div style={{position: 'relative'}}>
+                            <Tag
+                              style={{
+                                position: 'absolute',
+                                right: 4,
+                                top: 4,
+                              }}
+                              isColor={'warning'}>
+                              <small>
+                                OUT OF STOCK
+                              </small>
+                            </Tag>
+                          </div>
+                        )
+                      }
+                      <div style={{
+                        height: '100%',
+                        opacity: item.isInStock ? 1 : 0.5
+                      }}>
                         <img src={item.url} alt={item.name} />
                       </div>
-                      <div className={'footer'}>
+                      <div
+                        style={{
+                          opacity: item.isInStock ? 1 : 0.5
+                        }}
+                        className={'footer'}>
                         <p>{item.name}</p>
                         <p>
                           <b>

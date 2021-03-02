@@ -67,11 +67,11 @@ const CreateProductValidationSchema = Yup.object().shape({
   copy: Yup.string()
     .required(MESSAGES.REQUIRED)
     .min(80, 'SEO copy should not be less than 80 chars')
-    .max(120, 'SEO copy should not be more than 120 chars'),
+    .max(150, 'SEO copy should not be more than 150 chars'),
   price: Yup.number()
     .required(MESSAGES.REQUIRED),
   purchasePrice: Yup.number()
-    .moreThan(0, 'Purchase price cannot be 0')
+    .min(0, 'Purchase price cannot be less than 0')
     .required(MESSAGES.REQUIRED),
   productType: Yup.string()
     .required(MESSAGES.REQUIRED)
@@ -88,7 +88,7 @@ const CreateProductValidationSchema = Yup.object().shape({
     .when('productType', {is: 'sneaker', then: Yup.string().required(MESSAGES.REQUIRED)}),
   inStock: Yup.number()
     .required(MESSAGES.REQUIRED)
-    .moreThan(0, 'Stock cannot be 0'),
+    .min(0, 'Stock cannot be less than 0'),
   uuid: Yup.string()
     .required(MESSAGES.REQUIRED),
 });
@@ -310,10 +310,10 @@ const CreateProductModal = props => {
                     <TextField
                       label={<>With suitable keywords, write an <span
                         className="accented">SEO copy</span> for
-                        this product in 80 - 120 chars</>}
+                        this product in 80 - 150 chars</>}
                       placeholder="Copy"
                       type="textarea"
-                      chars={120}
+                      chars={150}
                       name="copy" />
 
                   </Field>

@@ -152,10 +152,38 @@ function useProvideFilters() {
           });
           // and map the resulting array, searching for matching products
         }).map(filteredProduct => allProducts.find(product => product.uuid === filteredProduct.uuid));
-        setFilteredProducts(filtered);
+        filtered.sort((a, b) => {
+
+          if (a.isInStock && !b.isInStock) return -1
+
+          if (a.isInStock && b.isInStock){
+            if (a.name < b.name) return -1;
+
+            if (a.name > b.name) return 1;
+
+            return 0;
+          }
+
+          return 1
+        });
+        setFilteredProducts(filtered)
       }else
         setFilteredProducts([]);
     } else {
+      allProducts?.sort((a, b) => {
+
+        if (a.isInStock && !b.isInStock) return -1
+
+        if (a.isInStock && b.isInStock){
+          if (a.name < b.name) return -1;
+
+          if (a.name > b.name) return 1;
+
+          return 0;
+        }
+
+        return 1
+      });
       // if no criteria are selected,
       // reset the filters
       setFilteredProducts(allProducts)

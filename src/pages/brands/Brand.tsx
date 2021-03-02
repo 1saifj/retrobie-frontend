@@ -3,7 +3,7 @@ import Layout from '../../components/Layout';
 import ProductFilters from './components/product-filters';
 import styled from 'styled-components';
 import Loading from '../../components/loading';
-import {Button, Container, Section} from 'bloomer';
+import {Button, Container, Section, Tag} from 'bloomer';
 import {useAuth} from '../../network';
 import {capitalize, formatNumberWithCommas} from '../../helpers';
 import {Link} from 'react-router-dom';
@@ -74,7 +74,7 @@ export default function ViewSingleBrand(props) {
       <SEOHeader
         description={brandData.description.seo}
         path={`/brand/${brandData.name}`}
-        title={`${brandData.name} shoes`}/>
+        title={`${brandData.name} shoes`} />
       <Section>
         <Container>
           <div>
@@ -88,14 +88,14 @@ export default function ViewSingleBrand(props) {
                         flexWrap: 'wrap',
                         justifyContent: 'space-around',
                         alignItems: 'center',
-                        gap: '3rem'
+                        gap: '3rem',
                       }}>
                       <div style={{
-                        flex: '0 1 150px'
+                        flex: '0 1 150px',
                       }}>
-                        <img style={{borderRadius: "4px"}}
+                        <img style={{borderRadius: '4px'}}
                              src={brandData.logo?.thumbnailUrl}
-                             alt={brandData.name}/>
+                             alt={brandData.name} />
                       </div>
 
                       <div style={{flex: '2 0 300px'}}>
@@ -105,7 +105,7 @@ export default function ViewSingleBrand(props) {
                         </p>
                       </div>
                     </div>
-                    <hr/>
+                    <hr />
                   </BrandHeader>
                   <div className={'product__filters'}>
                     <div className={'product__filters--desktop'}>
@@ -117,7 +117,7 @@ export default function ViewSingleBrand(props) {
                     </div>
                     <div className={'product__filters--mobile'}>
                       <DrawerWrapper
-                        onClose={()=> setIsFiltersDrawerOpen(false)}
+                        onClose={() => setIsFiltersDrawerOpen(false)}
                         handler={null}
                         open={isFiltersDrawerOpen}>
                         <Section>
@@ -131,8 +131,8 @@ export default function ViewSingleBrand(props) {
                             <div>
                               <Button
                                 style={{width: '100%', marginTop: 24}}
-                                onClick={()=> {
-                                  setIsFiltersDrawerOpen(false)
+                                onClick={() => {
+                                  setIsFiltersDrawerOpen(false);
                                 }}>
                                 Apply filters
                               </Button>
@@ -142,8 +142,8 @@ export default function ViewSingleBrand(props) {
                       </DrawerWrapper>
 
                       <Button
-                        onClick={()=> {
-                          setIsFiltersDrawerOpen(true)
+                        onClick={() => {
+                          setIsFiltersDrawerOpen(true);
                         }}
                         style={{marginRight: 12}}>
                         Filters
@@ -154,7 +154,7 @@ export default function ViewSingleBrand(props) {
                       id={'filter--products'}
                       className={'product__filters--products-parent'}>
                       <div style={{
-                        justifyContent: renderProducts?.length < 3 ?'start': 'space-between',
+                        justifyContent: renderProducts?.length < 3 ? 'start' : 'space-between',
                       }}
                       >
                         {
@@ -163,15 +163,37 @@ export default function ViewSingleBrand(props) {
                               key={String(index)}
                               to={`/brands/${brandNameOrId}/${item.slug}`}
                               style={{
-                                flex: '0 1 200px',
                                 maxHeight: 250,
                                 background: '#f5f5f5',
                               }}>
-
-                              <div style={{height: '100%'}}>
-                                <img src={item.url} alt={item.name}/>
+                              {
+                                !item.isInStock && (
+                                  <div style={{position: 'relative'}}>
+                                    <Tag
+                                      style={{
+                                        position: 'absolute',
+                                        right: 4,
+                                        top: 4,
+                                      }}
+                                      isColor={'warning'}>
+                                      <small>
+                                        OUT OF STOCK
+                                      </small>
+                                    </Tag>
+                                  </div>
+                                )
+                              }
+                              <div style={{
+                                height: '100%',
+                                opacity: item.isInStock ? 1 : 0.5
+                              }}>
+                                <img src={item.url} alt={item.name} />
                               </div>
-                              <div className={'footer'}>
+                              <div
+                                style={{
+                                  opacity: item.isInStock ? 1 : 0.5
+                                }}
+                                className={'footer'}>
                                 <p>{item.name}</p>
                                 <p>
                                   <b>
@@ -181,10 +203,10 @@ export default function ViewSingleBrand(props) {
                               </div>
                             </ProductItem>
 
-                          )): (
+                          )) : (
                             <EmptyState
                               style={{
-                                width: '100%'
+                                width: '100%',
                               }}
                               icon={GrimacingEmoji}
                               iconWidth={52}
@@ -203,7 +225,7 @@ export default function ViewSingleBrand(props) {
                 </div>
                 :
                 <div>
-                  <Loading minor/>
+                  <Loading minor />
                 </div>
             }
 

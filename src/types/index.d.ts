@@ -33,6 +33,7 @@ export type FilteredProduct = {
   size: number,
   style: string,
   slug: string,
+  isInStock: boolean
   condition: string,
   uuid: string
   url: string,
