@@ -118,7 +118,7 @@ function Product({ match }) {
     <>
       <SEOHeader
         path={`/product/${currentProduct.slug}`}
-        title={currentProduct.name}
+        title={currentProduct.name + ' for sale in Nairobi'}
         description={currentProduct.description.seo}
       />
 
@@ -178,7 +178,21 @@ function Product({ match }) {
                 title={`${currentProduct.name} shoes in Nairobi`}
               />
               <DescriptionParent>
-                <h1>{currentProduct.name}</h1>
+                <h1>
+                  {currentProduct.name}
+                  {
+                    !isInStock(currentProduct) && (
+                      <Tag
+                        style={{
+                          verticalAlign: "middle",
+                          marginLeft: "8px"
+                        }}
+                        isColor={'warning'}>
+                        Out of stock
+                      </Tag>
+                    )
+                  }
+                </h1>
                 <h2>
                   {
                     `${currentProduct.currency || 'Ksh'
