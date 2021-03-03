@@ -179,11 +179,11 @@ export default function SingleProduct(props) {
                 uploaderId: 'retro-image-uploader-' + productSlug,
               }));
               await mutate(null, true);
-              notify('success', data.message);
+              notify('success', "Updated product successfully.");
             } catch (e) {
               console.error(e);
               const message = extractErrorMessage(e);
-              notify('error', 'An error occurred.', message);
+              notify('error', 'An error occurred. ' + message);
             }
 
             setSubmitting(false);
