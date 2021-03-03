@@ -151,21 +151,21 @@ function useProvideFilters() {
             return String(product[key]) === qsParams[key];
           });
           // and map the resulting array, searching for matching products
-        }).map(filteredProduct => allProducts.find(product => product.uuid === filteredProduct.uuid));
-        filtered.sort((a, b) => {
+        }).map(filteredProduct => allProducts.find(product => product.uuid === filteredProduct.uuid))
+          .sort((a, b) => {
 
-          if (a.isInStock && !b.isInStock) return -1
+            if (a.isInStock && !b.isInStock) return -1;
 
-          if (a.isInStock && b.isInStock){
-            if (a.name < b.name) return -1;
+            if (a.isInStock && b.isInStock) {
+              if (a.name < b.name) return -1;
 
-            if (a.name > b.name) return 1;
+              if (a.name > b.name) return 1;
 
-            return 0;
-          }
+              return 0;
+            }
 
-          return 1
-        });
+            return 1;
+          });
         setFilteredProducts(filtered)
       }else
         setFilteredProducts([]);

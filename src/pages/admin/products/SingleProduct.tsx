@@ -87,6 +87,7 @@ export default function SingleProduct(props) {
       currency: 'Ksh.',
       categories: data.categories,
       originalPrice: data.originalPrice,
+      purchasePrice: data.purchasePrice,
       productType: data.productType,
       isOnOffer: data.isOnOffer,
       idealFor: data.meta.idealFor,
@@ -173,17 +174,23 @@ export default function SingleProduct(props) {
 
             try {
               // @ts-ignore
-              const {data} = await dispatch(api.products.update(thisProductData.uuid, diff));
+              const {data} = await dispatch(api.products.update(thisProductData.uuid, {
+                ...diff,
+                admin: {
+                  inStock: diff.inStockAdmin,
+                  purchasePrice: diff.purchasePrice
+                }
+              }));
               // Delete the now uploaded images
               dispatch(deleteUploadedImageAction({
                 uploaderId: 'retro-image-uploader-' + productSlug,
               }));
               await mutate(null, true);
-              notify('success', data.message);
+              notify('success', "Updated product successfully.");
             } catch (e) {
               console.error(e);
               const message = extractErrorMessage(e);
-              notify('error', 'An error occurred.', message);
+              notify('error', 'An error occurred. ' + message);
             }
 
             setSubmitting(false);

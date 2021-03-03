@@ -33,6 +33,7 @@ export default function({match}){
         slug: item.slug,
         name: item.name,
         price: item.originalPrice,
+        isInStock: item.inStock > 0,
         sex: item.detail.sex,
         size: item.detail.size,
         condition: item.meta.condition,
@@ -138,7 +139,6 @@ export default function({match}){
                       key={String(index)}
                       to={`/product/${item.slug}/`}
                       style={{
-                        flex: '0 1 200px',
                         maxHeight: 250,
                         background: '#f5f5f5',
                       }}>

@@ -9,7 +9,7 @@ import Cart from '../cart';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { useAuth } from '../../hooks';
 import RetroImage from '../image';
-import { ChevronDown } from 'react-feather';
+import {ChevronDown, User} from 'react-feather';
 import Tooltip from '../tooltip';
 import { UserState } from '../../state/reducers/userReducers';
 import useSWR from 'swr/esm/use-swr';
@@ -216,19 +216,35 @@ const MegaMenu = () => {
           {
             !userState?.isLoggedIn ? (
                 <>
-                  <div style={{display: 'flex', gap: 8}}>
-                    <Link to={'/accounts/login'}>
-                      <Button style={{fontWeight: 500}} isColor={'secondary'}>
-                        Log in
-                      </Button>
-                    </Link>
+                <Tooltip
+                  // options
+                  theme={'light'}
+                  interactive={true}
+                  arrow={true}
+                  placement={'bottom'}
+                  content={
+                    <div>
+                      <div>
+                        <h4 style={{margin: "8px 0"}}>Your account</h4>
+                      </div>
+                      <div style={{display: 'flex', gap: 8}}>
+                        <Link to={'/accounts/login'}>
+                          <Button style={{fontWeight: 500}} isColor={'secondary'}>
+                            Log in
+                          </Button>
+                        </Link>
 
-                    <Link to={'/accounts/register'}>
-                      <Button style={{fontWeight: 500}} isColor={'primary'}>
-                        Create a New Account
-                      </Button>
-                    </Link>
-                  </div>
+                        <Link to={'/accounts/register'}>
+                          <Button style={{fontWeight: 500}} isColor={'primary'}>
+                            Create a New Account
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  }
+                >
+                  <User size={24}/>
+                </Tooltip>
                 </>
               ) :
               (
