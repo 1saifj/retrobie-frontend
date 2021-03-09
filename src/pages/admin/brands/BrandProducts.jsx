@@ -25,7 +25,7 @@ function BrandProducts({match}) {
   const brandId = match.params.id;
     //here, brandId is both the key passed for caching and the value passed to 'getBrand'
   useEffect(() => {
-    dispatch(api.brands.getSingle(brandId))
+    dispatch(api.brands.getBrandByUuid({uuid: brandId}))
       .then(({data})=> {
         setThisBrand(data);
       })

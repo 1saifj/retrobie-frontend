@@ -22,17 +22,17 @@ export default function ViewSingleBrand(props) {
   const [isFiltersDrawerOpen, setIsFiltersDrawerOpen] = useState(false);
 
   const api = useAuth();
-  const brandFetcher = (url, name)=> api.brands.getSingle(name).then(({data})=> data);
+  const brandFetcher = (url, slug)=> api.brands.getBrandBySlug({slug}).then(({data})=> data);
   const {data: brandData, error: fetchBrandError} = useSWR<BrandType>(
-    ['/brands/:id', brandNameOrId],
-    brandFetcher
+    [`/brands/${brandNameOrId}`, brandNameOrId],
+    brandFetcher,
   );
 
   const {products: renderProducts} = useFiltersV2();
 
-  const filteredProductsFetcher = (url, name) => api.brands.getFilteredProducts(name).then(({data})=> data);
+  const filteredProductsFetcher = (url, slug) => api.brands.getFilteredProducts({slug}).then(({data})=> data);
   const {data: allProducts, error: fetchProductsError} = useSWR<FilteredProduct[]>([
-    brandData ? `/brands/${brandData.name}/products/filtered` : undefined,
+    brandData ? `/brands/${brandData.slug}/products/filtered` : undefined,
     brandNameOrId,
   ], filteredProductsFetcher);
 

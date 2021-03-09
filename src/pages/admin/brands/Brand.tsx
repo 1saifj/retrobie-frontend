@@ -31,7 +31,7 @@ const BrandLogoParent = styled('div')`
 function AdminBrand({match}) {
     const api = useAuth();
 
-    const getSingleBrand = (id)=> api.brands.getSingle(id).then(({data}) => data)
+    const getSingleBrand = (id)=> api.brands.getBrandByUuid({uuid: id}).then(({data}) => data)
 
     const {data: singleOrderData} = useSWR(['brands/single', match.params.id.toLowerCase()], (url, id)=> getSingleBrand(id));
 

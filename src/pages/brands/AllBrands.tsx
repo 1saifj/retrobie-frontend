@@ -51,7 +51,7 @@ function AllBrandsComponent() {
             <LogosParent>
               {
                 allBrands?.map(brand => (
-                  <Link to={`/brands/${brand.name}`}>
+                  <Link to={`/brands/${brand.slug}`}>
                     <div className={'image--parent'}>
                       <img src={brand.logo ? brand.logo.thumbnailUrl : ''}
                            alt={`${brand.name} logo`} />

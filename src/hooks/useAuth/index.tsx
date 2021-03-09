@@ -158,13 +158,14 @@ const useAuth = function() {
      * Get a single brand
      * @returns {Promise<AxiosResponse<any>>}
      */
-    getSingle: async (name) => (await getAxis()).get(`/brands/${name}`),
+    getBrandBySlug: async ({slug}) => (await getAxis()).get(`/brands/${slug}`),
+    getBrandByUuid: async ({uuid}) => (await getAxis()).get(`/brands/${uuid}`),
     /**
      * Get a single brand's products
      * @returns {Promise<AxiosResponse<any>>}
      */
     getProducts: async (name) => (await getAxis()).get(`/brands/${name}/products`),
-    getFilteredProducts: async (name) => (await getAxis()).get(`/brands/${name}/products/filtered`),
+    getFilteredProducts: async ({slug}) => (await getAxis()).get(`/brands/${slug}/products/filtered`),
     updateImage: (uuid) => async () => (await getAxis()).put(`/brands/images/${uuid}`),
     /**
      * Create a single brand
