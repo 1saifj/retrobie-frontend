@@ -99,6 +99,7 @@ export interface CategoryType {
 export interface BrandType {
   uuid: string;
   name: string
+  slug: string
   logo: ImageType
   description?: DescriptionType
 }

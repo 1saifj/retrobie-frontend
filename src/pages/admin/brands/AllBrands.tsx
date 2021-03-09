@@ -152,7 +152,7 @@ function AllBrandsAdmin(props) {
                                 <Box className='extra'>
                                     <div style={{display: "flex", paddingBottom: '0'}}>
                                         <Button isColor="white"
-                                                onClick={() => props.history.push(`brands/${brand.name}`)}>
+                                                onClick={() => props.history.push(`brands/${brand.slug}`)}>
                                             <Eye style={{marginRight: '8px'}}/>
                                             View Details
                                         </Button>
