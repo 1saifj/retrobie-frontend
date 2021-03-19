@@ -9,7 +9,7 @@
     "@types/node": "^14.14.9",
     "@types/react": "^16.14.1",
     "@types/react-dom": "^16.9.10",
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "bloomer": "^0.6.5",
     "bulma": "^0.8.2",
     "bulma-badge": "^3.0.1",
