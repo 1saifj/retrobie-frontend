@@ -3,11 +3,11 @@ dotenv.config();
 
 class Env {
   getApiHost() {
-    return this.isDev()
+    return this.isStaging()
+      ? 'https://api.staging.retrobie.com/api'
+      : this.isDev()
       ? 'http://localhost:2500/api'
-      : this.isStaging()
-        ? 'https://api.staging.retrobie.com/api'
-        : 'https://api.retrobie.com/api';
+      : 'https://api.retrobie.com/api';
   }
 
   getApiVersion() {
@@ -15,7 +15,7 @@ class Env {
   }
 
   getClientBaseUrl() {
-    return "https://retrobie.com"
+    return 'https://retrobie.com';
   }
 
   getApiBaseUrl() {
@@ -38,8 +38,8 @@ class Env {
     );
   }
 
-  isProduction(){
-    return process.env.NODE_ENV === 'production'
+  isProduction() {
+    return process.env.NODE_ENV === 'production';
   }
 }
 
