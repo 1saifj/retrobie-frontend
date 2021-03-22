@@ -55,8 +55,9 @@ const RetroImage = function (
           }
 
           // if solid color placeholder is required
-          if (loading) {
-            if (solidColor) {
+          if (solidColor) {
+            // show a simple square as the loading component
+            if (loading) {
               return (
                 <div
                   style={{
@@ -68,10 +69,9 @@ const RetroImage = function (
                 />
               );
             }
-
-            return <span>Loading...</span>
+            // otherwise, the component will automatically show a scaled down
+            // placeholder image
           }
-
 
           if (srcSet) {
             return (
