@@ -1,7 +1,8 @@
 import React, {CSSProperties} from 'react';
 import Image from 'react-progressive-graceful-image';
+import {DeadEyes2} from '../../constants/icons';
 
-export default function (
+const RetroImage = function (
   {
     src,
     srcSet,
@@ -40,9 +41,22 @@ export default function (
         srcSetData={srcSet}
       >
         {(src, loading, srcSetData) => {
+
+          if (!src){
+            return (
+              <div style={{textAlign: 'center'}}>
+                <img
+                  style={{width: 48}}
+                  src={DeadEyes2}
+                  alt={'error'} />
+                  <p>Could not load this image</p>
+              </div>
+            );
+          }
+
           // if solid color placeholder is required
-          if (solidColor) {
-            if (loading) {
+          if (loading) {
+            if (solidColor) {
               return (
                 <div
                   style={{
@@ -54,6 +68,8 @@ export default function (
                 />
               );
             }
+
+            return <span>Loading...</span>
           }
 
 
@@ -84,3 +100,5 @@ export default function (
 
   );
 }
+
+export default RetroImage;
