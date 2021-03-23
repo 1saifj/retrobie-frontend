@@ -41,7 +41,6 @@ For instance:
     --color-border-gray: #CBCBD6;
 }
 ```
-
 - [ ] TODO
 
 ## Deployment
@@ -62,5 +61,6 @@ up-to-date.
 
 For that reason, it's important to add any new (non-dynamic)
 routes to `routes.json`
+
 
 - [ ] TODO
