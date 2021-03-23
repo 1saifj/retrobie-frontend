@@ -1,6 +1,14 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+/**
+ * The NODE_ENV attribute is set automatically by React. It can only be 'production', 'test' or 'development'.
+ * As such, it's not necessary to set these values in their respective environments.
+ *
+ * Since React doesn't allow us to change these values, and we need a way to identify the 'staging'
+ *  environment, the REACT_APP_ENV variable is used for that purpose.
+ */
+
 class Env {
   getApiHost() {
     return this.isStaging()
@@ -22,8 +30,11 @@ class Env {
     return `${this.getApiHost()}/${this.getApiVersion()}`;
   }
 
+  /**
+   * Get the current environment. It returns NODE_ENV if REACT_APP_ENV is not set
+   */
   getEnvironment() {
-    return process.env.REACT_APP_ENV;
+    return process.env.REACT_APP_ENV || process.env.NODE_ENV;
   }
 
   isDev() {

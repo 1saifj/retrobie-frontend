@@ -104,6 +104,23 @@ export interface BrandType {
   description?: DescriptionType
 }
 
+export interface ProductTypeType {
+  uuid: string;
+  name: string;
+  options: ProductOption[]
+}
+
+export interface ProductOption {
+  uuid: string;
+  name: string;
+  values: ProductOptionValue[]
+}
+
+export interface ProductOptionValue {
+  uuid: string;
+  value: string
+}
+
 export type DeliveryType = {
   address: AddressType;
   cost: number;

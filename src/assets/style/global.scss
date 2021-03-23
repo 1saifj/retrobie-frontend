@@ -315,6 +315,7 @@ label, p.label {
 p.help {
   color: #666666;
   margin: 4px 0 4px;
+  line-height: normal;
 }
 
 //https://codepen.io/aaroniker/pen/ZEYoxEY
@@ -758,7 +759,7 @@ b {
 
 .modal-content, .modal-card {
   & > div {
-    padding: 48px;
+    padding: 12px;
   }
 }
 

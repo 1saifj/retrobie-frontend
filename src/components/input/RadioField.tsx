@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import {Radio} from 'bloomer';
+import {useField} from 'formik';
 
 const RadioParent = styled.div<{bordered?: boolean; selected?: boolean}>`
   display: flex;
@@ -34,7 +35,7 @@ const RadioGroupParent = styled.div`
   flex-wrap: wrap;
 
   & > div {
-    flex: 1 1 100px;
+    flex: 1 1 50px;
   }
 `
 
@@ -48,7 +49,7 @@ export default function RadioField(
     inline,
     options
   }: {
-    onChange: Function,
+    onChange?: (value: string, index?: number)=> void,
     name?: string,
     bordered?: boolean,
     isGroup?: boolean,
@@ -57,12 +58,18 @@ export default function RadioField(
     options: Array<{label: string, value: string}>
   }) {
 
+  const [field] = useField(name);
+
   const [selectedGroupItem, setSelectedGroupItem] = useState('');
 
   if (!isGroup)
     return (
       <>
-        <RadioParent onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}>
+        <RadioParent
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              onChange?.(e.target.value)
+              field.onChange(e);
+            }}>
           <Radio name={name} value={value} />
         </RadioParent>
       </>
@@ -74,17 +81,24 @@ export default function RadioField(
         style={{ display: inline ? 'flex' : 'block' }}
       >
         {
-          options?.map(item => (
+          options?.map((item, index) => (
             <>
               <div>
                 <RadioParent
                   bordered={bordered}
                   selected={selectedGroupItem === item.value}
-                  onClick={() => {
+                  onClick={(e) => {
                     setSelectedGroupItem(item.value);
                     if (typeof onChange === 'function') {
-                      onChange(item.value);
+                      onChange(item.value, index);
                     }
+                    field.onChange({
+                      ...e,
+                      target: {
+                        ...e.target,
+                        name
+                      }
+                    })
                   }}
                 >
                   <Radio

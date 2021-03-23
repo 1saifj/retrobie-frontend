@@ -458,6 +458,7 @@ export default function Shipping(props) {
                           inline
                           bordered
                           onChange={value => {
+                            // @ts-ignore
                             setPayNowOrOnDelivery(value);
                             setCompletedOrder({
                               payNowOrOnDelivery,

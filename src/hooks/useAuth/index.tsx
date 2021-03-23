@@ -90,6 +90,7 @@ const useAuth = function() {
           return `Bearer ${accessToken}`;
         }
       }
+      console.warn("Missing access or refresh token. Authenticated requests will not succeed.")
     }
 
     return undefined;
@@ -134,6 +135,10 @@ const useAuth = function() {
     initiateMpesaOnlinePayment: data => async () =>
       (await getAxis()).post('/payments/mpesa/pay-online/initiate', data),
   };
+
+  const productTypes = {
+    getAll: async ()=> (await getAxis()).get('/product-type')
+  }
 
 
   const imageKit = {
@@ -235,6 +240,7 @@ const useAuth = function() {
     orders,
     payments,
     products,
+    productTypes,
     ping,
   };
 };
