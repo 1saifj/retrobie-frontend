@@ -2,6 +2,22 @@ import React from 'react';
 import {Form, Formik, Field, FieldArray} from 'formik';
 import styled from 'styled-components';
 import {Button} from 'bloomer';
+import * as Yup from 'yup';
+import {MIN, REQUIRED} from '../validator/messages';
+
+const productTypeOptionValueSchema = Yup.object().shape({
+  value: Yup.string().required(REQUIRED),
+});
+
+const ProductTypeOptionSchema = Yup.object().shape({
+  name: Yup.string().required(REQUIRED),
+  values: Yup.array().of(productTypeOptionValueSchema).min(1, MIN(1)),
+});
+
+const AddProductTypeValidationSchema = Yup.object().shape({
+  name: Yup.string().required(REQUIRED).min(2, MIN(2)),
+  options: Yup.array().of(ProductTypeOptionSchema).min(1, MIN(1)),
+});
 
 export default function AddProductType(props) {
   return (
@@ -22,6 +38,7 @@ export default function AddProductType(props) {
           await new Promise(r => setTimeout(r, 500));
           alert(JSON.stringify(values, null, 2));
         }}
+        validationSchema={AddProductTypeValidationSchema}
       >
         {({errors, touched, isValidating, values}) => (
           <Form className="product-type-form">
