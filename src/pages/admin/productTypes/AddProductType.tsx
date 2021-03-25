@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import {Button} from 'bloomer';
 import * as Yup from 'yup';
 import {MIN, REQUIRED} from '../validator/messages';
+import {TextField} from '../../../components/input';
 
 const productTypeOptionValueSchema = Yup.object().shape({
   value: Yup.string().required(REQUIRED),
@@ -40,22 +41,24 @@ export default function AddProductType(props) {
         }}
         validationSchema={AddProductTypeValidationSchema}
       >
-        {({errors, touched, isValidating, values}) => (
+        {({values, isSubmitting, isValid}) => (
           <Form className="product-type-form">
-            <label htmlFor="name">Product Type Name</label>
-            <Field name="name" id="name" placeholder="eg Sneakers" style={{width: '100%'}} />
-            {errors.name && touched.name ? <div className="formErrored">{errors.name}</div> : null}
+            <TextField
+              name="name"
+              type="text"
+              label={<label htmlFor="name">Product Type Name</label>}
+              placeholder="eg Sneakers"
+            />
             <h5>Product Type Options</h5>
             <FieldArray name="options">
               {({insert, remove, push}) => (
                 <>
                   <div className="option-values">
                     {values.options.length > 0 &&
-                      values.options.map((_, index) => (
-                        <div key={index}>
-                          <label htmlFor={`options.${index}.name`}>Option Name</label>
-                          <Field
+                          <TextField
                             name={`options.${index}.name`}
+                            type="text"
+                            label={<label htmlFor={`options.${index}.name`}>Option Name</label>}
                             placeholder="eg Size"
                             type="text"
                             id={`options.${index}.name`}
@@ -67,20 +70,18 @@ export default function AddProductType(props) {
                               <>
                                 <div className="option-value">
                                   {values.options[index].values.length > 0 &&
-                                    values.options[index].values.map((_, valueIndex) => (
-                                      <div key={valueIndex}>
-                                        <label
-                                          htmlFor={`options.${index}.values.${valueIndex}.value`}
-                                        >
-                                          Value
-                                        </label>
-                                        <Field
-                                          name={`options.${index}.values.${valueIndex}.value`}
-                                          placeholder="eg 42"
-                                          type="text"
-                                          id={`options.${index}.values.${valueIndex}.value`}
-                                          className="options-input"
-                                        />
+                                            <TextField
+                                              name={`options.${index}.values.${valueIndex}.value`}
+                                              type="text"
+                                              label={
+                                                <label
+                                                  htmlFor={`options.${index}.values.${valueIndex}.value`}
+                                                >
+                                                  Value
+                                                </label>
+                                              }
+                                              placeholder="eg 42"
+                                            />
 
                                         <Button onClick={() => remove(valueIndex)}>
                                           Delete Value
