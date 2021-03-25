@@ -1,39 +1,50 @@
-import React, {useEffect, useState} from 'react';
+import React, {ReactElement, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import AnimatedLogo from '../../components/logo/AnimatedLogo';
-import {useHistory} from 'react-router';
+import {useHistory, useLocation, useParams} from 'react-router';
 import {ChevronDown} from 'react-feather';
+
+type RouteItem = {
+  name: string;
+  route: string;
+  icon: ReactElement
+  isActive: boolean;
+}
 
 const Sidebar = props => {
   const {items: sidebarItems} = props;
   const history = useHistory();
   const [currentActive, setCurrentActive] = useState(0);
-  const [sidebarRoutes, setSidebarRoutes] = useState(sidebarItems);
+  const [sidebarRoutes, setSidebarRoutes] = useState<RouteItem[]>(sidebarItems);
 
   useEffect(() => {
-    const active = localStorage.getItem('sidebar_active');
-    if (active !== undefined) {
-      setCurrentActive(Number(active));
-      changeActiveItem(null, Number(active));
-    }
-  }, []);
+    setActiveItem()
+  }, [currentActive]);
 
-  function clearOtherSidebarItems(index) {
-    let clonedItems = [...sidebarRoutes];
-    clonedItems = clonedItems.map((item, itemIndex) => {
-      if (index !== itemIndex) item.isActive = false;
-      return item;
-    });
-    return clonedItems;
+  function changeActiveItem(item) {
+    if (item) {
+      history.push(item.route);
+      setActiveItem();
+    }
   }
 
-  function changeActiveItem(item, index) {
-    if (item) history.push(item.route);
-
-    const clearedItems = clearOtherSidebarItems(index);
-    clearedItems[index].isActive = !clearedItems[index].isActive;
-    setSidebarRoutes(clearedItems);
+  function setActiveItem(){
+    // first split the url using the string 'dashboard'
+    const locationWithoutDashboard = history.location.pathname.split('dashboard');
+    // and drop the first part of the array
+    locationWithoutDashboard.shift();
+    // then pick the only remaining item in the array
+    // and split it using the forward slash.
+    // the resulting array will contain an empty string and the name of the route eg. brands, categories, etc.
+    const activeSidebarItem = locationWithoutDashboard[0].split("/")[1]
+    // if there is no name, we're probably dealing with the dashboard
+    if (!activeSidebarItem){
+      setCurrentActive(0);
+    }else {
+      const activeSidebarIndex = sidebarRoutes.findIndex(item => item.name.toLowerCase() === activeSidebarItem.toLowerCase());
+      setCurrentActive(activeSidebarIndex);
+    }
   }
 
   return (
@@ -60,11 +71,9 @@ const Sidebar = props => {
               sidebarRoutes.map((item, index) => {
                 return (
                   <SidebarItem
-                    isActive={item.isActive}
+                    isActive={currentActive === index}
                     key={item.name}
-                    onClick={() => {
-                      changeActiveItem(item, index);
-                    }}
+                    onClick={() => changeActiveItem(item)}
                   >
                     {item.icon}
                     <p>{item.name}</p>

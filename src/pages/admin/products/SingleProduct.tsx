@@ -22,6 +22,8 @@ import {useDispatch} from 'react-redux';
 import useSWR from 'swr/esm/use-swr';
 import {deleteUploadedImageAction} from '../../../state/actions';
 import {BrandType} from '../../../types';
+import {EmptyState} from '../../../components';
+import {DeadEyes2} from '../../../constants/icons';
 
 const MESSAGES ={
   REQUIRED: "This field is required.",
@@ -97,7 +99,17 @@ export default function SingleProduct(props) {
       sportsType: data.meta.sportsType,
     }
   ));
-  const {data: thisProductData, mutate} = useSWR([`/product/${productSlug}`, productSlug], singleProductFetcher);
+  const {data: thisProductData, error: fetchProductError, mutate} = useSWR([`/product/${productSlug}`, productSlug], singleProductFetcher);
+
+  if (fetchProductError){
+    return (
+      <EmptyState
+        icon={DeadEyes2}
+        centerAlign={true}
+        message={'An error occurred while fetching this product: ' + fetchProductError}
+        title={'Could not fetch product'} />
+    );
+  }
 
   if (!thisProductData) {
     return (

@@ -19,7 +19,9 @@ toast.configure({
     draggable: false,
 });
 
-if (env.isProduction()){
+// Make sure to check the current environment is not staging
+// Vercel/React at times erroneously injects the 'production' key into NODE_ENV
+if (env.isProduction() && !env.isStaging()){
   posthog.init('sI0h0X9GF-eLhMUhO1xvl998gfRStpLYm3dlVRDiFLQ', {
     api_host: 'https://app.posthog.com',
   });

@@ -22,9 +22,11 @@ export default function(
     options,
     filterOption,
     error,
-    onBlur
+    onBlur,
+    label
   }:
   {
+    label?: string
     isAsync: boolean,
     placeholder: string,
     onChange: ({value, label}: OptionType)=> void,
@@ -53,6 +55,7 @@ export default function(
   if (isAsync) {
     return (
       <div className={error && 'has-error'}>
+        <label>{label}</label>
         <AsyncSelect
           onBlur={onBlur}
           styles={customStyles}
@@ -75,6 +78,7 @@ export default function(
 
   return (
     <div className={error &&'has-error'}>
+      <label>{label}</label>
       <Select
         onBlur={onBlur}
         styles={customStyles}

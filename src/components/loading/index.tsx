@@ -32,7 +32,7 @@ function Loading(
 
     useEffect(() => {
         setMounted(true);
-    });
+    }, []);
     return (
         <>
             <Transition in={mounted} timeout={100}>

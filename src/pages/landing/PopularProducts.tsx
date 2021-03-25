@@ -1,24 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import Loading from '../../components/loading';
-import {EmptyState} from '../../components';
-import errorIcon from '../../assets/images/icons/error-text.svg';
+import {EmptyState, RetroImage} from '../../components';
 import { useAuth } from '../../network';
-import { useDispatch } from 'react-redux';
 import useSWR from 'swr';
 import ServerError from '../../assets/images/vectors/dead.svg';
-import {Button} from 'bloomer';
-import Layout from '../../components/Layout';
 import {ProductType} from '../../types';
 
 function PopularProducts() {
   const api = useAuth();
-  const dispatch = useDispatch();
 
   const featuredProductsFetcher = () => api.products.getFeatured().then(({ data }) => data);
   const { data: featuredProducts, error } = useSWR<ProductType[]>('/products/featured', featuredProductsFetcher)
-
 
   if (error) {
     return (
@@ -49,7 +43,10 @@ function PopularProducts() {
             <Link to={`/product/${product.slug}`} key={product.name}>
               <BrandParent>
                 <div className={'image'}>
-                  <img src={product.images[0].thumbnailUrl} alt={'featured image'} />
+                  <RetroImage
+                    src={product.images?.[0].thumbnailUrl}
+                    alt={'featured image'}
+                  />
                 </div>
                 <div className={'footer'}>
                   <p>{product.name}</p>

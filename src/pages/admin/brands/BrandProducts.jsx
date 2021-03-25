@@ -6,6 +6,7 @@ import CreateProductModal from '../products/modals/CreateProductModal';
 import Loading from '../../../components/loading';
 import {useAuth} from '../../../network';
 import {useDispatch} from 'react-redux';
+import useSWR from 'swr/esm/use-swr';
 
 
 function BrandProducts({match}) {
@@ -21,51 +22,48 @@ function BrandProducts({match}) {
     return data;
 }*/
 
-  const [thisBrand, setThisBrand] = useState({});
   const brandId = match.params.id;
-    //here, brandId is both the key passed for caching and the value passed to 'getBrand'
-  useEffect(() => {
-    dispatch(api.brands.getBrandByUuid({uuid: brandId}))
-      .then(({data})=> {
-        setThisBrand(data);
-      })
-  }, []);
+
+  const thisBrandFetcher = () => api.brands.getBrandByUuid({uuid: brandId});
+
+  const {data: thisBrand} = useSWR(`/brands/${brandId}`, thisBrandFetcher);
+  const [isCreateBrandModalActive, setCreateBrandModalActive] = useState(false);
 
 
-    const [isCreateBrandModalActive, setCreateBrandModalActive] = useState(false);
+  return (
+    <>
+      <div>
+        Brand Products
+      </div>
 
-    return (
-        <>
+      <div style={{background: 'white', height: '100%'}}>
+        <EmptyState
+          title="There's nothing here yet."
+          icon={PageNotFound}
+          style={{height: '80vh', display: 'grid', alignItems: 'center'}}
+          message="Looks like this brand doesn't have any products uploaded yet."
+          iconWidth={48}
+          prompt={() => (
             <div>
-                Brand Products
+              <CreateProductModal
+                isActive={isCreateBrandModalActive}
+                onClose={() => setCreateBrandModalActive(false)}
+              />
+              <Button style={{
+                padding: 0,
+                background: 'transparent',
+                borderBottom: '1px solid grey',
+              }} isColor="light" onClick={() => {
+                setCreateBrandModalActive(true);
+              }}>
+                Upload a new product
+              </Button>
             </div>
-
-            <div style={{background: 'white', height: "100%"}}>
-                <EmptyState title="There's nothing here yet."
-                            icon={PageNotFound}
-                            style={{height: '80vh', display: 'grid', alignItems: 'center'}}
-                            message="Looks like this brand doesn't have any products uploaded yet."
-                            prompt={() => (
-                                <div>
-                                    <CreateProductModal isActive={isCreateBrandModalActive}
-                                                        brand={thisBrand}
-                                                        onClose={() => setCreateBrandModalActive(false)}
-                                    />
-                                    <Button style={{
-                                        padding: 0,
-                                        background: 'transparent',
-                                        borderBottom: '1px solid grey'
-                                    }} isColor="light" onClick={() => {
-                                        setCreateBrandModalActive(true)
-                                    }}>
-                                        Upload a new product
-                                    </Button>
-                                </div>
-                            )}
-                />
-            </div>
-        </>
-    )
+          )}
+        />
+      </div>
+    </>
+  );
 }
 
 export default BrandProducts;
