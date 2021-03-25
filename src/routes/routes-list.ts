@@ -34,6 +34,7 @@ const AdminLogin = lazy(() => import('../pages/admin/login'));
 const AdminHome = lazy(() => import('../pages/admin/home'));
 const AdminProductTypesHome = lazy(() => import('../pages/admin/productTypes'));
 const AdminProductTypesCreate = lazy(() => import('../pages/admin/productTypes/AddProductType'));
+const AdminProductTypesList = lazy(() => import('../pages/admin/productTypes/ListProductTypes'));
 const AdminProductsHome = lazy(() => import('../pages/admin/products'));
 const AdminAllProducts = lazy(() => import('../pages/admin/products/AllProducts'));
 const AdminCreateProduct = lazy(() => import('../pages/admin/products/AddProduct'));
@@ -260,6 +261,11 @@ const adminRoutes = [
     path: '/company/admin/dashboard/product-types/create',
     exact: true,
     component: AdminProductTypesCreate,
+  },
+  {
+    path: '/company/admin/dashboard/product-types/all',
+    exact: true,
+    component: AdminProductTypesList,
   },
   {
     path: '/company/admin/dashboard/products',
