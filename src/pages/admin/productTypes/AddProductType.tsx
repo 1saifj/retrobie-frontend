@@ -23,7 +23,7 @@ const AddProductTypeValidationSchema = Yup.object().shape({
 export default function AddProductType(props) {
   return (
     <AddProductTypeSyled>
-      <h4>Create New Product Type</h4>
+      <h4 style={{textAlign: 'center'}}>Create New Product Type</h4>
 
       <Formik
         initialValues={{
@@ -51,10 +51,12 @@ export default function AddProductType(props) {
             />
             <h5>Product Type Options</h5>
             <FieldArray name="options">
-              {({insert, remove, push}) => (
+              {({remove, push}) => (
                 <>
                   <div className="option-values">
                     {values.options.length > 0 &&
+                      values.options.map((_, index, optionsArray) => (
+                        <div key={index} className="option-values__parent">
                           <TextField
                             name={`options.${index}.name`}
                             type="text"
@@ -66,10 +68,14 @@ export default function AddProductType(props) {
                           />
                           <h6>Option Values</h6>
                           <FieldArray name={`options.${index}.values`}>
-                            {({insert, remove, push}) => (
+                            {({remove, push}) => (
                               <>
-                                <div className="option-value">
+                                <div className="option-values__wrapper">
                                   {values.options[index].values.length > 0 &&
+                                    values.options[index].values.map(
+                                      (_, valueIndex, valuesArray) => (
+                                        <div key={valueIndex} className="option-values__value">
+                                          <div className="option-values__group">
                                             <TextField
                                               name={`options.${index}.values.${valueIndex}.value`}
                                               type="text"
@@ -82,31 +88,52 @@ export default function AddProductType(props) {
                                               }
                                               placeholder="eg 42"
                                             />
-
-                                        <Button onClick={() => remove(valueIndex)}>
-                                          Delete Value
-                                        </Button>
-                                      </div>
-                                    ))}
+                                            <Button
+                                              isColor="danger"
+                                              onClick={() => remove(valueIndex)}
+                                              disabled={valuesArray.length <= 1}
+                                            >
+                                              X
+                                            </Button>
+                                          </div>
+                                        </div>
+                                      )
+                                    )}
                                 </div>
-                                <Button onClick={() => push({value: ''})}>Add Another Value</Button>
+                                <Button
+                                  isColor="info"
+                                  className="button--okay"
+                                  onClick={() => push({value: ''})}
+                                >
+                                  Add Another Value
+                                </Button>
                               </>
                             )}
                           </FieldArray>
-
-                          <div>
-                            <Button onClick={() => remove(index)}>Delete This Option</Button>
-                          </div>
+                          <Button
+                            disabled={optionsArray.length <= 1}
+                            isColor="danger"
+                            onClick={() => remove(index)}
+                          >
+                            Delete This Option
+                          </Button>
                         </div>
                       ))}
                   </div>
-                  <Button onClick={() => push({name: '', values: [{value: ''}]})}>
+                  <Button isColor="info" onClick={() => push({name: '', values: [{value: ''}]})}>
                     Add New Option
                   </Button>
                 </>
               )}
             </FieldArray>
-            <Button type="submit">Create Product Type</Button>
+            <Button
+              isColor="success"
+              isLoading={isSubmitting}
+              disabled={isSubmitting || !isValid}
+              type="submit"
+            >
+              Create Product Type
+            </Button>
           </Form>
         )}
       </Formik>
@@ -115,22 +142,72 @@ export default function AddProductType(props) {
 }
 
 const AddProductTypeSyled = styled.div`
-  & .product-type-name {
+  .button {
+    padding: 0.5rem 1rem;
+    font-size; 0.8rem;
+  }
+
+  .product-type-name {
     display: flex;
     flex-direction: column;
   }
 
-  & .options-input {
+  .product-type-form {
+    button {
+      margin: 1rem;
+    }
+  }
+
+  .options-input {
     width: 100%;
   }
 
-  & .formErrored {
-    color: red;
-  }
-
-  & .options {
+  .option-values {
     border: 1px solid black;
     padding: 1rem;
     margin-bottom: 1rem;
+
+    &__group {
+      display: grid;
+      grid-template-columns: 80% 1fr;
+      grid-template-rows: repeat(3, 2.25rem);
+      button {
+        padding: 0.25rem 0.75rem;
+        margin: 0;
+        margin-left: 1rem;
+        grid-column: 2 / -1;
+        grid-row: 2 / span 1;
+      }
+    }
+
+    &__parent {
+      display: flex;
+      flex-direction: column;
+      border-bottom: 1px dashed rgba(var(--color-primary), 0.5);
+
+      & > .button {
+        margin 0.5rem 1rem;
+        min-width: 50%;
+        align-self: center;
+      }
+    }
+
+    &__wrapper {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      border: 1px dashed rgba(0, 0, 0, 0.7);
+      padding: 1rem;
+      margin-bottom: 1rem;
+
+      & > * {
+        margin: 0 1rem;
+        margin-bottom: 0.75rem;
+      }
+    }
+
+    &__value {
+      flex: 1 1 30%;
+    }
   }
 `;
