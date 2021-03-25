@@ -1,10 +1,13 @@
 import React from 'react';
-import {Form, Formik, Field, FieldArray} from 'formik';
+import {Form, Formik, FieldArray} from 'formik';
 import styled from 'styled-components';
 import {Button} from 'bloomer';
 import * as Yup from 'yup';
 import {MIN, REQUIRED} from '../validator/messages';
 import {TextField} from '../../../components/input';
+import {useAuth, useNotify} from '../../../hooks';
+import {useDispatch} from 'react-redux';
+import {extractErrorMessage} from '../../../helpers';
 
 const productTypeOptionValueSchema = Yup.object().shape({
   value: Yup.string().required(REQUIRED),
@@ -21,6 +24,10 @@ const AddProductTypeValidationSchema = Yup.object().shape({
 });
 
 export default function AddProductType(props) {
+  const api = useAuth();
+  const dispatch = useDispatch();
+  const notify = useNotify();
+
   return (
     <AddProductTypeSyled>
       <h4 style={{textAlign: 'center'}}>Create New Product Type</h4>
@@ -35,9 +42,18 @@ export default function AddProductType(props) {
             },
           ],
         }}
-        onSubmit={async values => {
-          await new Promise(r => setTimeout(r, 500));
-          alert(JSON.stringify(values, null, 2));
+        onSubmit={async (submitValues, {setSubmitting}) => {
+          setSubmitting(true);
+          const {data, ...rest} = await dispatch<any>(api.productTypes.create(submitValues));
+
+          if (data) {
+            setSubmitting(false);
+            notify.success(`Successfully created ${submitValues.name}.`);
+          } else {
+            setSubmitting(false);
+            const message = extractErrorMessage(rest);
+            notify.error(message || `Could not create ${submitValues.name}.`);
+          }
         }}
         validationSchema={AddProductTypeValidationSchema}
       >
@@ -62,9 +78,6 @@ export default function AddProductType(props) {
                             type="text"
                             label={<label htmlFor={`options.${index}.name`}>Option Name</label>}
                             placeholder="eg Size"
-                            type="text"
-                            id={`options.${index}.name`}
-                            className="options-input"
                           />
                           <h6>Option Values</h6>
                           <FieldArray name={`options.${index}.values`}>

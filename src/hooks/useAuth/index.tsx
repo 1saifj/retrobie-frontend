@@ -8,15 +8,15 @@ import jwtDecode from 'jwt-decode';
 
 type TOTPRequestBody = {
   email: string;
-  phoneNumber?: string
-  purpose: 'verify-account' | 'reset-password',
-  clientStrategy: 'email' | 'sms' | 'api'
-}
+  phoneNumber?: string;
+  purpose: 'verify-account' | 'reset-password';
+  clientStrategy: 'email' | 'sms' | 'api';
+};
 
 function isExpiredOrCloseToExpiry(token: string) {
   const decoded: AuthenticatedUser = jwtDecode(token);
-  const expiryTime =  decoded.exp * 1000;
-  return expiryTime < 0 || (expiryTime - Date.now() < 60 * 1000);
+  const expiryTime = decoded.exp * 1000;
+  return expiryTime < 0 || expiryTime - Date.now() < 60 * 1000;
 }
 
 // when we
@@ -29,8 +29,7 @@ let gettingTokenPromise = null;
  * NOTE: Non-idempotent requests (POST, PUT, etc) are thunks. GET requests are normal
  * async functions
  */
-const useAuth = function() {
-
+const useAuth = function () {
   const dispatch = useDispatch();
   const userState: UserState = useSelector((state: RootStateOrAny) => state.user);
 
@@ -43,22 +42,29 @@ const useAuth = function() {
     // if there is no other request underway
     if (gettingTokenPromise == null) {
       // create and assign a new request
-      gettingTokenPromise = axios.post(`${env.getApiBaseUrl()}/auth/session/refresh`, {
-        expiredToken,
-      }, {
-        headers: {
-          Authorization: `Bearer ${refreshToken}`,
-        },
-      }).then(({data}) => {
-        // set the
-        gettingTokenPromise = null;
-        dispatch(refreshSessionAction({accessToken: data.accessToken}));
-        return Promise.resolve(data);
-      }).catch(err => {
-        gettingTokenPromise = null;
-        // todo?
-        throw err;
-      });
+      gettingTokenPromise = axios
+        .post(
+          `${env.getApiBaseUrl()}/auth/session/refresh`,
+          {
+            expiredToken,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${refreshToken}`,
+            },
+          }
+        )
+        .then(({data}) => {
+          // set the
+          gettingTokenPromise = null;
+          dispatch(refreshSessionAction({accessToken: data.accessToken}));
+          return Promise.resolve(data);
+        })
+        .catch(err => {
+          gettingTokenPromise = null;
+          // todo?
+          throw err;
+        });
     }
 
     // otherwise, return the underway request
@@ -90,45 +96,46 @@ const useAuth = function() {
           return `Bearer ${accessToken}`;
         }
       }
-      console.warn("Missing access or refresh token. Authenticated requests will not succeed.")
+      console.warn('Missing access or refresh token. Authenticated requests will not succeed.');
     }
 
     return undefined;
   }
 
-
-  const getAxis: () => Promise<AxiosInstance> =
-    async () => {
-      const bearer = await getBearer();
-      const axis = axios.create({
-        baseURL: env.getApiBaseUrl(),
-        headers: {
-          ...(bearer && {
-            Authorization: bearer
-          })
-        },
-      });
-      axis.interceptors.response.use(
-        value => value,
-        err => {
-          if (err.response?.status === 401) {
-            console.log('Got 401 error');
-          }
-          throw err;
-        },
-      );
-      return axis;
-    };
+  const getAxis: () => Promise<AxiosInstance> = async () => {
+    const bearer = await getBearer();
+    const axis = axios.create({
+      baseURL: env.getApiBaseUrl(),
+      headers: {
+        ...(bearer && {
+          Authorization: bearer,
+        }),
+      },
+    });
+    axis.interceptors.response.use(
+      value => value,
+      err => {
+        if (err.response?.status === 401) {
+          console.log('Got 401 error');
+        }
+        throw err;
+      }
+    );
+    return axis;
+  };
 
   const orders = {
     getAll: async () => (await getAxis()).get(`/orders/all`),
-    getSingle: async (uuid) => (await getAxis()).get(`/orders/${uuid}`),
-    new: (data) => async () => (await getAxis()).post('/orders/new', data),
-    mine: async (params) => (await getAxis()).get(`/orders/mine?include=${params}`),
-    checkStatus: async (id)=> (await getAxis()).get(`/orders/${id}/status`),
-    complete: (data: {orderId: string, address: {latLng: [number, number]}, paymentType: 'pay-now' | 'pay-on-delivery'})=>
-      async () => (await getAxis()).post(`/orders/${data.orderId}/complete`, data),
-    cancel: async (data) => (await getAxis()).post(`/orders/${data.id}/cancel`),
+    getSingle: async uuid => (await getAxis()).get(`/orders/${uuid}`),
+    new: data => async () => (await getAxis()).post('/orders/new', data),
+    mine: async params => (await getAxis()).get(`/orders/mine?include=${params}`),
+    checkStatus: async id => (await getAxis()).get(`/orders/${id}/status`),
+    complete: (data: {
+      orderId: string;
+      address: {latLng: [number, number]};
+      paymentType: 'pay-now' | 'pay-on-delivery';
+    }) => async () => (await getAxis()).post(`/orders/${data.orderId}/complete`, data),
+    cancel: async data => (await getAxis()).post(`/orders/${data.id}/cancel`),
   };
 
   const payments = {
@@ -136,17 +143,12 @@ const useAuth = function() {
       (await getAxis()).post('/payments/mpesa/pay-online/initiate', data),
   };
 
-  const productTypes = {
-    getAll: async ()=> (await getAxis()).get('/product-type')
-  }
-
-
   const imageKit = {
     getSignature: () => async () => (await getAxis()).get(`/auth/imagekit/signature`),
-    upload: (data, config?: AxiosRequestConfig) => async () => axios.post('https://upload.imagekit.io/api/v1/files/upload', data, config),
-    delete: (data) => async () => axios.delete(`https://api.imagekit.io/v1/files/${data.fileId}`),
+    upload: (data, config?: AxiosRequestConfig) => async () =>
+      axios.post('https://upload.imagekit.io/api/v1/files/upload', data, config),
+    delete: data => async () => axios.delete(`https://api.imagekit.io/v1/files/${data.fileId}`),
   };
-
 
   /**
    * Use this to access all methods related to the '/brands' route
@@ -169,62 +171,70 @@ const useAuth = function() {
      * Get a single brand's products
      * @returns {Promise<AxiosResponse<any>>}
      */
-    getProducts: async (name) => (await getAxis()).get(`/brands/${name}/products`),
-    getFilteredProducts: async ({slug}) => (await getAxis()).get(`/brands/${slug}/products/filtered`),
-    updateImage: (uuid) => async () => (await getAxis()).put(`/brands/images/${uuid}`),
+    getProducts: async name => (await getAxis()).get(`/brands/${name}/products`),
+    getFilteredProducts: async ({slug}) =>
+      (await getAxis()).get(`/brands/${slug}/products/filtered`),
+    updateImage: uuid => async () => (await getAxis()).put(`/brands/images/${uuid}`),
     /**
      * Create a single brand
      * @param {object}data
      * @returns {Promise<AxiosResponse<any>>}
      */
-    create: (data) => async () => (await getAxis()).post(`/brands/new`, data),
+    create: data => async () => (await getAxis()).post(`/brands/new`, data),
   };
 
   const category = {
-    getOne: async (id)=> (await getAxis()).get(`/category/${id}`),
-    getAll: async ()=> (await getAxis()).get('/categories'),
-    create: (data)=> async ()=> (await getAxis()).post('/categories', data),
-    update: (uuid, data)=> async ()=> (await getAxis()).put(`/categories/${uuid}`, data),
-  }
+    getOne: async id => (await getAxis()).get(`/category/${id}`),
+    getAll: async () => (await getAxis()).get('/categories'),
+    create: data => async () => (await getAxis()).post('/categories', data),
+    update: (uuid, data) => async () => (await getAxis()).put(`/categories/${uuid}`, data),
+  };
+
+  const productTypes = {
+    create: data => async () => (await getAxis()).post('/product-type', data),
+  };
 
   const products = {
     getAll: async () => (await getAxis()).get('/products/all'),
     getFeatured: async () => (await getAxis()).get('/products/popular'),
-    getSingle: async (slug) => (await getAxis()).get(`/products/${slug}`),
-    get: async (slug) => (await getAxis()).get(`/products/${slug}`),
-    create: (data) => async () => (await getAxis()).post('/products/new', data),
-    reIndex: (data)=> async ()=> (await getAxis()).get(`/search/re-index/${data.index}`),
+    getSingle: async slug => (await getAxis()).get(`/products/${slug}`),
+    get: async slug => (await getAxis()).get(`/products/${slug}`),
+    create: data => async () => (await getAxis()).post('/products/new', data),
+    reIndex: data => async () => (await getAxis()).get(`/search/re-index/${data.index}`),
     update: (id, data) => async () => (await getAxis()).put(`/products/${id}/update`, data),
-    deleteImage: async ({productId, fileId})=> (await getAxis()).delete(`/products/${productId}/image/${fileId}`),
+    deleteImage: async ({productId, fileId}) =>
+      (await getAxis()).delete(`/products/${productId}/image/${fileId}`),
   };
 
   const deliveries = {
-    getQuote: async (data) => (await getAxis()).post('/delivery/quote', data),
-    populate: ()=> async () => (await getAxis()).post('/delivery/locations/populate'),
+    getQuote: async data => (await getAxis()).post('/delivery/quote', data),
+    populate: () => async () => (await getAxis()).post('/delivery/locations/populate'),
     getLocations: async ({q}: {q: string}) => (await getAxis()).get(`/delivery/locations?q=${q}`),
-  }
+  };
 
   const accounts = {
-    register: (data) => async () => (await getAxis()).post('auth/register', data),
-    requestPasswordReset: (data) => async () => (await getAxis()).post('auth/request-password-reset', data),
-    requestTOTP: (data: TOTPRequestBody) => async () => (await getAxis()).post('auth/totp/request', data),
-    resetPassword: (data) => async () => (await getAxis()).post('auth/reset-password', data),
-    verify: (data) => async () => (await getAxis()).post('auth/verify-account', data),
+    register: data => async () => (await getAxis()).post('auth/register', data),
+    requestPasswordReset: data => async () =>
+      (await getAxis()).post('auth/request-password-reset', data),
+    requestTOTP: (data: TOTPRequestBody) => async () =>
+      (await getAxis()).post('auth/totp/request', data),
+    resetPassword: data => async () => (await getAxis()).post('auth/reset-password', data),
+    verify: data => async () => (await getAxis()).post('auth/verify-account', data),
     me: async () => (await getAxis()).get('accounts/me'),
-    login: (data: {login: string, password: string}) =>
-      async () => (await getAxis()).post('auth/login', data),
-    logOut: (data: {accessToken: string, refreshToken: string}) => async (dispatch) => {
+    login: (data: {login: string; password: string}) => async () =>
+      (await getAxis()).post('auth/login', data),
+    logOut: (data: {accessToken: string; refreshToken: string}) => async dispatch => {
       dispatch(logoutUserAction());
       return (await getAxis()).post('/accounts/logout', data);
     },
     check: () => async () => (await getAxis()).get('auth/check'),
-    update: (diff) => async () => (await getAxis()).post('/accounts/me', diff),
+    update: diff => async () => (await getAxis()).post('/accounts/me', diff),
   };
 
   const cart = {
-    fetch: async (id)=> (await getAxis()).get(`carts/${id}`),
-    checkPaymentStatus: async (id)=> (await getAxis()).get(`carts/${id}/payment-status`)
-  }
+    fetch: async id => (await getAxis()).get(`carts/${id}`),
+    checkPaymentStatus: async id => (await getAxis()).get(`carts/${id}/payment-status`),
+  };
 
   async function ping() {
     return (await getAxis()).get('up');
