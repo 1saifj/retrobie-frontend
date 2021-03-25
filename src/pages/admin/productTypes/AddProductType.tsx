@@ -8,6 +8,7 @@ import {TextField} from '../../../components/input';
 import {useAuth, useNotify} from '../../../hooks';
 import {useDispatch} from 'react-redux';
 import {extractErrorMessage} from '../../../helpers';
+import {Trash} from 'react-feather';
 
 const productTypeOptionValueSchema = Yup.object().shape({
   value: Yup.string().required(REQUIRED),
@@ -30,7 +31,7 @@ export default function AddProductType(props) {
 
   return (
     <AddProductTypeSyled>
-      <h4 style={{textAlign: 'center'}}>Create New Product Type</h4>
+      <h2 style={{textAlign: 'center'}}>Create New Product Type</h2>
 
       <Formik
         initialValues={{
@@ -44,15 +45,13 @@ export default function AddProductType(props) {
         }}
         onSubmit={async (submitValues, {setSubmitting}) => {
           setSubmitting(true);
-          const {data, ...rest} = await dispatch<any>(api.productTypes.create(submitValues));
 
-          if (data) {
-            setSubmitting(false);
-            notify.success(`Successfully created ${submitValues.name}.`);
-          } else {
-            setSubmitting(false);
-            const message = extractErrorMessage(rest);
-            notify.error(message || `Could not create ${submitValues.name}.`);
+          try {
+            await dispatch<any>(api.productTypes.create(submitValues));
+            notify.success(`Successfully created ${submitValues.name}`);
+          } catch (error) {
+            const message = extractErrorMessage(error);
+            notify.error(`Error: ${message}`);
           }
         }}
         validationSchema={AddProductTypeValidationSchema}
@@ -62,10 +61,10 @@ export default function AddProductType(props) {
             <TextField
               name="name"
               type="text"
-              label={<label htmlFor="name">Product Type Name</label>}
+              label="Product Type Name"
               placeholder="eg Sneakers"
             />
-            <h5>Product Type Options</h5>
+            <h4>Product Type Options</h4>
             <FieldArray name="options">
               {({remove, push}) => (
                 <>
@@ -76,7 +75,7 @@ export default function AddProductType(props) {
                           <TextField
                             name={`options.${index}.name`}
                             type="text"
-                            label={<label htmlFor={`options.${index}.name`}>Option Name</label>}
+                            label="Option Name"
                             placeholder="eg Size"
                           />
                           <h6>Option Values</h6>
@@ -92,13 +91,7 @@ export default function AddProductType(props) {
                                             <TextField
                                               name={`options.${index}.values.${valueIndex}.value`}
                                               type="text"
-                                              label={
-                                                <label
-                                                  htmlFor={`options.${index}.values.${valueIndex}.value`}
-                                                >
-                                                  Value
-                                                </label>
-                                              }
+                                              label="Value"
                                               placeholder="eg 42"
                                             />
                                             <Button
@@ -106,18 +99,14 @@ export default function AddProductType(props) {
                                               onClick={() => remove(valueIndex)}
                                               disabled={valuesArray.length <= 1}
                                             >
-                                              X
+                                              <Trash height="1.2rem" />
                                             </Button>
                                           </div>
                                         </div>
                                       )
                                     )}
                                 </div>
-                                <Button
-                                  isColor="info"
-                                  className="button--okay"
-                                  onClick={() => push({value: ''})}
-                                >
+                                <Button isColor="info" onClick={() => push({value: ''})}>
                                   Add Another Value
                                 </Button>
                               </>
@@ -133,20 +122,27 @@ export default function AddProductType(props) {
                         </div>
                       ))}
                   </div>
-                  <Button isColor="info" onClick={() => push({name: '', values: [{value: ''}]})}>
+                  <Button
+                    style={{width: '100%'}}
+                    isColor="info"
+                    onClick={() => push({name: '', values: [{value: ''}]})}
+                  >
                     Add New Option
                   </Button>
                 </>
               )}
             </FieldArray>
-            <Button
-              isColor="success"
-              isLoading={isSubmitting}
-              disabled={isSubmitting || !isValid}
-              type="submit"
-            >
-              Create Product Type
-            </Button>
+            <div>
+              <Button
+                style={{width: '100%'}}
+                isColor="primary"
+                isLoading={isSubmitting}
+                disabled={isSubmitting || !isValid}
+                type="submit"
+              >
+                Create Product Type
+              </Button>
+            </div>
           </Form>
         )}
       </Formik>
@@ -155,11 +151,6 @@ export default function AddProductType(props) {
 }
 
 const AddProductTypeSyled = styled.div`
-  .button {
-    padding: 0.5rem 1rem;
-    font-size; 0.8rem;
-  }
-
   .product-type-name {
     display: flex;
     flex-direction: column;
@@ -182,10 +173,9 @@ const AddProductTypeSyled = styled.div`
 
     &__group {
       display: grid;
-      grid-template-columns: 80% 1fr;
+      grid-template-columns: 60% 1fr;
       grid-template-rows: repeat(3, 2.25rem);
       button {
-        padding: 0.25rem 0.75rem;
         margin: 0;
         margin-left: 1rem;
         grid-column: 2 / -1;
@@ -196,11 +186,10 @@ const AddProductTypeSyled = styled.div`
     &__parent {
       display: flex;
       flex-direction: column;
-      border-bottom: 1px dashed rgba(var(--color-primary), 0.5);
 
       & > .button {
         margin 0.5rem 1rem;
-        min-width: 50%;
+        width: 100%;
         align-self: center;
       }
     }
@@ -209,7 +198,7 @@ const AddProductTypeSyled = styled.div`
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
-      border: 1px dashed rgba(0, 0, 0, 0.7);
+      border: 1px dashed var(--color-border-gray);
       padding: 1rem;
       margin-bottom: 1rem;
 
