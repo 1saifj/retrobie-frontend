@@ -32,6 +32,9 @@ const OrderCompleted = lazy(() => import('../pages/shipping/order-completed'));
 //Admin
 const AdminLogin = lazy(() => import('../pages/admin/login'));
 const AdminHome = lazy(() => import('../pages/admin/home'));
+const AdminProductTypesHome = lazy(() => import('../pages/admin/productTypes'));
+const AdminProductTypesCreate = lazy(() => import('../pages/admin/productTypes/AddProductType'));
+const AdminProductTypesList = lazy(() => import('../pages/admin/productTypes/ListProductTypes'));
 const AdminProductsHome = lazy(() => import('../pages/admin/products'));
 const AdminAllProducts = lazy(() => import('../pages/admin/products/AllProducts'));
 const AdminCreateProduct = lazy(() => import('../pages/admin/products/AddProduct'));
@@ -68,253 +71,264 @@ const regularRoutes = [
   {
     path: '/',
     exact: true,
-    component: Landing
+    component: Landing,
   },
   {
-    path: "/accounts/register",
+    path: '/accounts/register',
     exact: true,
-    component: RegisterUser
+    component: RegisterUser,
   },
   {
-    path: "/accounts/login",
+    path: '/accounts/login',
     exact: true,
-    component: LoginUser
+    component: LoginUser,
   },
   {
-    path: "/accounts/verify",
+    path: '/accounts/verify',
     exact: true,
-    component: VerifyAccount
+    component: VerifyAccount,
   },
   {
-    path: "/accounts/me",
+    path: '/accounts/me',
     exact: true,
-    component: UserProfile
+    component: UserProfile,
   },
   {
-    path: "/accounts/forgot-password",
+    path: '/accounts/forgot-password',
     exact: true,
-    component: ForgotPassword
+    component: ForgotPassword,
   },
   {
-    path: "/accounts/reset-password",
+    path: '/accounts/reset-password',
     exact: true,
-    component: ResetPassword
+    component: ResetPassword,
   },
   {
-    path: "/accounts/me/orders",
+    path: '/accounts/me/orders',
     exact: true,
-    component: UserOrders
+    component: UserOrders,
   },
   {
-    path: "/orders/mine/:orderId",
-    component: UserSingleOrder
+    path: '/orders/mine/:orderId',
+    component: UserSingleOrder,
   },
   {
-    path: "/company/about",
+    path: '/company/about',
     exact: true,
-    component: About
+    component: About,
   },
   {
-    path: "/company/blog",
+    path: '/company/blog',
     exact: true,
-    component: Blog
+    component: Blog,
   },
   {
-    path: "/cart",
+    path: '/cart',
     component: Cart,
-    exact: true
+    exact: true,
   },
   {
-    path: "/checkout/shipping/order-completed/:orderId",
+    path: '/checkout/shipping/order-completed/:orderId',
     component: OrderCompleted,
   },
   {
-    path: "/checkout/shipping/:orderId",
+    path: '/checkout/shipping/:orderId',
     component: Shipping,
   },
   {
-    path: "/checkout/:cartId",
+    path: '/checkout/:cartId',
     component: Checkout,
   },
   {
-    path: "/privacy/privacy-and-cookie-policy",
+    path: '/privacy/privacy-and-cookie-policy',
     exact: true,
-    component: CookiePolicy
+    component: CookiePolicy,
   },
   {
-    path: "/privacy/terms-of-service",
+    path: '/privacy/terms-of-service',
     exact: true,
-    component: TermsOfService
+    component: TermsOfService,
   },
   {
-    path: "/product/:slug",
-    component: Product
-  },
-  {
-    path: "/policies/returns-policy",
-    exact: true,
-    component: ReturnsPolicy
-  },
-  {
-    path: "/policies/claims-policy",
-    exact: true,
-    component: ClaimsPolicy
-  },
-  {
-    path: "/policies/refund-policy",
-    exact: true,
-    component: RefundPolicy
-  },
-  {
-    path: "/policies/exchange-policy",
-    exact: true,
-    component: ExchangePolicy
-  },
-  {
-    path: "/policies/shipping-policy",
-    exact: true,
-    component: ShippingPolicy
-  },
-  {
-    path: "/support",
-    exact: true,
-    component: Support
-  },
-  {
-    path: "/support/custom-requests",
-    exact: true,
-    component: CustomRequests
-  },
-  {
-    path: "/support/shipping/maps",
-    exact: true,
-    component: SupportMaps
-  },
-  {
-    path: "/support/delivery/maps",
-    exact: true,
-    component: SupportMaps
-  },
-  {
-    path: "/support/get-in-touch",
-    exact: true,
-    component: Other
-  },
-  {
-    path: "/support/paying-for-an-order",
-    exact: true,
-    component: PayingForAnOrder
-  },
-  {
-    path: "/support/making-an-order-for-shoes-sneakers-nairobi",
-    exact: true,
-    component: MakingAnOrder
-  },
-  {
-    path: "/support/cancelling-an-order",
-    exact: true,
-    component: CancellingAnOrder
-  },
-  {
-    path: "/brands/",
-    exact: true,
-    component: BrandsPage
-  },
-  {
-    path: "/brands/:brand/:slug",
+    path: '/product/:slug',
     component: Product,
   },
   {
-    path: "/brands/:brand",
-    component: SingleBrand
-  },
-  {
-    path: "/category/:id/",
-    component: Category
-  },
-  {
-    path: "/collection/:id/",
-    component: Collection
-  },
-  {
-    path: "/company/admin/login",
+    path: '/policies/returns-policy',
     exact: true,
-    component: AdminLogin
-  }
-]
+    component: ReturnsPolicy,
+  },
+  {
+    path: '/policies/claims-policy',
+    exact: true,
+    component: ClaimsPolicy,
+  },
+  {
+    path: '/policies/refund-policy',
+    exact: true,
+    component: RefundPolicy,
+  },
+  {
+    path: '/policies/exchange-policy',
+    exact: true,
+    component: ExchangePolicy,
+  },
+  {
+    path: '/policies/shipping-policy',
+    exact: true,
+    component: ShippingPolicy,
+  },
+  {
+    path: '/support',
+    exact: true,
+    component: Support,
+  },
+  {
+    path: '/support/custom-requests',
+    exact: true,
+    component: CustomRequests,
+  },
+  {
+    path: '/support/shipping/maps',
+    exact: true,
+    component: SupportMaps,
+  },
+  {
+    path: '/support/delivery/maps',
+    exact: true,
+    component: SupportMaps,
+  },
+  {
+    path: '/support/get-in-touch',
+    exact: true,
+    component: Other,
+  },
+  {
+    path: '/support/paying-for-an-order',
+    exact: true,
+    component: PayingForAnOrder,
+  },
+  {
+    path: '/support/making-an-order-for-shoes-sneakers-nairobi',
+    exact: true,
+    component: MakingAnOrder,
+  },
+  {
+    path: '/support/cancelling-an-order',
+    exact: true,
+    component: CancellingAnOrder,
+  },
+  {
+    path: '/brands/',
+    exact: true,
+    component: BrandsPage,
+  },
+  {
+    path: '/brands/:brand/:slug',
+    component: Product,
+  },
+  {
+    path: '/brands/:brand',
+    component: SingleBrand,
+  },
+  {
+    path: '/category/:id/',
+    component: Category,
+  },
+  {
+    path: '/collection/:id/',
+    component: Collection,
+  },
+  {
+    path: '/company/admin/login',
+    exact: true,
+    component: AdminLogin,
+  },
+];
 
 const adminRoutes = [
   {
-    path: "/company/admin/dashboard/",
+    path: '/company/admin/dashboard/',
     exact: true,
-    component: AdminHome
+    component: AdminHome,
   },
   {
-    path: "/company/admin/dashboard/products",
+    path: '/company/admin/dashboard/product-types',
     exact: true,
-    component: AdminProductsHome
+    component: AdminProductTypesHome,
   },
   {
-    path: "/company/admin/dashboard/products/all",
+    path: '/company/admin/dashboard/product-types/create',
     exact: true,
-    component: AdminAllProducts
+    component: AdminProductTypesCreate,
   },
   {
-    path: "/company/admin/dashboard/products/create",
+    path: '/company/admin/dashboard/product-types/all',
     exact: true,
-    component: AdminCreateProduct
+    component: AdminProductTypesList,
   },
   {
-    path: "/company/admin/dashboard/deliveries",
+    path: '/company/admin/dashboard/products',
     exact: true,
-    component: AdminDeliveries
+    component: AdminProductsHome,
   },
   {
-    path: "/company/admin/dashboard/products/:slug",
-    component: AdminSingleProduct
-  },
-  {
-    path: "/company/admin/dashboard/orders/",
+    path: '/company/admin/dashboard/products/all',
     exact: true,
-    component: AdminOrders
+    component: AdminAllProducts,
   },
   {
-    path: "/company/admin/dashboard/categories",
+    path: '/company/admin/dashboard/products/create',
     exact: true,
-    component: AdminCategories
+    component: AdminCreateProduct,
   },
   {
-    path: "/company/admin/dashboard/categories/:slug",
-    component: AdminSingleCategory
-  },
-  {
-    path: "/company/admin/dashboard/orders/:id",
-    component: AdminSingleOrder
-  },
-  {
-    path: "/company/admin/dashboard/brands",
+    path: '/company/admin/dashboard/deliveries',
     exact: true,
-    component: AdminBrands
+    component: AdminDeliveries,
   },
   {
-    path: "/company/admin/dashboard/brands/:id",
-    exact: true,
-    component: AdminSingleBrand
+    path: '/company/admin/dashboard/products/:slug',
+    component: AdminSingleProduct,
   },
   {
-    path: "/company/admin/dashboard/brands/:id/products",
+    path: '/company/admin/dashboard/orders/',
     exact: true,
-    component: AdminBrandProducts
+    component: AdminOrders,
   },
   {
-    path: "/company/admin/dashboard/misc",
+    path: '/company/admin/dashboard/categories',
     exact: true,
-    component: MiscPages
+    component: AdminCategories,
   },
-]
+  {
+    path: '/company/admin/dashboard/categories/:slug',
+    component: AdminSingleCategory,
+  },
+  {
+    path: '/company/admin/dashboard/orders/:id',
+    component: AdminSingleOrder,
+  },
+  {
+    path: '/company/admin/dashboard/brands',
+    exact: true,
+    component: AdminBrands,
+  },
+  {
+    path: '/company/admin/dashboard/brands/:id',
+    exact: true,
+    component: AdminSingleBrand,
+  },
+  {
+    path: '/company/admin/dashboard/brands/:id/products',
+    exact: true,
+    component: AdminBrandProducts,
+  },
+  {
+    path: '/company/admin/dashboard/misc',
+    exact: true,
+    component: MiscPages,
+  },
+];
 
-
-export {
-  adminRoutes,
-  regularRoutes
-}
+export {adminRoutes, regularRoutes};

@@ -110,7 +110,7 @@ const SidebarParent = styled.div`
   }
 `;
 
-const SidebarItem = styled.li<{isActive?:boolean}>`
+const SidebarItem = styled.li<{isActive?: boolean}>`
   padding: 4px 12px;
   margin: 4px 8px;
   border-radius: 4px;
@@ -119,6 +119,7 @@ const SidebarItem = styled.li<{isActive?:boolean}>`
   background: ${p => (p.isActive ? 'var(--color-primary-light)' : 'var(--color-primary)')};
   transition: all 0.25s ease-in-out;
   color: #fff6d1;
+  align-items: center;
 
   &:hover {
     cursor: pointer;
@@ -127,7 +128,6 @@ const SidebarItem = styled.li<{isActive?:boolean}>`
 
   svg {
     margin-right: 16px;
-    margin-top: 10px;
     width: 20px;
     transition: stroke 0.25s ease-in-out;
     animation: ${p => (p.isActive ? 'col 1.5s linear 1' : 'none')};
