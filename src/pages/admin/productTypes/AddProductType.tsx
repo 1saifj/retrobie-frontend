@@ -3,7 +3,7 @@ import {Form, Formik, FieldArray} from 'formik';
 import styled from 'styled-components';
 import {Button} from 'bloomer';
 import * as Yup from 'yup';
-import {MIN, REQUIRED} from '../validator/messages';
+import {MIN, REQUIRED} from '../../../helpers/validationMessages';
 import {TextField} from '../../../components/input';
 import {useAuth, useNotify} from '../../../hooks';
 import {useDispatch} from 'react-redux';
@@ -31,152 +31,203 @@ export default function AddProductType(props) {
 
   return (
     <AddProductTypeSyled>
-      <h2 style={{textAlign: 'center'}}>Create New Product Type</h2>
+      <h2>Create New Product Type</h2>
 
-      <Formik
-        initialValues={{
-          name: '',
-          options: [
-            {
-              name: '',
-              values: [{value: ''}],
-            },
-          ],
-        }}
-        onSubmit={async (submitValues, {setSubmitting}) => {
-          setSubmitting(true);
+      <div className="product-type-wrapper">
+        <Formik
+          initialValues={{
+            name: '',
+            options: [
+              {
+                name: '',
+                values: [{value: ''}],
+              },
+            ],
+          }}
+          onSubmit={async (submitValues, {setSubmitting}) => {
+            setSubmitting(true);
 
-          try {
-            await dispatch<any>(api.productTypes.create(submitValues));
-            notify.success(`Successfully created ${submitValues.name}`);
-          } catch (error) {
-            const message = extractErrorMessage(error);
-            notify.error(`Error: ${message}`);
-          }
-        }}
-        validationSchema={AddProductTypeValidationSchema}
-      >
-        {({values, isSubmitting, isValid}) => (
-          <Form className="product-type-form">
-            <TextField
-              name="name"
-              type="text"
-              label="Product Type Name"
-              placeholder="eg Sneakers"
-            />
-            <h4>Product Type Options</h4>
-            <FieldArray name="options">
-              {({remove, push}) => (
-                <>
-                  <div className="option-values">
-                    {values.options.length > 0 &&
-                      values.options.map((_, index, optionsArray) => (
-                        <div key={index} className="option-values__parent">
-                          <TextField
-                            name={`options.${index}.name`}
-                            type="text"
-                            label="Option Name"
-                            placeholder="eg Size"
-                          />
-                          <h6>Option Values</h6>
-                          <FieldArray name={`options.${index}.values`}>
-                            {({remove, push}) => (
-                              <>
-                                <div className="option-values__wrapper">
-                                  {values.options[index].values.length > 0 &&
-                                    values.options[index].values.map(
-                                      (_, valueIndex, valuesArray) => (
-                                        <div key={valueIndex} className="option-values__value">
-                                          <div className="option-values__group">
-                                            <TextField
-                                              name={`options.${index}.values.${valueIndex}.value`}
-                                              type="text"
-                                              label="Value"
-                                              placeholder="eg 42"
-                                            />
-                                            <Button
-                                              isColor="danger"
-                                              onClick={() => remove(valueIndex)}
-                                              disabled={valuesArray.length <= 1}
-                                            >
-                                              <Trash height="1.2rem" />
-                                            </Button>
-                                          </div>
-                                        </div>
-                                      )
-                                    )}
+            try {
+              await dispatch<any>(api.productTypes.create(submitValues));
+              notify.success(`Successfully created ${submitValues.name}`);
+            } catch (error) {
+              const message = extractErrorMessage(error);
+              notify.error(`Error: ${message}`);
+            }
+          }}
+          validationSchema={AddProductTypeValidationSchema}
+        >
+          {({values, isSubmitting, isValid}) => (
+            <div className="product-type-form--wrapper">
+              <h4>Primary Details</h4>
+              <Form className="product-type-form">
+                <div className="product-type-form--name">
+                  <TextField
+                    name="name"
+                    type="text"
+                    label="Product Type Name"
+                    placeholder="eg Sneakers"
+                  />
+                </div>
+                <div className="product-type-form--options">
+                  <h4>Product Options</h4>
+                  <h5>A product type can have one or more multiple options</h5>
+                  <FieldArray name="options">
+                    {({remove, push}) => (
+                      <>
+                        <div className="option-values">
+                          {values.options.length > 0 &&
+                            values.options.map((_, index, optionsArray) => (
+                              <div key={index} className="option-values__parent">
+                                <h4>Option #{index + 1}</h4>
+                                <div className="option-values__subheading">
+                                  <h5>
+                                    A product option can have one or multiple values. e.g. Size 8,
+                                    Size 9; Color red, Color blue.
+                                  </h5>
+                                  <Button
+                                    className="is-tiny"
+                                    disabled={optionsArray.length <= 1}
+                                    isOutlined
+                                    isColor="dark"
+                                    onClick={() => remove(index)}
+                                  >
+                                    <Trash height="1.5rem" />
+                                  </Button>
                                 </div>
-                                <Button isColor="info" onClick={() => push({value: ''})}>
-                                  Add Another Value
-                                </Button>
-                              </>
-                            )}
-                          </FieldArray>
-                          <Button
-                            disabled={optionsArray.length <= 1}
-                            isColor="danger"
-                            onClick={() => remove(index)}
-                          >
-                            Delete This Option
-                          </Button>
+
+                                <TextField
+                                  className="half-width"
+                                  name={`options.${index}.name`}
+                                  type="text"
+                                  label="Name"
+                                  placeholder="eg Size"
+                                />
+                                <FieldArray name={`options.${index}.values`}>
+                                  {({remove, push}) => (
+                                    <>
+                                      <div className="option-values__wrapper">
+                                        {values.options[index].values.length > 0 &&
+                                          values.options[index].values.map(
+                                            (_, valueIndex, valuesArray) => (
+                                              <div
+                                                key={valueIndex}
+                                                className="option-values__value"
+                                              >
+                                                <div className="option-values__group">
+                                                  <TextField
+                                                    name={`options.${index}.values.${valueIndex}.value`}
+                                                    type="text"
+                                                    label={`Value #${valueIndex + 1}`}
+                                                    placeholder="eg 42"
+                                                  />
+                                                  <Button
+                                                    isOutlined
+                                                    isColor="dark"
+                                                    className="is-tiny"
+                                                    onClick={() => remove(valueIndex)}
+                                                    disabled={valuesArray.length <= 1}
+                                                  >
+                                                    <Trash height="1.5rem" />
+                                                  </Button>
+                                                </div>
+                                              </div>
+                                            )
+                                          )}
+                                      </div>
+                                      <Button
+                                        isOutlined
+                                        isColor="dark"
+                                        onClick={() => push({value: ''})}
+                                      >
+                                        Add Value
+                                      </Button>
+                                    </>
+                                  )}
+                                </FieldArray>
+                              </div>
+                            ))}
                         </div>
-                      ))}
-                  </div>
+                        <Button
+                          style={{width: '100%'}}
+                          isOutlined
+                          isColor="black"
+                          onClick={() => push({name: '', values: [{value: ''}]})}
+                        >
+                          Add New Option
+                        </Button>
+                      </>
+                    )}
+                  </FieldArray>
+                </div>
+                <div>
                   <Button
-                    style={{width: '100%'}}
-                    isColor="info"
-                    onClick={() => push({name: '', values: [{value: ''}]})}
+                    style={{width: '100%', marginTop: '1rem'}}
+                    isColor="primary"
+                    isLoading={isSubmitting}
+                    disabled={isSubmitting || !isValid}
+                    type="submit"
                   >
-                    Add New Option
+                    Submit
                   </Button>
-                </>
-              )}
-            </FieldArray>
-            <div>
-              <Button
-                style={{width: '100%'}}
-                isColor="primary"
-                isLoading={isSubmitting}
-                disabled={isSubmitting || !isValid}
-                type="submit"
-              >
-                Create Product Type
-              </Button>
+                </div>
+              </Form>
             </div>
-          </Form>
-        )}
-      </Formik>
+          )}
+        </Formik>
+      </div>
     </AddProductTypeSyled>
   );
 }
 
 const AddProductTypeSyled = styled.div`
+  .product-type {
+    &-wrapper {
+      border: var(--gray-thin-border);
+      padding: 2rem;
+    }
+
+    &-form {
+      &--wrapper {
+      }
+
+      &--name {
+        border: var(--gray-thin-border);
+        padding: 1rem;
+      }
+
+      &--options {
+        border: var(--gray-thin-border);
+        margin-top: 2rem;
+        padding: 1rem;
+      }
+    }
+  }
+
+  .input-half {
+    width: 50%;
+  }
+
   .product-type-name {
     display: flex;
     flex-direction: column;
   }
 
-  .product-type-form {
-    button {
-      margin: 1rem;
-    }
-  }
-
-  .options-input {
-    width: 100%;
-  }
-
   .option-values {
-    border: 1px solid black;
-    padding: 1rem;
-    margin-bottom: 1rem;
+    margin: 1rem 0;
+
+    &__subheading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
     &__group {
       display: grid;
-      grid-template-columns: 60% 1fr;
+      grid-template-columns: minmax(75%, auto) 1fr;
       grid-template-rows: repeat(3, 2.25rem);
       button {
-        margin: 0;
+        margin: 0 auto;
         margin-left: 1rem;
         grid-column: 2 / -1;
         grid-row: 2 / span 1;
@@ -184,32 +235,22 @@ const AddProductTypeSyled = styled.div`
     }
 
     &__parent {
-      display: flex;
-      flex-direction: column;
+      border: var(--gray-thin-border);
+      padding: 1rem;
+      margin-bottom: 1rem;
 
       & > .button {
-        margin 0.5rem 1rem;
         width: 100%;
         align-self: center;
       }
     }
 
     &__wrapper {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      border: 1px dashed var(--color-border-gray);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(30vw, 1fr));
+      border: var(--gray-thin-border);
       padding: 1rem;
-      margin-bottom: 1rem;
-
-      & > * {
-        margin: 0 1rem;
-        margin-bottom: 0.75rem;
-      }
-    }
-
-    &__value {
-      flex: 1 1 30%;
+      margin: 1rem 0;
     }
   }
 `;
