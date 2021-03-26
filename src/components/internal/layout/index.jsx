@@ -33,7 +33,7 @@ class InternalLayout extends React.Component {
             },
             {
                 name: 'Product Types',
-                icon: <Archive fill={"#fff"} style={{width: '24px', marginTop: 0}}/>,
+                icon: <Archive color={"#fff"} />,
                 route: '/company/admin/dashboard/product-types',
             },
             {
