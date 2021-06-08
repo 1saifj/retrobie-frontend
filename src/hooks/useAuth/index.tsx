@@ -171,10 +171,10 @@ const useAuth = function () {
      * Get a single brand's products
      * @returns {Promise<AxiosResponse<any>>}
      */
-    getProducts: async name => (await getAxis()).get(`/brands/${name}/products`),
-    getFilteredProducts: async ({slug}) =>
-      (await getAxis()).get(`/brands/${slug}/products/filtered`),
-    updateImage: uuid => async () => (await getAxis()).put(`/brands/images/${uuid}`),
+    getProducts: async (name) => (await getAxis()).get(`/brands/${name}/products`),
+    getFilteredProducts: async ({slug}) => (await getAxis()).get(`/brands/${slug}/products/filtered`),
+    updateImage: (uuid) => async () => (await getAxis()).put(`/brands/images/${uuid}`),
+
     /**
      * Create a single brand
      * @param {object}data
