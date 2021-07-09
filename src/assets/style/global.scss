@@ -15,7 +15,7 @@
   --color-text: #2b292d;
   --color-text-medium: #403e42;
   --color-description: #58565b;
-  --color-description-light: #888888;
+  --color-description-light: #444; //fixme
   --color-description-pale: #666666;
   --color-border-gray: #cbcbd6;
   --color-border-lightgray: #e5e5e5;
@@ -684,7 +684,12 @@ b {
 .button.is-tiny {
   padding: 0.4rem;
   width: 2.5rem;
+
+  svg, img {
+    width: 1.2rem;
+  }
 }
+
 
 .secondary {
   color: var(--color-description);
@@ -726,6 +731,10 @@ b {
 .progress::-webkit-progress-value,
 .progress::-moz-progress-bar {
   transition: width 0.5s ease;
+}
+
+h1.light, h2.light, h3.light, h4.light, h5.light, h6.light {
+  color: var(--color-description-light);
 }
 
 .react-select {
@@ -840,5 +849,5 @@ b {
 }
 
 .half-width {
-  width: 50%;
+  width: 50% !important;
 }

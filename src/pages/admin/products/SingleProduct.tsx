@@ -39,9 +39,6 @@ const UpdateProductValidationSchema = Yup.object().shape({
   long: Yup.string().required(),
   seo: Yup.string().required(),
   size: Yup.number().required(),
-  sizeCountry: Yup.string()
-    .oneOf(['UK', 'US', "CHN"])
-    .required(),
   sex: Yup.string()
     .oneOf(['M', 'F'])
     .required(),
@@ -79,24 +76,13 @@ export default function SingleProduct(props) {
       short: data.description.short,
       long: data.description.long,
       seo: data.description.seo,
-      size: data.detail.size,
-      sizeCountry: data.detail.sizeCountry,
-      sex: data.detail.sex,
-      inStock: data.inStock,
-      inStockAdmin: data.admin?.inStock,
       brand: capitalize(data.brands[0].name),
       images: data.images,
       currency: 'Ksh.',
       categories: data.categories,
       originalPrice: data.originalPrice,
-      purchasePrice: data.purchasePrice,
       productType: data.productType,
       isOnOffer: data.isOnOffer,
-      idealFor: data.meta.idealFor,
-      style: data.meta.style,
-      condition: data.meta.condition,
-      endorsedBy: data.meta.endorsedBy,
-      sportsType: data.meta.sportsType,
     }
   ));
   const {data: thisProductData, error: fetchProductError, mutate} = useSWR([`/product/${productSlug}`, productSlug], singleProductFetcher);
@@ -150,14 +136,11 @@ export default function SingleProduct(props) {
     <div>
       <div>
         <Formik
-          validationSchema={UpdateProductValidationSchema}
           initialValues={{
-            ...thisProductData,
-            sizeCountry: 'UK',
+            ...thisProductData
           }}
-          onSubmit={async (values, {setFieldValue, setSubmitting}) => {
-            //fixme
-            setFieldValue('images', thisProductData.images);
+          onSubmit={async (values, {setSubmitting}) => {
+            console.log("Submitting form...", values)
             // When updating a product, we only want to send details that have changed
             // And ignore the rest
             // Note: arrays always show up
@@ -186,13 +169,7 @@ export default function SingleProduct(props) {
 
             try {
               // @ts-ignore
-              const {data} = await dispatch(api.products.update(thisProductData.uuid, {
-                ...diff,
-                admin: {
-                  inStock: diff.inStockAdmin,
-                  purchasePrice: diff.purchasePrice
-                }
-              }));
+              await dispatch(api.products.update(thisProductData.uuid, diff));
               // Delete the now uploaded images
               dispatch(deleteUploadedImageAction({
                 uploaderId: 'retro-image-uploader-' + productSlug,
@@ -477,77 +454,9 @@ export default function SingleProduct(props) {
                         </Column>
                         <Column isSize={{desktop: '1/2'}}>
                           <label>Are these shoes better suited for men or women?</label>
-                          <Select
-                            defaultValue={{
-                              value: 'M',
-                            }}
-                            value={
-                              values.sex && {
-                                label: values.sex === 'M' ? 'Men' : 'Women',
-                                value: values.sex,
-                              }
-                            }
-                            options={[
-                              {
-                                value: 'M',
-                                label: 'Men',
-                              },
-                              {
-                                value: 'F',
-                                label: 'Women',
-                              },
-                            ]}
-                            placeholder={'eg. Men or Women'}
-                            onChange={({value}) => setFieldValue('sex', value)}
-                          />
                         </Column>
                       </Columns>
                     </div>
-                    <Columns>
-                      <Column isSize={{desktop: '1/2'}}>
-                        <div>
-                          <label>This product's current condition</label>
-                          <Select
-                            defaultValue={
-                              values.condition && {
-                                label: capitalize(values.condition),
-                                value: values.condition,
-                              }
-                            }
-                            placeholder="eg. New or Refurbished"
-                            options={conditions}
-                            onChange={({value}) => setFieldValue('condition', value)}
-                          />
-                        </div>
-                      </Column>
-                      <Column isSize={{desktop: '1/2'}}>
-                        <label>Shoe style</label>
-                        <Select
-                          placeholder={'eg. Low Cut or High Cut'}
-                          defaultValue={
-                            values.style && {
-                              label: capitalize(values.style),
-                              value: values.style,
-                            }
-                          }
-                          options={[
-                            {
-                              label: 'High-cut',
-                              value: 'high-cut',
-                            },
-                            {
-                              label: 'Mid-cut',
-                              value: 'mid-cut',
-                            },
-                            {
-                              label: 'Low-cut',
-                              value: 'low-cut',
-                            },
-                          ]}
-                          onChange={style => setFieldValue('style', style.value)}
-                        />
-                      </Column>
-                    </Columns>
                   </div>
                 </div>
                 {/*

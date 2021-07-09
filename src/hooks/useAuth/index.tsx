@@ -193,6 +193,7 @@ const useAuth = function () {
   const productTypes = {
     create: data => async () => (await getAxis()).post('/product-type', data),
     getAll: async () => (await getAxis()).get('/product-type'),
+    getSingle: async slug => (await getAxis()).get(`/product-type/${slug}`),
   };
 
   const products = {
