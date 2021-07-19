@@ -205,9 +205,9 @@ function Landing({ history }) {
                 <Helmet>
                   <script id="mcjs">
                     {
-                      env.isProduction() ?
-                        '!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/6ec31ce43b70efd818395b2ae/14ec84c64dab50454558e2aab.js");' :
-                        '!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/6ec31ce43b70efd818395b2ae/819f6aab492396f5747c68f82.js");'
+                      !env.isStaging() ?
+                        '!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/6ec31ce43b70efd818395b2ae/819f6aab492396f5747c68f82.js");' :
+                        '!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/6ec31ce43b70efd818395b2ae/14ec84c64dab50454558e2aab.js");'
                     }
                   </script>
                 </Helmet>
