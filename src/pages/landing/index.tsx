@@ -27,6 +27,8 @@ import Categories from './Categories';
 import Discover from './Discover';
 import Hero from './Hero';
 import DotPattern from '../../assets/images/patterns/dots.svg';
+import { Helmet } from 'react-helmet';
+import {env} from '../../config';
 
 function Landing({ history }) {
   return (
@@ -36,9 +38,9 @@ function Landing({ history }) {
         description={'We stock high-quality affordable sneakers, running shoes, sports shoes and classy men\'s shoes in Nairobi. We also accept shoe requests from repeat customers.'}
         title={'Home of Authentic Sneakers & Sports Shoes in Kenya'}
       />
-      <JsonLd item={jsonld()}/>
+      <JsonLd item={jsonld()} />
       <Section>
-        <Hero/>
+        <Hero />
       </Section>
       <Section>
         <div style={{textAlign: 'center'}}>
@@ -46,22 +48,22 @@ function Landing({ history }) {
         </div>
         <ValueProposition>
           <div>
-            <img style={{width: '48px'}} src={Return} alt={'easy returns'}/>
+            <img style={{width: '48px'}} src={Return} alt={'easy returns'} />
             <h4>We accept Returns</h4>
             <p>Within 7 days of delivery.</p>
           </div>
           <div>
-            <img style={{width: '48px'}} src={FastDelivery} alt={'next-day Delivery'}/>
+            <img style={{width: '48px'}} src={FastDelivery} alt={'next-day Delivery'} />
             <h4>Next-day Delivery</h4>
             <p>Anywhere within Nairobi</p>
           </div>
           <div>
-            <img style={{width: '48px'}} src={FreePickups} alt={'free pickups payment'}/>
+            <img style={{width: '48px'}} src={FreePickups} alt={'free pickups payment'} />
             <h4>Free pickups</h4>
             <p>At selected points within the CBD.</p>
           </div>
           <div>
-            <img style={{width: '48px'}} src={Shield} alt={'easy payment'}/>
+            <img style={{width: '48px'}} src={Shield} alt={'easy payment'} />
             <h4>100% Quality Guarantee</h4>
             <p>It's real deal or no deal.</p>
           </div>
@@ -72,13 +74,13 @@ function Landing({ history }) {
         <Container>
           <div>
             <div style={{textAlign: 'center'}}>
-              <img src={Fire} alt={'fire'} style={{width: '64px'}}/>
+              <img src={Fire} alt={'fire'} style={{width: '64px'}} />
 
               <h2>Popular Right Now.</h2>
               <p>Not sure where to start? Check out the most popular brands and models</p>
             </div>
             <div>
-              <PopularProducts/>
+              <PopularProducts />
             </div>
           </div>
         </Container>
@@ -86,7 +88,7 @@ function Landing({ history }) {
 
       <Section style={{background: `url('${DotPattern}')`}} id="app-body">
         <Container>
-          <Discover/>
+          <Discover />
         </Container>
       </Section>
 
@@ -126,7 +128,7 @@ function Landing({ history }) {
           </div>
           <Values>
             <div>
-              <img src={Scope} alt={'fire'} style={{width: '100%'}}/>
+              <img src={Scope} alt={'fire'} style={{width: '100%'}} />
               <h4>Discovery</h4>
               <div>
                 <p>
@@ -136,7 +138,7 @@ function Landing({ history }) {
               </div>
             </div>
             <div>
-              <img src={Expression} alt={'fire'} style={{width: '100%'}}/>
+              <img src={Expression} alt={'fire'} style={{width: '100%'}} />
               <h4>Self-Expression</h4>
               <div>
                 <p>
@@ -146,7 +148,7 @@ function Landing({ history }) {
               </div>
             </div>
             <div>
-              <img src={Authenticity} alt={'fire'} style={{width: '100%'}}/>
+              <img src={Authenticity} alt={'fire'} style={{width: '100%'}} />
               <h4>Authenticity</h4>
               <div>
                 <p>
@@ -156,13 +158,13 @@ function Landing({ history }) {
                     <img
                       alt={'mischevious wink'}
                       src={WinkingEmoji}
-                      style={{width: 18, verticalAlign: 'sub'}}/>
+                      style={{width: 18, verticalAlign: 'sub'}} />
                   </span>
                 </p>
               </div>
             </div>
             <div>
-              <img src={Originality} alt={'fire'} style={{width: '100%'}}/>
+              <img src={Originality} alt={'fire'} style={{width: '100%'}} />
               <h4>Originality</h4>
               <div>
                 <p>
@@ -176,7 +178,7 @@ function Landing({ history }) {
 
       <Section>
         <Container>
-          <Categories/>
+          <Categories />
         </Container>
       </Section>
       {/*<Section>*/}
@@ -191,7 +193,7 @@ function Landing({ history }) {
             <h2 style={{margin: 0}}>We accept</h2>
             <div className="images">
               <div>
-                <img title="M-Pesa" src={MPesaLogo} alt="mpesa logo"/>
+                <img title="M-Pesa" src={MPesaLogo} alt="mpesa logo" />
               </div>
             </div>
           </Partners>
@@ -199,6 +201,17 @@ function Landing({ history }) {
         <div>
           <Container>
             <CallToAction>
+              <div>
+                <Helmet>
+                  <script id="mcjs">
+                    {
+                      env.isProduction() ?
+                        '!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/6ec31ce43b70efd818395b2ae/14ec84c64dab50454558e2aab.js");' :
+                        '!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/6ec31ce43b70efd818395b2ae/819f6aab492396f5747c68f82.js");'
+                    }
+                  </script>
+                </Helmet>
+              </div>
               <div className={'images'}>
                 <img
                   src={'https://ik.imagekit.io/t25/v2/landing/coffee_ZF-vC31Vp.gif'}
@@ -259,7 +272,7 @@ function Landing({ history }) {
                       </div>
                     </div>
                     <div id="mce-responses" className="clear">
-                      <div className="response" id="mce-error-response" style={{display: 'none'}}/>
+                      <div className="response" id="mce-error-response" style={{display: 'none'}} />
                       <div
                         className="response"
                         id="mce-success-response"
