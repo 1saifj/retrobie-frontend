@@ -66,7 +66,12 @@ const Sidebar = props => {
             </div>
           </SidebarItem>
 
-          <ul>
+          <ul style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            height: "80vh"
+          }}>
             {sidebarRoutes &&
               sidebarRoutes.map((item, index) => {
                 return (

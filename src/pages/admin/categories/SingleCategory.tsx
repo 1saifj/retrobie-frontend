@@ -3,7 +3,7 @@ import useSWR from 'swr/esm/use-swr';
 import {useAuth, useNotify} from '../../../hooks';
 import {Loading} from '../../../components';
 import {CategoryType} from '../../../types';
-import CustomImageUploader from '../../../components/upload/CustomImageUploader';
+import ImageUploader from '../../../components/uploader/ImageUploader';
 import {useDispatch} from 'react-redux';
 import {Button} from 'bloomer';
 
@@ -52,7 +52,7 @@ export default function({match}){
             ) : (
               <div>
                 <div>
-                  <CustomImageUploader
+                  <ImageUploader
                     folder={`/category/${match.params.slug}`}
                     onInit={(images)=> {
                       if (images?.length) {

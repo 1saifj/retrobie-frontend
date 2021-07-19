@@ -19,6 +19,7 @@ export type ProductType = {
   detail?: ProductDetailType;
   meta?: ProductMetaType;
   description?: DescriptionType;
+  defaultVariant?: VariantType
   currency?: string;
   adminProduct?: {
     inStock: number;
@@ -55,6 +56,34 @@ type ProductMetaType = {
   style: string;
   condition: string;
 };
+
+export interface VariantType {
+  optionValues?: Array<ProductTypeOptionValue>;
+  uuid?: string;
+  slug?: string;
+  name?: string
+  originalPrice: number;
+  id?: number;
+  productId?: number;
+  images?: ImageType[];
+  categories?: CategoryType[];
+  product?: ProductType;
+  description?: DescriptionType;
+  stock?: StockType
+}
+
+export interface StockType {
+  uuid?: string
+  warehouse?: WarehouseType
+  quantity?: number
+}
+
+export interface WarehouseType {
+  id?: number
+  uuid?: string
+  address?: AddressType
+}
+
 
 export type ImageType = {
   fileId?: string;
@@ -107,17 +136,17 @@ export interface BrandType {
 export interface ProductTypeType {
   uuid: string;
   name: string;
-  options: ProductOption[];
+  options: ProductTypeOption[];
   slug?: string;
 }
 
-export interface ProductOption {
+export interface ProductTypeOption {
   uuid: string;
   name: string;
-  values: ProductOptionValue[];
+  values: ProductTypeOptionValue[];
 }
 
-export interface ProductOptionValue {
+export interface ProductTypeOptionValue {
   uuid: string;
   value: string;
 }
@@ -171,7 +200,7 @@ export interface OrderType {
   payment?: PaymentType;
   paymentType?: string;
   paymentMethod?: string;
-  customer?: UserInfoType;
+  customer?: any;
   delivery?: DeliveryType;
 }
 

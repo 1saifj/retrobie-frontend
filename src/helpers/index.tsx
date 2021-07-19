@@ -1,6 +1,7 @@
 import slugify from './slugify';
 import axios from 'axios';
 import {env} from '../config';
+import _ from 'lodash';
 
 
 export function formatNumberWithCommas(x: number): string {
@@ -168,6 +169,22 @@ class DefaultHelpers {
         [key]: obj2[key],
       };
     }, {});
+  }
+
+  /**
+   * https://gist.github.com/Yimiprod/7ee176597fef230d1451
+   * @param object
+   * @param base
+   */
+  objectDiffV2<T>(object: T, base: T): Partial<T> {
+    function changes(object, base): Partial<T> {
+      return _.transform(object, function(result, value, key) {
+        if (!_.isEqual(value, base[key])) {
+          result[key] = (_.isObject(value) && _.isObject(base[key])) ? changes(value, base[key]) : value;
+        }
+      });
+    }
+    return changes(object, base);
   }
 
   /**

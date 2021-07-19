@@ -30,7 +30,7 @@ export default function ViewSingleBrand(props) {
 
   const {products: renderProducts} = useFiltersV2();
 
-  const filteredProductsFetcher = (url, slug) => api.brands.getFilteredProducts({slug}).then(({data})=> data);
+  const filteredProductsFetcher = (url, slug) => api.brands.getFilteredProducts({slugOrUuid: slug}).then(({data})=> data);
   const {data: allProducts, error: fetchProductsError} = useSWR<FilteredProduct[]>([
     brandData ? `/brands/${brandData.slug}/products/filtered` : undefined,
     brandNameOrId,

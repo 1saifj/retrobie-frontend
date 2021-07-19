@@ -1,7 +1,7 @@
 import {FieldArray} from 'formik';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {capitalize} from '../../../../helpers';
-import {ProductOptionValue, ProductTypeType} from '../../../../types';
+import {ProductTypeOptionValue, ProductTypeType} from '../../../../types';
 import {CheckboxField, TextField} from '../../../../components/input';
 import {Column, Columns} from 'bloomer';
 import { Trash2 } from 'react-feather';
@@ -12,25 +12,26 @@ import RadioField from '../../../../components/input/RadioField';
 const CreateVariantComponent = (
   {
     allProductTypes,
-    selectedProductType,
+    productTypeId,
     onDeleteVariant,
-    index,
+    variantIndex,
   }: {
-    allProductTypes: ProductTypeType[],
-    selectedProductType: string,
+    allProductTypes: Array<ProductTypeType>
+    productTypeId: string,
     onDeleteVariant: Function,
-    index: number
+    variantIndex: number
   })=> {
 
-  if (!selectedProductType) return <span/>
+  if (!productTypeId) return <span/>
+
 
   return (
     <VariantParent className="bordered">
       <header>
         <div>
-          <h4>Variant #{index + 1}</h4>
+          <h4>Variant #{variantIndex + 1}</h4>
         </div>
-        <div className="trash" onClick={()=> onDeleteVariant(index)}>
+        <div className="trash" onClick={()=> onDeleteVariant(variantIndex)}>
           <Trash2/>
         </div>
       </header>
@@ -38,7 +39,7 @@ const CreateVariantComponent = (
         <Column>
           <TextField
             label={'Variant name'}
-            name={`variants.${index}.name`}
+            name={`variants.${variantIndex}.name`}
             placeholder={'The name of this variant'}
             type={'text'}
           />
@@ -46,7 +47,7 @@ const CreateVariantComponent = (
         <Column>
           <TextField
             label={'Stock count'}
-            name={`variants.${index}.inStock`}
+            name={`variants.${variantIndex}.inStock`}
             placeholder={'e.g. 5'}
             type={'number'}
           />
@@ -56,7 +57,7 @@ const CreateVariantComponent = (
         <Column>
           <TextField
             label={'Price'}
-            name={`variants.${index}.originalPrice`}
+            name={`variants.${variantIndex}.originalPrice`}
             placeholder={'e.g. 5000'}
             type={'number'}
             help={"Leave this field blank if it costs the same as the product."}
@@ -65,18 +66,18 @@ const CreateVariantComponent = (
         <Column>
           <CheckboxField
             label={'Is this variant on offer?'}
-            name={`variants.${index}.isOnOffer`}
+            name={`variants.${variantIndex}.isOnOffer`}
           />
         </Column>
       </Columns>
       <FieldArray
-        name={`variants.${index}.options`}
+        name={`variants.${variantIndex}.options`}
         render={(arrayHelpers)=> (
-          <div className="product-types">
+          <div className="product-type-options">
             {
               allProductTypes
-                ?.find(type => type.uuid === selectedProductType)
-                ?.options.map((option, optionIndex) => (
+                ?.find(type => type.uuid === productTypeId)
+                ?.options?.map((option, optionIndex) => (
                 <div className="bordered small product-type" key={option.uuid}>
                   <div>
                     <h4>
@@ -85,7 +86,7 @@ const CreateVariantComponent = (
                     <div
                       className="option">
                       <RadioField
-                        name={`variants.${index}.options.${optionIndex}.value`}
+                        name={`variants.${variantIndex}.options.${optionIndex}.value`}
                         bordered={true}
                         onChange={(value, index)=> arrayHelpers.replace(optionIndex, {
                           name: option.name,
@@ -129,5 +130,10 @@ const VariantParent = styled.div`
       cursor:pointer;
       opacity: 0.8;
     }
+  }
+  
+  .product-type-options {
+    display: flex;
+    gap: 1rem;
   }
 `;

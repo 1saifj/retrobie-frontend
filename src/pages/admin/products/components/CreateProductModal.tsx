@@ -13,9 +13,8 @@ import '../../../../assets/style/bulma-fx';
 import {v4 as uuidv4} from 'uuid';
 import {capitalize, extractErrorMessage, slugify} from '../../../../helpers';
 import 'react-quill/dist/quill.snow.css';
-import Editor from '../../brands/Editor';
-import CustomImageUploader from '../../../../components/upload/CustomImageUploader';
-import * as Yup from 'yup';
+import Editor from '../../../../components/editor/Editor';
+import ImageUploader from '../../../../components/uploader/ImageUploader';
 import {SelectField} from '../../../../components/input';
 import {useAuth} from '../../../../network';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
@@ -26,8 +25,8 @@ import {MetaState} from '../../../../state/reducers/metaReducers';
 import {useNotify} from '../../../../hooks';
 import CustomModal from '../../../../components/CustomModal';
 import styled from 'styled-components';
-import CreateVariantComponent from './CreateVariantComponent';
 import { deleteUploadedImageAction } from '../../../../state/actions';
+import CreateProductComponent from './CreateProductComponent';
 
 
 // const MESSAGES = {
@@ -132,6 +131,7 @@ const CreateProductModal = props => {
   return (
     <div>
       <CustomModal
+        closeOnClickBackground={true}
         onClose={() => props.onClose()}
         isActive={props.isActive}>
         <CreateProductParent isActive={props.isActive}>
@@ -227,7 +227,7 @@ const CreateProductModal = props => {
               setSubmitting(true);
 
               try {
-                const {data, ...rest} = await dispatch<any>(api.products.create(values));
+                await dispatch<any>(api.products.create(values));
 
                 setSubmitting(false);
                 dispatch(deleteUploadedImageAction({uploaderId}));
@@ -245,7 +245,7 @@ const CreateProductModal = props => {
               <Form>
                 <div className="bordered">
                   <h4>Product images</h4>
-                  <CustomImageUploader
+                  <ImageUploader
                     allowMultiple={true}
                     id={`create-product-uploader`}
                     folder={values.folder}
@@ -452,42 +452,10 @@ const CreateProductModal = props => {
                 </div>
                 {
                   values.productType && (
-                    <div className="bordered">
-                      <h4>Product variants</h4>
-                      <p>
-                        Select <b>one</b> value in every
-                        one of the available variant options.
-                      </p>
-                      <div>
-                        <FieldArray
-                          name={'variants'}
-                          render={arrayHelpers=> (
-                            <div>
-                              <div>
-                                {
-                                  values.variants?.map((variant, index) => (
-                                    <Columns>
-                                      <CreateVariantComponent
-                                        index={index}
-                                        onDeleteVariant={(index)=> arrayHelpers.remove(index)}
-                                        selectedProductType={values.productType}
-                                        allProductTypes={allProductTypes} />
-                                    </Columns>
-                                  ))
-                                }
-                              </div>
-                              <div>
-                                <Button
-                                  onClick={() => arrayHelpers.push({})}
-                                  style={{width: '100%'}}>
-                                  Add variant
-                                </Button>
-                              </div>
-                            </div>
-                          )}
-                        />
-                      </div>
-                    </div>
+                    <CreateProductComponent
+                      allProductTypes={allProductTypes}
+                      productTypeId={values.productType}
+                      variants={values.variants}/>
                   )
                 }
                 <div style={{marginTop: 24}}>
@@ -542,7 +510,6 @@ const CreateProductParent = styled.div<{isActive: boolean}>`
     margin-bottom: 24px;
     margin-left: 12px;
     margin-right: 12px;
-    flex: 1 1 150px;
   }
   
   .option {

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {Radio} from 'bloomer';
 import {useField} from 'formik';
@@ -39,73 +39,87 @@ const RadioGroupParent = styled.div`
   }
 `
 
-export default function RadioField(
-  {
-    onChange,
-    name,
-    bordered,
-    isGroup,
-    value,
-    inline,
-    options
-  }: {
-    onChange?: (value: string, index?: number)=> void,
-    name?: string,
-    bordered?: boolean,
-    isGroup?: boolean,
-    value?: string,
-    inline?: boolean,
-    options: Array<{label: string, value: string}>
-  }) {
+interface RadioOptionValue {
+  label: string;
+  value: string;
+}
 
-  const [field] = useField(name);
+interface RadioFieldProps {
+  onChange?: (value: string, index?: number)=> void,
+  name?: string,
+  bordered?: boolean,
+  isGroup?: boolean,
+  value?: string,
+  inline?: boolean,
+  selectedGroupItems?: Array<RadioOptionValue>
+  options: Array<RadioOptionValue>
+}
 
-  const [selectedGroupItem, setSelectedGroupItem] = useState('');
+export default function RadioField(props: RadioFieldProps) {
 
-  if (!isGroup)
+  const [field] = useField(props.name);
+
+  const [selectedGroupItems, setSelectedGroupItems] = useState<RadioOptionValue[]>(props.selectedGroupItems);
+
+  const selectedItemsLength = props.selectedGroupItems?.length;
+
+  useEffect(()=> {
+    setSelectedGroupItems(props.selectedGroupItems ?? [])
+  }, [selectedItemsLength])
+
+  if (!props.isGroup)
     return (
       <>
         <RadioParent
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              onChange?.(e.target.value)
+              props.onChange?.(e.target.value)
               field.onChange(e);
             }}>
-          <Radio name={name} value={value} />
+          <Radio name={props.name} value={props.value} />
         </RadioParent>
       </>
     );
 
+
+  if (!selectedGroupItems) return <span/>
+
   return (
     <>
       <RadioGroupParent
-        style={{ display: inline ? 'flex' : 'block' }}
+        style={{ display: props.inline ? 'flex' : 'block' }}
       >
         {
-          options?.map((item, index) => (
+          props.options?.map((item, index) => (
             <>
               <div>
                 <RadioParent
-                  bordered={bordered}
-                  selected={selectedGroupItem === item.value}
+                  bordered={props.bordered}
+                  selected={Boolean(selectedGroupItems?.find(groupItem=> groupItem?.value === item.value))}
                   onClick={(e) => {
-                    setSelectedGroupItem(item.value);
-                    if (typeof onChange === 'function') {
-                      onChange(item.value, index);
+                    setSelectedGroupItems(()=> {
+                      const newArr = [];
+                      newArr[index] = {
+                        value: item.value
+                      }
+                      return newArr;
+                    });
+                    if (typeof props.onChange === 'function') {
+                      props.onChange(item.value, index);
                     }
                     field.onChange({
                       ...e,
                       target: {
                         ...e.target,
-                        name
+                        name: props.name
                       }
                     })
                   }}
                 >
                   <Radio
-                    name={name}
+                    name={props.name}
                     value={item.value}
                     readOnly
-                    checked={selectedGroupItem === item.value}
+                    checked={Boolean(selectedGroupItems?.find(groupItem=> groupItem?.value === item.value))}
                   >
                     <span style={{ width: 'max-content' }}>{item.label}</span>
                   </Radio>

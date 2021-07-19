@@ -13,7 +13,7 @@ import {
   SAVE_ZOOM_LEVEL, FETCH_REMOTE_CART, EMPTY_CART, IMAGE_UPLOADED, REMOVE_UPLOADED_IMAGE,
 } from './constants';
 import {AddressType, CartItemType, CartType, LoginResponseType} from '../../types';
-import {UploadedImageType} from '../../components/upload/CustomImageUploader';
+import {UploadedImageType} from '../../components/uploader/ImageUploader';
 
 const createAction = (type: string, payload?: any) => ({type, payload});
 

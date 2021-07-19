@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {axis, useAuth} from '../../../network';
+import {useAuth} from '../../../network';
 import Loading from '../../../components/loading';
 import styled from 'styled-components';
 import {notify} from '../../../helpers/views';
@@ -8,9 +8,8 @@ import {Form, Formik} from 'formik';
 import TextField from '../../../components/input/TextField';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
-import OnOffSwitch from '../../../components/OnOffSwitch';
-import Editor from '../brands/Editor';
-import CustomImageUploader from '../../../components/upload/CustomImageUploader';
+import Editor from '../../../components/editor/Editor';
+import ImageUploader from '../../../components/uploader/ImageUploader';
 import SelectedImageModal from '../brands/modals/SelectedImageModal';
 import * as Yup from 'yup';
 import defaultHelpers, {
@@ -21,48 +20,36 @@ import defaultHelpers, {
 import {useDispatch} from 'react-redux';
 import useSWR from 'swr/esm/use-swr';
 import {deleteUploadedImageAction} from '../../../state/actions';
-import {BrandType} from '../../../types';
+import {BrandType, ProductTypeType, VariantType} from '../../../types';
 import {EmptyState} from '../../../components';
 import {DeadEyes2} from '../../../constants/icons';
+import {SimpleListItem} from '../../../components/list';
+import {ChevronRight} from 'react-feather';
+import CreateVariantModal from './components/CreateVariantModal';
+import EditVariantModal from './components/EditVariantModal';
 
-const MESSAGES ={
-  REQUIRED: "This field is required.",
-  TOO_SHORT: "This field is too short.",
-  TOO_LONG: "This field is too long."
-}
 
 const UpdateProductValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
-  slug: Yup.string().required(),
-  uuid: Yup.string().required(),
+  brand: Yup.string().required(),
+  originalPrice: Yup.number().required(),
+  productType: Yup.string().required(),
+  categories: Yup.array().of(Yup.object({name: Yup.string()})).required(),
   short: Yup.string().required(),
   long: Yup.string().required(),
   seo: Yup.string().required(),
-  size: Yup.number().required(),
-  sex: Yup.string()
-    .oneOf(['M', 'F'])
-    .required(),
-  inStock: Yup.number()
-    .required(MESSAGES.REQUIRED)
-    .min(0),
-  inStockAdmin: Yup.number()
-    .required(MESSAGES.REQUIRED)
-    .min(0),
-  brand: Yup.string().required(),
-  currency: Yup.string().required(),
-  originalPrice: Yup.number().required(),
-  // idealFor: Yup.string().optional(),
-  style: Yup.string().required(),
-  condition: Yup.string().required(),
-  // endorsedBy: Yup.string().optional(),
-  // sportsType: Yup.string().optional(),
+  isOnOffer: Yup.boolean()
 });
 
-export default function SingleProduct(props) {
+export default function ViewSingleProductPage(props) {
   const api = useAuth();
   const dispatch = useDispatch();
   const [showImageModal, setImageModalShown] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
+
+  const [isCreateVariantModalActive, setCreateVariantModalActive] = useState(false);
+  const [isEditVariantModalActive, setEditVariantModalActive] = useState(false);
+  const [editingVariant, setEditingVariant] = useState(null);
 
   const allBrandsFetcher = () => api.brands.getAll().then(({data}) => data);
   const {data: allBrands} = useSWR<BrandType[]>('/brands/all', allBrandsFetcher);
@@ -83,11 +70,20 @@ export default function SingleProduct(props) {
       originalPrice: data.originalPrice,
       productType: data.productType,
       isOnOffer: data.isOnOffer,
+      variants: data.variants
     }
   ));
   const {data: thisProductData, error: fetchProductError, mutate} = useSWR([`/product/${productSlug}`, productSlug], singleProductFetcher);
 
-  if (fetchProductError){
+
+  const productTypeFetcher = () => api.productTypes.getSingle(thisProductData?.productType?.slug).then(({data}) => data);
+  const {data: productType, error: fetchProductTypeError} = useSWR<ProductTypeType>(
+    thisProductData?.productType?.uuid ?
+    `/product/${thisProductData.productType.uuid}` : undefined,
+    productTypeFetcher
+  );
+
+  if (fetchProductError || fetchProductTypeError){
     return (
       <EmptyState
         icon={DeadEyes2}
@@ -97,39 +93,27 @@ export default function SingleProduct(props) {
     );
   }
 
-  if (!thisProductData) {
+  if (!thisProductData || !productType) {
     return (
       <Loading message={'Please wait a while...'} />
     )
   }
 
-  const conditions = [
-    {
-      label: 'New',
-      value: 'new',
-    },
-    {
-      label: 'Refurbished',
-      value: 'refurbished',
-    },
-    {
-      label: 'Slightly Worn',
-      value: 'worn',
-    },
-  ];
 
   function deleteProduct(id) {
     if (!id) {
       return;
     }
-    axis
-      .delete(`/products/single/${id}`)
-      .then(response => {
-        notify('success', response.data.message);
-      })
-      .catch(err => {
-        notify('error', "That didn't work out");
-      });
+
+  }
+
+  const triggerCreateVariantModal: () => void = () => {
+    setCreateVariantModalActive((prevState) => !prevState);
+  }
+  const triggerEditVariantModal: (variant) => void = (variant) => {
+    console.log("Setting variant: ", variant)
+    setEditingVariant(variant);
+    setEditVariantModalActive((prevState) => !prevState);
   }
 
   return (
@@ -137,10 +121,10 @@ export default function SingleProduct(props) {
       <div>
         <Formik
           initialValues={{
-            ...thisProductData
+            ...thisProductData,
           }}
           onSubmit={async (values, {setSubmitting}) => {
-            console.log("Submitting form...", values)
+            console.log('Submitting form...', values);
             // When updating a product, we only want to send details that have changed
             // And ignore the rest
             // Note: arrays always show up
@@ -156,6 +140,13 @@ export default function SingleProduct(props) {
             // Delete them from the object if they don't exist
             if (noNewImages) {
               delete diff.images;
+            } else {
+              // otherwise, delete the 'local' id used by the image uploader
+              diff.images = diff.images.map(image => {
+                const {id, ...rest} = image;
+
+                return rest;
+              });
             }
 
             if (noNewCategories) {
@@ -175,7 +166,7 @@ export default function SingleProduct(props) {
                 uploaderId: 'retro-image-uploader-' + productSlug,
               }));
               await mutate(null, true);
-              notify('success', "Updated product successfully.");
+              notify('success', 'Updated product successfully.');
             } catch (e) {
               console.error(e);
               const message = extractErrorMessage(e);
@@ -190,7 +181,7 @@ export default function SingleProduct(props) {
               <FormItemsParent>
                 <h3>Main Details</h3>
                 <div>
-                  <CustomImageUploader
+                  <ImageUploader
                     allowMultiple={true}
                     id={productSlug}
                     folder={`products/${slugify(thisProductData.brand, {lower: true})}/${slugify(values.name)}`}
@@ -281,6 +272,15 @@ export default function SingleProduct(props) {
                         />
                       </Field>
                     </Column>
+
+                    <Column isSize={{desktop: '1/2'}}>
+                      <TextField
+                        placeholder={'eg. 5000'}
+                        type={'number'}
+                        label={'The current price of this product'}
+                        name={'originalPrice'}
+                      />
+                    </Column>
                   </Columns>
                 </div>
                 <Columns>
@@ -370,120 +370,57 @@ export default function SingleProduct(props) {
                   />
                 </div>
                 <div>
-                  <h4>Price</h4>
-                  <Columns>
-                    <Column isSize={{desktop: '1/2'}}>
-                      <TextField
-                        type={'text'}
-                        placeholder={'Currency'}
-                        name={'currency'}
-                        label={'Currency'}
-                        disabled
-                      />
-                    </Column>
-                    <Column isSize={{desktop: '1/2'}}>
-                      <TextField
-                        placeholder={'eg. 5000'}
-                        type={'number'}
-                        label={'The current price of this product'}
-                        name={'originalPrice'}
-                      />
-                    </Column>
-                  </Columns>
-                </div>
-                <div style={{marginTop: 12}}>
-                  <h4>Stock</h4>
-                  <div>
-                    <Columns>
-                      <Column isSize={{desktop: '1/2'}}>
-                        <TextField
-                          label={'Users stock count'}
-                          placeholder={'eg. 25'}
-                          type={'number'}
-                          name={'inStock'}
-                        />
-                      </Column>
-                      <Column isSize={{desktop: '1/2'}}>
-                        <TextField
-                          label={'Admin stock count'}
-                          placeholder={'eg. 30'}
-                          type={'number'}
-                          name={'inStockAdmin'}
-                        />
-                      </Column>
-                    </Columns>
+                  <div style={{display: 'flex'}}>
                     <div>
-                      <Columns>
-                        <Column isSize={{desktop: '1/2'}}>
-                          <div>
-                            <OnOffSwitch
-                              label={'Is this product on offer?'}
-                              onText={''}
-                              offText={''}
-                              onChange={value => {
-                                setFieldValue('isOnOffer', value);
-                              }}
-                            />
-                          </div>
-                        </Column>
-                        <Column isSize={{desktop: '1/2'}}>
-                          <TextField
-                            disabled={!values.isOnOffer}
-                            placeholder={'Sale Price'}
-                            name={'salePrice'}
-                            type={'number'}
-                            label={'Sale Price'}
-                          />
-                        </Column>
-                      </Columns>
+                      <h4 style={{margin: 0}}>Product Variants</h4>
+                      <p>Variants can be grouped by their options</p>
                     </div>
                   </div>
-                </div>
-                <div style={{marginTop: 24}}>
                   <div>
-                    <h4>Misc</h4>
                     <div>
-                      <Columns>
-                        <Column isSize={{desktop: '1/2'}}>
-                          <TextField
-                            placeholder={'Size'}
-                            type={'number'}
-                            label={'Size'}
-                            name={'size'}
-                          />
-                        </Column>
-                        <Column isSize={{desktop: '1/2'}}>
-                          <label>Are these shoes better suited for men or women?</label>
-                        </Column>
-                      </Columns>
+                      {
+                        thisProductData.variants.map((variant: VariantType) => {
+                          return (
+                            <div>
+                              <SimpleListItem>
+                                <div style={{display: 'flex', alignItems: 'center', justifyContent: 'between'}}
+                                     className="hover-pointer"
+                                     onClick={()=> triggerEditVariantModal(variant)}
+                                >
+                                  <p>{variant.name}</p>
+
+                                  <ChevronRight size={24} />
+                                </div>
+                              </SimpleListItem>
+
+                            </div>
+                          );
+                        })
+                      }
+                    </div>
+                    <div>
+                      <Button onClick={triggerCreateVariantModal}>
+                        Add a New Variant
+                      </Button>
+
+                      <div>
+                        <CreateVariantModal
+                          isActive={isCreateVariantModalActive}
+                          onClose={triggerCreateVariantModal}
+                          productTypeId={thisProductData.productType.uuid}
+                        />
+                      </div>
+                      <div>
+                        <EditVariantModal
+                          isActive={isEditVariantModalActive}
+                          onClose={triggerEditVariantModal}
+                          variantId={editingVariant?.uuid}
+                          productTypeOptions={productType.options}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-                {/*
-                  <div>
-                    <div style={{marginTop: 12}}>
-                      <h4>Type</h4>
-                    </div>
-                    <Columns>
-                      <Column isSize={{desktop: '1/2'}}>
-                        <TextField
-                          placeholder={'eg. sports, clubbing, casual wear'}
-                          type={'text'}
-                          label={'What are these shoes ideal for?'}
-                          name={'idealFor'}
-                        />
-                      </Column>
-                      <Column isSize={{desktop: '1/2'}}>
-                        <TextField
-                          placeholder={'eg. Football, Basketball...etc'}
-                          type={'text'}
-                          label={'Sports Type'}
-                          name={'sportsType'}
-                        />
-                      </Column>
-                    </Columns>
-                  </div>
-*/}
                 <div style={{marginTop: 24}}>
                   <Button
                     isLoading={isSubmitting}
@@ -520,11 +457,6 @@ const FormItemsParent = styled.div`
   
   a {
     text-decoration: none;
-  }
-  
-  h4 {
-    margin-top: 0;
-    margin-bottom: 0;
   }
   
   .rdw-option-wrapper, .rdw-dropdown-wrapper {

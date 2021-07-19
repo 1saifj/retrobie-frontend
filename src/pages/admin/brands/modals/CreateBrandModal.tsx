@@ -18,7 +18,7 @@ import * as Yup from 'yup';
 import {useAuth} from '../../../../network';
 import {useDispatch} from 'react-redux';
 import {PromiseThunk} from '../../../../types';
-import CustomImageUploader from '../../../../components/upload/CustomImageUploader';
+import ImageUploader from '../../../../components/uploader/ImageUploader';
 
 const CreateBrandValidationSchema = Yup.object().shape({
     name: Yup.string()
@@ -142,7 +142,7 @@ const CreateBrandModal = (
                   <Form>
                     <div style={{border: '1px solid grey', padding: '12px 8px'}}>
                       <h4>Upload a logo</h4>
-                      <CustomImageUploader
+                      <ImageUploader
                         folder={`logos/${values.slug}`}
                         id={values.slug}
                         onUpload={(err, {images}) => {

@@ -18,7 +18,7 @@ export default function SingleOrder(props) {
   function getAllCartItemProducts(key, cartItems: Array<CartItemType>): Promise<ProductType[]> {
     if (cartItems?.length) {
       return Promise.all(
-        cartItems?.map(async item => (await api.products.getSingle(item.productId))?.data)
+        cartItems?.map(async item => (await api.variants.getOne(item.productId))?.data)
       );
     }
 
@@ -72,7 +72,9 @@ export default function SingleOrder(props) {
   }
 
   if (!thisOrderData) {
-    return <Loading />;
+    return (
+      <p>Loading...</p>
+    )
   }
 
   function markOrderAsFulfilled() {
@@ -108,21 +110,21 @@ export default function SingleOrder(props) {
                 <div style={{display: 'flex'}}>
                   <div style={{marginRight: '48px'}}>
                     <img
-                      src={env.getApiBaseUrl() + thisOrderData.customer.avatar.url}
+                      src={env.getApiBaseUrl() + thisOrderData.customer.profile.avatar?.url}
                       alt={'avatar'}
                     />
                     <div>
                       <h2>Personal information</h2>
                       <div>
                         <p>
-                          {thisOrderData.customer.firstName} {thisOrderData.customer.lastName}
+                          {thisOrderData.customer.profile.firstName} {thisOrderData.customer.profile.lastName}
                         </p>
                       </div>
                       <div>
-                        <p>+254-{addDashes(thisOrderData.customer.phoneNumber)}</p>
+                        <p>+254-{addDashes(thisOrderData.customer.profile.phoneNumber)}</p>
                       </div>
                       <div>
-                        <p>{thisOrderData.customer.email}</p>
+                        <p>{thisOrderData.customer.account.email}</p>
                       </div>
                     </div>
                     <div>

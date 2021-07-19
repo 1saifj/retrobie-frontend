@@ -9,28 +9,28 @@ import {useNotify} from '../../hooks';
 import {env} from '../../config';
 import {imageUploadedAction} from '../../state/actions';
 import {MetaState} from '../../state/reducers/metaReducers';
-import { CircularProgressbar } from 'react-circular-progressbar';
+import {CircularProgressbar} from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
 type LocalImageType = {
-    // a random string
-    id: string,
-    uploaded: false,
-    src: string,
-    file: File,
-    md5: string,
-    isUploading?: boolean
-    uploadPercent?: number
+  // a random string
+  id: string,
+  uploaded: false,
+  src: string,
+  file: File,
+  md5: string,
+  isUploading?: boolean
+  uploadPercent?: number
 }
 
 export type UploadedImageType = {
-    // a random string
-    id: string,
-    uploaded: true,
-    md5: string,
-    url: string;
-    fileId: string;
-    thumbnailUrl: string
+  // a random string
+  id: string,
+  uploaded: true,
+  md5: string,
+  url: string;
+  fileId: string;
+  thumbnailUrl: string
 }
 
 const SelectedImage = styled.div`
@@ -43,43 +43,26 @@ const SelectedImage = styled.div`
       cursor:pointer;
      }
    }
-`
+`;
 
 
-function CustomImageUploader(
-  {
-    onInit,
-    initialImages,
-    instantUpload,
-    isSelectDisabled,
-    deferredUpload,
-    onUpload,
-    onDeleteUploadedImage,
-    onClickSelectedImage,
-    allowMultiple,
-    folder,
-    id,
-    onBeforeChange,
-    onUploadProgress,
-  }: {
+interface CustomImageUploaderParams {
+  onInit?: (images: Array<UploadedImageType>) => void;
+  initialImages?: UploadedImageType[];
+  instantUpload?: boolean;
+  isSelectDisabled?: boolean;
+  deferredUpload?: boolean;
+  folder: string;
+  onUpload: (err, {images, uploaderId}: {images: Array<UploadedImageType>; uploaderId: string}) => void;
+  onDeleteUploadedImage?: ({fileId}: {fileId: any}) => Promise<void>;
+  onClickSelectedImage?: (e) => void;
+  allowMultiple: boolean;
+  id: string;
+  onBeforeChange?: (e) => void;
+  onUploadProgress?: ({percentCompleted, fileId}: {percentCompleted: number; fileId: string}) => void;
+}
 
-    // useful for showing images that have been uploaded to the image server
-    // but likely not to our own
-    onInit?: (images: Array<UploadedImageType>) => void,
-    initialImages?: UploadedImageType[],
-    instantUpload?: boolean,
-    isSelectDisabled?: boolean,
-    deferredUpload?: boolean,
-    folder: string,
-    onUpload: (err, {images, uploaderId}: {images: Array<UploadedImageType>, uploaderId: string}) => void,
-    onDeleteUploadedImage?: ({fileId})=> Promise<void>
-    onClickSelectedImage?: (e) => void,
-    allowMultiple: boolean,
-    id: string,
-    onBeforeChange?: (e) => void,
-    onUploadProgress?: ({percentCompleted, fileId}: {percentCompleted: number, fileId: string}) => void
-
-  }) {
+function ImageUploader(props: CustomImageUploaderParams) {
 
   const api = useAuth();
   const dispatch = useDispatch();
@@ -87,7 +70,23 @@ function CustomImageUploader(
 
   const inputRef = useRef(null);
 
-  const uploaderId = `retro-image-uploader-${id}`;
+  const {
+    onUploadProgress,
+    onClickSelectedImage,
+    id,
+    folder,
+    instantUpload,
+    onBeforeChange,
+    onUpload,
+    onInit,
+    isSelectDisabled,
+    onDeleteUploadedImage,
+    deferredUpload,
+    initialImages,
+    allowMultiple,
+  } = props;
+
+  const uploaderId = `retro-image-uploader-${(id)}`;
 
   const metaState: MetaState = useSelector((state: RootStateOrAny) => state.meta);
   const uploadedImages: UploadedImageType[] = metaState.components.imageUploader[uploaderId];
@@ -152,8 +151,8 @@ function CustomImageUploader(
   async function onDelete(image) {
     if (image.uploaded || image.fileId) {
       await onDeleteUploadedImage?.({
-        fileId: image.fileId
-      })
+        fileId: image.fileId,
+      });
     } else {
       const selectedForDeleteIndex = selectedImagesState
         .findIndex(single => single.md5 === image.md5);
@@ -185,7 +184,7 @@ function CustomImageUploader(
         formData.append('file', currentFile.file);
         formData.append('fileName', currentFile.file.name);
         const environment = env.getEnvironment();
-        formData.append('folder', environment === 'production' ? folder : `${environment}/${folder}`);
+        formData.append('folder', environment === 'production' ? folder : `${environment}/${(folder)}`);
 
         const selectedImageIndex = selectedImages.findIndex(file => file.md5 === currentFile.md5);
 
@@ -285,12 +284,12 @@ function CustomImageUploader(
                         image.isUploading && (
                           <div style={{
                             position: 'absolute',
-                            height: "100%",
-                            width: "100%",
+                            height: '100%',
+                            width: '100%',
                             zIndex: 1,
-                            background: "rgba(0,0,0,0.5)",
-                            display: "flex",
-                            alignItems: "center"
+                            background: 'rgba(0,0,0,0.5)',
+                            display: 'flex',
+                            alignItems: 'center',
                           }}>
                             <CircularProgressbar
                               value={uploadingPercent}
@@ -351,7 +350,7 @@ function CustomImageUploader(
               inputRef.current.click();
             }}
           >
-            {allowMultiple ? 'Select images' : 'Select image'}
+            {allowMultiple ? 'Select new images' : 'Select a new image'}
           </Button>
         </div>
       </Root>
@@ -397,7 +396,7 @@ const Root = styled.div`
         }
       }
     }
-`
+`;
 
 
-export default CustomImageUploader;
+export default ImageUploader;

@@ -32,15 +32,12 @@ const OrderCompleted = lazy(() => import('../pages/shipping/order-completed'));
 //Admin
 const AdminLogin = lazy(() => import('../pages/admin/login'));
 const AdminHome = lazy(() => import('../pages/admin/home'));
-const AdminProductTypesHome = lazy(() => import('../pages/admin/productTypes'));
-const AdminProductTypesCreate = lazy(() => import('../pages/admin/productTypes/AddProductType'));
-const AdminProductTypesList = lazy(() => import('../pages/admin/productTypes/ListProductTypes'));
-const AdminProductTypesDetail = lazy(() => import('../pages/admin/productTypes/SingleProductType'));
-const AdminProductsHome = lazy(() => import('../pages/admin/products'));
-const AdminAllProducts = lazy(() => import('../pages/admin/products/AllProducts'));
-const AdminCreateProduct = lazy(() => import('../pages/admin/products/AddProduct'));
+const AdminProductTypesCreate = lazy(() => import('../pages/admin/productTypes/CreateProductTypePage'));
+const AdminProductTypesList = lazy(() => import('../pages/admin/productTypes/ViewAllProductTypesPage'));
+const AdminProductTypesDetail = lazy(() => import('../pages/admin/productTypes/ViewSingleProductTypePage'));
+const AdminAllProducts = lazy(() => import('../pages/admin/products/ViewAllProductsPage'));
 const AdminDeliveries = lazy(() => import('../pages/admin/deliveries'));
-const AdminSingleProduct = lazy(() => import('../pages/admin/products/SingleProduct'));
+const AdminSingleProduct = lazy(() => import('../pages/admin/products/ViewSingleProductPage'));
 
 const AdminOrders = lazy(() => import('../pages/admin/orders/view-orders'));
 const AdminCategories = lazy(() => import('../pages/admin/categories'));
@@ -48,7 +45,6 @@ const AdminSingleCategory = lazy(() => import('../pages/admin/categories/SingleC
 
 const AdminSingleOrder = lazy(() => import('../pages/admin/orders/single'));
 const AdminBrands = lazy(() => import('../pages/admin/brands/AllBrands'));
-const AdminBrandProducts = lazy(() => import('../pages/admin/brands/BrandProducts'));
 const MiscPages = lazy(() => import('../pages/admin/misc'));
 
 const AdminSingleBrand = lazy(() => import('../pages/admin/brands/Brand'));
@@ -256,17 +252,12 @@ const adminRoutes = [
   {
     path: '/company/admin/dashboard/product-types',
     exact: true,
-    component: AdminProductTypesHome,
+    component: AdminProductTypesList,
   },
   {
     path: '/company/admin/dashboard/product-types/create',
     exact: true,
     component: AdminProductTypesCreate,
-  },
-  {
-    path: '/company/admin/dashboard/product-types/all',
-    exact: true,
-    component: AdminProductTypesList,
   },
   {
     path: '/company/admin/dashboard/product-types/:slug',
@@ -276,17 +267,7 @@ const adminRoutes = [
   {
     path: '/company/admin/dashboard/products',
     exact: true,
-    component: AdminProductsHome,
-  },
-  {
-    path: '/company/admin/dashboard/products/all',
-    exact: true,
     component: AdminAllProducts,
-  },
-  {
-    path: '/company/admin/dashboard/products/create',
-    exact: true,
-    component: AdminCreateProduct,
   },
   {
     path: '/company/admin/dashboard/deliveries',
@@ -324,11 +305,6 @@ const adminRoutes = [
     path: '/company/admin/dashboard/brands/:id',
     exact: true,
     component: AdminSingleBrand,
-  },
-  {
-    path: '/company/admin/dashboard/brands/:id/products',
-    exact: true,
-    component: AdminBrandProducts,
   },
   {
     path: '/company/admin/dashboard/misc',

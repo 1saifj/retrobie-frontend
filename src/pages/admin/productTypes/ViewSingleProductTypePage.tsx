@@ -4,9 +4,9 @@ import useSWR from 'swr';
 import {EmptyState, Loading} from '../../../components';
 import {DeadEyes2} from '../../../constants/icons';
 import {useAuth} from '../../../hooks';
-import ProductTypeForm from './ProductTypeForm';
+import ProductTypeForm from './components/ProductTypeForm';
 
-export default function SingleProductType() {
+export default function ViewSingleProductTypePage() {
   const param: {slug: string} = useParams();
   const api = useAuth();
 

@@ -1,4 +1,4 @@
-import {Input} from 'bloomer';
+import {Button, Column, Columns, Input} from 'bloomer';
 import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
@@ -7,7 +7,7 @@ import {Loading} from '../../../components';
 import {useAuth} from '../../../hooks';
 import {ProductTypeType} from '../../../types';
 
-export default function ListProductTypes() {
+export default function ViewAllProductTypesPage(props) {
   const api = useAuth();
 
   const productTypeFetcher = () =>
@@ -35,7 +35,7 @@ export default function ListProductTypes() {
   if (!allProductTypes?.length) {
     return (
       <div>
-        <Loading minor={true} />
+        <Loading />
       </div>
     );
   }
@@ -57,7 +57,21 @@ export default function ListProductTypes() {
 
   return (
     <ListProductTypesStyled>
-      <h2>Product Types</h2>
+
+      <Columns>
+        <Column>
+          <h2>Product Types</h2>
+        </Column>
+        <Column>
+          <Button
+            isColor="light"
+            onClick={() => props.history.push('/company/admin/dashboard/product-types/create')}
+          >
+            Add a new Product type
+          </Button>
+
+        </Column>
+      </Columns>
       <div className="product-type-list__wrapper">
         <div style={{marginBottom: '0.75rem'}}>
           <label htmlFor="product-type-filter">Filter This List</label>
@@ -75,7 +89,7 @@ export default function ListProductTypes() {
           {filteredProductTypes?.map((productType, index) => {
             return (
               <div key={index}>
-                <Link to={`${productType.slug}`}>
+                <Link to={`product-types/${productType.slug}`}>
                   <div className="product-type-list__item">
                     <p>{productType.name}</p>
                     <span>&rsaquo;</span>

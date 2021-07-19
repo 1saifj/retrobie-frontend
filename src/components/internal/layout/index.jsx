@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import Sidebar from '../../../pages/admin/sidebar';
 import AuthenticatedMenu from '../../nav/AuthenticatedMenu';
 import {Box as LayoutBox} from 'bloomer';
-import {Anchor, BarChart2, Box, Flag, Home, Archive , Settings, Truck, Users} from 'react-feather';
-import {ReactComponent as SidebarShoe} from '../../../assets/images/icons/shoe.svg';
+import {Anchor, Box, Flag, Home, Archive,  Truck, Package} from 'react-feather';
 
 
 class InternalLayout extends React.Component {
@@ -27,18 +26,13 @@ class InternalLayout extends React.Component {
                 route: '/company/admin/dashboard/orders',
             },
             {
-                name: 'Analytics',
-                icon: <BarChart2 color={"#fff"}/>,
-                route: '/company/admin/dashboard/analytics',
-            },
-            {
                 name: 'Product Types',
                 icon: <Archive color={"#fff"} />,
                 route: '/company/admin/dashboard/product-types',
             },
             {
                 name: 'Products',
-                icon: <SidebarShoe fill={"#fff"} style={{width: '24px', marginTop: 0}}/>,
+                icon: <Package color={"#fff"} />,
                 route: '/company/admin/dashboard/products',
             },
             {
@@ -57,20 +51,10 @@ class InternalLayout extends React.Component {
                 route: '/company/admin/dashboard/brands'
             },
             {
-                name: 'Users',
-                icon: <Users color={"#fff"}/>,
-                route: '/company/admin/dashboard/brands'
-            },
-            {
                 name: 'Misc',
                 icon: <Anchor color={"#fff"}/>,
                 route: '/company/admin/dashboard/misc',
-            },
-            {
-                name: 'Settings',
-                icon: <Settings color={"#fff"}/>,
-                route: '/company/admin/dashboard/settings',
-            },
+            }
 
         ];
         return (

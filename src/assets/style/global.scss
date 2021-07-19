@@ -180,32 +180,31 @@ body,
 
 h1 {
   font-size: 2.074em;
-  margin: 0.67em 0;
+  margin: 0.5em 0;
 }
 
 h2 {
   font-size: 1.728em;
-  margin: 0.75em 0;
+  margin: 0.2em 0;
 }
 
 h3 {
   font-size: 1.44em;
-  margin: 0.83em 0;
+  margin: 0.15em 0;
 }
 
 h4 {
   font-size: 1.14em;
-  margin: 0.9em 0;
+  margin: 0.1em 0;
 }
 
 h5 {
   font-size: 0.9em;
-  margin: 0.35rem 0;
+  margin: 0.05rem 0;
 }
 
 h6 {
   font-size: 0.8em;
-  margin: 1.67em 0;
 }
 
 p,
@@ -657,24 +656,6 @@ b {
   }
 }
 
-.buttons .button {
-  margin: unset;
-}
-
-.buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-
-  button {
-    flex: 1 1 150px;
-  }
-}
-
-.button {
-  height: unset;
-  padding: 12px 32px;
-}
 
 .button.is-small {
   font-size: 14px;
@@ -775,7 +756,7 @@ h1.light, h2.light, h3.light, h4.light, h5.light, h6.light {
 .modal-content,
 .modal-card {
   & > div {
-    padding: 12px;
+    padding: 1rem;
   }
 }
 
@@ -850,4 +831,26 @@ h1.light, h2.light, h3.light, h4.light, h5.light, h6.light {
 
 .half-width {
   width: 50% !important;
+}
+
+.hover-pointer:hover {
+  cursor: pointer;
+}
+
+.bordered {
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+  padding: 1.5rem 1rem;
+  transition: all 0.25s ease-in-out;
+  margin-top: 1rem;
+}
+
+// nested bordered
+.bordered .bordered {
+  margin: 12px 12px;
+  padding: 0.6rem 0.8rem;
+
+  &.small {
+    margin: 0;
+  }
 }

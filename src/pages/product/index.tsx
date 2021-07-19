@@ -136,7 +136,7 @@ function Product({ match }) {
           >
             <ProductSlider
               productName={currentProduct.name}
-              images={currentProduct.images} />
+              images={currentProduct.defaultVariant.images} />
 
             <div style={{
               width: '80%',
@@ -212,38 +212,7 @@ function Product({ match }) {
                     />
                   </InDepth>
                 </div>
-                <div>
-                  <div>
-                    <h4>Available sizes</h4>
-                  </div>
-                  <SizesParent>
-                    <Sizes>
-                      <CustomTag>
-                        <p>
-                          {
-                            `
-                            ${currentProduct.detail.size} 
-                            ${currentProduct.detail.sizeCountry.toUpperCase()}
-                            `
-                          }
-                        </p>
-                      </CustomTag>
-                    </Sizes>
-                  </SizesParent>
-                </div>
 
-                <div>
-                  <div>
-                    <h4>Product condition</h4>
-                    <CustomTag>
-                      <p>
-                        {
-                          capitalize(currentProduct.meta.condition)
-                        }
-                      </p>
-                    </CustomTag>
-                  </div>
-                </div>
                 {
                   currentProduct.inStock !== null && (
                     <div>
@@ -256,11 +225,11 @@ function Product({ match }) {
                           ) :
                           currentProduct.inStock <= 5 ? (
                             <CustomTag>
-                              <p>Only {currentProduct.inStock} left in stock</p>
+                              <p>Only {currentProduct.defaultVariant.stock.quantity} left in stock</p>
                             </CustomTag>
                           ) : (
                             <CustomTag>
-                              <p>{currentProduct.inStock} left in stock</p>
+                              <p>{currentProduct.defaultVariant.stock.quantity} left in stock</p>
                             </CustomTag>
                           )
                       }

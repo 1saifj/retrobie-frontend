@@ -1,15 +1,14 @@
 import {Button} from 'bloomer';
 import {FieldArray, Form, Formik} from 'formik';
-import React, {useEffect} from 'react';
-import {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Trash} from 'react-feather';
 import {useDispatch} from 'react-redux';
 import styled from 'styled-components';
 import * as Yup from 'yup';
-import {TextField} from '../../../components/input';
-import {extractErrorMessage} from '../../../helpers';
-import {MIN, REQUIRED} from '../../../helpers/validationMessages';
-import {useAuth, useNotify} from '../../../hooks';
+import {TextField} from '../../../../components/input';
+import defaultHelpers, {extractErrorMessage} from '../../../../helpers';
+import {MIN, REQUIRED} from '../../../../helpers/validationMessages';
+import {useAuth, useNotify} from '../../../../hooks';
 
 const productTypeOptionValueSchema = Yup.object().shape({
   value: Yup.string().required(REQUIRED),
@@ -66,7 +65,32 @@ export default function ProductTypeForm({formTitle, formAction, ...children}) {
                 await dispatch<any>(api.productTypes.create(submitValues));
                 notify.success(`Successfully created ${submitValues.name}`);
               } else if (submitAction === 'view') {
-                notify.error('TODO: Admin should be able to update Product Type');
+                const diff = defaultHelpers.objectDiffV2(submitValues, formData);
+                if(diff){
+
+                  let payload = diff;
+                  payload.options = submitValues.options;
+
+                  // fixme: without diffing, this request will result in a lot of
+                  //        unnecessary writes on the db.
+                  // if (diff.options){
+                  //   diff.options.map(option => {
+                  //     const optionId = submitValues.options.find(lookup=> option.uuid)
+                  //     return {
+                  //       ...option,
+                  //       values: option.values.filter(value => {
+                  //         // remove any empty values
+                  //         return !!value
+                  //       })
+                  //     }
+                  //   })
+                  // }
+
+                  await api.productTypes.update({uuid: formData.uuid, payload});
+
+                }else {
+                  notify.info("No change!")
+                }
               }
             } catch (error) {
               const message = extractErrorMessage(error);
@@ -89,9 +113,9 @@ export default function ProductTypeForm({formTitle, formAction, ...children}) {
                 </div>
                 <div className="product-type-form--options">
                   <h4>Product Options</h4>
-                  <h5 className="light">
+                  <p className="light">
                     A product type can have one or more multiple options
-                  </h5>
+                  </p>
                   <FieldArray name="options">
                     {({remove, push}) => (
                       <>
@@ -101,10 +125,10 @@ export default function ProductTypeForm({formTitle, formAction, ...children}) {
                               <div key={index} className="option-values__parent">
                                 <h4>Option #{index + 1}</h4>
                                 <div className="option-values__subheading">
-                                  <h5 className="light">
+                                  <p>
                                     A product option can have one or multiple values. e.g. Size 8,
                                     Size 9; Color red, Color blue.
-                                  </h5>
+                                  </p>
                                   <Button
                                     className="is-tiny"
                                     disabled={optionsArray.length <= 1}
@@ -236,7 +260,6 @@ const ProductFormStyled = styled.div`
 
       &-submit-delete {
         display: flex;
-        flex-direction: space-between;
 
         & > * {
           margin: 0 1rem;

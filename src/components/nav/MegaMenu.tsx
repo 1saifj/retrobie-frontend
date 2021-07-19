@@ -220,6 +220,7 @@ const MegaMenu = () => {
                   // options
                   theme={'light'}
                   interactive={true}
+                  trigger={'click'}
                   arrow={true}
                   placement={'bottom'}
                   content={
@@ -243,7 +244,9 @@ const MegaMenu = () => {
                     </div>
                   }
                 >
-                  <User size={24}/>
+                  <div className={'hover-pointer'}>
+                    <User size={24}/>
+                  </div>
                 </Tooltip>
                 </>
               ) :

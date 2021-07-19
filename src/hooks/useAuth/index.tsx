@@ -172,9 +172,8 @@ const useAuth = function () {
      * @returns {Promise<AxiosResponse<any>>}
      */
     getProducts: async (name) => (await getAxis()).get(`/brands/${name}/products`),
-    getFilteredProducts: async ({slug}) => (await getAxis()).get(`/brands/${slug}/products/filtered`),
+    getFilteredProducts: async ({slugOrUuid}) => (await getAxis()).get(`/products/brand/${slugOrUuid}`),
     updateImage: (uuid) => async () => (await getAxis()).put(`/brands/images/${uuid}`),
-
     /**
      * Create a single brand
      * @param {object}data
@@ -194,6 +193,7 @@ const useAuth = function () {
     create: data => async () => (await getAxis()).post('/product-type', data),
     getAll: async () => (await getAxis()).get('/product-type'),
     getSingle: async slug => (await getAxis()).get(`/product-type/${slug}`),
+    update: async ({uuid, payload}) => (await getAxis()).patch(`/product-type/${uuid}`, payload),
   };
 
   const products = {
@@ -202,7 +202,9 @@ const useAuth = function () {
     getSingle: async slug => (await getAxis()).get(`/products/${slug}`),
     get: async slug => (await getAxis()).get(`/products/${slug}`),
     create: data => async () => (await getAxis()).post('/products/new', data),
-    reIndex: data => async () => (await getAxis()).get(`/search/re-index/${data.index}`),
+    reIndex: data => async () => (await getAxis()).post(
+      `/products/re-index?deleteAll=${data.deleteAll}&createIndexIfNotExists=${data.createIndexIfNotExists}`
+    ),
     update: (id, data) => async () => (await getAxis()).put(`/products/${id}/update`, data),
     deleteImage: async ({productId, fileId}) =>
       (await getAxis()).delete(`/products/${productId}/image/${fileId}`),
@@ -238,6 +240,12 @@ const useAuth = function () {
     checkPaymentStatus: async id => (await getAxis()).get(`carts/${id}/payment-status`),
   };
 
+  const variants = {
+    getOne: async uuid => (await getAxis()).get(`variants/${uuid}`),
+    updateOne: async ({uuid, payload}) => (await getAxis()).patch(`variants/${uuid}`, payload),
+    create: async ({uuid, payload}) => (await getAxis()).post(`variants/`, payload),
+  }
+
   async function ping() {
     return (await getAxis()).get('up');
   }
@@ -254,6 +262,7 @@ const useAuth = function () {
     products,
     productTypes,
     ping,
+    variants
   };
 };
 
