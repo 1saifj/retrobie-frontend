@@ -44,7 +44,7 @@ function PopularProducts() {
               <BrandParent>
                 <div className={'image'}>
                   <RetroImage
-                    src={product.defaultVariant.images[0].thumbnailUrl}
+                    src={product?.defaultVariant?.images[0]?.thumbnailUrl}
                     alt={'featured image'}
                   />
                 </div>
