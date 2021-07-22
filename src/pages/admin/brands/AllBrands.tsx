@@ -11,12 +11,12 @@ import SidebarShoe from '../../../assets/images/icons/products.svg';
 import Sale from '../../../assets/images/icons/sale.svg';
 import {notify} from '../../../helpers/views';
 import useSWR from 'swr/esm/use-swr';
-import {useAuth} from '../../../hooks';
+import {useApi} from '../../../hooks';
 import {BrandType} from '../../../types';
 
 
 function AllBrandsAdmin(props) {
-    const api = useAuth();
+    const api = useApi();
 
     const getAllBrands = () => api.brands.getAll().then(({data})=> data);
 

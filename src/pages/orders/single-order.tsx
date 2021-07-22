@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useAuth} from '../../network';
+import {useApi} from '../../network';
 import Layout from '../../components/Layout';
 import Cart from '../../components/cart';
 import useSWR from 'swr/esm/use-swr';
@@ -18,7 +18,7 @@ import CustomModal from '../../components/CustomModal';
 
 const SingleOrder= function({match: {params: {orderId}}}) {
 
-  const api = useAuth();
+  const api = useApi();
   const notify = useNotify();
 
   const user: UserState = useSelector((state: RootStateOrAny)=> state.user)

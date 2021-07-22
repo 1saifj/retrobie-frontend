@@ -4,7 +4,7 @@ import ProductFilters from './components/product-filters';
 import styled from 'styled-components';
 import Loading from '../../components/loading';
 import {Button, Container, Section, Tag} from 'bloomer';
-import {useAuth} from '../../network';
+import {useApi} from '../../network';
 import {capitalize, formatNumberWithCommas} from '../../helpers';
 import {Link} from 'react-router-dom';
 import useSWR from 'swr/esm/use-swr';
@@ -21,7 +21,7 @@ export default function ViewSingleBrand(props) {
 
   const [isFiltersDrawerOpen, setIsFiltersDrawerOpen] = useState(false);
 
-  const api = useAuth();
+  const api = useApi();
   const brandFetcher = (url, slug)=> api.brands.getBrandBySlug({slug}).then(({data})=> data);
   const {data: brandData, error: fetchBrandError} = useSWR<BrandType>(
     [`/brands/${brandNameOrId}`, brandNameOrId],

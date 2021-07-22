@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import Loading from '../../../components/loading';
-import {useAuth} from '../../../network';
+import {useApi} from '../../../network';
 import useSWR from 'swr/esm/use-swr';
 import {Button, Column, Columns, Input} from 'bloomer';
 import {ProductType} from '../../../types';
@@ -13,7 +13,7 @@ import {extractErrorMessage} from '../../../helpers';
 import {SimpleListItem} from '../../../components/list';
 
 export default function ViewAllProductsPage() {
-  const api = useAuth();
+  const api = useApi();
 
   const allProductsFetcher = () => api.products.getAll().then(({data}) => {
     return data.sort((a, b) => {

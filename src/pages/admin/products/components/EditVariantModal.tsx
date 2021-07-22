@@ -5,7 +5,7 @@ import EditVariantComponent from './EditVariantComponent';
 import React from 'react';
 import {ProductTypeOption, VariantType} from '../../../../types';
 import { Button } from 'bloomer';
-import {useAuth, useNotify} from '../../../../hooks';
+import {useApi, useNotify} from '../../../../hooks';
 import {extractErrorMessage} from '../../../../helpers';
 import useSWR from 'swr/esm/use-swr';
 
@@ -17,7 +17,7 @@ const EditVariantModal = (props: {
   productTypeOptions: Array<ProductTypeOption>
 })=> {
 
-  const api = useAuth();
+  const api = useApi();
   const notify = useNotify();
 
   const singleVariantFetcher = () => api.variants.getOne(props.variantId).then(({data}) => data);

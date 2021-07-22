@@ -4,11 +4,11 @@ import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import useSWR from 'swr';
 import {Loading} from '../../../components';
-import {useAuth} from '../../../hooks';
+import {useApi} from '../../../hooks';
 import {ProductTypeType} from '../../../types';
 
 export default function ViewAllProductTypesPage(props) {
-  const api = useAuth();
+  const api = useApi();
 
   const productTypeFetcher = () =>
     api.productTypes.getAll().then(({data}) => {

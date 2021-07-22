@@ -10,7 +10,7 @@ import {extractErrorMessage} from '../../helpers';
 import InputMask from 'react-input-mask';
 import {logoutUserAction} from '../../state/actions';
 import {useDispatch} from 'react-redux';
-import {useAuth} from '../../network';
+import {useApi} from '../../network';
 
 const FormParent = styled.div`
   display: flex;
@@ -67,7 +67,7 @@ export default function ResetPassword ({history}) {
 
     const [formErrors, setFormErrors] = useState([])
 
-    const api = useAuth();
+    const api = useApi();
     const dispatch = useDispatch();
     const logOut = () => {
         dispatch(logoutUserAction())

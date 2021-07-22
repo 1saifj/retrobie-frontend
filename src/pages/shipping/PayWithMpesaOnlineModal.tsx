@@ -4,7 +4,7 @@ import {Button, Help} from 'bloomer';
 import {addDashes, extractErrorMessage, formatNumberWithCommas} from '../../helpers';
 import MpesaLogo from '../../assets/images/logos/mpesa.svg';
 import CustomModal from '../../components/CustomModal';
-import {useAuth} from '../../network';
+import {useApi} from '../../network';
 import {AxiosResponse} from 'axios';
 import {AddressType, CheckoutType, PaymentStatus} from '../../types';
 import Notification from '../../components/notification';
@@ -35,7 +35,7 @@ export default function PayWithMpesaOnlineModal(
   },
 ) {
   const checkout: CheckoutType = useSelector((state: RootStateOrAny) => state.user.checkout);
-  const api = useAuth();
+  const api = useApi();
   const dispatch = useDispatch();
   const notify = useNotify();
   const [isPaymentLoading, setPaymentLoading] = useState(false);

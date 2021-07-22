@@ -16,7 +16,7 @@ import 'react-quill/dist/quill.snow.css';
 import Editor from '../../../../components/editor/Editor';
 import ImageUploader from '../../../../components/uploader/ImageUploader';
 import {SelectField} from '../../../../components/input';
-import {useAuth} from '../../../../network';
+import {useApi} from '../../../../network';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import useSWR from 'swr/esm/use-swr';
 import CreatableSelect from 'react-select/creatable';
@@ -98,7 +98,7 @@ function Monitor() {
 }
 
 const CreateProductModal = props => {
-  const api = useAuth();
+  const api = useApi();
   const dispatch = useDispatch();
 
   const notify = useNotify();

@@ -31,7 +31,7 @@ import {AtSign, Phone, User} from 'react-feather';
 import {Helmet} from 'react-helmet';
 import {createCheckoutAction, loginUserAction} from '../../state/actions';
 import {CartType, CheckoutType, LoginResponseType, ServerCartType} from '../../types';
-import {useAuth} from '../../network';
+import {useApi} from '../../network';
 import useSWR from 'swr/esm/use-swr';
 import ServerError from '../../assets/images/vectors/dead.svg';
 import {useNotify} from '../../hooks';
@@ -81,7 +81,7 @@ const NewUserCheckoutValidationSchema = Yup.object().shape({
 });
 
 export default function Checkout(props) {
-  const api = useAuth();
+  const api = useApi();
   const notify = useNotify();
 
   const isUserLoggedIn = useSelector((state: RootStateOrAny) => state.user.isLoggedIn);

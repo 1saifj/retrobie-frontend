@@ -13,14 +13,14 @@ import {Button, Delete, Help, Modal, ModalBackground, ModalClose, ModalContent, 
 import ProductSlider from '../../components/slider/ProductSlider';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {isProductInStock} from '../../components/cart';
-import {useAuth} from '../../network';
+import {useApi} from '../../network';
 import {CartItemType, CartType, ProductType} from '../../types';
 import useSWR from 'swr';
 import {useNotify} from '../../hooks';
 import {EmptyState} from '../../components';
 
 function Product({ match }) {
-  const api = useAuth();
+  const api = useApi();
   const dispatch = useDispatch();
   const { slug } = match.params;
 

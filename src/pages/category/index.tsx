@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {EmptyState, Layout, Loading} from '../../components';
-import {useAuth} from '../../hooks';
+import {useApi} from '../../hooks';
 import useSWR from 'swr/esm/use-swr';
 import ProductFilters from '../brands/components/product-filters';
 import {CategoryType} from '../../types';
@@ -17,7 +17,7 @@ export default function({match}){
 
   const categoryId = match.params.id;
 
-  const api = useAuth();
+  const api = useApi();
 
   const [isFiltersDrawerOpen, setIsFiltersDrawerOpen] = useState(false);
 

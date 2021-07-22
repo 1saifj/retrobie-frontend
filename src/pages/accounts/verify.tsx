@@ -9,7 +9,7 @@ import VerifiedIcon from '../../assets/images/icons/verified.svg';
 import jwtDecode from 'jwt-decode';
 import * as Yup from 'yup';
 import InputMask from 'react-input-mask';
-import {useAuth} from '../../network';
+import {useApi} from '../../network';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {UserState} from '../../state/reducers/userReducers';
 import {EmptyState} from '../../components';
@@ -64,7 +64,7 @@ function setFormSubmitted(submitted) {
  * @constructor
  */
 export default function VerifyAccount(props) {
-  const api = useAuth();
+  const api = useApi();
   const dispatch = useDispatch();
   const countdownTime = 60;
 

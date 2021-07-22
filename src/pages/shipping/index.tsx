@@ -17,7 +17,7 @@ import IndexFinger from '../../assets/images/emoji/backhand-index-pointing-up.pn
 import {ChevronRight} from 'react-feather';
 import SimpleMap from '../../components/map/SimpleMap';
 import Loading from '../../components/loading';
-import {useAuth} from '../../network';
+import {useApi} from '../../network';
 import PayWithMpesaOnlineModal from './PayWithMpesaOnlineModal';
 import {ThunkDispatch} from 'redux-thunk';
 import {UserState} from '../../state/reducers/userReducers';
@@ -40,7 +40,7 @@ import ServerError from '../../assets/images/vectors/dead.svg';
 // });
 
 export default function Shipping(props) {
-  const api = useAuth();
+  const api = useApi();
 
   const paramOrderId = props.match.params.orderId;
 

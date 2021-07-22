@@ -5,7 +5,7 @@ import {EmptyState} from '../../../components';
 import TextField from '../../../components/input/TextField';
 import {Form, Formik} from 'formik';
 import useSWR from 'swr';
-import {useAuth} from '../../../network';
+import {useApi} from '../../../network';
 import {CartItemType, OrderType, ProductType} from '../../../types';
 import CustomModal from '../../../components/CustomModal';
 import {env} from '../../../config';
@@ -13,7 +13,7 @@ import {addDashes, formatNumberWithCommas} from '../../../helpers';
 
 
 export default function SingleOrder(props) {
-  const api = useAuth();
+  const api = useApi();
 
   function getAllCartItemProducts(key, cartItems: Array<CartItemType>): Promise<ProductType[]> {
     if (cartItems?.length) {

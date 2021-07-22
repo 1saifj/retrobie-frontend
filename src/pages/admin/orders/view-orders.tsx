@@ -2,13 +2,13 @@ import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {Link} from 'react-router-dom';
 import useSWR from 'swr';
-import {useAuth} from '../../../network';
+import {useApi} from '../../../network';
 import {Loading} from '../../../components';
 import {OrderType} from '../../../types';
 import {formatNumberWithCommas} from '../../../helpers';
 
 export default function AdminOrders() {
-  const api = useAuth();
+  const api = useApi();
   const [allOrders, setAllOrders] = useState<Array<OrderType>>([]);
 
   const allOrdersFetcher = () => api.orders.getAll().then(({data}) => data);

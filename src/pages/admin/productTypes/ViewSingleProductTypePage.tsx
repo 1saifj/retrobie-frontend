@@ -3,12 +3,12 @@ import {useParams} from 'react-router';
 import useSWR from 'swr';
 import {EmptyState, Loading} from '../../../components';
 import {DeadEyes2} from '../../../constants/icons';
-import {useAuth} from '../../../hooks';
+import {useApi} from '../../../hooks';
 import ProductTypeForm from './components/ProductTypeForm';
 
 export default function ViewSingleProductTypePage() {
   const param: {slug: string} = useParams();
-  const api = useAuth();
+  const api = useApi();
 
   const slug = param.slug || '';
 

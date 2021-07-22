@@ -29,7 +29,7 @@ let gettingTokenPromise = null;
  * NOTE: Non-idempotent requests (POST, PUT, etc) are thunks. GET requests are normal
  * async functions
  */
-const useAuth = function () {
+const useApi = function () {
   const dispatch = useDispatch();
   const userState: UserState = useSelector((state: RootStateOrAny) => state.user);
 
@@ -266,4 +266,4 @@ const useAuth = function () {
   };
 };
 
-export default useAuth;
+export default useApi;

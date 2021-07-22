@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import {TextField} from '../../../../components/input';
 import defaultHelpers, {extractErrorMessage} from '../../../../helpers';
 import {MIN, REQUIRED} from '../../../../helpers/validationMessages';
-import {useAuth, useNotify} from '../../../../hooks';
+import {useApi, useNotify} from '../../../../hooks';
 
 const productTypeOptionValueSchema = Yup.object().shape({
   value: Yup.string().required(REQUIRED),
@@ -37,7 +37,7 @@ export default function ProductTypeForm({formTitle, formAction, ...children}) {
     },
   } = formAction;
 
-  const api = useAuth();
+  const api = useApi();
   const dispatch = useDispatch();
   const notify = useNotify();
   const [submitAction, setSubmitAction] = useState('create');

@@ -5,7 +5,7 @@ import Layout from '../../components/Layout';
 import {Link} from 'react-router-dom';
 import {Container, Section} from 'bloomer';
 import Loading from '../../components/loading';
-import {useAuth} from '../../network';
+import {useApi} from '../../network';
 import useSWR from 'swr/esm/use-swr';
 import {BrandType} from '../../types';
 import {capitalize} from '../../helpers';
@@ -13,7 +13,7 @@ import {EmptyState} from '../../components';
 import {GrimacingEmoji} from '../../constants/icons';
 
 function AllBrandsComponent() {
-  const api = useAuth();
+  const api = useApi();
 
   const allBrandsFetcher = () => api.brands.getAll().then(({data}) => data);
   const {data: allBrands, error: fetchAllBrandsError} =

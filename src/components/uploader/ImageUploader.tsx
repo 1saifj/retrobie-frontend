@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {generateRandomString} from '../../helpers';
 import styled from 'styled-components';
 import {Button, Delete} from 'bloomer';
-import {useAuth} from '../../network';
+import {useApi} from '../../network';
 import MD5 from 'md5';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {useNotify} from '../../hooks';
@@ -64,7 +64,7 @@ interface CustomImageUploaderParams {
 
 function ImageUploader(props: CustomImageUploaderParams) {
 
-  const api = useAuth();
+  const api = useApi();
   const dispatch = useDispatch();
   const notify = useNotify();
 
