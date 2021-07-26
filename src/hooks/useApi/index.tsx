@@ -172,7 +172,7 @@ const useApi = function () {
      * @returns {Promise<AxiosResponse<any>>}
      */
     getProducts: async (name) => (await getAxis()).get(`/brands/${name}/products`),
-    getFilteredProducts: async ({slugOrUuid}) => (await getAxis()).get(`/products/brand/${slugOrUuid}`),
+    getFilteredProducts: async ({brandName}) => (await getAxis()).get(`/products/brand/${brandName}`),
     updateImage: (uuid) => async () => (await getAxis()).put(`/brands/images/${uuid}`),
     /**
      * Create a single brand
@@ -184,6 +184,7 @@ const useApi = function () {
 
   const category = {
     getOne: async id => (await getAxis()).get(`/category/${id}`),
+    getProducts: async uuid => (await getAxis()).get(`/products/category/${uuid}`),
     getAll: async () => (await getAxis()).get('/categories'),
     create: data => async () => (await getAxis()).post('/categories', data),
     update: (uuid, data) => async () => (await getAxis()).put(`/categories/${uuid}`, data),
@@ -236,7 +237,7 @@ const useApi = function () {
   };
 
   const cart = {
-    fetch: async id => (await getAxis()).get(`carts/${id}`),
+    getOne: async id => (await getAxis()).get(`carts/${id}`),
     checkPaymentStatus: async id => (await getAxis()).get(`carts/${id}/payment-status`),
   };
 

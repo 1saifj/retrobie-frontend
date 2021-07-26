@@ -9,7 +9,7 @@ import {useApi} from '../../network';
 import useSWR from 'swr/esm/use-swr';
 import {BrandType} from '../../types';
 import {capitalize} from '../../helpers';
-import {EmptyState} from '../../components';
+import {EmptyState, RetroImage} from '../../components';
 import {GrimacingEmoji} from '../../constants/icons';
 
 function AllBrandsComponent() {
@@ -53,8 +53,9 @@ function AllBrandsComponent() {
                 allBrands?.map(brand => (
                   <Link to={`/brands/${brand.slug}`}>
                     <div className={'image--parent'}>
-                      <img src={brand.logo ? brand.logo.thumbnailUrl : ''}
-                           alt={`${brand.name} logo`} />
+                      <RetroImage
+                        src={brand.logo?.thumbnailUrl}
+                        alt={`${brand.name} logo`} />
                       <div style={{marginTop: 12}}>
                         <p>
                           {capitalize(brand.name)}

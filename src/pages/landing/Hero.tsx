@@ -5,29 +5,29 @@ import FeaturedSneaker from '../../assets/images/vectors/featured-sneaker.svg';
 import RetroImage from '../../components/image';
 import HowItWorksModal from './modals/HowItWorksModal';
 
-const Hero = () => {
-  const images = {
-    landing: {
-      //The image container has a max-width: 752px;
-      //768px -> 576px
-      //1024px
-      //1216px
-      //1408px
-      big: 'https://ik.imagekit.io/t25/v2/landing/Air-Jordan-1-Hi-85-Varsity-Red_Ef9VMKOMZ.webp',
-      mid3:
-        'https://ik.imagekit.io/t25/v2/landing/Air-Jordan-1-Hi-85-Varsity-Red_Ef9VMKOMZ.webp?tr=w-600',
-      mid2:
-        'https://ik.imagekit.io/t25/v2/landing/Air-Jordan-1-Hi-85-Varsity-Red_Ef9VMKOMZ.webp?tr=w-550',
-      mid1:
-        'https://ik.imagekit.io/t25/v2/landing/Air-Jordan-1-Hi-85-Varsity-Red_Ef9VMKOMZ.webp?tr=w-500',
-      mid:
-        'https://ik.imagekit.io/t25/v2/landing/Air-Jordan-1-Hi-85-Varsity-Red_Ef9VMKOMZ.webp?tr=w-450',
-      small:
-        'https://ik.imagekit.io/t25/v2/landing/Air-Jordan-1-Hi-85-Varsity-Red_Ef9VMKOMZ.webp?tr=w-350',
-    },
-  };
+const images = {
+  landing: {
+    //The image container has a max-width: 752px;
+    //768px -> 576px
+    //1024px
+    //1216px
+    //1408px
+    big: 'https://ik.imagekit.io/t25/v2/landing/Air-Jordan-1-Hi-85-Varsity-Red_Ef9VMKOMZ.webp',
+    mid3:
+      'https://ik.imagekit.io/t25/v2/landing/Air-Jordan-1-Hi-85-Varsity-Red_Ef9VMKOMZ.webp?tr=w-600',
+    mid2:
+      'https://ik.imagekit.io/t25/v2/landing/Air-Jordan-1-Hi-85-Varsity-Red_Ef9VMKOMZ.webp?tr=w-550',
+    mid1:
+      'https://ik.imagekit.io/t25/v2/landing/Air-Jordan-1-Hi-85-Varsity-Red_Ef9VMKOMZ.webp?tr=w-500',
+    mid:
+      'https://ik.imagekit.io/t25/v2/landing/Air-Jordan-1-Hi-85-Varsity-Red_Ef9VMKOMZ.webp?tr=w-450',
+    small:
+      'https://ik.imagekit.io/t25/v2/landing/Air-Jordan-1-Hi-85-Varsity-Red_Ef9VMKOMZ.webp?tr=w-350',
+  },
+};
 
-  const [imageState] = useState(images);
+const Hero = () => {
+
   const [isHowItWorksModalActive, setIsHowItWorksModalActive] = useState(false);
 
   function scrollToAppBody() {
@@ -38,18 +38,18 @@ const Hero = () => {
   return (
     <>
       <HeroSection>
-        <Column className={'image'}>
+        <Column className='image'>
           <div>
             <RetroImage
-              src={imageState.landing.big}
+              src={images.landing.big}
               alt=''
               srcSet={{
                 srcSet: `
-                    ${imageState.landing.small} 350w,
-                    ${imageState.landing.mid}   450w,
-                    ${imageState.landing.mid2}  500w,
-                    ${imageState.landing.mid3}  550w,
-                    ${imageState.landing.big}   1140w,
+                    ${images.landing.small} 350w,
+                    ${images.landing.mid}   450w,
+                    ${images.landing.mid2}  500w,
+                    ${images.landing.mid3}  550w,
+                    ${images.landing.big}   1140w,
                 `,
                 sizes: `
                     (max-width: 428px) 350px,
@@ -61,27 +61,27 @@ const Hero = () => {
               }}
             />
             {/*<picture>*/}
-            {/*  <source media={'(max-width:428px)'} srcSet={imageState.landing.small} />*/}
-            {/*  <source media={'(max-width:510px)'} srcSet={imageState.landing.mid} />*/}
-            {/*  <source media={'(max-width:630px)'} srcSet={imageState.landing.mid2} />*/}
-            {/*  <source media={'(max-width:1024px)'} srcSet={imageState.landing.mid3} />*/}
-            {/*  <img src={imageState.landing.big} alt={'landing page'} />*/}
+            {/*  <source media={'(max-width:428px)'} srcSet={images.landing.small} />*/}
+            {/*  <source media={'(max-width:510px)'} srcSet={images.landing.mid} />*/}
+            {/*  <source media={'(max-width:630px)'} srcSet={images.landing.mid2} />*/}
+            {/*  <source media={'(max-width:1024px)'} srcSet={images.landing.mid3} />*/}
+            {/*  <img src={images.landing.big} alt={'landing page'} />*/}
             {/*</picture>*/}
           </div>
         </Column>
-        <Column className={'description'}>
+        <Column className='description'>
           <div>
             <header>
               <div style={{width: '48px', marginLeft: '8px'}}>
                 <img src={FeaturedSneaker} alt="just a sneaker" />
               </div>
-              <small className={'secondary'}>ABOUT US</small>
+              <small className='secondary'>ABOUT US</small>
             </header>
             <h1>
               Home of <span> authentic,</span> exclusive sneakers in Nairobi
             </h1>
             <div>
-              <p className={'secondary'}>
+              <p className='secondary'>
                 Find and discover your favorite brands - from Air Jordans to Yeezys -{' '}
                 <span>original sneakers</span>,{' '}
                 basketball shoes, and many more fashion pieces
@@ -89,9 +89,9 @@ const Hero = () => {
               </p>
             </div>
           </div>
-          <div className={'ctas'}>
+          <div className='buttons'>
             <Button
-              isColor={'primary'}
+              isColor='primary'
               style={{
                 margin: '4px 4px',
               }}

@@ -30,11 +30,13 @@ export type ProductType = {
 // by Meilisearch
 export type FilteredProduct = {
   price: number;
+  originalPrice: number;
   sex: 'M' | 'F';
   size: number;
   style: string;
   slug: string;
   isInStock: boolean;
+  quantity?: number
   condition: string;
   uuid: string;
   url: string;
@@ -121,7 +123,7 @@ export interface CategoryType {
   slug: string;
   uuid: string;
   landingImage: ImageType;
-  description: string;
+  description: DescriptionType;
   products?: Array<ProductType>;
 }
 
