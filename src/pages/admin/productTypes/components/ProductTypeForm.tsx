@@ -9,6 +9,7 @@ import {TextField} from '../../../../components/input';
 import defaultHelpers, {extractErrorMessage} from '../../../../helpers';
 import {MIN, REQUIRED} from '../../../../helpers/validationMessages';
 import {useApi, useNotify} from '../../../../hooks';
+import uuid from 'uuid/v4';
 
 const productTypeOptionValueSchema = Yup.object().shape({
   value: Yup.string().required(REQUIRED),
@@ -66,10 +67,12 @@ export default function ProductTypeForm({formTitle, formAction, ...children}) {
                 notify.success(`Successfully created ${submitValues.name}`);
               } else if (submitAction === 'view') {
                 const diff = defaultHelpers.objectDiffV2(submitValues, formData);
-                if(diff){
+                if (diff) {
 
                   let payload = diff;
                   payload.options = submitValues.options;
+
+                  console.log("Submitting: ", payload)
 
                   // fixme: without diffing, this request will result in a lot of
                   //        unnecessary writes on the db.
@@ -88,8 +91,8 @@ export default function ProductTypeForm({formTitle, formAction, ...children}) {
 
                   await api.productTypes.update({uuid: formData.uuid, payload});
 
-                }else {
-                  notify.info("No change!")
+                } else {
+                  notify.info('No change!');
                 }
               }
             } catch (error) {
@@ -121,74 +124,84 @@ export default function ProductTypeForm({formTitle, formAction, ...children}) {
                       <>
                         <div className="option-values">
                           {values.options.length > 0 &&
-                            values.options.map((_, index, optionsArray) => (
-                              <div key={index} className="option-values__parent">
-                                <h4>Option #{index + 1}</h4>
-                                <div className="option-values__subheading">
-                                  <p>
-                                    A product option can have one or multiple values. e.g. Size 8,
-                                    Size 9; Color red, Color blue.
-                                  </p>
-                                  <Button
-                                    className="is-tiny"
-                                    disabled={optionsArray.length <= 1}
-                                    onClick={() => remove(index)}
-                                  >
-                                    <Trash height="25px" />
-                                  </Button>
-                                </div>
-
-                                <TextField
-                                  className="half-width"
-                                  name={`options.${index}.name`}
-                                  type="text"
-                                  label="Name"
-                                  placeholder="eg Size"
-                                />
-                                <FieldArray name={`options.${index}.values`}>
-                                  {({remove, push}) => (
-                                    <>
-                                      <div className="option-values__wrapper">
-                                        {values.options[index].values.length > 0 &&
-                                          values.options[index].values.map(
-                                            (_, valueIndex, valuesArray) => (
-                                              <div
-                                                key={valueIndex}
-                                                className="option-values__value"
-                                              >
-                                                <div className="option-values__group">
-                                                  <TextField
-                                                    name={`options.${index}.values.${valueIndex}.value`}
-                                                    type="text"
-                                                    label={`Value #${valueIndex + 1}`}
-                                                    placeholder="eg 42"
-                                                  />
-                                                  <Button
-                                                    className="is-tiny"
-                                                    onClick={() => remove(valueIndex)}
-                                                    disabled={valuesArray.length <= 1}
-                                                  >
-                                                    <Trash height="25px" />
-                                                  </Button>
-                                                </div>
-                                              </div>
-                                            )
-                                          )}
-                                      </div>
-                                      <Button
-                                        onClick={() => push({value: ''})}
-                                      >
-                                        Add Value
-                                      </Button>
-                                    </>
-                                  )}
-                                </FieldArray>
+                          values.options.map((_, index, optionsArray) => (
+                            <div key={index} className="option-values__parent">
+                              <h4>Option #{index + 1}</h4>
+                              <div className="option-values__subheading">
+                                <p>
+                                  A product option can have one or multiple values. e.g. Size 8,
+                                  Size 9; Color red, Color blue.
+                                </p>
+                                <Button
+                                  className="is-tiny"
+                                  disabled={optionsArray.length <= 1}
+                                  onClick={() => remove(index)}
+                                >
+                                  <Trash height="25px" />
+                                </Button>
                               </div>
-                            ))}
+
+                              <TextField
+                                className="half-width"
+                                name={`options.${index}.name`}
+                                type="text"
+                                label="Name"
+                                placeholder="eg Size"
+                              />
+                              <FieldArray name={`options.${index}.values`}>
+                                {({remove, push}) => (
+                                  <>
+                                    <div className="option-values__wrapper">
+                                      {values.options[index].values.length > 0 &&
+                                      values.options[index].values.map(
+                                        (_, valueIndex, valuesArray) => (
+                                          <div
+                                            key={valueIndex}
+                                            className="option-values__value"
+                                          >
+                                            <div className="option-values__group">
+                                              <TextField
+                                                name={`options.${index}.values.${valueIndex}.value`}
+                                                type="text"
+                                                label={`Value #${valueIndex + 1}`}
+                                                placeholder="eg 42"
+                                              />
+                                              <Button
+                                                className="is-tiny"
+                                                onClick={() => remove(valueIndex)}
+                                                disabled={valuesArray.length <= 1}
+                                              >
+                                                <Trash height="25px" />
+                                              </Button>
+                                            </div>
+                                          </div>
+                                        ),
+                                      )}
+                                    </div>
+                                    <Button
+                                      onClick={() => push({
+                                        value: '',
+                                        uuid: uuid(),
+                                      })}
+                                    >
+                                      Add Value
+                                    </Button>
+                                  </>
+                                )}
+                              </FieldArray>
+                            </div>
+                          ))}
                         </div>
                         <Button
                           style={{width: '100%'}}
-                          onClick={() => push({name: '', values: [{value: ''}]})}
+                          onClick={() => push({
+                            name: '',
+                            uuid: uuid(),
+                            values: [{
+                              value: '',
+                              uuid: uuid(),
+                            }],
+                          })}
                         >
                           Add New Option
                         </Button>
