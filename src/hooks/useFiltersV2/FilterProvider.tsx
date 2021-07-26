@@ -1,16 +1,17 @@
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState} from 'react';
 import {FilteredProduct} from '../../types';
 import qs from 'qs';
-
-const filterContext = createContext(null);
+import useFilterContext from './useFilterContext';
 
 
 export default function ProvideFilters({children}) {
+  const FilterContext = useFilterContext();
+
   const filters = useProvideFilters();
   return (
-    <filterContext.Provider value={filters}>
+    <FilterContext.Provider value={filters}>
       {children}
-    </filterContext.Provider>
+    </FilterContext.Provider>
   );
 }
 
@@ -21,7 +22,7 @@ export function useFiltersV2(): {
   criteriaValues: Map<string, Set<string | number>>,
   products: Array<FilteredProduct>,
 } {
-  return useContext(filterContext);
+  return useContext(useFilterContext());
 }
 
 
