@@ -22,7 +22,7 @@ export default function ViewAllProductTypesPage(props) {
     });
 
   const {data: allProductTypes} = useSWR<Array<ProductTypeType>>(
-    '/product-type/all',
+    '/product-types/all',
     productTypeFetcher
   );
 

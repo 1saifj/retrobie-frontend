@@ -113,7 +113,7 @@ const CreateProductModal = props => {
   const {data: allBrands} = useSWR<BrandType[]>('/brands/all', allBrandsFetcher);
 
   const allProductTypesFetcher = () => api.productTypes.getAll().then(({data}) => data);
-  const {data: allProductTypes} = useSWR<ProductTypeType[]>('/product-type', allProductTypesFetcher);
+  const {data: allProductTypes} = useSWR<ProductTypeType[]>('/product-types', allProductTypesFetcher);
 
   const allCategoriesFetcher = () => api.category.getAll().then(({data}) => data);
   const {data: allCategories} = useSWR<CategoryType[]>('/categories', allCategoriesFetcher);

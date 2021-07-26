@@ -190,10 +190,10 @@ const useApi = function () {
   };
 
   const productTypes = {
-    create: data => async () => (await getAxis()).post('/product-type', data),
-    getAll: async () => (await getAxis()).get('/product-type'),
-    getSingle: async slug => (await getAxis()).get(`/product-type/${slug}`),
-    update: async ({uuid, payload}) => (await getAxis()).patch(`/product-type/${uuid}`, payload),
+    create: data => async () => (await getAxis()).post('/product-types', data),
+    getAll: async () => (await getAxis()).get('/product-types'),
+    getSingle: async slug => (await getAxis()).get(`/product-types/${slug}`),
+    update: async ({uuid, payload}) => (await getAxis()).patch(`/product-types/${uuid}`, payload),
   };
 
   const products = {
