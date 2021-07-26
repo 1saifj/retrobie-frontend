@@ -1,9 +1,56 @@
-import React, {useEffect} from 'react';
-import {capitalize, formatNumberWithCommas} from '../../../helpers';
-import styled from 'styled-components';
+import {FilteredProduct, ProductType} from '../../types';
+import React, {useEffect, useState} from 'react';
+import DrawerWrapper from 'rc-drawer';
+import {Button, Container, Section} from 'bloomer';
+import useFiltersV2 from '../../hooks/useFiltersV2';
+import {capitalize, formatNumberWithCommas} from '../../helpers';
 import qs from 'qs';
-import {FilteredProduct, ProductType} from '../../../types';
-import useFiltersV2 from '../../../hooks/useFiltersV2';
+import styled from 'styled-components';
+
+export const MobileFilter = function(props: {
+  products: Array<ProductType>
+}){
+
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
+
+  return (
+    <div>
+      <DrawerWrapper
+        onClose={() => setDrawerOpen(false)}
+        handler={null}
+        open={isDrawerOpen}>
+        <Section>
+          <Container>
+            <ProductFilters
+              //@ts-ignore
+              products={props.products}
+              allCriteria={['sex', 'size', 'price']}
+            />
+          </Container>
+        </Section>
+      </DrawerWrapper>
+      <Button
+        onClick={() => setDrawerOpen(true)}
+        style={{marginRight: 12}}>
+        Filters
+      </Button>
+    </div>
+  )
+}
+
+export const DesktopFilter = function(props: {
+  products: Array<ProductType>,
+  criteria: Array<string>
+}){
+
+  return (
+    <ProductFilters
+      // @ts-ignore
+      products={props.products}
+      allCriteria={props.criteria}
+    />
+  );
+}
 
 /**
  * In order to work, this component requires an array of criteria and an array of
@@ -33,10 +80,10 @@ const ProductFilters =  function(
   const criteriaLength = allCriteria.length;
 
   useEffect(() => {
-    if (allCriteria?.length) {
-      setAllCriteria(allCriteria)
-    }
-  },
+      if (allCriteria?.length) {
+        setAllCriteria(allCriteria)
+      }
+    },
     // a bit hacky, but it renders forever otherwise
     [criteriaLength]
   );
@@ -100,8 +147,6 @@ const ProductFilters =  function(
     </>
   );
 };
-
-export default ProductFilters;
 
 const FilterItem = styled.div<{applied?: boolean}>`
   border: 1px solid ${p => p.applied ? 'var(--color-primary)' : 'var(--color-border-gray)'};
