@@ -29,31 +29,6 @@ const DefaultFooter = ({internal}) => {
               </SocialButtons>
             </SocialButtonsParent>
           </div>
-          {
-            !internal && (
-              <div
-                style={{
-                  textAlign: 'left',
-                  maxWidth: 600,
-                  margin: '0 auto'
-                }}>
-                <p>
-                  Retrobie is a relatively young brand and sneaker shop,
-                  founded in 2018 with the goal of providing authentic sneakers,
-                  high-quality sports shoes and unique apparel to everyone in Nairobi.
-                </p>
-                <p>
-                  Aside from sneakers in Nairobi, we are also passionate
-                  about sports, with out main area of expertise being basketball. We've
-                  got everything you'll need on the court - Air Jordans, Lebrons, Kyries, Currys,
-                  KDs, PGs, CP3s and even rare treats like Iversons.
-                </p>
-                <p>
-                  Try us out. You won't be disappointed.
-                </p>
-              </div>
-            )
-          }
           <ListParent>
             <ul>
               <p>The Company</p>
