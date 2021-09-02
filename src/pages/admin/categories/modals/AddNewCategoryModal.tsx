@@ -3,14 +3,14 @@ import CustomModal from '../../../../components/CustomModal';
 import {Form, Formik} from 'formik';
 import {TextField} from '../../../../components/input';
 import {Button} from 'bloomer';
-import CustomImageUploader from '../../../../components/upload/CustomImageUploader';
+import ImageUploader from '../../../../components/uploader/ImageUploader';
 import {slugify} from '../../../../helpers';
 import {useDispatch} from 'react-redux';
-import {useAuth} from '../../../../hooks';
+import {useApi} from '../../../../hooks';
 
 export default function({isActive, onClose}){
 
-  const api = useAuth();
+  const api = useApi();
   const dispatch = useDispatch();
 
   return (
@@ -40,7 +40,7 @@ export default function({isActive, onClose}){
               }}>
               {({values, setFieldValue, isSubmitting}) => (
                 <Form>
-                  <CustomImageUploader
+                  <ImageUploader
                     folder={`/category/${slugify(values.name, {strict: true})}`}
                     id={slugify(values.name, {strict: true})}
                     onInit={(images => {

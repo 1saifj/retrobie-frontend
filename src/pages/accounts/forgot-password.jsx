@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import {extractErrorMessage} from '../../helpers';
 import {notify} from '../../helpers/views';
 import TextField from '../../components/input/TextField';
-import {useAuth} from '../../network';
+import {useApi} from '../../network';
 import {useDispatch} from 'react-redux';
 
 const FormParent = styled.div`
@@ -29,7 +29,7 @@ const ResetPasswordSchema = Yup.object().shape({
 
 export default function ForgotPassword(props) {
 
-  const api = useAuth();
+  const api = useApi();
   const dispatch = useDispatch();
 
     return (

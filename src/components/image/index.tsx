@@ -29,6 +29,10 @@ const RetroImage = function (
     return `${url.protocol}//${url.host}${url.pathname}?${queryParam.toString()}`;
   }
 
+  function getErrorImageUrl(){
+    return `https://ik.imagekit.io/t25/placeholder-1_czR2yzdt_.png`
+  }
+
   return (
     <div style={{
       display: 'flex',
@@ -46,10 +50,8 @@ const RetroImage = function (
             return (
               <div style={{textAlign: 'center'}}>
                 <img
-                  style={{width: 48}}
-                  src={DeadEyes2}
+                  src={getErrorImageUrl()}
                   alt={'error'} />
-                  <p>Could not load this image</p>
               </div>
             );
           }

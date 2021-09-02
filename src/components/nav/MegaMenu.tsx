@@ -7,7 +7,7 @@ import Drawer from 'rc-drawer';
 import { Button, Container, Section } from 'bloomer';
 import Cart from '../cart';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
-import { useAuth } from '../../hooks';
+import { useApi } from '../../hooks';
 import RetroImage from '../image';
 import {ChevronDown, User} from 'react-feather';
 import Tooltip from '../tooltip';
@@ -30,7 +30,7 @@ type NavbarItemType = {
 }
 
 const MegaMenu = () => {
-  const api = useAuth();
+  const api = useApi();
   const history = useHistory();
   const isDrawerOpen = useSelector((state: RootStateOrAny) => state.meta.isSidebarOpen);
   const userState: UserState = useSelector((state: RootStateOrAny) => state.user);
@@ -220,6 +220,7 @@ const MegaMenu = () => {
                   // options
                   theme={'light'}
                   interactive={true}
+                  trigger={'click'}
                   arrow={true}
                   placement={'bottom'}
                   content={
@@ -243,7 +244,9 @@ const MegaMenu = () => {
                     </div>
                   }
                 >
-                  <User size={24}/>
+                  <div className={'hover-pointer'}>
+                    <User size={24}/>
+                  </div>
                 </Tooltip>
                 </>
               ) :

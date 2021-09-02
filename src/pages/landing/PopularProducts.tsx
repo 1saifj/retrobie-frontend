@@ -3,13 +3,13 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import Loading from '../../components/loading';
 import {EmptyState, RetroImage} from '../../components';
-import { useAuth } from '../../network';
+import { useApi } from '../../network';
 import useSWR from 'swr';
 import ServerError from '../../assets/images/vectors/dead.svg';
 import {ProductType} from '../../types';
 
 function PopularProducts() {
-  const api = useAuth();
+  const api = useApi();
 
   const featuredProductsFetcher = () => api.products.getFeatured().then(({ data }) => data);
   const { data: featuredProducts, error } = useSWR<ProductType[]>('/products/featured', featuredProductsFetcher)
@@ -44,7 +44,7 @@ function PopularProducts() {
               <BrandParent>
                 <div className={'image'}>
                   <RetroImage
-                    src={product.images?.[0].thumbnailUrl}
+                    src={product?.defaultVariant?.images[0]?.thumbnailUrl}
                     alt={'featured image'}
                   />
                 </div>

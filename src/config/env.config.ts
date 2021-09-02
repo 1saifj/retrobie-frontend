@@ -45,7 +45,8 @@ class Env {
     return (
       process.env.REACT_APP_ENV === 'staging' ||
       window.location.hostname.includes('netlify') ||
-      window.location.hostname.includes('vercel')
+      window.location.hostname.includes('vercel') ||
+        window.location.hostname.includes("dev.retrobie")
     );
   }
 

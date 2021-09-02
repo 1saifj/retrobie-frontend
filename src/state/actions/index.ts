@@ -10,10 +10,10 @@ import {
   TOGGLE_SIDEBAR,
   SAVE_CHECKOUT_ADDRESS,
   SAVE_SHIPPING_QUOTE,
-  SAVE_ZOOM_LEVEL, FETCH_REMOTE_CART, EMPTY_CART, IMAGE_UPLOADED, REMOVE_UPLOADED_IMAGE,
+  SAVE_ZOOM_LEVEL, FETCH_REMOTE_CART, EMPTY_CART, IMAGE_UPLOADED, REMOVE_UPLOADED_IMAGE, FETCH_FILTERED_PRODUCTS,
 } from './constants';
 import {AddressType, CartItemType, CartType, LoginResponseType} from '../../types';
-import {UploadedImageType} from '../../components/upload/CustomImageUploader';
+import {UploadedImageType} from '../../components/uploader/ImageUploader';
 
 const createAction = (type: string, payload?: any) => ({type, payload});
 
@@ -46,6 +46,10 @@ export const saveShippingQuoteAction = (data: {cost: number, courierOrderNo?: st
 export const refreshSessionAction = (payload: {accessToken: string}) =>
   createAction(REFRESH_SESSION, payload);
 export const setZoomLevelAction = (payload: {level: number}) => createAction(SAVE_ZOOM_LEVEL, payload);
+
+// products
+export const fetchFilteredProductsAction = (payload: {query: string}) =>
+  createAction(FETCH_FILTERED_PRODUCTS, payload);
 
 // meta
 export const toggleSidebarAction = (payload: {open: boolean}) =>

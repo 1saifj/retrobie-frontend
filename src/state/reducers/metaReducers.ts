@@ -1,5 +1,5 @@
 import {IMAGE_UPLOADED, REMOVE_UPLOADED_IMAGE, TOGGLE_SIDEBAR} from '../actions/constants';
-import {UploadedImageType} from '../../components/upload/CustomImageUploader';
+import {UploadedImageType} from '../../components/uploader/ImageUploader';
 
 export type MetaState = {
   isSidebarOpen: boolean,

@@ -6,7 +6,7 @@ import useSWR from 'swr/esm/use-swr';
 import {OrderStatus, PaymentStatus} from '../../types';
 import {UserState} from '../../state/reducers/userReducers';
 import {RootStateOrAny, useSelector} from 'react-redux';
-import {useAuth} from '../../hooks';
+import {useApi} from '../../hooks';
 import NotFound from '../not-found';
 
 const OrderCompleted = function(props) {
@@ -14,7 +14,7 @@ const OrderCompleted = function(props) {
   const orderId = props.match.params.orderId
 
   const user: UserState = useSelector((state: RootStateOrAny)=> state.user)
-  const api = useAuth();
+  const api = useApi();
 
   const orderDataFetcher = (key, orderId) => api.orders.checkStatus(orderId).then(({data})=> data);
   const {data: orderStatusResult, error: fetchOrderStatusError} = useSWR<{

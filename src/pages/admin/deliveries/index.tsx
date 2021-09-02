@@ -1,11 +1,11 @@
 import React from 'react';
 import {Button} from 'bloomer';
-import {useAuth, useNotify} from '../../../hooks';
+import {useApi, useNotify} from '../../../hooks';
 import {useDispatch} from 'react-redux';
 
 export default function(){
 
-  const api = useAuth();
+  const api = useApi();
   const dispatch = useDispatch();
   const notify = useNotify();
 

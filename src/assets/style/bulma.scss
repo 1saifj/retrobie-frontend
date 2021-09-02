@@ -25,6 +25,7 @@ $notification-padding: 0.5rem 1rem 0.5rem 1rem;
 @import "../../../node_modules/bulma/sass/utilities/_all.sass";
 @import "../../../node_modules/bulma/sass/base/_all.sass";
 @import "../../../node_modules/bulma/sass/form/_all.sass";
+
 @import "../../../node_modules/bulma/sass/elements/button.sass";
 @import "../../../node_modules/bulma/sass/elements/container.sass";
 @import "../../../node_modules/bulma/sass/elements/box.sass";
@@ -32,6 +33,9 @@ $notification-padding: 0.5rem 1rem 0.5rem 1rem;
 @import "../../../node_modules/bulma/sass/elements/notification";
 @import "../../../node_modules/bulma/sass/elements/tag";
 @import "../../../node_modules/bulma/sass/elements/other";
+
+@import "../../../node_modules/bulma/sass/helpers/visibility";
+@import "../../../node_modules/bulma/sass/helpers/spacing";
 
 @import "../../../node_modules/bulma/sass/grid/columns";
 @import "../../../node_modules/bulma/sass/grid/tiles";

@@ -15,10 +15,10 @@ import {v4 as uuidv4} from 'uuid';
 import {notify} from '../../../../helpers/views';
 import {cleanString, extractErrorMessage} from '../../../../helpers';
 import * as Yup from 'yup';
-import {useAuth} from '../../../../network';
+import {useApi} from '../../../../network';
 import {useDispatch} from 'react-redux';
 import {PromiseThunk} from '../../../../types';
-import CustomImageUploader from '../../../../components/upload/CustomImageUploader';
+import ImageUploader from '../../../../components/uploader/ImageUploader';
 
 const CreateBrandValidationSchema = Yup.object().shape({
     name: Yup.string()
@@ -86,7 +86,7 @@ const CreateBrandModal = (
       onCreate?,
       onError?
   }) => {
-    const api = useAuth();
+    const api = useApi();
     const dispatch = useDispatch<PromiseThunk<any>>();
 
   return (
@@ -142,7 +142,7 @@ const CreateBrandModal = (
                   <Form>
                     <div style={{border: '1px solid grey', padding: '12px 8px'}}>
                       <h4>Upload a logo</h4>
-                      <CustomImageUploader
+                      <ImageUploader
                         folder={`logos/${values.slug}`}
                         id={values.slug}
                         onUpload={(err, {images}) => {

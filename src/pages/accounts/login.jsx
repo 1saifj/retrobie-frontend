@@ -11,7 +11,7 @@ import {useDispatch} from 'react-redux';
 import {loginUserAction} from '../../state/actions';
 import {extractErrorMessage} from '../../helpers';
 import {notify} from '../../helpers/views';
-import {useAuth} from '../../network';
+import {useApi} from '../../network';
 
 const FormParent = styled.div`
   display: grid;
@@ -35,7 +35,7 @@ const UserLoginSchema = Yup.object().shape({
 })
 
 export default function LoginUser(props) {
-  const api = useAuth();
+  const api = useApi();
 
   const [staySignedIn, setStaySignedIn] = useState(true);
 

@@ -1,17 +1,11 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Box, Button, TextArea} from 'bloomer';
 import {Loading} from '../../../components';
 import styled from 'styled-components';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import useSWR from 'swr/esm/use-swr';
-import {useAuth} from '../../../hooks';
-
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+import {useApi} from '../../../hooks';
 
 const BrandLogoParent = styled('div')`
     display: flex;
@@ -29,7 +23,7 @@ const BrandLogoParent = styled('div')`
 `;
 
 function AdminBrand({match}) {
-    const api = useAuth();
+    const api = useApi();
 
     const getSingleBrand = (id)=> api.brands.getBrandByUuid({uuid: id}).then(({data}) => data)
 

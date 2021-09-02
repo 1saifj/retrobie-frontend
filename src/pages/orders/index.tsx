@@ -4,7 +4,7 @@ import {Tag} from 'bloomer';
 import {Link} from 'react-router-dom';
 import {capitalize} from '../../helpers';
 import useSWR from 'swr/esm/use-swr';
-import {useAuth} from '../../hooks';
+import {useApi} from '../../hooks';
 import {EmptyState, Layout, Loading, RetroImage} from '../../components';
 import {OrderStatus, OrderType} from '../../types';
 import {DeadEyes, EmptyBox, GrimacingEmoji} from '../../constants/icons';
@@ -92,7 +92,7 @@ export   function mapStatus(status: OrderStatus, message?: {
 
 const AllOrders = function() {
 
-  const api = useAuth();
+  const api = useApi();
 
   const user: UserState = useSelector((state: RootStateOrAny) => state.user)
 

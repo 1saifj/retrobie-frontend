@@ -12,7 +12,7 @@ import * as Yup from 'yup';
 import {Link} from 'react-router-dom';
 import {loginUserAction} from '../../state/actions';
 import {useDispatch} from 'react-redux';
-import {useAuth} from '../../network';
+import {useApi} from '../../network';
 
 const MESSAGES ={
     REQUIRED: "This field is required.",
@@ -63,7 +63,7 @@ export const FormParent = styled.div`
 
 const RegisterUser = (props) => {
 
-    const api = useAuth();
+    const api = useApi();
 
     const [, setFormErrors] = useState([])
 
