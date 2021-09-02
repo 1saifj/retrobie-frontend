@@ -50,7 +50,7 @@ const MiscPages = lazy(() => import('../pages/admin/misc'));
 const AdminSingleBrand = lazy(() => import('../pages/admin/brands/Brand'));
 const BrandsPage = lazy(() => import('../pages/brands/AllBrandsPage'));
 
-const SingleBrand = lazy(() => import('../pages/brands/BrandPage'));
+const SingleBrand = lazy(() => import('../pages/brands/BrandProductsPage'));
 // User
 const UserProfile = lazy(() => import('../pages/accounts/me'));
 const UserOrders = lazy(() => import('../pages/orders'));

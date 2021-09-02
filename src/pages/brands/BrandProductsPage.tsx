@@ -14,8 +14,9 @@ import useFetchers from '../../hooks/useFetchers/useFetchers';
 import BrandPageHeaderComponent from './components/BrandPageHeaderComponent';
 import { DesktopFilter, MobileFilter } from '../../components/filters/Filters';
 import FilterItems from '../../components/filters/FilterItems';
+import BrandProductsFilter from './components/BrandProductsFilter';
 
-function BrandPage(props) {
+function BrandProductsPage(props) {
 
   const brandNameOrId = props.match.params.brand;
 
@@ -76,22 +77,12 @@ function BrandPage(props) {
         <Container>
           <div>
             <div className="brand__header">
-              <BrandPageHeaderComponent brand={brandData}/>
+              <BrandPageHeaderComponent brand={brandData} />
             </div>
             <div className='product__filters'>
-              <div className='product__filters--desktop'>
-                <DesktopFilter
-                  //@ts-ignore
-                  products={brandProducts}
-                  criteria={['sex', 'size', 'originalPrice', 'style']} />
-              </div>
-              <div className='product__filters--mobile'>
-                <MobileFilter
-                  //@ts-ignore
-                  products={brandProducts}/>
-              </div>
-              <div className='product__filters--products-parent'>
-                <FilterItems products={renderProducts}/>
+              <BrandProductsFilter brandName={brandData.name} />
+              <div >
+                <FilterItems products={renderProducts} />
               </div>
             </div>
           </div>
@@ -102,44 +93,7 @@ function BrandPage(props) {
   );
 }
 
-export default BrandPage;
+export default BrandProductsPage;
 
 const BrandPageParent = styled(Container)`
-.product__filters {
-  display: flex;
-  gap: 64px;
-  flex-wrap: wrap;
-
-  @media screen and (max-width: 800px) {
-    flex-direction: column;
-    gap: 32px;
-  }
-
-  .product__filters--desktop {
-    @media screen and (max-width: 800px) {
-      display: none;
-    }
-  }
-
-  .product__filters--mobile {
-    display: none;
-    @media screen and (max-width: 800px) {
-      display: block;
-    }
-  }
-
-  .product__filters--products-parent {
-    width: 100%;
-    flex: 1 0;
-    min-height: 100vh;
-
-    & > div {
-      display: grid;
-      column-gap: 24px;
-      row-gap: 72px;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      justify-content: space-between;
-    }
-  }
-}
 `
