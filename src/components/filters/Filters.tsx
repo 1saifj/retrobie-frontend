@@ -21,7 +21,7 @@ export const MobileFilter = function(props: {
         open={isDrawerOpen}>
         <Section>
           <Container>
-            <ProductFilters
+            <BrandProductsFilter
               //@ts-ignore
               products={props.products}
               allCriteria={['sex', 'size', 'price']}
@@ -44,7 +44,7 @@ export const DesktopFilter = function(props: {
 }){
 
   return (
-    <ProductFilters
+    <BrandProductsFilter
       // @ts-ignore
       products={props.products}
       allCriteria={props.criteria}
@@ -61,14 +61,7 @@ export const DesktopFilter = function(props: {
  * These should be the same as the set of keys in the {@link ProductType} object.
  * @param {ProductType[]} props.products - a list of products to be filtered through
  */
-const ProductFilters =  function(
-  {
-    allCriteria,
-    products,
-  }: {
-    allCriteria: Array<string>,
-    products: FilteredProduct[]
-  }) {
+const BrandProductsFilter =  function({allCriteria, products}: {allCriteria: Array<string>, products: FilteredProduct[]}) {
 
   const {
     setAllCriteria,
@@ -80,10 +73,13 @@ const ProductFilters =  function(
   const criteriaLength = allCriteria.length;
 
   useEffect(() => {
+    // if criteria has been provided in props
       if (allCriteria?.length) {
+        // set it to state
         setAllCriteria(allCriteria)
       }
     },
+    // if the length of the criteria props changes, re-render this component.
     // a bit hacky, but it renders forever otherwise
     [criteriaLength]
   );
