@@ -12,59 +12,55 @@ function Discover() {
 
   return (
     <div
-      style={{
-        paddingTop: 32
-      }}>
-      <div style={{
-        textAlign: 'center',
-        background: theme === 'light' ?
-          'var(--color-background--light)' :
-          'var(--color-background--dark)',
-      }}>
+      style={{paddingTop: 32}}>
+      <div
+        style={{
+          textAlign: 'center',
+          background: 'var(--color-background--light)',
+        }}>
         <h2>Discover your favorite brands and collaborations</h2>
       </div>
-      <div style={{
-        background: theme === 'light' ?
-          'var(--color-background--light)' :
-          'var(--color-background--dark)',
-        gap: 16
-      }}>
+      <div
+        style={{
+          background: 'var(--color-background--light)',
+          gap: 16,
+        }}>
         <BrandSlider
           items={[
-          { image: AdidasBlackLogo, link: '/brands/adidas' },
-          { image: AirJordanBlackLogo, link: '/brands/jordan' },
-          { image: YeezyLogo, link: '/brands/yeezy' },
-          { image: NikeBlackLogo, link: '/brands/nike' },
-          // {image: AdidasOriginalsLogo, link: '/brands/adidas-originals'},
-          // {image: NewBalanceLogo, link: '/brands/new-balance'},
-          { image: ConverseLogo, link: '/brands/converse' },
-          // {image: VansBlackLogo, link: '/brands/vans'},
-          // {image: KobeLogo, link: '/brands/kobe'},
-          // {image: LebronLogo, link: '/brands/lebron'},
-          // {image: AntaLogo, link: '/brands/anta'},
-        ]} />
+            {image: AdidasBlackLogo, link: '/brands/adidas'},
+            {image: AirJordanBlackLogo, link: '/brands/jordan'},
+            {image: YeezyLogo, link: '/brands/yeezy'},
+            {image: NikeBlackLogo, link: '/brands/nike'},
+            // {image: AdidasOriginalsLogo, link: '/brands/adidas-originals'},
+            // {image: NewBalanceLogo, link: '/brands/new-balance'},
+            {image: ConverseLogo, link: '/brands/converse'},
+            // {image: VansBlackLogo, link: '/brands/vans'},
+            // {image: KobeLogo, link: '/brands/kobe'},
+            // {image: LebronLogo, link: '/brands/lebron'},
+            // {image: AntaLogo, link: '/brands/anta'},
+          ]} />
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div style={{display: 'flex', justifyContent: 'center'}}>
         <BrandImages>
-          <div style={{ position: 'relative' }}>
+          <div style={{position: 'relative'}}>
             <RetroImage
-              style={{ maxHeight: 550 }}
-              src={"https://ik.imagekit.io/t25/v2/landing/converse-girl_xBGozjXIT.webp?tr=h-540"}
+              style={{maxHeight: 550}}
+              src={'https://ik.imagekit.io/t25/v2/landing/converse-girl_xBGozjXIT.webp?tr=h-540'}
               alt={'woman wearing converse'} />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{display: 'flex', flexDirection: 'column'}}>
             <RetroImage
-              src={"https://ik.imagekit.io/t25/v2/landing/vans-old-skool-1_fx5NrnSi6.webp?tr=w-400"}
+              src={'https://ik.imagekit.io/t25/v2/landing/vans-old-skool-1_fx5NrnSi6.webp?tr=w-400'}
               alt={'vans old skool'} />
 
             <RetroImage
-              src={"https://ik.imagekit.io/t25/v2/landing/air-jordan-1_Qtle7cPaS.webp?tr=w-400,ar-3-2"}
+              src={'https://ik.imagekit.io/t25/v2/landing/air-jordan-1_Qtle7cPaS.webp?tr=w-400,ar-3-2'}
               alt={'red black and white air jordan 1'} />
           </div>
           <div>
             <RetroImage
-              src={"https://ik.imagekit.io/t25/v2/landing/adidas-superstars-1_aUAyIuusI.webp?tr=h-540"}
+              src={'https://ik.imagekit.io/t25/v2/landing/adidas-superstars-1_aUAyIuusI.webp?tr=h-540'}
               alt={'adidas superstars'} />
           </div>
 
@@ -73,8 +69,6 @@ function Discover() {
     </div>
   );
 }
-
-Discover.propTypes = {};
 
 const BrandImages = styled('div')`
       display: flex;

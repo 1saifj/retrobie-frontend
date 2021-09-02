@@ -10,17 +10,18 @@ import '../../assets/style/index.scss';
 import {JsonLd} from 'react-schemaorg';
 import productJsonld, {subProduct} from './product.jsonld';
 import {Button, Delete, Help, Modal, ModalBackground, ModalClose, ModalContent, Tag, Title} from 'bloomer';
-import ProductSlider from '../../components/slider/ProductSlider';
+import ProductImagesSliderComponent from './components/ProductImagesSliderComponent';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {isProductInStock} from '../../components/cart';
-import {useAuth} from '../../network';
+import {useApi} from '../../network';
 import {CartItemType, CartType, ProductType} from '../../types';
 import useSWR from 'swr';
 import {useNotify} from '../../hooks';
 import {EmptyState} from '../../components';
+import ValuePropositionComponent from './components/ValuePorposition';
 
-function Product({ match }) {
-  const api = useAuth();
+function ProductPage({ match }) {
+  const api = useApi();
   const dispatch = useDispatch();
   const { slug } = match.params;
 
@@ -117,319 +118,249 @@ function Product({ match }) {
   return (
     <>
       <SEOHeader
-        path={`/product/${currentProduct.slug}`}
-        title={currentProduct.name + ' for sale in Nairobi'}
-        description={currentProduct.description.seo}
+        description={`${currentProduct.description.seo}`}
+        path={`/product/${slug}`}
+        title={`${currentProduct.name} shoes in Nairobi`}
       />
+
 
       <JsonLd item={{...productJsonld(currentProduct)}} />
       <JsonLd item={{...subProduct(currentProduct)}} />
 
       <Layout>
-        <ProductRoot>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            <ProductSlider
-              productName={currentProduct.name}
-              images={currentProduct.defaultVariant.images} />
+        <ProductPageParent>
+          <ProductImagesSliderComponent
+            productName={currentProduct.name}
+            images={currentProduct.defaultVariant.images} />
 
-            <div style={{
-              width: '80%',
-              borderRadius: '4px',
-              marginTop: 84,
-            }}>
-              <div>
-                <ValueProposition>
-                  <div>
-                    <img style={{width: '50px'}} src={FastDelivery} alt={'Free Delivery'} />
-                    <h4>Next-day Delivery</h4>
-                    <p>Anywhere within Nairobi</p>
-                  </div>
-                  <div>
-                    <img style={{width: '50px'}} src={HelpIcon} alt={'easy payment'} />
-                    <h4>Any questions? Need help?</h4>
-                    <p>
-                      Hit us up on Twitter <a href="https://twitter.com/retrbobie">@retrobie</a> or
-                      give us a call at <a
-                      href={'tel:+254-796-610-303'}
-                      type={'tel'}>
-                      +254 796 610 303
-                    </a>
-                    </p>
-                  </div>
-                  <div>
-                    <img style={{width: '50px'}} src={Diamond} alt={'easy payment'} />
-                    <h4>Assured Quality</h4>
-                    <p>100% original product guarantee</p>
-                  </div>
-                </ValueProposition>
-              </div>
-            </div>
+          <div style={{
+            width: '80%',
+            borderRadius: '4px',
+            marginTop: 84,
+          }}>
+            <ValuePropositionComponent/>
+          </div>
 
-            <ProductParent className="product--parent">
-              <SEOHeader
-                description={`${currentProduct.description.seo}`}
-                path={`/product/${slug}`}
-                title={`${currentProduct.name} shoes in Nairobi`}
-              />
-              <DescriptionParent>
-                <h1>
-                  {currentProduct.name}
-                  {
-                    !isInStock(currentProduct) && (
-                      <Tag
-                        style={{
-                          verticalAlign: "middle",
-                          marginLeft: "8px"
-                        }}
-                        isColor={'warning'}>
-                        Out of stock
-                      </Tag>
-                    )
-                  }
-                </h1>
-                <h2>
-                  {
-                    `${currentProduct.currency || 'Ksh'
-                    }.  
-                    ${formatNumberWithCommas(currentProduct.originalPrice)
-                    }`
-                  }
-                </h2>
-                <div>
-                  <h4>Description</h4>
-                  <p>{currentProduct.description.short}</p>
-                  <InDepth>
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: currentProduct.description.long,
-                      }}
-                    />
-                  </InDepth>
-                </div>
-
+          <ProductParent className="product--parent">
+            <DescriptionParent>
+              <h1>
+                {currentProduct.name}
                 {
-                  currentProduct.inStock !== null && (
-                    <div>
-                      <h4>Stock</h4>
-                      {
-                        currentProduct.inStock === 0 ? (
-                            <CustomTag>
-                              <p>Not in stock</p>
-                            </CustomTag>
-                          ) :
-                          currentProduct.inStock <= 5 ? (
-                            <CustomTag>
-                              <p>Only {currentProduct.defaultVariant.stock.quantity} left in stock</p>
-                            </CustomTag>
-                          ) : (
-                            <CustomTag>
-                              <p>{currentProduct.defaultVariant.stock.quantity} left in stock</p>
-                            </CustomTag>
-                          )
-                      }
-                    </div>
+                  !isInStock(currentProduct) && (
+                    <Tag
+                      style={{
+                        verticalAlign: "middle",
+                        marginLeft: "8px"
+                      }}
+                      isColor={'warning'}>
+                      Out of stock
+                    </Tag>
                   )
                 }
-                <Buttons>
-                  <div style={{margin: '18px 0'}}>
-                    <div>
-                      <Button
-                        isColor="primary"
-                        onClick={() => {
-                          return dispatchToCart({
-                            ...currentProduct,
-                            price: currentProduct.originalPrice,
-                          });
-                        }}
-                        disabled={!isInStock(currentProduct)}
-                        style={{
-                          width: '100%',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        {!isInStock(currentProduct) ? 'OUT OF STOCK' : 'ADD TO CART.'}
-                      </Button>
-                    </div>
-                  </div>
-                  <div>
-                    {
-                      !isInStock(currentProduct) && (
-                        <div>
-                          <Help>
-                            Want to be the first to know when this product in back in stock? {' '}
-                            <Button
-                              isColor={'ghost'}>
-                              We can let you know!
-                            </Button>
-                          </Help>
+              </h1>
+              <h2>
+                {
+                  `${currentProduct.currency || 'Ksh'
+                  }.  
+                    ${formatNumberWithCommas(currentProduct.originalPrice)
+                  }`
+                }
+              </h2>
+              <div>
+                <h4>Description</h4>
+                <p>{currentProduct.description.short}</p>
+                <InDepth>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: currentProduct.description.long,
+                    }}
+                  />
+                </InDepth>
+              </div>
 
-                        </div>
-                      )
+              {
+                currentProduct.inStock !== null && (
+                  <div>
+                    <h4>Stock</h4>
+                    {
+                      currentProduct.inStock === 0 ? (
+                          <CustomTag>
+                            <p>Not in stock</p>
+                          </CustomTag>
+                        ) :
+                        currentProduct.inStock <= 5 ? (
+                          <CustomTag>
+                            <p>Only {currentProduct.defaultVariant.stock.quantity} left in stock</p>
+                          </CustomTag>
+                        ) : (
+                          <CustomTag>
+                            <p>{currentProduct.defaultVariant.stock.quantity} left in stock</p>
+                          </CustomTag>
+                        )
                     }
                   </div>
-
+                )
+              }
+              <Buttons>
+                <div style={{margin: '18px 0'}}>
                   <div>
-                    <header>
-                      <h3>What if it doesn't fit?</h3>
-                    </header>
-                    <div
+                    <Button
+                      isColor="primary"
+                      onClick={() => {
+                        return dispatchToCart({
+                          ...currentProduct,
+                          price: currentProduct.originalPrice,
+                        });
+                      }}
+                      disabled={!isInStock(currentProduct)}
                       style={{
-                        display: 'flex',
-                        gap: '16px',
-                        flexWrap: 'wrap',
+                        width: '100%',
+                        fontWeight: 'bold',
                       }}
                     >
-                      <div style={{flex: '1 0 180px'}}>
-                        <img alt={'return'} src={Return} style={{width: '48px'}} />
-                        <h4 style={{color: '#353535'}}>Returns accepted within 7 days</h4>
-                        <p>
-                          &#10003; Direct returns - money refunded to your M-Pesa or Paypal account.
+                      {!isInStock(currentProduct) ? 'OUT OF STOCK' : 'ADD TO CART.'}
+                    </Button>
+                  </div>
+                </div>
+                <div>
+                  {
+                    !isInStock(currentProduct) && (
+                      <div>
+                        <Help>
+                          Want to be the first to know when this product in back in stock? {' '}
+                          <Button
+                            isColor={'ghost'}>
+                            We can let you know!
+                          </Button>
+                        </Help>
+
+                      </div>
+                    )
+                  }
+                </div>
+
+                <div>
+                  <header>
+                    <h3>What if it doesn't fit?</h3>
+                  </header>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '16px',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <div style={{flex: '1 0 180px'}}>
+                      <img alt={'return'} src={Return} style={{width: '48px'}} />
+                      <h4 style={{color: '#353535'}}>Returns accepted within 7 days</h4>
+                      <p>
+                        &#10003; Direct returns - money refunded to your M-Pesa or Paypal account.
+                      </p>
+                    </div>
+                    <div style={{flex: '1 0 180px'}}>
+                      <img alt={'replace'} src={Replace} style={{width: '48px'}} />
+                      <h4 style={{color: '#353535'}}>Replacements accepted within 14 days</h4>
+                      <p>&#10003; Replace your product with any other of similar value</p>
+                    </div>
+                  </div>
+                </div>
+
+                <hr />
+
+                <div>
+                  <h3>Missing your size?</h3>
+                  <p>
+                    Didn't find these shoes in your size? Hit us up and we'll try and get it for
+                    you. ✌️
+                  </p>
+                </div>
+
+                <ConditionParent>
+                  <div style={{textAlign: 'center', color: '#222'}}>
+                    <Modal isActive={conditionModalOpen}>
+                      <Delete onClick={() => openModal(false)} />
+                      <ModalBackground />
+                      <ModalContent>
+                        <Title>Condition Guide</Title>
+                        <p style={{color: '#222'}}>
+                          All products on T25 are divided into three distinct categories:
                         </p>
-                      </div>
-                      <div style={{flex: '1 0 180px'}}>
-                        <img alt={'replace'} src={Replace} style={{width: '48px'}} />
-                        <h4 style={{color: '#353535'}}>Replacements accepted within 14 days</h4>
-                        <p>&#10003; Replace your product with any other of similar value</p>
-                      </div>
-                    </div>
+                        <ul>
+                          <li>
+                            <Tag
+                              style={{
+                                background: 'dodgerblue',
+                                color: 'white',
+                              }}
+                            >
+                              Repackaged:
+                            </Tag>
+                            <p
+                              style={{
+                                color: '#222',
+                                display: 'inline',
+                                marginLeft: '4px',
+                              }}
+                            >
+                              New with box: unused, unworn and unblemished. Are repackaged in T25
+                              boxes.
+                            </p>
+                          </li>
+                          <li>
+                            <Tag
+                              style={{
+                                background: 'green',
+                                color: 'white',
+                              }}
+                            >
+                              Refurbished:
+                            </Tag>
+                            <p
+                              style={{
+                                color: '#222',
+                                display: 'inline',
+                                marginLeft: '4px',
+                              }}
+                            >
+                              Like-new with minimal blemishes and wear. Does not come with box.
+                            </p>
+                          </li>
+                          <li>
+                            <Tag
+                              style={{
+                                background: 'violet',
+                                color: 'white',
+                              }}
+                            >
+                              Slightly Worn:
+                            </Tag>
+                            <p
+                              style={{
+                                color: '#222',
+                                display: 'inline',
+                                marginLeft: '4px',
+                              }}
+                            >
+                              Visible wear and tear, but still reasonably new.
+                            </p>
+                          </li>
+                        </ul>
+                      </ModalContent>
+                      <ModalClose />
+                    </Modal>
                   </div>
-
-                  <hr />
-
-                  <div>
-                    <h3>Missing your size?</h3>
-                    <p>
-                      Didn't find these shoes in your size? Hit us up and we'll try and get it for
-                      you. ✌️
-                    </p>
-                  </div>
-
-                  <ConditionParent>
-                    <div style={{textAlign: 'center', color: '#222'}}>
-                      <Modal isActive={conditionModalOpen}>
-                        <Delete onClick={() => openModal(false)} />
-                        <ModalBackground />
-                        <ModalContent>
-                          <Title>Condition Guide</Title>
-                          <p style={{color: '#222'}}>
-                            All products on T25 are divided into three distinct categories:
-                          </p>
-                          <ul>
-                            <li>
-                              <Tag
-                                style={{
-                                  background: 'dodgerblue',
-                                  color: 'white',
-                                }}
-                              >
-                                Repackaged:
-                              </Tag>
-                              <p
-                                style={{
-                                  color: '#222',
-                                  display: 'inline',
-                                  marginLeft: '4px',
-                                }}
-                              >
-                                New with box: unused, unworn and unblemished. Are repackaged in T25
-                                boxes.
-                              </p>
-                            </li>
-                            <li>
-                              <Tag
-                                style={{
-                                  background: 'green',
-                                  color: 'white',
-                                }}
-                              >
-                                Refurbished:
-                              </Tag>
-                              <p
-                                style={{
-                                  color: '#222',
-                                  display: 'inline',
-                                  marginLeft: '4px',
-                                }}
-                              >
-                                Like-new with minimal blemishes and wear. Does not come with box.
-                              </p>
-                            </li>
-                            <li>
-                              <Tag
-                                style={{
-                                  background: 'violet',
-                                  color: 'white',
-                                }}
-                              >
-                                Slightly Worn:
-                              </Tag>
-                              <p
-                                style={{
-                                  color: '#222',
-                                  display: 'inline',
-                                  marginLeft: '4px',
-                                }}
-                              >
-                                Visible wear and tear, but still reasonably new.
-                              </p>
-                            </li>
-                          </ul>
-                        </ModalContent>
-                        <ModalClose />
-                      </Modal>
-                    </div>
-                  </ConditionParent>
-                </Buttons>
-              </DescriptionParent>
-            </ProductParent>
-          </div>
-        </ProductRoot>
+                </ConditionParent>
+              </Buttons>
+            </DescriptionParent>
+          </ProductParent>
+        </ProductPageParent>
       </Layout>
     </>
   );
 }
 
-export default Product;
+export default ProductPage;
 
-const ValueProposition = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  justify-content: space-around;
-  padding: 24px;
-  text-align: center;
-
-  & > div {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin: 0 12px;
-    
-    @media screen and (max-width: 376px) {
-       margin: 12px;
-    }
-
-    h4 {
-      margin-bottom: 6px;
-    }
-
-    a {
-      color: dodgerblue;
-      text-decoration: underline;
-    }
-    
-    p {
-      margin: 0;
-      text-align: center;
-    }
-  }
-`;
 
 const ConditionParent = styled.div`
   display: flex;
@@ -441,9 +372,13 @@ const ConditionParent = styled.div`
   }
 `;
 
-const ProductRoot = styled.div`
-  .layout--parent {
-    margin: 0;
+const ProductPageParent = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  
+  .product__page__slider__parent {
+    
   }
 `;
 

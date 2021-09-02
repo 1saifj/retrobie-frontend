@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import useSWR from 'swr/esm/use-swr';
-import {useAuth, useNotify} from '../../../hooks';
+import {useApi, useNotify} from '../../../hooks';
 import {Loading} from '../../../components';
 import {CategoryType} from '../../../types';
 import ImageUploader from '../../../components/uploader/ImageUploader';
@@ -10,7 +10,7 @@ import {Button} from 'bloomer';
 
 export default function({match}){
 
-  const api = useAuth();
+  const api = useApi();
   const notify = useNotify();
   const dispatch = useDispatch();
 

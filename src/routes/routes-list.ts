@@ -4,7 +4,7 @@ const Cart = lazy(() => import('../pages/cart'));
 const Landing = lazy(() => import('../pages/landing'));
 const HowItWorks = lazy(() => import('../pages/how-it-works'));
 const Blog = lazy(() => import('../pages/blog'));
-const Category = lazy(() => import('../pages/category'));
+const Category = lazy(() => import('../pages/category/CategoryPage'));
 const Collection = lazy(() => import('../pages/collections'));
 const About = lazy(() => import('../pages/about'));
 const Product = lazy(() => import('../pages/product'));
@@ -25,7 +25,7 @@ const MakingAnOrder = lazy(() => import('../pages/support/orders/making-an-order
 const CancellingAnOrder = lazy(() => import('../pages/support/orders/cancelling-an-order'));
 const SupportMaps = lazy(() => import('../pages/support/shipping/maps'));
 
-const Checkout = lazy(() => import('../pages/checkout'));
+const Checkout = lazy(() => import('../pages/checkout/CheckoutPage'));
 const Shipping = lazy(() => import('../pages/shipping'));
 const OrderCompleted = lazy(() => import('../pages/shipping/order-completed'));
 
@@ -48,9 +48,9 @@ const AdminBrands = lazy(() => import('../pages/admin/brands/AllBrands'));
 const MiscPages = lazy(() => import('../pages/admin/misc'));
 
 const AdminSingleBrand = lazy(() => import('../pages/admin/brands/Brand'));
-const BrandsPage = lazy(() => import('../pages/brands/AllBrands'));
+const BrandsPage = lazy(() => import('../pages/brands/AllBrandsPage'));
 
-const SingleBrand = lazy(() => import('../pages/brands/Brand'));
+const SingleBrand = lazy(() => import('../pages/brands/BrandProductsPage'));
 // User
 const UserProfile = lazy(() => import('../pages/accounts/me'));
 const UserOrders = lazy(() => import('../pages/orders'));

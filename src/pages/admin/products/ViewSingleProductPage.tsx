@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useAuth} from '../../../network';
+import {useApi} from '../../../network';
 import Loading from '../../../components/loading';
 import styled from 'styled-components';
 import {notify} from '../../../helpers/views';
@@ -42,7 +42,7 @@ const UpdateProductValidationSchema = Yup.object().shape({
 });
 
 export default function ViewSingleProductPage(props) {
-  const api = useAuth();
+  const api = useApi();
   const dispatch = useDispatch();
   const [showImageModal, setImageModalShown] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);

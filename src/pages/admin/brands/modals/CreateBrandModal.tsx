@@ -15,7 +15,7 @@ import {v4 as uuidv4} from 'uuid';
 import {notify} from '../../../../helpers/views';
 import {cleanString, extractErrorMessage} from '../../../../helpers';
 import * as Yup from 'yup';
-import {useAuth} from '../../../../network';
+import {useApi} from '../../../../network';
 import {useDispatch} from 'react-redux';
 import {PromiseThunk} from '../../../../types';
 import ImageUploader from '../../../../components/uploader/ImageUploader';
@@ -86,7 +86,7 @@ const CreateBrandModal = (
       onCreate?,
       onError?
   }) => {
-    const api = useAuth();
+    const api = useApi();
     const dispatch = useDispatch<PromiseThunk<any>>();
 
   return (

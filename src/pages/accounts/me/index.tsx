@@ -4,7 +4,7 @@ import {Lock, Users} from 'react-feather';
 import Loading from '../../../components/loading';
 import {Tab, TabLink, TabList, Tabs} from 'bloomer';
 import {UserDetails} from './components';
-import {useAuth} from '../../../network';
+import {useApi} from '../../../network';
 import useSWR from 'swr/esm/use-swr';
 import {Tooltip} from 'react-tippy';
 import {RootStateOrAny, useSelector} from 'react-redux';
@@ -39,7 +39,7 @@ const tabs = [
 ]
 
 export default function UserProfile() {
-  const api = useAuth();
+  const api = useApi();
 
   const user: UserState = useSelector((state: RootStateOrAny) => state.user);
 

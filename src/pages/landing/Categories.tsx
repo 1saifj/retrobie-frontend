@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import CategoryTitle from '../../assets/images/vectors/sneaker 1.svg';
 import ChevronRight from '../../assets/images/icons/chevron-right.svg';
 import {Link} from 'react-router-dom';
-import {useAuth} from '../../hooks';
+import {useApi} from '../../hooks';
 import useSWR from 'swr/esm/use-swr';
 import {EmptyState, Loading} from '../../components';
 import {CategoryType} from '../../types';
@@ -11,7 +11,7 @@ import ServerError from '../../assets/images/vectors/dead.svg';
 
 const Categories = () => {
 
-    const api = useAuth();
+    const api = useApi();
     const allCategoriesFetcher = () => api.category.getAll().then(({data}) => data);
     const {data: allCategories, error} = useSWR<Array<CategoryType>>('/categories/all', allCategoriesFetcher);
 

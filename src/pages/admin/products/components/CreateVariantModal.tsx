@@ -6,7 +6,7 @@ import 'react-quill/dist/quill.snow.css';
 import CustomModal from '../../../../components/CustomModal';
 import CreateVariantComponent from './CreateVariantComponent';
 import ImageUploader from '../../../../components/uploader/ImageUploader';
-import {useAuth} from '../../../../hooks';
+import {useApi} from '../../../../hooks';
 import useSWR from 'swr/esm/use-swr';
 import {ProductTypeType} from '../../../../types';
 
@@ -20,7 +20,7 @@ const CreateVariantModal = (props: {
 }) => {
 
 
-  const api = useAuth();
+  const api = useApi();
 
   const allProductTypesFetcher = () => api.productTypes.getAll().then((result) => result.data);
   const {data: allProductTypes} = useSWR<ProductTypeType[]>('/product-type', allProductTypesFetcher);

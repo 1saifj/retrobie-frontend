@@ -29,7 +29,7 @@ let gettingTokenPromise = null;
  * NOTE: Non-idempotent requests (POST, PUT, etc) are thunks. GET requests are normal
  * async functions
  */
-const useAuth = function () {
+const useApi = function () {
   const dispatch = useDispatch();
   const userState: UserState = useSelector((state: RootStateOrAny) => state.user);
 
@@ -172,7 +172,7 @@ const useAuth = function () {
      * @returns {Promise<AxiosResponse<any>>}
      */
     getProducts: async (name) => (await getAxis()).get(`/brands/${name}/products`),
-    getFilteredProducts: async ({slugOrUuid}) => (await getAxis()).get(`/products/brand/${slugOrUuid}`),
+    getFilteredProducts: async ({brandName}) => (await getAxis()).get(`/products/brand/${brandName}`),
     updateImage: (uuid) => async () => (await getAxis()).put(`/brands/images/${uuid}`),
     /**
      * Create a single brand
@@ -180,20 +180,23 @@ const useAuth = function () {
      * @returns {Promise<AxiosResponse<any>>}
      */
     create: data => async () => (await getAxis()).post(`/brands/new`, data),
+    getBrandFilters:
+      async (brandName: string) => (await getAxis()).get(`/brands/filters/${brandName}`),
   };
 
   const category = {
     getOne: async id => (await getAxis()).get(`/category/${id}`),
+    getProducts: async uuid => (await getAxis()).get(`/products/category/${uuid}`),
     getAll: async () => (await getAxis()).get('/categories'),
     create: data => async () => (await getAxis()).post('/categories', data),
     update: (uuid, data) => async () => (await getAxis()).put(`/categories/${uuid}`, data),
   };
 
   const productTypes = {
-    create: data => async () => (await getAxis()).post('/product-type', data),
-    getAll: async () => (await getAxis()).get('/product-type'),
-    getSingle: async slug => (await getAxis()).get(`/product-type/${slug}`),
-    update: async ({uuid, payload}) => (await getAxis()).patch(`/product-type/${uuid}`, payload),
+    create: data => async () => (await getAxis()).post('/product-types', data),
+    getAll: async () => (await getAxis()).get('/product-types'),
+    getSingle: async slug => (await getAxis()).get(`/product-types/${slug}`),
+    update: async ({uuid, payload}) => (await getAxis()).patch(`/product-types/${uuid}`, payload),
   };
 
   const products = {
@@ -208,6 +211,7 @@ const useAuth = function () {
     update: (id, data) => async () => (await getAxis()).put(`/products/${id}/update`, data),
     deleteImage: async ({productId, fileId}) =>
       (await getAxis()).delete(`/products/${productId}/image/${fileId}`),
+    getBrandProductsWithQuery: async (brandName) => (await getAxis()).get(`/products/brand/${brandName}`),
   };
 
   const deliveries = {
@@ -236,7 +240,7 @@ const useAuth = function () {
   };
 
   const cart = {
-    fetch: async id => (await getAxis()).get(`carts/${id}`),
+    getOne: async id => (await getAxis()).get(`carts/${id}`),
     checkPaymentStatus: async id => (await getAxis()).get(`carts/${id}/payment-status`),
   };
 
@@ -262,8 +266,9 @@ const useAuth = function () {
     products,
     productTypes,
     ping,
-    variants
+    variants,
+    get: (url)=> (getAxis().then((instance) => instance.get(url))),
   };
 };
 
-export default useAuth;
+export default useApi;

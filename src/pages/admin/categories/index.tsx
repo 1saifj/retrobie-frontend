@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import useSWR from 'swr/esm/use-swr';
-import {useAuth} from '../../../hooks';
+import {useApi} from '../../../hooks';
 import {Loading} from '../../../components';
 import {CategoryType} from '../../../types';
 import {Button} from 'bloomer';
@@ -12,7 +12,7 @@ export default function(){
 
   const [isCreateNewCategoryModalActive, setIsCreateNewCategoryModalActive] = useState(false);
 
-  const api = useAuth();
+  const api = useApi();
 
   const allCategoriesFetcher = () => api.category.getAll().then(({data}) => data);
   const {data: allCategories} = useSWR<Array<CategoryType>>('/categories', allCategoriesFetcher);

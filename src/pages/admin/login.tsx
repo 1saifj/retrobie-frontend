@@ -10,12 +10,12 @@ import {Form, Formik} from 'formik';
 import {FormParent} from '../accounts/register';
 import {useDispatch} from 'react-redux';
 import {loginUserAction} from '../../state/actions';
-import {useAuth} from '../../network';
+import {useApi} from '../../network';
 import {LoginResponseType, PromiseThunk} from '../../types';
 import {AxiosResponse} from 'axios';
 
 const AdminLogin = props => {
-  const api = useAuth();
+  const api = useApi();
   const dispatch = useDispatch<PromiseThunk<AxiosResponse<LoginResponseType>>>();
 
   const setUserLoggedIn = payload => dispatch(loginUserAction(payload));

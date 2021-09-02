@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import useSWR from 'swr/esm/use-swr';
-import {useAuth} from '../../../hooks';
+import {useApi} from '../../../hooks';
 
 const BrandLogoParent = styled('div')`
     display: flex;
@@ -23,7 +23,7 @@ const BrandLogoParent = styled('div')`
 `;
 
 function AdminBrand({match}) {
-    const api = useAuth();
+    const api = useApi();
 
     const getSingleBrand = (id)=> api.brands.getBrandByUuid({uuid: id}).then(({data}) => data)
 

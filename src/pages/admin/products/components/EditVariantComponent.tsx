@@ -144,6 +144,11 @@ const VariantParent = styled.div`
   
   .product-type-options {
     display: flex;
+    flex-wrap: wrap;
     gap: 1rem;
+    
+    & > div {
+      flex: 1 1 250px;
+    }
   }
 `;

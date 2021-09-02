@@ -4,7 +4,7 @@ import {Form, Formik} from 'formik';
 import {TextField} from '../../../../components/input';
 import {Button, Column, Columns} from 'bloomer';
 import defaultHelpers, {extractErrorMessage} from '../../../../helpers';
-import {useAuth, useNotify} from '../../../../hooks';
+import {useApi, useNotify} from '../../../../hooks';
 import * as Yup from 'yup';
 import {useDispatch} from 'react-redux';
 
@@ -46,7 +46,7 @@ const UpdateProfileValidationSchema = Yup.object().shape({
 export default function ({data}){
 
   const notify = useNotify();
-  const api = useAuth();
+  const api = useApi();
   const dispatch = useDispatch();
 
   const [userInfo] = useState({
