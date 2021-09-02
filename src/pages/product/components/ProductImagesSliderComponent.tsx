@@ -1,10 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
-import RetroImage from '../image';
+import RetroImage from '../../../components/image';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
-import {ImageType} from '../../types';
+import {ImageType} from '../../../types';
 
 function isNarrowDevice() {
   return window.innerWidth <= 600;
@@ -69,17 +69,13 @@ function Slider(
   );
 }
 
-export default function ProductSlider({images, productName}) {
+export default function ProductImagesSliderComponent({images, productName}) {
   return (
     <ProductSliderParent>
       <Slider productName={productName} images={images}/>
     </ProductSliderParent>
   );
 }
-
-ProductSlider.propTypes = {
-  images: PropTypes.array,
-};
 
 const Dot = styled.div<{
   isActive: boolean,
