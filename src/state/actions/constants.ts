@@ -4,6 +4,8 @@ export const EMPTY_CART = 'EMPTY_CART';
 export const ADD_TO_CART = 'ADD_TO_CART';
 export const FETCH_REMOTE_CART = 'FETCH_REMOTE_CART';
 
+export const FETCH_FILTERED_PRODUCTS = 'products/fetchFilteredProducts';
+
 export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
 
 export const LOG_IN_USER = 'LOG_IN_USER';

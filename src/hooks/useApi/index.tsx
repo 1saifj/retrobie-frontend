@@ -180,6 +180,8 @@ const useApi = function () {
      * @returns {Promise<AxiosResponse<any>>}
      */
     create: data => async () => (await getAxis()).post(`/brands/new`, data),
+    getBrandFilters:
+      async (brandName: string) => (await getAxis()).get(`/brands/filters/${brandName}`),
   };
 
   const category = {
@@ -209,6 +211,7 @@ const useApi = function () {
     update: (id, data) => async () => (await getAxis()).put(`/products/${id}/update`, data),
     deleteImage: async ({productId, fileId}) =>
       (await getAxis()).delete(`/products/${productId}/image/${fileId}`),
+    getBrandProductsWithQuery: async (brandName) => (await getAxis()).get(`/products/brand/${brandName}`),
   };
 
   const deliveries = {
@@ -263,7 +266,8 @@ const useApi = function () {
     products,
     productTypes,
     ping,
-    variants
+    variants,
+    get: (url)=> (getAxis().then((instance) => instance.get(url))),
   };
 };
 
