@@ -41,7 +41,8 @@ const RegisterValidationSchema = Yup.object().shape({
     .min(8, 'Your password should be at least 8 characters long')
     .max(128, MESSAGES.TOO_LONG)
     .matches(/.*[0-9].*/, 'Please include at least one number')
-    .matches(/.*[A-Z].*/, 'Please include at least one uppercase letter'),
+    .matches(/.*[A-Z].*/, 'Please include at least one uppercase letter')
+    .matches(/.*[a-z].*/, 'Please include at least one lowercase letter')
 
 });
 
@@ -64,27 +65,15 @@ export const FormParent = styled.div`
 
 const RegisterUser = (props) => {
 
-    const api = useApi();
+  const api = useApi();
 
-    const [, setFormErrors] = useState([])
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-    const [passwordShown, setPasswordShown] = useState(false);
+  const [passwordShown, setPasswordShown] = useState(false);
 
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    const setUserLoggedIn = payload => dispatch(loginUserAction(payload));
-
-    // function getErrors(): {[key: string]: string} {
-    //     if (formErrors.length) {
-    //         const errors = {};
-    //         formErrors.forEach(err=> {
-    //             errors[err.field] = err.messages
-    //         })
-    //         return errors;
-    //     }
-    //
-    //     return undefined;
-    // }
+  const setUserLoggedIn = payload => dispatch(loginUserAction(payload));
 
   return (
     <>
@@ -113,54 +102,13 @@ const RegisterUser = (props) => {
                 phoneNumber: '',
                 email: '',
               }}
-              // validate={async values => {
-              //   // errors from the server, if any
-              //   let errors = getErrors();
-              //
-              //   // If we get errors from the server
-              //   if (errors) {
-              //     // Go through the keys {field: error_message}
-              //     Object.keys(values).forEach(field => {
-              //       try {
-              //         // Validate the field value
-              //         const isValid = Yup.reach(RegisterValidationSchema, field).validateSync(values[field]);
-              //         // If it's valid, remove any error
-              //         if (isValid) {
-              //           errors[field] = undefined;
-              //           // Don't forget to reset the state
-              //           // @ts-ignore
-              //           // setFormErrors(errors);
-              //         }
-              //
-              //       } catch (e) {
-              //         // The messages should be synced between frontend
-              //         // and backend to prevent a disruption in the UI flow
-              //         errors[field] = e.message;
-              //       }
-              //     });
-              //     return errors;
-              //   } else {
-              //     errors = {};
-              //
-              //     try {
-              //       await RegisterValidationSchema.validate(values);
-              //       return undefined;
-              //     } catch (e) {
-              //       errors[e.path] = e.message;
-              //       return errors;
-              //     }
-              //   }
-              //
-              // }}
+              initialErrors={formErrors}
               validationSchema={RegisterValidationSchema}
               onSubmit={async (values, {setSubmitting, setFieldError}) => {
                 try {
-                  // {message: "", accessToken: "", refreshToken: ""}
-
                   values.phoneNumber = replaceNonAlphanumeric(values.phoneNumber, '');
                   // @ts-ignore
                   const {data} = await dispatch(api.accounts.register(values));
-                  notify('success', data.message);
                   setUserLoggedIn(data);
                   setSubmitting(false);
                   // // The user is effectively logged in at this point.
@@ -170,15 +118,24 @@ const RegisterUser = (props) => {
                   props.history.push('/accounts/verify');
 
                 } catch (e) {
-                  if (e.response && e.response.data.errors) {
+                  // if there is a validation error
+                  if (e.response) {
                     notify('error', e.response.data.message);
-                    const responseErrors = e.response.data.errors;
-                    const errors = [];
-                    responseErrors.forEach(error => {
-                      setFieldError(error.path, error['messages'].join('\n'));
-                      errors.push({field: error.path, messages: error['messages'].join('\n')});
-                    });
-                    setFormErrors(errors);
+
+                    if (e.response.data?.validation?.errors){
+                      const responseErrors = e.response.data.validation.errors;
+                      const errors = {};
+                      responseErrors.forEach(error => {
+                        setFieldError(error.path, error['messages'].join('\n'));
+                        errors[error.path] = error['messages'].join('\n');
+                      });
+                      setFormErrors(errors);
+                    } else if (e.response.data?.errors) {
+                      const responseErrors = e.response.data.errors;
+                      responseErrors.forEach(error => {
+                        setFieldError(error.path, error['message']);
+                      });
+                    }
                   } else {
                     const message = responseHelper.extractErrorMessage(e);
                     notify('error', message);
@@ -187,7 +144,7 @@ const RegisterUser = (props) => {
                 }
               }}
             >
-              {({isSubmitting}) => (
+              {({isSubmitting, isValid, handleBlur, setFieldError}) => (
                 <Form style={{padding: '0 24px'}}>
                   <div style={{marginBottom: 36}}>
                     <div>
@@ -266,7 +223,7 @@ const RegisterUser = (props) => {
                       <Button
                         isColor={'primary'}
                         type={'submit'}
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || !isValid}
                         isLoading={isSubmitting}
                         style={{minWidth: 300}}>
                         Create account
