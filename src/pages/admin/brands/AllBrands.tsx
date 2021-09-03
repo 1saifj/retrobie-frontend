@@ -119,9 +119,15 @@ function AllBrandsAdmin(props) {
                     </div>
                     <div>
                         <Plus onClick={() => setShowCreateBrandModal(true)}/>
-                        <CreateBrandModal
-                            onClose={() => setShowCreateBrandModal(false)}
-                            isActive={showCreateBrandModal}/>
+                      <CreateBrandModal
+                        onClose={() => setShowCreateBrandModal(false)}
+                        isActive={showCreateBrandModal}
+                        onCreate={(brand) => {
+                          notify('success', 'Created brand successfully', {autoClose: 2500});
+                          setShowCreateBrandModal(false);
+                          addBrand(brand);
+                        }}
+                      />
                     </div>
                 </BrandHeader>
                 {
