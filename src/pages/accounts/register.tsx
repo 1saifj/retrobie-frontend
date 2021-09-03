@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import RegisterVector from '../../assets/images/vectors/register.svg';
 import {Form, Formik} from 'formik';
 import TextField from '../../components/input/TextField';
-import {extractErrorMessage, replaceNonAlphanumeric} from '../../helpers';
+import { replaceNonAlphanumeric} from '../../helpers';
 import {notify} from '../../helpers/views';
 import {Eye} from '../../constants/icons';
 import * as Yup from 'yup';
@@ -13,6 +13,7 @@ import {Link} from 'react-router-dom';
 import {loginUserAction} from '../../state/actions';
 import {useDispatch} from 'react-redux';
 import {useApi} from '../../network';
+import responseHelper from '../../helpers/ResponseHelper';
 
 const MESSAGES ={
     REQUIRED: "This field is required.",
@@ -179,7 +180,7 @@ const RegisterUser = (props) => {
                     });
                     setFormErrors(errors);
                   } else {
-                    const message = extractErrorMessage(e);
+                    const message = responseHelper.extractErrorMessage(e);
                     notify('error', message);
                   }
                   setSubmitting(false);
