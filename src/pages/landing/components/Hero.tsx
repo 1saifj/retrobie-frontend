@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Button, Column, Columns } from 'bloomer';
-import FeaturedSneaker from '../../assets/images/vectors/featured-sneaker.svg';
-import RetroImage from '../../components/image';
-import HowItWorksModal from './modals/HowItWorksModal';
+import {Button, Column, Columns, Section} from 'bloomer';
+import FeaturedSneaker from '../../../assets/images/vectors/featured-sneaker.svg';
+import RetroImage from '../../../components/image';
+import HowItWorksModal from '../modals/HowItWorksModal';
 
 const images = {
   landing: {
@@ -37,83 +37,85 @@ const Hero = () => {
 
   return (
     <>
-      <HeroSection>
-        <Column className='image'>
-          <div>
-            <RetroImage
-              src={images.landing.big}
-              alt=''
-              srcSet={{
-                srcSet: `
+      <Section>
+        <HeroSection>
+          <Column className='image'>
+            <div>
+              <RetroImage
+                src={images.landing.big}
+                alt=''
+                srcSet={{
+                  srcSet: `
                     ${images.landing.small} 350w,
                     ${images.landing.mid}   450w,
                     ${images.landing.mid2}  500w,
                     ${images.landing.mid3}  550w,
                     ${images.landing.big}   1140w,
                 `,
-                sizes: `
+                  sizes: `
                     (max-width: 428px) 350px,
                     (max-width: 510px) 450px,
                     (max-width: 630px) 500px,
                     (max-width: 1024px) 550px,
                     1140px
                 `,
-              }}
-            />
-            {/*<picture>*/}
-            {/*  <source media={'(max-width:428px)'} srcSet={images.landing.small} />*/}
-            {/*  <source media={'(max-width:510px)'} srcSet={images.landing.mid} />*/}
-            {/*  <source media={'(max-width:630px)'} srcSet={images.landing.mid2} />*/}
-            {/*  <source media={'(max-width:1024px)'} srcSet={images.landing.mid3} />*/}
-            {/*  <img src={images.landing.big} alt={'landing page'} />*/}
-            {/*</picture>*/}
-          </div>
-        </Column>
-        <Column className='description'>
-          <div>
-            <header>
-              <div style={{width: '48px', marginLeft: '8px'}}>
-                <img src={FeaturedSneaker} alt="just a sneaker" />
-              </div>
-              <small className='secondary'>ABOUT US</small>
-            </header>
-            <h1>
-              Home of <span> authentic,</span> exclusive sneakers in Nairobi
-            </h1>
-            <div>
-              <p className='secondary'>
-                Find and discover your favorite brands - from Air Jordans to Yeezys -{' '}
-                <span>original sneakers</span>,{' '}
-                basketball shoes, and many more fashion pieces
-                at the best sneaker shop in Nairobi.
-              </p>
+                }}
+              />
+              {/*<picture>*/}
+              {/*  <source media={'(max-width:428px)'} srcSet={images.landing.small} />*/}
+              {/*  <source media={'(max-width:510px)'} srcSet={images.landing.mid} />*/}
+              {/*  <source media={'(max-width:630px)'} srcSet={images.landing.mid2} />*/}
+              {/*  <source media={'(max-width:1024px)'} srcSet={images.landing.mid3} />*/}
+              {/*  <img src={images.landing.big} alt={'landing page'} />*/}
+              {/*</picture>*/}
             </div>
-          </div>
-          <div className='buttons'>
-            <Button
-              isColor='primary'
-              style={{
-                margin: '4px 4px',
-              }}
-              onClick={() => scrollToAppBody()}
-            >
-              Get started
-            </Button>
-            <Button
-              isOutlined
-              style={{margin: '4px 4px', minWidth: '200px'}}
-              onClick={() => setIsHowItWorksModalActive(true)}
-            >
-              Learn more
-            </Button>
-          </div>
-        </Column>
-        <HowItWorksModal
-          isActive={isHowItWorksModalActive}
-          onClose={() => {
-            setIsHowItWorksModalActive(false);
-          }} />
-      </HeroSection>
+          </Column>
+          <Column className='description'>
+            <div>
+              <header>
+                <div style={{width: '48px', marginLeft: '8px'}}>
+                  <img src={FeaturedSneaker} alt="just a sneaker" />
+                </div>
+                <small className='secondary'>ABOUT US</small>
+              </header>
+              <h1>
+                Home of <span> authentic,</span> exclusive sneakers in Nairobi
+              </h1>
+              <div>
+                <p className='secondary'>
+                  Find and discover your favorite brands - from Air Jordans to Yeezys -{' '}
+                  <span>original sneakers</span>,{' '}
+                  basketball shoes, and many more fashion pieces
+                  at the best sneaker shop in Nairobi.
+                </p>
+              </div>
+            </div>
+            <div className='buttons'>
+              <Button
+                isColor='primary'
+                style={{
+                  margin: '4px 4px',
+                }}
+                onClick={() => scrollToAppBody()}
+              >
+                Get started
+              </Button>
+              <Button
+                isOutlined
+                style={{margin: '4px 4px', minWidth: '200px'}}
+                onClick={() => setIsHowItWorksModalActive(true)}
+              >
+                Learn more
+              </Button>
+            </div>
+          </Column>
+          <HowItWorksModal
+            isActive={isHowItWorksModalActive}
+            onClose={() => {
+              setIsHowItWorksModalActive(false);
+            }} />
+        </HeroSection>
+      </Section>
     </>
   );
 };

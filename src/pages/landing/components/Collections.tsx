@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import PeepStanding26 from '../../assets/images/vectors/peep-standing-26.svg';
-import PeepStanding27 from '../../assets/images/vectors/standing-elegantly.svg';
-import PeepStanding28 from '../../assets/images/marketing/casual-hangout.jpg';
+import PeepStanding26 from '../../../assets/images/vectors/peep-standing-26.svg';
+import PeepStanding27 from '../../../assets/images/vectors/standing-elegantly.svg';
+import PeepStanding28 from '../../../assets/images/marketing/casual-hangout.jpg';
 
 const collections = [
     {

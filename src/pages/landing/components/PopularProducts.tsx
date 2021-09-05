@@ -1,12 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import Loading from '../../components/loading';
-import {EmptyState, RetroImage} from '../../components';
-import { useApi } from '../../network';
+import Loading from '../../../components/loading';
+import {EmptyState, RetroImage} from '../../../components';
+import { useApi } from '../../../network';
 import useSWR from 'swr';
-import ServerError from '../../assets/images/vectors/dead.svg';
-import {ProductType} from '../../types';
+import ServerError from '../../../assets/images/vectors/dead.svg';
+import {ProductType} from '../../../types';
+import {Container, Section} from 'bloomer';
+import Fire from '../../../assets/images/icons/fire.svg';
+import Layout from '../../../components/Layout';
 
 function PopularProducts() {
   const api = useApi();
@@ -37,24 +40,39 @@ function PopularProducts() {
 
   return (
     <>
-      <BrandImagesParent>
-        {featuredProducts?.length &&
-          featuredProducts.map(product => (
-            <Link to={`/product/${product.slug}`} key={product.name}>
-              <BrandParent>
-                <div className={'image'}>
-                  <RetroImage
-                    src={product?.defaultVariant?.images[0]?.thumbnailUrl}
-                    alt={'featured image'}
-                  />
-                </div>
-                <div className={'footer'}>
-                  <p>{product.name}</p>
-                </div>
-              </BrandParent>
-            </Link>
-          ))}
-      </BrandImagesParent>
+      <Section>
+        <Container>
+          <div>
+            <div style={{textAlign: 'center'}}>
+              <img src={Fire} alt={'fire'} style={{width: '64px'}} />
+
+              <h2>Popular Right Now.</h2>
+              <p>Not sure where to start? Check out the most popular brands and models</p>
+            </div>
+            <div>
+              <BrandImagesParent>
+                {featuredProducts?.length &&
+                featuredProducts.map(product => (
+                  <Link to={`/product/${product.slug}`} key={product.name}>
+                    <BrandParent>
+                      <div className={'image'}>
+                        <RetroImage
+                          src={product?.defaultVariant?.images[0]?.thumbnailUrl}
+                          alt={'featured image'}
+                        />
+                      </div>
+                      <div className={'footer'}>
+                        <p>{product.name}</p>
+                      </div>
+                    </BrandParent>
+                  </Link>
+                ))}
+              </BrandImagesParent>
+
+            </div>
+          </div>
+        </Container>
+      </Section>
     </>
   );
 }

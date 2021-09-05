@@ -1,6 +1,6 @@
-export default () => {
 
-  return {
+export default {
+  jsonld: {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "image": [
@@ -69,5 +69,8 @@ export default () => {
         "closes": "12:00"
       }
     ]
-  }
+  },
+  description: 'We stock high-quality affordable sneakers, running shoes, sports shoes and classy men\'s shoes in Nairobi. We also accept shoe requests from repeat customers.',
+  title: 'Home of Authentic Sneakers & Sports Shoes in Kenya'
+
 }
