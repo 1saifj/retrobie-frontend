@@ -12,6 +12,16 @@ const Newsletter = ()=> {
 
   return (
     <Section>
+      <Helmet>
+        <script id="mcjs">
+          {
+            env.isStaging() ?
+              '!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/6ec31ce43b70efd818395b2ae/819f6aab492396f5747c68f82.js");' :
+              '!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/6ec31ce43b70efd818395b2ae/14ec84c64dab50454558e2aab.js");'
+          }
+        </script>
+      </Helmet>
+
       <Container>
         <Partners>
           <h2 style={{margin: 0}}>We accept</h2>
@@ -25,17 +35,6 @@ const Newsletter = ()=> {
       <div>
         <Container>
           <CallToAction>
-            <div>
-              <Helmet>
-                <script id="mcjs">
-                  {
-                    env.isStaging() ?
-                      '!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/6ec31ce43b70efd818395b2ae/819f6aab492396f5747c68f82.js");' :
-                      '!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/6ec31ce43b70efd818395b2ae/14ec84c64dab50454558e2aab.js");'
-                  }
-                </script>
-              </Helmet>
-            </div>
             <div className={'images'}>
               <img
                 src={'https://ik.imagekit.io/t25/v2/landing/coffee_ZF-vC31Vp.gif'}
@@ -86,7 +85,7 @@ const Newsletter = ()=> {
                       />
                       <Button
                         isColor="primary"
-                        style={{padding: '10px 24px', fontSize: '14px'}}
+                        isSize={'medium'}
                         defaultValue="Subscribe"
                         name="subscribe"
                         id="mc-embedded-subscribe"

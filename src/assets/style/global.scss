@@ -656,6 +656,14 @@ b {
   }
 }
 
+.button {
+  padding: 1.8rem 2.5rem;
+}
+
+.button.is-medium {
+  padding: 1.5rem 2rem;
+}
+
 
 .button.is-small {
   font-size: 14px;
