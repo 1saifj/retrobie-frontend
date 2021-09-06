@@ -77,6 +77,7 @@ const userReducers = (state = initialState, action) => {
           thumbnailUrl: action.payload.avatar?.thumbnailUrl,
         },
         isLoggedIn: true,
+        isVerified: loginUserPayload.isVerified
       };
       return loginUserState;
     case LOG_OUT_USER:
