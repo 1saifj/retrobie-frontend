@@ -280,6 +280,7 @@ const MegaMenu = () => {
                           <li style={{padding: '0 8px'}}>
                             <Button
                               isColor={'ghost'}
+                              style={{height: 'unset', fontWeight: 'bold', textDecoration: 'none'}}
                               onClick={() => logout()}>
                               Log out
                             </Button>
