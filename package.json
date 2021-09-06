@@ -2,6 +2,14 @@
   "name": "retrobie",
   "version": "2.7.1",
   "private": true,
+  "scripts": {
+    "prebuild": "npm run generate-sitemap",
+    "start": "PORT=7001 BROWSER=none react-scripts start",
+    "build": "DISABLE_NEW_JSX_TRANSFORM=true react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "generate-sitemap": "node src/utils/generate-sitemap"
+  },
   "dependencies": {
     "@sentry/browser": "^5.27.4",
     "@sentry/tracing": "^6.1.0",
@@ -66,14 +74,7 @@
     "uuid": "^7.0.3",
     "yup": "^0.28.5"
   },
-  "scripts": {
-    "prebuild": "npm run generate-sitemap",
-    "start": "PORT=7001 BROWSER=none react-scripts start",
-    "build": "DISABLE_NEW_JSX_TRANSFORM=true react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "generate-sitemap": "node src/utils/generate-sitemap"
-  },
+
   "eslintConfig": {
     "extends": "react-app"
   },
