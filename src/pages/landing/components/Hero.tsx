@@ -4,6 +4,7 @@ import {Button, Column, Columns, Section} from 'bloomer';
 import FeaturedSneaker from '../../../assets/images/vectors/featured-sneaker.svg';
 import RetroImage from '../../../components/image';
 import HowItWorksModal from '../modals/HowItWorksModal';
+import RegisterModal from '../modals/RegisterModal';
 
 const images = {
   landing: {
@@ -29,11 +30,7 @@ const images = {
 const Hero = () => {
 
   const [isHowItWorksModalActive, setIsHowItWorksModalActive] = useState(false);
-
-  function scrollToAppBody() {
-    let appBody = document.getElementById('app-body');
-    appBody.scrollIntoView();
-  }
+  const [isRegisterModalActive, setRegisterModalActive] = useState(false);
 
   return (
     <>
@@ -96,7 +93,7 @@ const Hero = () => {
                 style={{
                   margin: '4px 4px',
                 }}
-                onClick={() => scrollToAppBody()}
+                onClick={() => setRegisterModalActive(true)}
               >
                 Get started
               </Button>
@@ -109,6 +106,7 @@ const Hero = () => {
               </Button>
             </div>
           </Column>
+          <RegisterModal isActive={isRegisterModalActive} onClose={()=> setRegisterModalActive(false)}/>
           <HowItWorksModal
             isActive={isHowItWorksModalActive}
             onClose={() => {
