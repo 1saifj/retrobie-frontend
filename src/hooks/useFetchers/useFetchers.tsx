@@ -11,7 +11,7 @@ const useFetchers = ()=> {
 
 
   const productsFetcher = {
-    getFilteredProducts: (url, brandName) => api.brands.getFilteredProducts({brandName}).then(({data}) => data),
+    getFilteredProducts: (url, slug) => api.brands.getFilteredProducts({slug}).then(({data}) => data),
   };
 
   const cartsFetcher = {

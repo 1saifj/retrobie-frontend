@@ -1,27 +1,23 @@
 import {useEffect, useState} from 'react';
-import useSWR from 'swr/esm/use-swr';
 import useApi from '../useApi';
 import qs from 'qs';
-import {useDispatch} from 'react-redux';
 
 
-function useBrandFilters({brandName}){
+function useBrandFilters({slug}) {
 
   const api = useApi();
 
-  const dispatch = useDispatch();
-
   const [queryParamString, setQueryParamString] = useState<string>(null);
-  const [loadingNewItems, setLoadingNewItems] = useState(false);
+  const [loadingNewItems] = useState(false);
 
-  const [filteredProducts, setFilteredProducts] = useState(null);
+  const [, setFilteredProducts] = useState(null);
 
-  const [allProducts, setAllProducts] = useState([])
+  const [allProducts, setAllProducts] = useState([]);
 
-  useEffect(()=> {
-    api.brands.getFilteredProducts({brandName})
+  useEffect(() => {
+    api.brands.getFilteredProducts({slug})
       .then(({data}) => setAllProducts(data));
-  }, [brandName, api.brands])
+  }, [slug])
 
 
   async function fetchFilteredProducts(params?){
@@ -37,7 +33,7 @@ function useBrandFilters({brandName}){
 
     // otherwise, fetch a list of products with the new criteria
 
-    return await api.brands.getFilteredProducts({brandName});
+    return await api.brands.getFilteredProducts({slug});
 
     // find any products that match the provided criteria
     // const transformed =  transformedProducts.filter((product) => product[queryToAddOrRemove] === value);

@@ -11,7 +11,7 @@ import DrawerWrapper from 'rc-drawer';
 import {Button, Container, Section} from 'bloomer';
 
 interface ProductFiltersProps {
-  brandName: string
+  slug: string
   children?: any
 }
 
@@ -26,16 +26,16 @@ interface ProductFiltersProps {
  */
 const BrandProductsFilter =  function(props: ProductFiltersProps) {
 
-  const {brandName} = props;
+  const {slug} = props;
 
   const api = useApi();
 
-  const {fetchFilteredProducts} = useBrandFilters({brandName})
+  const {fetchFilteredProducts} = useBrandFilters({slug});
 
   const criteriaFetcher = (url) => api.get(url).then(({data}) => data);
   const {data: brandProductsFilters, error: fetchBrandProductsError} = useSWR<Array<{label: string, key: string, values: string[]}>>(
-    [`/brands/filters/${brandName}`, brandName],
-    criteriaFetcher
+    [`/brands/${slug}/filters`, slug],
+    criteriaFetcher,
   )
 
   if (!brandProductsFilters?.length) {
@@ -98,7 +98,7 @@ const BrandProductsFilter =  function(props: ProductFiltersProps) {
           </div>
 
           <div className='product__filters--mobile'>
-            <MobileFilter brandName={brandName} />
+            <MobileFilter slug={slug} />
           </div>
 
         </div>
@@ -111,7 +111,7 @@ export default BrandProductsFilter;
 
 
 export const MobileFilter = function(props: {
-  brandName: string
+  slug: string
 }){
 
   const [isDrawerOpen, setDrawerOpen] = useState(false);
@@ -124,7 +124,7 @@ export const MobileFilter = function(props: {
         open={isDrawerOpen}>
         <Section>
           <Container>
-            <BrandProductsFilter brandName={props.brandName}/>
+            <BrandProductsFilter slug={props.slug} />
           </Container>
         </Section>
       </DrawerWrapper>
@@ -188,7 +188,7 @@ const BrandProductsFilterParent = styled.div`
     & > div {
       display: grid;
       column-gap: 24px;
-      row-gap: 72px;
+      row-gap: 6rem;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       justify-content: space-between;
     }

@@ -172,7 +172,7 @@ const useApi = function () {
      * @returns {Promise<AxiosResponse<any>>}
      */
     getProducts: async (name) => (await getAxis()).get(`/brands/${name}/products`),
-    getFilteredProducts: async ({brandName}) => (await getAxis()).get(`/products/brand/${brandName}`),
+    getFilteredProducts: async ({slug}) => (await getAxis()).get(`/products/brand/${slug}`),
     updateImage: (uuid) => async () => (await getAxis()).put(`/brands/images/${uuid}`),
     /**
      * Create a single brand
