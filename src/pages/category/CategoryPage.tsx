@@ -1,13 +1,13 @@
 import React from 'react';
 import {EmptyState, Layout, Loading} from '../../components';
 import useSWR from 'swr/esm/use-swr';
-import {CategoryType, ProductType} from '../../types';
+import {CategoryType, FilteredProduct, ProductType} from '../../types';
 import {useFiltersV2} from '../../hooks/useFiltersV2/FilterProvider';
 import {Container} from 'bloomer';
 import {DeadEyes2, EmptyBox} from '../../constants/icons';
 import SEOHeader from '../../components/SEOHeader';
 import useFetchers from '../../hooks/useFetchers/useFetchers';
-import {DesktopFilter, MobileFilter} from '../../components/filters/Filters';
+import {Filters} from '../../components/filters/Filters';
 import styled from 'styled-components';
 import FilterItems from '../../components/filters/FilterItems';
 
@@ -15,8 +15,6 @@ import FilterItems from '../../components/filters/FilterItems';
 const CategoryPage = function({match}) {
 
   const categorySlug = match.params.id;
-
-  const {products: renderProducts} = useFiltersV2();
 
   const {categoriesFetcher} = useFetchers();
 
@@ -26,7 +24,7 @@ const CategoryPage = function({match}) {
   );
 
   const {data: categoryProducts, error: fetchCategoryProductsError} = useSWR<ProductType[]>(
-    categoryData? [`/category/${categoryData.uuid}/products`, categoryData.uuid]: null,
+    categoryData ? [`/category/${categoryData.slug}/products`, categoryData.slug] : null,
     categoriesFetcher.getProducts,
   );
 
@@ -69,28 +67,21 @@ const CategoryPage = function({match}) {
         description={categoryData.description?.seo}
         path={`/category/${categoryData.slug}`}
         title={`${categoryData.name} in Nairobi`} />
-      <CategoryPageParent>
+      <div>
         <Container>
           <header>
             <h1>
               {categoryData.name}
             </h1>
           </header>
-          <div className={'product__filters'}>
-            <div className={'product__filters--desktop'}>
-              <DesktopFilter products={categoryProducts}
-                             criteria={['sex', 'size', 'price']}
-              />
-            </div>
-            <div className={'product__filters--mobile'}>
-              <MobileFilter products={categoryProducts} />
-            </div>
-            <div className={'product__filters--products-parent'}>
-              <FilterItems products={renderProducts} />
-            </div>
-          </div>
+          <Filters products={categoryProducts}>
+            {
+              filteredProducts =>
+                <FilterItems products={filteredProducts} />
+            }
+          </Filters>
         </Container>
-      </CategoryPageParent>
+      </div>
     </Layout>
   );
 };

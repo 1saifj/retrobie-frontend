@@ -5,63 +5,58 @@ import Loading from '../../components/loading';
 import {Container} from 'bloomer';
 import {capitalize} from '../../helpers';
 import useSWR from 'swr/esm/use-swr';
-import {BrandType, FilteredProduct} from '../../types';
-import useFiltersV2 from '../../hooks/useFiltersV2';
+import {BrandType, FilteredProduct, ProductType} from '../../types';
 import {Clown, GrimacingEmoji} from '../../constants/icons';
 import {EmptyState} from '../../components';
 import SEOHeader from '../../components/SEOHeader';
 import useFetchers from '../../hooks/useFetchers/useFetchers';
 import BrandPageHeaderComponent from './components/BrandPageHeaderComponent';
-import { DesktopFilter, MobileFilter } from '../../components/filters/Filters';
+import {Filters} from '../../components/filters/Filters';
 import FilterItems from '../../components/filters/FilterItems';
-import BrandProductsFilter from './components/BrandProductsFilter';
 
 function BrandProductsPage(props) {
 
-  const brandNameOrId = props.match.params.brand;
+  const brandSlug = props.match.params.brand;
 
   const {brandsFetcher, productsFetcher} = useFetchers();
 
   const {data: brandData, error: fetchBrandError} = useSWR<BrandType>(
-    [`/brands/${brandNameOrId}`, brandNameOrId],
+    [`/brands/${brandSlug}`, brandSlug],
     brandsFetcher.getOne,
   );
 
-  const {products: renderProducts} = useFiltersV2();
+  const {data: brandProducts, error: fetchProductsError} = useSWR(brandData?.slug ? [
+    `/brands/${brandData.slug}/products/filtered`,
+    brandData?.slug,
+  ] : undefined, productsFetcher.getFilteredProducts);
 
-  const {data: brandProducts, error: fetchProductsError} = useSWR<FilteredProduct[]>([
-    brandData?.name ? `/brands/${brandData.name}/products/filtered` : undefined,
-    brandData?.name,
-  ], productsFetcher.getFilteredProducts);
-
-
-  if (fetchBrandError || fetchProductsError) {
-    return  (
+  if (fetchBrandError) {
+    return (
       <Layout>
         <EmptyState
           icon={Clown}
           title={'Looks like clowns took over our servers.'}
-          message={"It's not you it's us. We're working on it."}
+          message={'It\'s not you it\'s us. We\'re working on it.'}
         />
       </Layout>
-    )
+    );
   }
 
-  if (!brandProducts || !brandData) {
+  if (!brandData || !brandProducts) {
     return (
-      <Loading/>
-    )
+      <Loading />
+    );
   }
 
-  if (!brandProducts.length){
-    return  (
+  if (!brandProducts?.length) {
+    return (
       <Layout>
         <EmptyState
           icon={GrimacingEmoji}
           iconWidth={52}
           centerAlign={true}
           title={`Oops. We haven't uploaded any ${capitalize(brandData.name)} shoes yet.`}
-          message={'We\'re working on it! Check back soon!' }
+          message={'We\'re working on it! Check back soon!'}
         />
       </Layout>
     )
@@ -76,15 +71,14 @@ function BrandProductsPage(props) {
       <BrandPageParent>
         <Container>
           <div>
-            <div className="brand__header">
-              <BrandPageHeaderComponent brand={brandData} />
-            </div>
-            <div className='product__filters'>
-              <BrandProductsFilter brandName={brandData.name} />
-              <div >
-                <FilterItems products={renderProducts} />
-              </div>
-            </div>
+            <BrandPageHeaderComponent brand={brandData} />
+            <Filters products={brandProducts}>
+              {
+                filteredProducts => (
+                  <FilterItems products={filteredProducts} />
+                )
+              }
+            </Filters>
           </div>
         </Container>
       </BrandPageParent>

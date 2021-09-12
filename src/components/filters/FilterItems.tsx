@@ -33,7 +33,7 @@ function FilterItem ({product: item}){
         <p>{item.name}</p>
         <p>
           <b>
-            Ksh. {formatNumberWithCommas(item.price)}
+            Ksh. {formatNumberWithCommas(item.originalPrice)}
           </b>
         </p>
       </div>
@@ -62,13 +62,16 @@ export const FilterItems = function(props: {
   }
 
   return (
-    <div>
-      {
-        props.products.map((item, index) => (
-          <FilterItem key={index.toString()} product={item} />
-        ))
-      }
+    <div className={'product__filters--products-parent'}>
+      <div>
+        {
+          props.products.map((item, index) => (
+            <FilterItem key={index.toString()} product={item} />
+          ))
+        }
+      </div>
     </div>
+
   )
 }
 

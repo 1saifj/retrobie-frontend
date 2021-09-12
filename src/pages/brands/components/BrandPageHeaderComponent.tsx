@@ -9,20 +9,25 @@ function BrandPageHeaderComponent(props: {
 }){
   const {brand} = props;
   return (
-    <BrandHeaderParent>
-      <div className="brand__header__image">
-        <RetroImage
-          style={{borderRadius: '4px'}}
-          src={brand.logo?.thumbnailUrl}
-          alt={brand.name} />
+    <>
+      <div className="brand__header">
+        <BrandHeaderParent>
+          <div className="brand__header__image">
+            <RetroImage
+              style={{borderRadius: '4px'}}
+              src={brand.logo?.thumbnailUrl}
+              alt={brand.name} />
+          </div>
+          <div className="brand__header__description">
+            <h1>About {brand.name}</h1>
+            <p>
+              {brand.description.long}
+            </p>
+          </div>
+        </BrandHeaderParent>
+
       </div>
-      <div className="brand__header__description">
-        <h1>About {brand.name}</h1>
-        <p>
-          {brand.description.long}
-        </p>
-      </div>
-    </BrandHeaderParent>
+    </>
   );
 }
 

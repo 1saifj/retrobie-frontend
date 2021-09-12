@@ -1,5 +1,5 @@
 import {FilteredProduct, ProductType} from '../../types';
-import React, {useEffect, useState} from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import DrawerWrapper from 'rc-drawer';
 import {Button, Container, Section} from 'bloomer';
 import useFiltersV2 from '../../hooks/useFiltersV2';
@@ -7,35 +7,76 @@ import {capitalize, formatNumberWithCommas} from '../../helpers';
 import qs from 'qs';
 import styled from 'styled-components';
 
+interface FiltersParams {
+  children: (filteredProducts: FilteredProduct[]) => React.ReactNode;
+  products?: ProductType[]
+}
+
+export const Filters = (props: FiltersParams) => {
+
+  const {products: allProducts} = props;
+
+  const {products: filteredProducts, setAllProducts} = useFiltersV2();
+
+  useEffect(() => {
+    // @ts-ignore
+    setAllProducts(allProducts);
+
+  }, [allProducts]);
+
+  console.log('Filtered products: ', filteredProducts);
+
+  return (
+    <>
+      <FiltersParent>
+        <div className={'product__filters'}>
+          {/*<DesktopFilter*/}
+          {/*  products={products}*/}
+          {/*  criteria={['sex', 'size', 'price']}*/}
+          {/*/>*/}
+
+          {/*<MobileFilter*/}
+          {/*  products={products} />*/}
+
+          {props.children(filteredProducts)}
+        </div>
+      </FiltersParent>
+    </>
+  );
+};
+
 export const MobileFilter = function(props: {
   products: Array<ProductType>
-}){
+}) {
 
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   return (
-    <div>
-      <DrawerWrapper
-        onClose={() => setDrawerOpen(false)}
-        handler={null}
-        open={isDrawerOpen}>
-        <Section>
-          <Container>
-            <BrandProductsFilter
-              //@ts-ignore
-              products={props.products}
-              allCriteria={['sex', 'size', 'price']}
-            />
-          </Container>
-        </Section>
-      </DrawerWrapper>
-      <Button
-        onClick={() => setDrawerOpen(true)}
-        style={{marginRight: 12}}>
-        Filters
-      </Button>
+    <div className={'product__filters--mobile'}>
+      <div>
+        <DrawerWrapper
+          onClose={() => setDrawerOpen(false)}
+          handler={null}
+          open={isDrawerOpen}>
+          <Section>
+            <Container>
+              <BrandProductsFilter
+                //@ts-ignore
+                products={props.products}
+                allCriteria={['sex', 'size', 'price']}
+              />
+            </Container>
+          </Section>
+        </DrawerWrapper>
+        <Button
+          onClick={() => setDrawerOpen(true)}
+          style={{marginRight: 12}}>
+          Filters
+        </Button>
+      </div>
+
     </div>
-  )
+  );
 }
 
 export const DesktopFilter = function(props: {
@@ -44,11 +85,13 @@ export const DesktopFilter = function(props: {
 }){
 
   return (
-    <BrandProductsFilter
-      // @ts-ignore
-      products={props.products}
-      allCriteria={props.criteria}
-    />
+    <div className={'product__filters--desktop'}>
+      <BrandProductsFilter
+        // @ts-ignore
+        products={props.products}
+        allCriteria={props.criteria}
+      />
+    </div>
   );
 }
 
@@ -162,3 +205,46 @@ const FilterItem = styled.div<{applied?: boolean}>`
     border: 1px solid var(--color-border-lightgray);
   }
 `;
+
+const FiltersParent = styled(Container)`
+.product__filters {
+  display: flex;
+  gap: 64px;
+  flex-wrap: wrap;
+
+  @media screen and (max-width: 800px) {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .product__filters--desktop {
+    @media screen and (max-width: 800px) {
+      display: none;
+    }
+  }
+
+  .product__filters--mobile {
+    display: none;
+    @media screen and (max-width: 800px) {
+      display: block;
+    }
+  }
+
+  .product__filters--products-parent {
+    width: 100%;
+    flex: 1 0;
+    min-height: 100vh;
+
+    & > div {
+      display: grid;
+      column-gap: 24px;
+      row-gap: 72px;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      justify-content: space-between;
+    }
+  }
+}
+
+
+`;
+
