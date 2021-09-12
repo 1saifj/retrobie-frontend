@@ -32,7 +32,7 @@ export default function ViewAllProductTypesPage(props) {
     setFilteredProductTypes(allProductTypes);
   }, [allProductTypes]);
 
-  if (!allProductTypes?.length) {
+  if (!allProductTypes) {
     return (
       <div>
         <Loading />
@@ -86,18 +86,26 @@ export default function ViewAllProductTypesPage(props) {
         </div>
 
         <div>
-          {filteredProductTypes?.map((productType, index) => {
-            return (
-              <div key={index}>
-                <Link to={`product-types/${productType.slug}`}>
-                  <div className="product-type-list__item">
-                    <p>{productType.name}</p>
-                    <span>&rsaquo;</span>
-                  </div>
-                </Link>
+          {
+            filteredProductTypes?.length ? (
+              <div>
+                {
+                  filteredProductTypes?.map((productType, index) => {
+                    return (
+                      <div key={index}>
+                        <Link to={`product-types/${productType.slug}`}>
+                          <div className="product-type-list__item">
+                            <p>{productType.name}</p>
+                            <span>&rsaquo;</span>
+                          </div>
+                        </Link>
+                      </div>
+                    );
+                  })
+                }
               </div>
-            );
-          })}
+            ) : <p>No product types created yet.</p>
+          }
         </div>
       </div>
     </ListProductTypesStyled>
