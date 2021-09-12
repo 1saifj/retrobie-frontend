@@ -98,7 +98,7 @@ const Layout = function(params: {
                     {params.children}
                   </LayoutParent>
                   {
-                    !!params.footer && (
+                    !params.footer && (
                       <div style={{marginTop: 48}}>
                         <Footer internal={params.internal} />
                       </div>
