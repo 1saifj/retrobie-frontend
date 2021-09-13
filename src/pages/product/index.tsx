@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Loading from '../../components/loading';
 import {addItemToCartAction, toggleSidebarAction} from '../../state/actions';
 import {capitalize, formatNumberWithCommas} from '../../helpers';
@@ -19,11 +19,16 @@ import useSWR from 'swr';
 import {useNotify} from '../../hooks';
 import {EmptyState} from '../../components';
 import ValuePropositionComponent from './components/ValuePorposition';
+import {useHistory} from 'react-router';
 
 function ProductPage({ match }) {
   const api = useApi();
   const dispatch = useDispatch();
-  const { slug } = match.params;
+  const {slug} = match.params;
+
+  const history = useHistory();
+  const notify = useNotify();
+
 
   const isSidebarOpen = useSelector((state: RootStateOrAny) => state.meta.isSidebarOpen);
 
@@ -36,7 +41,27 @@ function ProductPage({ match }) {
     singleDataFetcher,
   );
 
-  const notify = useNotify();
+  useEffect(() => {
+    const query = history.location.search;
+
+    if (query) {
+      const searchParams = new URLSearchParams(query);
+      if (searchParams.has('variant')) {
+        console.log('Variant id: ', searchParams.get('variant'));
+      } else {
+        if (currentProduct) {
+          searchParams.append('variant', currentProduct.defaultVariant.uuid);
+          history.replace(`?${searchParams.toString()}`);
+        }
+      }
+    } else {
+      if (currentProduct) {
+        const searchParams = new URLSearchParams({variant: currentProduct.defaultVariant.uuid});
+        history.replace(`?${searchParams.toString()}`);
+      }
+    }
+
+  }, [currentProduct]);
 
   if (!currentProduct && !fetchProductError) {
     return <Loading message={false} />;
