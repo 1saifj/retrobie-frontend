@@ -158,13 +158,7 @@ function ProductPage({ match }) {
             productName={currentProduct.name}
             images={currentProduct.defaultVariant.images} />
 
-          <div style={{
-            width: '80%',
-            borderRadius: '4px',
-            marginTop: 84,
-          }}>
-            <ValuePropositionComponent/>
-          </div>
+          <ValuePropositionComponent />
 
           <ProductParent className="product--parent">
             <DescriptionParent>
