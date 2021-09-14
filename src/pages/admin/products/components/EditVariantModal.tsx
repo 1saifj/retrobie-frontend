@@ -74,7 +74,7 @@ const EditVariantModal = (props: {
                 });
 
                 setSubmitting(false);
-                notify.success('Created variant successfully.')
+                notify.success('Updated variant successfully.');
                 // props.onClose();
               } catch (e){
                 const message = extractErrorMessage(e);
