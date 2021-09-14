@@ -46,15 +46,6 @@ const CreateVariantModal = (props: {
               {({values, isSubmitting}) => (
                 <Form>
                   <div>
-                    <div className='bordered'>
-                      <ImageUploader
-                        folder={'fold'}
-                        onUpload={(err, {images, uploaderId}) => {
-
-                        }}
-                        allowMultiple={true}
-                        id={'create-or-edit-variant-modal'} />
-                    </div>
                     <FieldArray
                       name={'variants'}
                       render={arrayHelpers => (

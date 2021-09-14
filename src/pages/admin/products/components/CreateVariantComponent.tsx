@@ -7,6 +7,7 @@ import {Column, Columns} from 'bloomer';
 import { Trash2 } from 'react-feather';
 import styled from 'styled-components';
 import RadioField from '../../../../components/input/RadioField';
+import ImageUploader from '../../../../components/uploader/ImageUploader';
 
 
 const CreateVariantComponent = (
@@ -31,10 +32,20 @@ const CreateVariantComponent = (
         <div>
           <h4>Variant #{variantIndex + 1}</h4>
         </div>
-        <div className="trash" onClick={()=> onDeleteVariant(variantIndex)}>
-          <Trash2/>
+        <div className="trash" onClick={() => onDeleteVariant(variantIndex)}>
+          <Trash2 />
         </div>
       </header>
+      <ImageUploader
+        folder={'fold'}
+        onInit={(images) => {
+        }}
+        onUpload={(err, {images, uploaderId}) => {
+
+        }}
+        allowMultiple={true}
+        id={'create-or-edit-variant-modal'} />
+
       <Columns>
         <Column>
           <TextField
@@ -42,14 +53,6 @@ const CreateVariantComponent = (
             name={`variants.${variantIndex}.name`}
             placeholder={'The name of this variant'}
             type={'text'}
-          />
-        </Column>
-        <Column>
-          <TextField
-            label={'Stock count'}
-            name={`variants.${variantIndex}.inStock`}
-            placeholder={'e.g. 5'}
-            type={'number'}
           />
         </Column>
       </Columns>
@@ -60,7 +63,7 @@ const CreateVariantComponent = (
             name={`variants.${variantIndex}.originalPrice`}
             placeholder={'e.g. 5000'}
             type={'number'}
-            help={"Leave this field blank if it costs the same as the product."}
+            help={'Leave this field blank if it costs the same as the product.'}
           />
         </Column>
         <Column>
@@ -70,9 +73,28 @@ const CreateVariantComponent = (
           />
         </Column>
       </Columns>
+      <h4>Stock Information</h4>
+      <Columns>
+        <Column>
+          <TextField
+            label={'Stock count'}
+            name={`variants.${variantIndex}.stock.quantity`}
+            placeholder={'e.g. 5'}
+            type={'number'}
+          />
+        </Column>
+        <Column>
+          <TextField
+            label={'Cost price'}
+            name={`variants.${variantIndex}.stock.costPrice`}
+            placeholder={'e.g. 5'}
+            type={'number'}
+          />
+        </Column>
+      </Columns>
       <FieldArray
         name={`variants.${variantIndex}.options`}
-        render={(arrayHelpers)=> (
+        render={(arrayHelpers) => (
           <div className="product-type-options">
             {
               allProductTypes
@@ -91,10 +113,10 @@ const CreateVariantComponent = (
                         onChange={(value, index)=> arrayHelpers.replace(optionIndex, {
                           name: option.name,
                           uuid: option.uuid,
-                          value: {
+                          attribute: {
                             uuid: value,
-                            value: option.values[index].value
-                          }
+                            value: option.values[index].value,
+                          },
                         })}
                         isGroup={true}
                         inline={true}
