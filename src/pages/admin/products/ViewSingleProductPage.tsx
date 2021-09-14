@@ -407,6 +407,7 @@ export default function ViewSingleProductPage(props) {
                         <CreateVariantModal
                           isActive={isCreateVariantModalActive}
                           onClose={triggerCreateVariantModal}
+                          productId={thisProductData.uuid}
                           productTypeId={thisProductData.productType.uuid}
                         />
                       </div>

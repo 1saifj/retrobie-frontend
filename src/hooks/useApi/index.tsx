@@ -247,7 +247,7 @@ const useApi = function () {
   const variants = {
     getOne: async uuid => (await getAxis()).get(`variants/${uuid}`),
     updateOne: async ({uuid, payload}) => (await getAxis()).patch(`variants/${uuid}`, payload),
-    create: async ({uuid, payload}) => (await getAxis()).post(`variants/`, payload),
+    create: async ({payload}) => (await getAxis()).post(`variants/`, payload),
   }
 
   async function ping() {

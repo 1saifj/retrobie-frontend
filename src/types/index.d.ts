@@ -20,10 +20,10 @@ export type ProductType = {
   meta?: ProductMetaType;
   description?: DescriptionType;
   defaultVariant?: VariantType
+  variants?: VariantType[]
   currency?: string;
-  adminProduct?: {
-    inStock: number;
-  };
+  stock?: StockType
+  adminProduct?
 };
 
 // This is the ProductType as represented/provided
@@ -151,6 +151,7 @@ export interface ProductTypeOption {
 export interface ProductTypeOptionValue {
   uuid: string;
   value: string;
+  option?: ProductTypeOption
 }
 
 export type DeliveryType = {
