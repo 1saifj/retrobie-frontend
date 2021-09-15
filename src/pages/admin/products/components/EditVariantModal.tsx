@@ -4,10 +4,12 @@ import ImageUploader from '../../../../components/uploader/ImageUploader';
 import EditVariantComponent from './EditVariantComponent';
 import React from 'react';
 import {ProductTypeOption, VariantType} from '../../../../types';
-import { Button } from 'bloomer';
+import {Button} from 'bloomer';
 import {useApi, useNotify} from '../../../../hooks';
-import {extractErrorMessage} from '../../../../helpers';
+import defaultHelpers, {extractErrorMessage} from '../../../../helpers';
 import useSWR from 'swr/esm/use-swr';
+import {useDispatch} from 'react-redux';
+import {deleteUploadedImageAction} from '../../../../state/actions';
 
 
 const EditVariantModal = (props: {
@@ -15,15 +17,22 @@ const EditVariantModal = (props: {
   onClose: Function,
   isActive: boolean,
   productTypeOptions: Array<ProductTypeOption>
-})=> {
+}) => {
 
   const api = useApi();
   const notify = useNotify();
+  const dispatch = useDispatch();
+
+  const uploaderId = 'create-or-edit-variant-modal';
 
   const singleVariantFetcher = () => api.variants.getOne(props.variantId).then(({data}) => data);
   const {data: workingVariant} = useSWR<VariantType>(props.variantId ? `/variants/${props.variantId}` : undefined, singleVariantFetcher);
 
-  if (!workingVariant) return <span/>
+  if (!workingVariant) return <span />;
+
+  const removeLocalUploaderId = (id) => {
+    return dispatch(deleteUploadedImageAction({uploaderId: id}));
+  };
 
   return (
     <div>
@@ -47,6 +56,23 @@ const EditVariantModal = (props: {
             }}
             onSubmit={async (values, {setSubmitting}) => {
               const {uuid, ...rest} = values;
+
+              let noNewImages = defaultHelpers.arraysEqual(workingVariant.images, values.images);
+
+              // @ts-ignore
+              let diff = defaultHelpers.objectDiff(workingVariant, values);
+
+              // Delete them from the object if they don't exist
+              if (noNewImages) {
+                delete diff.images;
+              } else {
+                // otherwise, delete the 'local' id used by the image uploader
+                rest.images = diff.images.map((image: any) => {
+                  const {id, ...rest} = image;
+
+                  return rest;
+                });
+              }
 
               // @ts-ignore
               const {optionValues} = rest;
@@ -73,6 +99,7 @@ const EditVariantModal = (props: {
                   },
                 });
 
+                removeLocalUploaderId(uploaderId);
                 setSubmitting(false);
                 notify.success('Updated variant successfully.');
                 // props.onClose();
@@ -83,17 +110,20 @@ const EditVariantModal = (props: {
               }
             }}
           >
-            {({values, isSubmitting}) => (
+            {({values, isSubmitting, setFieldValue}) => (
               <Form>
                 <div>
                   <div className='bordered'>
                     <ImageUploader
                       folder={'fold'}
                       onUpload={(err, {images, uploaderId}) => {
-
+                        setFieldValue('images', images);
                       }}
                       allowMultiple={true}
-                      id={'create-or-edit-variant-modal'} />
+                      onInit={(images) => {
+                        setFieldValue('images', images);
+                      }}
+                      id={uploaderId} />
                   </div>
                   <div>
                     <EditVariantComponent
