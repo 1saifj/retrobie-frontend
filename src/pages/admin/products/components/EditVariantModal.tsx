@@ -23,12 +23,13 @@ const EditVariantModal = (props: {
   const notify = useNotify();
   const dispatch = useDispatch();
 
-  const uploaderId = 'create-or-edit-variant-modal';
 
   const singleVariantFetcher = () => api.variants.getOne(props.variantId).then(({data}) => data);
   const {data: workingVariant} = useSWR<VariantType>(props.variantId ? `/variants/${props.variantId}` : undefined, singleVariantFetcher);
 
   if (!workingVariant) return <span />;
+
+  const uploaderId = defaultHelpers.md5(workingVariant.name);
 
   const removeLocalUploaderId = (id) => {
     return dispatch(deleteUploadedImageAction({uploaderId: id}));
@@ -116,6 +117,8 @@ const EditVariantModal = (props: {
                   <div className='bordered'>
                     <ImageUploader
                       folder={'fold'}
+                      // @ts-ignore
+                      initialImages={workingVariant.images}
                       onUpload={(err, {images, uploaderId}) => {
                         setFieldValue('images', images);
                       }}
