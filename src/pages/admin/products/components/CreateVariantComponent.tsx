@@ -1,6 +1,6 @@
 import {FieldArray} from 'formik';
 import React, {useEffect, useState} from 'react';
-import {capitalize} from '../../../../helpers';
+import defaultHelpers, {capitalize} from '../../../../helpers';
 import {ProductTypeOptionValue, ProductTypeType} from '../../../../types';
 import {CheckboxField, TextField} from '../../../../components/input';
 import {Column, Columns} from 'bloomer';
@@ -10,20 +10,19 @@ import RadioField from '../../../../components/input/RadioField';
 import ImageUploader from '../../../../components/uploader/ImageUploader';
 
 
-const CreateVariantComponent = (
-  {
-    allProductTypes,
-    productTypeId,
-    onDeleteVariant,
-    variantIndex,
-  }: {
-    allProductTypes: Array<ProductTypeType>
-    productTypeId: string,
-    onDeleteVariant: Function,
-    variantIndex: number
-  })=> {
+const CreateVariantComponent = ({allProductTypes, onDeleteVariant, productTypeId, setFieldValue, variantIndex}: {
+  allProductTypes: Array<ProductTypeType>
+  productTypeId: string,
+  onDeleteVariant: Function,
+  variantIndex: number,
+  setFieldValue?: Function
+}) => {
 
-  if (!productTypeId) return <span/>
+  const [variantName, setVariantName] = useState(null);
+
+  const uploaderId = variantName ? defaultHelpers.md5(variantName) : '';
+
+  if (!productTypeId) return <span />;
 
 
   return (
@@ -39,20 +38,22 @@ const CreateVariantComponent = (
       <ImageUploader
         folder={'fold'}
         onInit={(images) => {
+          setFieldValue('images', images);
         }}
         onUpload={(err, {images, uploaderId}) => {
-
+          setFieldValue('images', images);
         }}
         allowMultiple={true}
-        id={'create-or-edit-variant-modal'} />
+        id={uploaderId} />
 
       <Columns>
         <Column>
           <TextField
             label={'Variant name'}
-            name={`variants.${variantIndex}.name`}
+            name={`variants.${(variantIndex)}.name`}
             placeholder={'The name of this variant'}
             type={'text'}
+            onBlur={(e) => setVariantName(e.target.value)}
           />
         </Column>
       </Columns>
@@ -60,7 +61,7 @@ const CreateVariantComponent = (
         <Column>
           <TextField
             label={'Price'}
-            name={`variants.${variantIndex}.originalPrice`}
+            name={`variants.${(variantIndex)}.originalPrice`}
             placeholder={'e.g. 5000'}
             type={'number'}
             help={'Leave this field blank if it costs the same as the product.'}
@@ -69,7 +70,7 @@ const CreateVariantComponent = (
         <Column>
           <CheckboxField
             label={'Is this variant on offer?'}
-            name={`variants.${variantIndex}.isOnOffer`}
+            name={`variants.${(variantIndex)}.isOnOffer`}
           />
         </Column>
       </Columns>
@@ -78,7 +79,7 @@ const CreateVariantComponent = (
         <Column>
           <TextField
             label={'Stock count'}
-            name={`variants.${variantIndex}.stock.quantity`}
+            name={`variants.${(variantIndex)}.stock.quantity`}
             placeholder={'e.g. 5'}
             type={'number'}
           />
@@ -86,14 +87,14 @@ const CreateVariantComponent = (
         <Column>
           <TextField
             label={'Cost price'}
-            name={`variants.${variantIndex}.stock.costPrice`}
+            name={`variants.${(variantIndex)}.stock.costPrice`}
             placeholder={'e.g. 5'}
             type={'number'}
           />
         </Column>
       </Columns>
       <FieldArray
-        name={`variants.${variantIndex}.options`}
+        name={`variants.${(variantIndex)}.options`}
         render={(arrayHelpers) => (
           <div className="product-type-options">
             {
@@ -108,7 +109,7 @@ const CreateVariantComponent = (
                     <div
                       className="option">
                       <RadioField
-                        name={`variants.${variantIndex}.options.${optionIndex}.value`}
+                        name={`variants.${(variantIndex)}.options.${optionIndex}.value`}
                         bordered={true}
                         onChange={(value, index)=> arrayHelpers.replace(optionIndex, {
                           name: option.name,
