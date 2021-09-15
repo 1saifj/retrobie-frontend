@@ -73,7 +73,7 @@ const CreateVariantModal = (props: {
               }
             }}
             >
-            {({values, errors, isSubmitting}) => (
+            {({values, setFieldValue, errors, isSubmitting}) => (
               <Form>
                 <div>
                   <FieldArray
@@ -89,6 +89,7 @@ const CreateVariantModal = (props: {
                                     onDeleteVariant={(index) => arrayHelpers.remove(index)}
                                     productTypeId={props.productTypeId}
                                     allProductTypes={allProductTypes}
+                                    setFieldValue={setFieldValue}
                                   />
                                 </div>
                               ))
