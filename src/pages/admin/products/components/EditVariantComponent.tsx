@@ -51,6 +51,7 @@ const EditVariantComponent = (
           />
         </Column>
       </Columns>
+      <h4>Stock Information</h4>
       <Columns>
         <Column>
           <TextField
@@ -69,7 +70,17 @@ const EditVariantComponent = (
             type={'text'}
           />
         </Column>
-
+      </Columns>
+      <Columns>
+        <Column>
+          <TextField
+            label={'Cost price'}
+            name={`stock.costPrice`}
+            placeholder={'e.g. 5000'}
+            type={'number'}
+            help={'How much did this product cost to buy?'}
+          />
+        </Column>
       </Columns>
       <Columns>
         <Column>
