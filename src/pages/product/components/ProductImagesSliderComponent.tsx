@@ -10,24 +10,27 @@ function isNarrowDevice() {
   return window.innerWidth <= 600;
 }
 
-function Slider(
-  {
-    productName,
-    images
-  }) {
-  const [allImages, ] = useState<Array<ImageType>>(images);
+function Slider(props) {
+
+  const {images} = props;
+
+  const [allImages, setAllImages] = useState<Array<ImageType>>(images);
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const paginate = (index) => setCurrentIndex(index);
 
+  useEffect(() => {
+    setAllImages(images);
+  }, [images]);
+
   const handleDragStart = (e) => e.preventDefault();
 
-  const items = allImages.map((item)=> (
+  const items = allImages.map((item) => (
     <RetroImage
       solidColor={true}
       onDragStart={handleDragStart}
-      alt={productName}
+      alt={props.productName}
       style={{maxHeight: '500px'}}
       src={item.url}
     />
@@ -49,10 +52,10 @@ function Slider(
                       isNarrow={isNarrowDevice()}
                       isActive={isActive}
                       onClick={() => paginate(activeIndex)}>
-                      <img
-                        alt={`${productName} thumbnail`}
-                        src={allImages[activeIndex].thumbnailUrl}
-                        style={{width: '60px'}}/>
+                      <RetroImage
+                        alt={`${(props.productName)} thumbnail`}
+                        src={allImages[activeIndex]?.thumbnailUrl}
+                        style={{width: '60px'}} />
                     </Dot>
 
                   </div>
