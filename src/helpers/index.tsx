@@ -2,12 +2,12 @@ import slugify from './slugify';
 import axios from 'axios';
 import {env} from '../config';
 import _ from 'lodash';
+import md5 from 'md5';
 
 
 export function formatNumberWithCommas(x: number): string {
-  return x?.toLocaleString('en-KE', {
-    currency:'Ksh',
-  })
+  const nf = new Intl.NumberFormat();
+  return nf.format(x);
 }
 
 export function addDashes(phoneNumber) {
@@ -195,6 +195,10 @@ class DefaultHelpers {
    */
   arraysEqual(arr1, arr2) {
     return JSON.stringify(arr1) === JSON.stringify(arr2);
+  }
+
+  md5(str: string): string {
+    return md5(str);
   }
 }
 
