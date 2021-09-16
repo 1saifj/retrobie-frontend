@@ -67,9 +67,16 @@ export default function CheckoutPage(props) {
   }
 
   async function submitCart(cartInfo) {
+
+    const {items, ...rest} = cartInfo.cart;
+    const submitData = {
+      ...rest,
+      cartItems: items,
+    };
+
     try {
-      // @ts-ignore
-      const {data} = await dispatch(api.orders.new(cartInfo));
+
+      const {data} = await api.cart.new({cart: submitData});
       if (data.tokens) {
         // if the user doesn't have an account,
         // log them in
@@ -79,7 +86,7 @@ export default function CheckoutPage(props) {
         });
       }
 
-      props.history.push(`/checkout/shipping/${data.order.uuid}`);
+      props.history.push(`/checkout/shipping/${data.orderId}`);
     } catch (e) {
       const message = extractErrorMessage(e);
       notify.error(message);
