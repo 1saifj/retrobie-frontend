@@ -2,16 +2,13 @@ import React, {useState} from 'react';
 import Layout from '../../components/Layout';
 import styled from 'styled-components';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
-import {addDashes, extractErrorMessage, formatNumberWithCommas} from '../../helpers';
+import {extractErrorMessage, formatNumberWithCommas} from '../../helpers';
 import {EmptyState} from '../../components';
 import {ErrorIconDark, GrimacingEmoji, NormalCart} from '../../constants/icons';
 import {Button} from 'bloomer';
 import {Form, Formik} from 'formik';
-import * as Yup from 'yup';
 import RadioField from '../../components/input/RadioField';
 import LipaNaMpesa from '../../assets/images/logos/lipa-na-mpesa.png';
-import MpesaLogo from '../../assets/images/logos/mpesa.svg';
-import PeaceSign from '../../assets/images/emoji/peace-sign.png';
 import PointingDown from '../../assets/images/emoji/backhand-index-pointing-down.png';
 import IndexFinger from '../../assets/images/emoji/backhand-index-pointing-up.png';
 import {ChevronRight} from 'react-feather';
@@ -53,7 +50,7 @@ export default function Shipping(props) {
   const orderDataFetcher = (key, orderId) => api.orders.checkStatus(orderId).then(({data})=> data);
   const {data: orderStatusResult, error: fetchOrderStatusError} = useSWR<{
     paymentStatus: PaymentStatus,
-    orderStatus: OrderStatus,
+    status: OrderStatus,
     referenceNo: string
   }>(userState.isLoggedIn ? [`orders/${paramOrderId}/status`, paramOrderId]: null, orderDataFetcher)
 
@@ -66,7 +63,6 @@ export default function Shipping(props) {
   const [isPayOnlineModalOpen, setPayOnlineModalOpen] = useState(false);
   const [isFetchQuoteLoading, setIsFetchQuoteLoading] = useState(false);
 
-  const [wardsAndLocalAreas, setWardsAndLocalAreas] = useState<Array<{label: string, value: string}>>([]);
   const notify = useNotify();
 
   function flip(value?) {
@@ -152,12 +148,12 @@ export default function Shipping(props) {
   }
 
 
-  if (orderStatusResult.orderStatus !== 'incomplete'){
+  if (orderStatusResult.status !== 'pendingPayment') {
     return (
       <div>
-        <p>Other status</p>
+        <p>Other status: {orderStatusResult.status}</p>
       </div>
-    )
+    );
   }
 
   async function completeOrder(order: {
@@ -512,69 +508,69 @@ export default function Shipping(props) {
                                       classNames="fade"
                                     >
                                       <div>
-                                        <div className={'pay-online'}>
-                                          <div
-                                            className={'header'}
-                                            onClick={() => flip('pay-online')}
-                                          >
-                                            <div>
-                                              <h4>Option 1: Pay Online</h4>
-                                              <p>Receive a prompt on your phone and enter your M-Pesa PIN.</p>
-                                            </div>
-                                            <ChevronRight
-                                              style={{
-                                                transform: payOnlineOrBuyGoods === 'pay-online' ? 'rotate(90deg)' : '0',
-                                              }}
-                                              className={'chevron'}/>
-                                          </div>
-                                          <div>
-                                            {payOnlineOrBuyGoods === 'pay-online' && (
-                                              <div className={'pay-online'}>
-                                                <Button
-                                                  isColor="primary"
-                                                  onClick={() => setPayOnlineModalOpen(true)}
-                                                >
-                                                  Pay with &nbsp;
-                                                  <img
-                                                    style={{width: 80}}
-                                                    alt={'mpesa logo'}
-                                                    src={MpesaLogo}
-                                                  />{' '}
-                                                  &nbsp; Online
-                                                </Button>
-                                                <div className={'steps'}>
-                                                  <h4>Steps</h4>
-                                                  <ol>
-                                                    <li>
-                                                      You will automatically receive a prompt at your phone number:
-                                                      <b> +254-{addDashes(userInfo?.phoneNumber)}</b>&nbsp;
-                                                    </li>
-                                                    <li>
-                                                      Enter your PIN number to confirm payment of the requested
-                                                      amount.
-                                                    </li>
-                                                    <li>
-                                                      <b>Your order will be confirmed immediately</b> after the
-                                                      payment is received.
-                                                    </li>
-                                                    <li>
-                                                      Sit back and relax.
-                                                      <img
-                                                        src={PeaceSign}
-                                                        style={{width: 16}}
-                                                        alt={'peace'}
-                                                      />{' '}
-                                                      We'll take care of the rest.
-                                                    </li>
-                                                  </ol>
-                                                </div>
-                                              </div>
-                                            )}
-                                          </div>
+                                        {/*<div className={'pay-online'}>*/}
+                                        {/*  <div*/}
+                                        {/*    className={'header'}*/}
+                                        {/*    onClick={() => flip('pay-online')}*/}
+                                        {/*  >*/}
+                                        {/*    <div>*/}
+                                        {/*      <h4>Option 1: Pay Online</h4>*/}
+                                        {/*      <p>Receive a prompt on your phone and enter your M-Pesa PIN.</p>*/}
+                                        {/*    </div>*/}
+                                        {/*    <ChevronRight*/}
+                                        {/*      style={{*/}
+                                        {/*        transform: payOnlineOrBuyGoods === 'pay-online' ? 'rotate(90deg)' : '0',*/}
+                                        {/*      }}*/}
+                                        {/*      className={'chevron'}/>*/}
+                                        {/*  </div>*/}
+                                        {/*  <div>*/}
+                                        {/*    {payOnlineOrBuyGoods === 'pay-online' && (*/}
+                                        {/*      <div className={'pay-online'}>*/}
+                                        {/*        <Button*/}
+                                        {/*          isColor="primary"*/}
+                                        {/*          onClick={() => setPayOnlineModalOpen(true)}*/}
+                                        {/*        >*/}
+                                        {/*          Pay with &nbsp;*/}
+                                        {/*          <img*/}
+                                        {/*            style={{width: 80}}*/}
+                                        {/*            alt={'mpesa logo'}*/}
+                                        {/*            src={MpesaLogo}*/}
+                                        {/*          />{' '}*/}
+                                        {/*          &nbsp; Online*/}
+                                        {/*        </Button>*/}
+                                        {/*        <div className={'steps'}>*/}
+                                        {/*          <h4>Steps</h4>*/}
+                                        {/*          <ol>*/}
+                                        {/*            <li>*/}
+                                        {/*              You will automatically receive a prompt at your phone number:*/}
+                                        {/*              <b> +254-{addDashes(userInfo?.phoneNumber)}</b>&nbsp;*/}
+                                        {/*            </li>*/}
+                                        {/*            <li>*/}
+                                        {/*              Enter your PIN number to confirm payment of the requested*/}
+                                        {/*              amount.*/}
+                                        {/*            </li>*/}
+                                        {/*            <li>*/}
+                                        {/*              <b>Your order will be confirmed immediately</b> after the*/}
+                                        {/*              payment is received.*/}
+                                        {/*            </li>*/}
+                                        {/*            <li>*/}
+                                        {/*              Sit back and relax.*/}
+                                        {/*              <img*/}
+                                        {/*                src={PeaceSign}*/}
+                                        {/*                style={{width: 16}}*/}
+                                        {/*                alt={'peace'}*/}
+                                        {/*              />{' '}*/}
+                                        {/*              We'll take care of the rest.*/}
+                                        {/*            </li>*/}
+                                        {/*          </ol>*/}
+                                        {/*        </div>*/}
+                                        {/*      </div>*/}
+                                        {/*    )}*/}
+                                        {/*  </div>*/}
 
-                                        </div>
+                                        {/*</div>*/}
 
-                                        <hr/>
+                                        <hr />
 
                                         <div className={'buy-goods'}>
                                           <div
@@ -582,7 +578,7 @@ export default function Shipping(props) {
                                             onClick={() => flip('buy-goods')}
                                           >
                                             <div>
-                                              <h4>Option 2: Buy Goods Till Number</h4>
+                                              <h4>Option 1: Buy Goods Till Number</h4>
                                               <p>Enter the till number yourself</p>
                                             </div>
                                             <ChevronRight
@@ -878,8 +874,7 @@ const CompleteOrderRoot = styled.div`
       
       h4,
       p {
-        margin: 0;
-        margin-bottom: 6px;
+        margin: 0 0 6px;
         transition: all ease-in-out 0.25s;
       }
 
