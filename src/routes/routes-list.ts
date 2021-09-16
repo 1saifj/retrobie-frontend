@@ -7,7 +7,7 @@ const Blog = lazy(() => import('../pages/blog'));
 const Category = lazy(() => import('../pages/category/CategoryPage'));
 const Collection = lazy(() => import('../pages/collections'));
 const About = lazy(() => import('../pages/about'));
-const Product = lazy(() => import('../pages/product'));
+const Product = lazy(() => import('../pages/product/ProductPage'));
 
 const TermsOfService = lazy(() => import('../pages/policies/terms-of-service'));
 const CookiePolicy = lazy(() => import('../pages/policies/privacy-and-cookie-policy'));
