@@ -226,7 +226,7 @@ function ProductPage({match}) {
     const optionValue = getVariantColor(currentVariant);
 
     const availableVariants = currentProduct.variants.filter(variant => {
-      return variant.optionValues.some(ov => ov.uuid === optionValue.uuid);
+      return variant.optionValues.some(ov => ov.uuid === optionValue?.uuid);
     });
 
     const collator = new Intl.Collator([], {numeric: true});
@@ -317,7 +317,7 @@ function ProductPage({match}) {
   }
 
   function isColorActive(color: ProductTypeOptionValue) {
-    return selectedColorOption.uuid === color.uuid;
+    return selectedColorOption?.uuid === color.uuid;
   }
 
   function openModal(open) {
