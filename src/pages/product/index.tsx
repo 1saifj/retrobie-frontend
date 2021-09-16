@@ -28,6 +28,17 @@ const AddToCartValidationSchema = Yup.object({
   size: Yup.string().required(),
 });
 
+/**
+ * Once a product is loaded, its variants are sorted out by color and displayed to the user. A variant
+ * from the first set of colors is arbitrarily set as the active variant.
+ *
+ * When a user selects a different color, the same process is repeated (an arbitrary variant is selected
+ * from the set of colors and set as the currently active variant).
+ *
+ * The active variant is also changed when a user
+ * @param match
+ * @constructor
+ */
 function ProductPage({match}) {
   const api = useApi();
   const dispatch = useDispatch();
@@ -44,6 +55,8 @@ function ProductPage({match}) {
   const [selectedColorOption, setSelectedColorOption] = useState<ProductTypeOptionValue>(null);
 
   const [availableSizes, setAvailableSizes] = useState<ProductTypeOptionValue[]>([]);
+
+  const [isInvalidVariant, setIsInvalidVariant] = useState(false);
 
   const isSidebarOpen = useSelector((state: RootStateOrAny) => state.meta.isSidebarOpen);
 
@@ -67,7 +80,12 @@ function ProductPage({match}) {
           const currentVariant = currentProduct.variants.find(
             variant => variant.uuid === searchParams.get('variant'),
           );
-          setActiveVariant(currentVariant);
+
+          if (currentVariant) {
+            setActiveVariant(currentVariant);
+          } else {
+            setIsInvalidVariant(true);
+          }
         } else {
           setActiveVariant(currentProduct.defaultVariant);
         }
@@ -89,18 +107,29 @@ function ProductPage({match}) {
 
   }, [currentProduct]);
 
+  if (isInvalidVariant) {
+    return (
+      <Layout>
+        <EmptyState
+          icon={DeadEyes}
+          title={'Oops. That doesn\'t look right.'}
+          message={'Please review the product you\'re looking for and try again.'}
+        />
+      </Layout>
+    );
+  }
+
   if ((!currentProduct && !fetchProductError) || !currentVariant) {
     return <Loading message={false} />;
   }
 
   if (fetchProductError) {
     return (
-      <Layout
-      >
+      <Layout>
         <EmptyState
           icon={DeadEyes}
           title={'Yikes. A server error occurred.'}
-          message={"It's not you. It's us. Our engineers have been notified and are on the case."}
+          message={'It\'s not you. It\'s us. Our engineers have been notified and are on the case.'}
         />
       </Layout>
     );
@@ -184,6 +213,10 @@ function ProductPage({match}) {
   function setVariantIdToUrl(variant: VariantType) {
     const query = history.location.search;
     const searchParams = new URLSearchParams(query);
+
+    if (searchParams.has('variant')) {
+      searchParams.delete('variant');
+    }
 
     searchParams.append('variant', variant.uuid);
     history.replace(`?${searchParams.toString()}`);
