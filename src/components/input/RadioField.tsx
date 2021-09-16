@@ -57,26 +57,33 @@ interface RadioFieldProps {
 
 export default function RadioField(props: RadioFieldProps) {
 
-  const [field] = useField(props.name);
+  const {selectedGroupItems: selectedGroupItemsProps} = props;
+
+  const [field, meta] = useField(props.name);
 
   const [selectedGroupItems, setSelectedGroupItems] = useState<RadioOptionValue[]>(props.selectedGroupItems);
 
-  const selectedItemsLength = props.selectedGroupItems?.length;
+  useEffect(() => {
+    setSelectedGroupItems(selectedGroupItemsProps ?? []);
+  }, [selectedGroupItemsProps]);
 
-  useEffect(()=> {
-    setSelectedGroupItems(props.selectedGroupItems ?? [])
-  }, [selectedItemsLength])
+  const hasError = meta.touched && meta.error;
 
   if (!props.isGroup)
     return (
       <>
         <RadioParent
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              props.onChange?.(e.target.value)
-              field.onChange(e);
-            }}>
+            props.onChange?.(e.target.value);
+            field.onChange(e);
+          }}>
           <Radio name={props.name} value={props.value} />
         </RadioParent>
+        {hasError ? (
+          <div className="error">
+            <small>{meta.error}</small>
+          </div>
+        ) : null}
       </>
     );
 
@@ -121,7 +128,7 @@ export default function RadioField(props: RadioFieldProps) {
                     readOnly
                     checked={Boolean(selectedGroupItems?.find(groupItem=> groupItem?.value === item.value))}
                   >
-                    <span style={{ width: 'max-content' }}>{item.label}</span>
+                    <span style={{width: 'max-content'}}>{item.label}</span>
                   </Radio>
                 </RadioParent>
               </div>
@@ -130,6 +137,11 @@ export default function RadioField(props: RadioFieldProps) {
           ))
         }
       </RadioGroupParent>
+      {hasError ? (
+        <div className="error">
+          <small>{meta.error}</small>
+        </div>
+      ) : null}
     </>
   )
 
