@@ -244,7 +244,7 @@ function ProductPage({match}) {
   }
 
   function getVariantColor(variant: VariantType): ProductTypeOptionValue {
-    return variant?.optionValues.find(ov => ov.option.name === 'color' || ov.option.name === 'colour');
+    return variant?.optionValues?.find(ov => ov.option.name === 'color' || ov.option.name === 'colour');
   }
 
   function getVariantsSortedByColor(currentProduct: ProductType) {
@@ -346,16 +346,20 @@ function ProductPage({match}) {
 
           <div>
             <h4>Available Options</h4>
-            <AvailableColors>
-              {
-                sortedVariants.map(variant => (
-                  <Color isActive={isColorActive(getVariantColor(variant))}
-                         onClick={() => changeCurrentVariant(variant)}>
-                    <RetroImage src={variant.images[0]?.thumbnailUrl} alt={variant.name} />
-                  </Color>
-                ))
-              }
-            </AvailableColors>
+            {
+              sortedVariants.length ? (
+                <AvailableColors>
+                  {
+                    sortedVariants.map(variant => (
+                      <Color isActive={isColorActive(getVariantColor(variant))}
+                             onClick={() => changeCurrentVariant(variant)}>
+                        <RetroImage src={variant.images[0]?.thumbnailUrl} alt={variant.name} />
+                      </Color>
+                    ))
+                  }
+                </AvailableColors>
+              ) : <span>No options available.</span>
+            }
           </div>
 
           <ProductParent className="product--parent">
@@ -425,26 +429,30 @@ function ProductPage({match}) {
                       <h4>Select a size:</h4>
                       <SizesParent>
 
-                        <RadioField
-                          bordered={true}
-                          isGroup={true}
-                          inline={true}
-                          onChange={(value) => {
-                            const variantBySize = deduceVariantByColorAndSize({
-                              color: selectedColorOption.uuid,
-                              size: value,
-                            });
-                            setActiveVariant(variantBySize);
-                            setFieldValue('size', value);
-                          }}
-                          options={availableSizes.map(size => ({
-                            value: size.uuid,
-                            label: size.value,
-                          }))}
-                          // intentionally misnamed
-                          // doesn't work with proper naming for some reason
-                          // see onChange instead
-                          name={'productSize'} />
+                        {
+                          availableSizes.length ? (
+                            <RadioField
+                              bordered={true}
+                              isGroup={true}
+                              inline={true}
+                              onChange={(value) => {
+                                const variantBySize = deduceVariantByColorAndSize({
+                                  color: selectedColorOption.uuid,
+                                  size: value,
+                                });
+                                setActiveVariant(variantBySize);
+                                setFieldValue('size', value);
+                              }}
+                              options={availableSizes.map(size => ({
+                                value: size.uuid,
+                                label: size.value,
+                              }))}
+                              // intentionally misnamed
+                              // doesn't work with proper naming for some reason
+                              // see onChange instead
+                              name={'productSize'} />
+                          ) : <span>No sizes available.</span>
+                        }
 
                       </SizesParent>
                     </div>
