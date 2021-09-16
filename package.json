@@ -74,7 +74,6 @@
     "uuid": "^7.0.3",
     "yup": "^0.28.5"
   },
-
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -93,6 +92,7 @@
   "devDependencies": {
     "@arkweid/lefthook": "^0.7.2",
     "@types/mapbox-gl": "^2.0.0",
+    "@types/md5": "^2.3.1",
     "@types/qs": "^6.9.5",
     "@types/react-helmet": "^6.1.0",
     "@types/react-input-mask": "^3.0.0",
