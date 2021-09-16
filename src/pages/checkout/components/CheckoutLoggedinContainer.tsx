@@ -1,4 +1,4 @@
-import {Avatar} from '../../../components';
+import {Avatar, Loading} from '../../../components';
 import {AtSign, Phone, User} from 'react-feather';
 import {addDashes} from '../../../helpers';
 import {Column} from 'bloomer';
@@ -11,7 +11,7 @@ function CheckoutLoggedinContainer (props: {
   user: UserInfoType
 }){
 
-  if (!props.user) return <p>Not logged in.</p>
+  if (!props.user) return <Loading minor={true} />;
 
   return (
     <>
