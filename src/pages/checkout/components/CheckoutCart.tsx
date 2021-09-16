@@ -145,14 +145,17 @@ function CheckoutCart (props: {
           hideCloseButton={true}
           hideCheckoutButton={!isUserLoggedIn}
           checkoutButtonDisabled={Boolean(fetchRemoteCartError)}
-          checkoutButtonIsLoading={!remoteCart}
+          checkoutButtonIsLoading={!isLocalCart && !remoteCart}
           checkoutButtonText={
             !fetchRemoteCartError ? 'Proceed to Payment & Delivery' :
               'Could not fetch your details'
           }
           onCheckout={async () => {
             const data = {
-              cart: checkoutState,
+              cart: {
+                ...checkoutState,
+                uuid: checkoutState.id,
+              },
             };
             await props.submitCart(data);
           }}
