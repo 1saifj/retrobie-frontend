@@ -1,27 +1,34 @@
 import React, {useEffect, useState} from 'react';
 import Loading from '../../components/loading';
-import {addItemToCartAction, toggleSidebarAction} from '../../state/actions';
-import {capitalize, formatNumberWithCommas} from '../../helpers';
+import {formatNumberWithCommas} from '../../helpers';
 import styled from 'styled-components';
 import Layout from '../../components/Layout';
 import SEOHeader from '../../components/SEOHeader';
-import {DeadEyes, Diamond, FastDelivery, HelpIcon, Replace, Return} from '../../constants/icons';
+import {DeadEyes, Replace, Return} from '../../constants/icons';
 import '../../assets/style/index.scss';
 import {JsonLd} from 'react-schemaorg';
 import productJsonld, {subProduct} from './product.jsonld';
 import {Button, Delete, Help, Modal, ModalBackground, ModalClose, ModalContent, Tag, Title} from 'bloomer';
 import ProductImagesSliderComponent from './components/ProductImagesSliderComponent';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
-import {isProductInStock} from '../../components/cart';
 import {useApi} from '../../network';
-import {CartItemType, CartType, ProductType} from '../../types';
+import {CartItemType, CartType, ProductType, ProductTypeOptionValue, VariantType} from '../../types';
 import useSWR from 'swr';
 import {useNotify} from '../../hooks';
-import {EmptyState} from '../../components';
+import {EmptyState, RetroImage} from '../../components';
 import ValuePropositionComponent from './components/ValuePorposition';
 import {useHistory} from 'react-router';
+import RadioField from '../../components/input/RadioField';
+import {Form, Formik} from 'formik';
+import * as Yup from 'yup';
+import {isProductInStock} from '../../components/cart';
+import {addItemToCartAction, toggleSidebarAction} from '../../state/actions';
 
-function ProductPage({ match }) {
+const AddToCartValidationSchema = Yup.object({
+  size: Yup.string().required(),
+});
+
+function ProductPage({match}) {
   const api = useApi();
   const dispatch = useDispatch();
   const {slug} = match.params;
@@ -30,40 +37,59 @@ function ProductPage({ match }) {
   const notify = useNotify();
 
 
+  const [sortedVariants, setSortedVariants] = useState<VariantType[]>([]);
+
+  const [currentVariant, setCurrentVariant] = useState<VariantType>(null);
+
+  const [selectedColorOption, setSelectedColorOption] = useState<ProductTypeOptionValue>(null);
+
+  const [availableSizes, setAvailableSizes] = useState<ProductTypeOptionValue[]>([]);
+
   const isSidebarOpen = useSelector((state: RootStateOrAny) => state.meta.isSidebarOpen);
 
   const [conditionModalOpen, setConditionModalOpen] = useState(false);
   const cart: CartType = useSelector((state: RootStateOrAny) => state.cart);
 
-  const singleDataFetcher = (_key, slug) => api.products.getSingle(slug).then(({ data }) => data)
+  const singleDataFetcher = (_key, slug) => api.products.getSingle(slug).then(({data}) => data);
   const {data: currentProduct, error: fetchProductError} = useSWR<ProductType>(
     [`/product/${slug}`, slug],
     singleDataFetcher,
   );
 
   useEffect(() => {
-    const query = history.location.search;
 
-    if (query) {
-      const searchParams = new URLSearchParams(query);
-      if (searchParams.has('variant')) {
-        console.log('Variant id: ', searchParams.get('variant'));
-      } else {
-        if (currentProduct) {
-          searchParams.append('variant', currentProduct.defaultVariant.uuid);
-          history.replace(`?${searchParams.toString()}`);
+    if (currentProduct) {
+      const query = history.location.search;
+
+      if (query) {
+        const searchParams = new URLSearchParams(query);
+        if (searchParams.has('variant')) {
+          const currentVariant = currentProduct.variants.find(
+            variant => variant.uuid === searchParams.get('variant'),
+          );
+          setActiveVariant(currentVariant);
+        } else {
+          setActiveVariant(currentProduct.defaultVariant);
         }
-      }
-    } else {
-      if (currentProduct) {
-        const searchParams = new URLSearchParams({variant: currentProduct.defaultVariant.uuid});
-        history.replace(`?${searchParams.toString()}`);
+      } else {
+        setActiveVariant(currentProduct.defaultVariant);
       }
     }
 
   }, [currentProduct]);
 
-  if (!currentProduct && !fetchProductError) {
+  /**
+   * For each product, we sort the variants out depending on their color.
+   */
+  useEffect(() => {
+    if (currentProduct) {
+      const variantsSortedByColor = getVariantsSortedByColor(currentProduct);
+      setSortedVariants(variantsSortedByColor);
+    }
+
+  }, [currentProduct]);
+
+  if ((!currentProduct && !fetchProductError) || !currentVariant) {
     return <Loading message={false} />;
   }
 
@@ -80,48 +106,169 @@ function ProductPage({ match }) {
     );
   }
 
-  function getProductFromCart(uuid): CartItemType | undefined {
+  function getVariantFromCart(uuid): CartItemType | undefined {
     if (!cart.items.length) return null;
 
     return cart.items.find(item => item.productId === uuid);
   }
 
-  function dispatchToCart(productItem: ProductType) {
+  function deduceVariantByColorAndSize({size, color}: {size: string; color: string}): VariantType {
+
+    return currentProduct.variants.find(variant => {
+      const hasCorrectSize = variant.optionValues.some(ov => {
+        return ov.uuid === size;
+      });
+
+      const hasCorrectColor = variant.optionValues.some(ov => {
+        return ov.uuid === color;
+      });
+
+      return hasCorrectSize && hasCorrectColor;
+    });
+  }
+
+  /**
+   * In order for an item to be added to the cart, we need to have
+   * a combination of 1) the size of the product 2) the color of the product.
+   *
+   * Using these two attributes, we can then determine exactly what it is
+   * a user wants to add to their cart.
+   **/
+
+  function addToCart({size, color}) {
+
+    const lineItem: VariantType = deduceVariantByColorAndSize({size, color: color.uuid});
 
     let cartItem: CartItemType = {
-      productName: productItem.name,
-      inStock: productItem.inStock,
-      images: productItem.images,
-      uuid: productItem.uuid,
-      isOnOffer: productItem.isOnOffer,
-      slug: productItem.slug,
-      originalPrice: productItem.originalPrice,
-      thumbnailUrl: productItem.images[0].thumbnailUrl,
-      price: productItem.originalPrice,
+      productName: lineItem.name,
+      inStock: lineItem.stock.quantity,
+      images: lineItem.images,
+      uuid: lineItem.uuid,
+      isOnOffer: false,
+      slug: lineItem.slug,
+      originalPrice: lineItem.originalPrice,
+      thumbnailUrl: lineItem.images[0].thumbnailUrl,
+      price: lineItem.originalPrice,
       quantity: 1,
-      productId: productItem.uuid
+      productId: lineItem.uuid,
     };
 
     const { shouldAddToCart, message } = isProductInStock(cart, cartItem);
     if (shouldAddToCart) {
       if (!isSidebarOpen) {
-        const toastId = notify.info( `${productItem.name} added to cart`, {
+        notify.info(`${lineItem.name} added to cart`, {
           onClick: () => {
-            dispatch(toggleSidebarAction({open: true}))
+            dispatch(toggleSidebarAction({open: true}));
           },
         });
-
       }
-      dispatch(addItemToCartAction({ item: cartItem }));
+      dispatch(addItemToCartAction({item: cartItem}));
     } else {
       notify.error(message);
     }
   }
 
+  function setActiveVariant(variant: VariantType) {
+    if (variant) {
+      setCurrentVariant(variant);
+      setVariantIdToUrl(variant);
 
-  function isInStock(product: ProductType) {
+      const color = getVariantColor(variant);
+      setSelectedColorOption(color);
+
+      const availableSizes = getAvailableSizesForVariant(variant);
+      setAvailableSizes(availableSizes);
+    }
+  }
+
+  function setVariantIdToUrl(variant: VariantType) {
+    const query = history.location.search;
+    const searchParams = new URLSearchParams(query);
+
+    searchParams.append('variant', variant.uuid);
+    history.replace(`?${searchParams.toString()}`);
+  }
+
+  function getAvailableSizesForVariant(currentVariant: VariantType) {
+    const optionValue = getVariantColor(currentVariant);
+
+    const availableVariants = currentProduct.variants.filter(variant => {
+      return variant.optionValues.some(ov => ov.uuid === optionValue.uuid);
+    });
+
+    const collator = new Intl.Collator([], {numeric: true});
+
+    return availableVariants.map(variant => {
+      return variant.optionValues.map(ov => {
+        if (ov.option.name === 'size') {
+          return ov;
+        }
+        return null;
+      });
+    }).flat()
+      .filter(ov => ov !== null)
+      .sort((a, b) => collator.compare(a.value, b.value));
+  }
+
+  function getVariantColor(variant: VariantType): ProductTypeOptionValue {
+    return variant?.optionValues.find(ov => ov.option.name === 'color' || ov.option.name === 'colour');
+  }
+
+  function getVariantsSortedByColor(currentProduct: ProductType) {
+    const variantsSortedByColor = [];
+    // we use this array to ensure the same color isn't collected twice
+    const collectedColors = [];
+
+    // for each variant
+    const colorsAvailable = currentProduct.variants.map(variant => {
+      // map its optionValues
+      return variant.optionValues.map((ov, index) => {
+        // and get the color option if available
+        // we account for different spellings, just in case.
+        if (ov.option.name === 'color' || ov.option.name === 'colour') {
+          return variant.optionValues[index].value;
+        }
+        return null;
+      });
+    }).flat()
+      .filter(v => v != null);
+
+    // for each variant
+    currentProduct.variants.forEach(variant => {
+      // go through the list of colors available
+      colorsAvailable.forEach(color => {
+        // and for each color, got through the variant's attributes
+        variant.optionValues.forEach(ov => {
+          // if the variant has a color option available
+          if (ov.option.name === 'color' || ov.option.name === 'colour') {
+            // and the variant's color matches an available color
+            if (ov.value === color) {
+              // make sure the color hasn't been collected before
+              if (!collectedColors.includes(color)) {
+                // and push the variant to our array
+                variantsSortedByColor.push(variant);
+                // together with the collected color
+                collectedColors.push(color);
+              }
+            }
+          }
+        });
+      });
+    });
+
+    return variantsSortedByColor;
+  }
+
+  function changeCurrentVariant(newVariant: VariantType) {
+    setSelectedColorOption(getVariantColor(newVariant));
+    setCurrentVariant(newVariant);
+    const availableSizes = getAvailableSizesForVariant(newVariant);
+    setAvailableSizes(availableSizes);
+  }
+
+  function isInStock(variant: VariantType) {
     // get the item from the user's cart
-    const cartItem = getProductFromCart(product.uuid);
+    const cartItem = getVariantFromCart(variant?.uuid);
     // if it exists in the cart
     if (cartItem) {
       // make sure the user hasn't selected more products than are in stock
@@ -132,8 +279,12 @@ function ProductPage({ match }) {
     }
 
     // if it's not in the cart,
-    // make sure the product count from the server is greater than 0
-    return product?.inStock > 0;
+    // make sure the variant count from the server is greater than 0
+    return variant?.stock?.quantity > 0;
+  }
+
+  function isColorActive(color: ProductTypeOptionValue) {
+    return selectedColorOption.uuid === color.uuid;
   }
 
   function openModal(open) {
@@ -156,33 +307,64 @@ function ProductPage({ match }) {
         <ProductPageParent>
           <ProductImagesSliderComponent
             productName={currentProduct.name}
-            images={currentProduct.defaultVariant.images} />
+            images={currentVariant.images} />
 
           <ValuePropositionComponent />
+
+          <div>
+            <h4>Available Options</h4>
+            <AvailableColors>
+              {
+                sortedVariants.map(variant => (
+                  <Color isActive={isColorActive(getVariantColor(variant))}
+                         onClick={() => changeCurrentVariant(variant)}>
+                    <RetroImage src={variant.images[0]?.thumbnailUrl} alt={variant.name} />
+                  </Color>
+                ))
+              }
+            </AvailableColors>
+          </div>
 
           <ProductParent className="product--parent">
             <DescriptionParent>
               <h1>
                 {currentProduct.name}
                 {
-                  !isInStock(currentProduct) && (
+                  !isInStock(currentVariant) ? (
                     <Tag
                       style={{
-                        verticalAlign: "middle",
-                        marginLeft: "8px"
+                        verticalAlign: 'middle',
+                        marginLeft: '8px',
                       }}
-                      isColor={'warning'}>
+                      isColor={'danger'}>
                       Out of stock
+                    </Tag>
+                  ) : currentVariant.stock.quantity <= 5 ? (
+                    <Tag isColor={'warning'}
+                         style={{
+                           verticalAlign: 'middle',
+                           marginLeft: '8px',
+                         }}
+                    >
+                      {`Only ${currentVariant.stock.quantity} left in stock`}
+                    </Tag>
+                  ) : (
+                    <Tag isColor={'info'}
+                         style={{
+                           verticalAlign: 'middle',
+                           marginLeft: '8px',
+                         }}
+                    >
+                      {`${currentVariant.stock.quantity} left in stock`}
                     </Tag>
                   )
                 }
               </h1>
               <h2>
                 {
-                  `${currentProduct.currency || 'Ksh'
-                  }.  
-                    ${formatNumberWithCommas(currentProduct.originalPrice)
-                  }`
+                  `
+                  Ksh. ${formatNumberWithCommas(currentVariant?.originalPrice)}
+                  `
                 }
               </h2>
               <div>
@@ -197,179 +379,194 @@ function ProductPage({ match }) {
                 </InDepth>
               </div>
 
-              {
-                currentProduct.inStock !== null && (
-                  <div>
-                    <h4>Stock</h4>
-                    {
-                      currentProduct.inStock === 0 ? (
-                          <CustomTag>
-                            <p>Not in stock</p>
-                          </CustomTag>
-                        ) :
-                        currentProduct.inStock <= 5 ? (
-                          <CustomTag>
-                            <p>Only {currentProduct.defaultVariant.stock.quantity} left in stock</p>
-                          </CustomTag>
-                        ) : (
-                          <CustomTag>
-                            <p>{currentProduct.defaultVariant.stock.quantity} left in stock</p>
-                          </CustomTag>
-                        )
-                    }
-                  </div>
-                )
-              }
-              <Buttons>
-                <div style={{margin: '18px 0'}}>
-                  <div>
-                    <Button
-                      isColor="primary"
-                      onClick={() => {
-                        return dispatchToCart({
-                          ...currentProduct,
-                          price: currentProduct.originalPrice,
-                        });
-                      }}
-                      disabled={!isInStock(currentProduct)}
-                      style={{
-                        width: '100%',
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      {!isInStock(currentProduct) ? 'OUT OF STOCK' : 'ADD TO CART.'}
-                    </Button>
-                  </div>
-                </div>
-                <div>
-                  {
-                    !isInStock(currentProduct) && (
-                      <div>
-                        <Help>
-                          Want to be the first to know when this product in back in stock? {' '}
+              <Formik
+                initialValues={{
+                  size: '',
+                }}
+                validationSchema={AddToCartValidationSchema}
+                onSubmit={(values) => addToCart({size: values.size, color: selectedColorOption})}
+              >
+                {({values, setFieldValue}) => (
+                  <Form>
+                    <div style={{marginTop: '1rem'}}>
+                      <h4>Select a size:</h4>
+                      <SizesParent>
+
+                        <RadioField
+                          bordered={true}
+                          isGroup={true}
+                          inline={true}
+                          onChange={(value) => {
+                            const variantBySize = deduceVariantByColorAndSize({
+                              color: selectedColorOption.uuid,
+                              size: value,
+                            });
+                            setActiveVariant(variantBySize);
+                            setFieldValue('size', value);
+                          }}
+                          options={availableSizes.map(size => ({
+                            value: size.uuid,
+                            label: size.value,
+                          }))}
+                          // intentionally misnamed
+                          // doesn't work with proper naming for some reason
+                          // see onChange instead
+                          name={'productSize'} />
+
+                      </SizesParent>
+                    </div>
+
+                    <Buttons>
+                      <div style={{margin: '18px 0'}}>
+                        <div>
                           <Button
-                            isColor={'ghost'}>
-                            We can let you know!
+                            isColor="primary"
+                            type="submit"
+                            disabled={!isInStock(currentVariant) || !values.size}
+                            style={{
+                              width: '100%',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {
+                              !isInStock(currentVariant) ? 'OUT OF STOCK' : !values.size ? 'SELECT A SIZE' : 'ADD TO CART.'
+                            }
                           </Button>
-                        </Help>
-
+                        </div>
                       </div>
-                    )
-                  }
-                </div>
+                      <div>
+                        {
+                          !isInStock(currentVariant) && (
+                            <div>
+                              <Help>
+                                Want to be the first to know when this product in back in stock? {' '}
+                                <Button
+                                  isColor={'ghost'}>
+                                  We can let you know!
+                                </Button>
+                              </Help>
 
-                <div>
-                  <header>
-                    <h3>What if it doesn't fit?</h3>
-                  </header>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '16px',
-                      flexWrap: 'wrap',
-                    }}
-                  >
-                    <div style={{flex: '1 0 180px'}}>
-                      <img alt={'return'} src={Return} style={{width: '48px'}} />
-                      <h4 style={{color: '#353535'}}>Returns accepted within 7 days</h4>
-                      <p>
-                        &#10003; Direct returns - money refunded to your M-Pesa or Paypal account.
-                      </p>
-                    </div>
-                    <div style={{flex: '1 0 180px'}}>
-                      <img alt={'replace'} src={Replace} style={{width: '48px'}} />
-                      <h4 style={{color: '#353535'}}>Replacements accepted within 14 days</h4>
-                      <p>&#10003; Replace your product with any other of similar value</p>
-                    </div>
-                  </div>
-                </div>
+                            </div>
+                          )
+                        }
+                      </div>
 
-                <hr />
+                      <div>
+                        <header>
+                          <h3>What if it doesn't fit?</h3>
+                        </header>
+                        <div
+                          style={{
+                            display: 'flex',
+                            gap: '16px',
+                            flexWrap: 'wrap',
+                          }}
+                        >
+                          <div style={{flex: '1 0 180px'}}>
+                            <img alt={'return'} src={Return} style={{width: '48px'}} />
+                            <h4 style={{color: '#353535'}}>Returns accepted within 7 days</h4>
+                            <p>
+                              &#10003; Direct returns - money refunded to your M-Pesa or Paypal account.
+                            </p>
+                          </div>
+                          <div style={{flex: '1 0 180px'}}>
+                            <img alt={'replace'} src={Replace} style={{width: '48px'}} />
+                            <h4 style={{color: '#353535'}}>Replacements accepted within 14 days</h4>
+                            <p>&#10003; Replace your product with any other of similar value</p>
+                          </div>
+                        </div>
+                      </div>
 
-                <div>
-                  <h3>Missing your size?</h3>
-                  <p>
-                    Didn't find these shoes in your size? Hit us up and we'll try and get it for
-                    you. ✌️
-                  </p>
-                </div>
+                      <hr />
 
-                <ConditionParent>
-                  <div style={{textAlign: 'center', color: '#222'}}>
-                    <Modal isActive={conditionModalOpen}>
-                      <Delete onClick={() => openModal(false)} />
-                      <ModalBackground />
-                      <ModalContent>
-                        <Title>Condition Guide</Title>
-                        <p style={{color: '#222'}}>
-                          All products on T25 are divided into three distinct categories:
+                      <div>
+                        <h3>Missing your size?</h3>
+                        <p>
+                          Didn't find these shoes in your size? Hit us up and we'll try and get it for
+                          you. ✌️
                         </p>
-                        <ul>
-                          <li>
-                            <Tag
-                              style={{
-                                background: 'dodgerblue',
-                                color: 'white',
-                              }}
-                            >
-                              Repackaged:
-                            </Tag>
-                            <p
-                              style={{
-                                color: '#222',
-                                display: 'inline',
-                                marginLeft: '4px',
-                              }}
-                            >
-                              New with box: unused, unworn and unblemished. Are repackaged in T25
-                              boxes.
-                            </p>
-                          </li>
-                          <li>
-                            <Tag
-                              style={{
-                                background: 'green',
-                                color: 'white',
-                              }}
-                            >
-                              Refurbished:
-                            </Tag>
-                            <p
-                              style={{
-                                color: '#222',
-                                display: 'inline',
-                                marginLeft: '4px',
-                              }}
-                            >
-                              Like-new with minimal blemishes and wear. Does not come with box.
-                            </p>
-                          </li>
-                          <li>
-                            <Tag
-                              style={{
-                                background: 'violet',
-                                color: 'white',
-                              }}
-                            >
-                              Slightly Worn:
-                            </Tag>
-                            <p
-                              style={{
-                                color: '#222',
-                                display: 'inline',
-                                marginLeft: '4px',
-                              }}
-                            >
-                              Visible wear and tear, but still reasonably new.
-                            </p>
-                          </li>
-                        </ul>
-                      </ModalContent>
-                      <ModalClose />
-                    </Modal>
-                  </div>
-                </ConditionParent>
-              </Buttons>
+                      </div>
+
+                      <ConditionParent>
+                        <div style={{textAlign: 'center', color: '#222'}}>
+                          <Modal isActive={conditionModalOpen}>
+                            <Delete onClick={() => openModal(false)} />
+                            <ModalBackground />
+                            <ModalContent>
+                              <Title>Condition Guide</Title>
+                              <p style={{color: '#222'}}>
+                                All products on T25 are divided into three distinct categories:
+                              </p>
+                              <ul>
+                                <li>
+                                  <Tag
+                                    style={{
+                                      background: 'dodgerblue',
+                                      color: 'white',
+                                    }}
+                                  >
+                                    Repackaged:
+                                  </Tag>
+                                  <p
+                                    style={{
+                                      color: '#222',
+                                      display: 'inline',
+                                      marginLeft: '4px',
+                                    }}
+                                  >
+                                    New with box: unused, unworn and unblemished. Are repackaged in T25
+                                    boxes.
+                                  </p>
+                                </li>
+                                <li>
+                                  <Tag
+                                    style={{
+                                      background: 'green',
+                                      color: 'white',
+                                    }}
+                                  >
+                                    Refurbished:
+                                  </Tag>
+                                  <p
+                                    style={{
+                                      color: '#222',
+                                      display: 'inline',
+                                      marginLeft: '4px',
+                                    }}
+                                  >
+                                    Like-new with minimal blemishes and wear. Does not come with box.
+                                  </p>
+                                </li>
+                                <li>
+                                  <Tag
+                                    style={{
+                                      background: 'violet',
+                                      color: 'white',
+                                    }}
+                                  >
+                                    Slightly Worn:
+                                  </Tag>
+                                  <p
+                                    style={{
+                                      color: '#222',
+                                      display: 'inline',
+                                      marginLeft: '4px',
+                                    }}
+                                  >
+                                    Visible wear and tear, but still reasonably new.
+                                  </p>
+                                </li>
+                              </ul>
+                            </ModalContent>
+                            <ModalClose />
+                          </Modal>
+                        </div>
+                      </ConditionParent>
+                    </Buttons>
+                  </Form>
+                )}
+              </Formik>
+
             </DescriptionParent>
           </ProductParent>
         </ProductPageParent>
@@ -425,61 +622,22 @@ const DescriptionParent = styled.div`
   }
 `;
 
-const ColorsRoot = styled.div`
-  & > h4 {
-    margin-bottom: 8px;
-  }
-`;
-
-const ColorsParent = styled.div<{src: string}>`
-  border: 2px solid ${props => props.src};
-  padding: 2px;
-  border-radius: 50%;
-  width: -moz-min-content;
-  width: 32px;
-  -webkit-transition: all 0.25s ease-in-out;
-  transition: all 0.25s ease-in-out;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Color = styled.div<{src: string}>`
-  background: ${props => props.src};
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-
-  &:hover {
-    cursor: pointer;
-  }
-`;
 
 const SizesParent = styled.div`
   display: flex;
   align-items: center;
 `;
 
-const Sizes = styled.div`
-  display: flex;
 
-  .rs-radio-group-picker {
-    border: none;
-  }
-
-  .rs-radio-checker {
-    label {
-      padding: 0;
-    }
-  }
+const AvailableColors = styled.div`
+  display: flex; 
+  gap: 0.5rem;
 `;
 
-const CustomTag = styled.div`
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  margin-right: 6px;
-  padding: 10px 12px 8px;
+const Color = styled.div<{isActive?: boolean}>`
+  max-width: 80px;
+  border-radius: 0.2rem;
+  border: ${props => !props.isActive ? '2px solid lightgray' : '2px solid red'};
   width: max-content;
   transition: all 0.25s ease-in-out;
   display: flex;
@@ -489,15 +647,9 @@ const CustomTag = styled.div`
      padding: 8px 10px;      
   }
 
-  p {
-    margin: 0;
-    padding: 0;
-    color: #353535;
-  }
-
   &:hover {
     cursor: pointer;
-    border: 1px solid rgba(0, 0, 0, 0.3);
+    border: 2px solid gray;
   }
 `;
 
