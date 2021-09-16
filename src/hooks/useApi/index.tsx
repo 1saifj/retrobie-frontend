@@ -241,6 +241,7 @@ const useApi = function () {
 
   const cart = {
     getOne: async id => (await getAxis()).get(`carts/${id}`),
+    new: async payload => (await getAxis()).post(`checkout/new`, payload),
     checkPaymentStatus: async id => (await getAxis()).get(`carts/${id}/payment-status`),
   };
 
