@@ -455,6 +455,7 @@ const CreateProductModal = props => {
                     <CreateProductComponent
                       allProductTypes={allProductTypes}
                       productTypeId={values.productType}
+                      setFieldValue={setFieldValue}
                       variants={values.variants}/>
                   )
                 }

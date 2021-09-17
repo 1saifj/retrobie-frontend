@@ -9,6 +9,7 @@ function CreateProductComponent(props: {
   allProductTypes: Array<ProductTypeType>;
   productTypeId: string;
   variants: Array<VariantType>;
+  setFieldValue
 
 }){
 
@@ -33,6 +34,7 @@ function CreateProductComponent(props: {
                         onDeleteVariant={(index)=> arrayHelpers.remove(index)}
                         productTypeId={props.productTypeId}
                         allProductTypes={props.allProductTypes}
+                        setFieldValue={props.setFieldValue}
                       />
                     </Columns>
                   ))

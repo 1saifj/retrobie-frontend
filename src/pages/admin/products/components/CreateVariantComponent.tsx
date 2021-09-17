@@ -15,7 +15,7 @@ const CreateVariantComponent = ({allProductTypes, onDeleteVariant, productTypeId
   productTypeId: string,
   onDeleteVariant: Function,
   variantIndex: number,
-  setFieldValue?: Function
+  setFieldValue: Function
 }) => {
 
   const [variantName, setVariantName] = useState(null);
