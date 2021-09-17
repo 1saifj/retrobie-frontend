@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import {Link} from 'react-router-dom';
 import {Tag} from 'bloomer';
 import {EmptyState, RetroImage} from '../index';
-import {formatNumberWithCommas} from '../../helpers';
+import defaultHelpers, {formatNumberWithCommas} from '../../helpers';
 import {FilteredProduct} from '../../types';
 import {GrimacingEmoji} from '../../constants/icons';
 import React from 'react';
@@ -13,7 +13,7 @@ function FilterItem ({product: item}){
   return (
     <ProductItem isInStock={item.inStock} to={`/product/${item.slug}/`}>
       {
-        !item.isInStock && (
+        item.stock.quantity > 1 && (
           <div className="is-relative">
             <Tag
               isColor={'warning'}
@@ -30,7 +30,7 @@ function FilterItem ({product: item}){
       </div>
       <div
         className={'product__item__footer'}>
-        <p>{item.name}</p>
+        <p>{defaultHelpers.titleCase(item.name)}</p>
         <p>
           <b>
             Ksh. {formatNumberWithCommas(item.originalPrice)}
