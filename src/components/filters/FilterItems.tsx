@@ -17,7 +17,7 @@ function FilterItem({product: item}) {
         !isInStock && <OutOfStockTag />
       }
       <ProductItemImage thumbnailUrl={item.images[0]?.thumbnailUrl} alt={item.name} />
-      <ProductItemDetails name={item.name} price={item.price} />
+      <ProductItemDetails name={item.name} price={item.originalPrice} />
     </ProductItemParent>
   );
 }
