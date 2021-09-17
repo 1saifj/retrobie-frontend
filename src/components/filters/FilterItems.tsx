@@ -8,46 +8,57 @@ import {GrimacingEmoji} from '../../constants/icons';
 import React from 'react';
 
 
-function FilterItem ({product: item}){
+function FilterItem({product: item}) {
 
   const isInStock = item.quantity > 0;
   return (
-    <ProductItem isInStock={isInStock} to={`/product/${item.slug}/`}>
+    <ProductItemParent isInStock={isInStock} to={`/product/${item.slug}/`}>
       {
-        !isInStock && (
-          <div className="is-relative">
-            <Tag
-              isColor={'warning'}
-              className="product__item--in-stock-tag">
-              <small>
-                OUT OF STOCK
-              </small>
-            </Tag>
-          </div>
-        )
+        !isInStock && <OutOfStockTag />
       }
-      <div className="product__item__image">
-        <RetroImage src={item.images[0]?.thumbnailUrl} alt={item.name} />
-      </div>
-      <div
-        className={'product__item__footer'}>
-        <p>{defaultHelpers.titleCase(item.name)}</p>
-        <p>
-          <b>
-            Ksh. {formatNumberWithCommas(item.originalPrice)}
-          </b>
-        </p>
-      </div>
-    </ProductItem>
+      <ProductItemImage thumbnailUrl={item.images[0]?.thumbnailUrl} alt={item.name} />
+      <ProductItemDetails name={item.name} price={item.price} />
+    </ProductItemParent>
   );
 }
+
+const OutOfStockTag = () => (
+  <div className="is-relative">
+    <Tag
+      isColor={'warning'}
+      className="product__item--in-stock-tag">
+      <small>
+        OUT OF STOCK
+      </small>
+    </Tag>
+  </div>
+);
+
+const ProductItemImage = ({thumbnailUrl, alt}) => (
+  <div className="product__item__image">
+    <RetroImage src={thumbnailUrl} alt={alt} />
+  </div>
+
+);
+
+const ProductItemDetails = ({name, price}) => (
+  <div
+    className={'product__item__footer'}>
+    <p>{defaultHelpers.titleCase(name)}</p>
+    <p>
+      <b>
+        Ksh. {formatNumberWithCommas(price)}
+      </b>
+    </p>
+  </div>
+);
 
 
 export const FilterItems = function(props: {
   products: Array<FilteredProduct>
-}){
+}) {
 
-  if (!props.products){
+  if (!props.products) {
     return (
       <EmptyState
         icon={GrimacingEmoji}
@@ -78,7 +89,7 @@ export const FilterItems = function(props: {
 
 export default FilterItems;
 
-const ProductItem = styled(Link)<{isInStock: boolean}>`
+const ProductItemParent = styled(Link)<{isInStock: boolean}>`
   border: 1px solid #f1f1f1;
   border-radius: 4px;
   min-width: 200px;
