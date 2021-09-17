@@ -158,16 +158,16 @@ const CreateProductModal = props => {
               const values = {
                 ...submitValues,
                 productType: {
-                  uuid: submitValues.productType
+                  uuid: submitValues.productType,
                 },
-                images: uploadedImages,
+                images: uploadedImages.map(({id, ...rest}) => ({...rest})),
                 description: {
                   long: submitValues.long,
                   short: submitValues.short,
                   seo: submitValues.seo,
                 },
                 brands: [
-                  submitValues.brand
+                  submitValues.brand,
                 ],
                 admin: {
                   purchasePrice: submitValues.purchasePrice,
@@ -205,8 +205,8 @@ const CreateProductModal = props => {
                 variants: submitValues.variants.map(({options, ...rest})=> ({
                   ...rest,
                   optionValues: options.map(option=> ({
-                    uuid: option.value.uuid,
-                    value: option.value.value
+                    uuid: option.attribute.uuid,
+                    value: option.attribute.value,
                   }))
                 }))
               };
