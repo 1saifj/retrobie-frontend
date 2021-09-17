@@ -29,7 +29,7 @@ const CreateBrandValidationSchema = Yup.object().shape({
         .required("This field is required")
         .min(180, "Should be at least 180 characters long")
         .max(320, "Too long"),
-    copy: Yup.string()
+    seo: Yup.string()
         .required("This field is required")
         .min(80, "SEO copy should not be less than 80 chars")
         .max(130, "SEO copy should not be more than 130 chars"),
@@ -107,6 +107,9 @@ const CreateBrandModal = (
               <Formik
                 initialValues={{
                   name: '',
+                  long: '',
+                  short: '',
+                  seo: '',
                   uuid,
                   slug: '',
                   logo: null,
@@ -114,9 +117,19 @@ const CreateBrandModal = (
                 validationSchema={CreateBrandValidationSchema}
                 onSubmit={async (values, {setSubmitting, setFieldError}) => {
                   setSubmitting(true);
+
+                  const {long, short, seo, ...rest} = values;
+
+                  const createData = {
+                    ...rest,
+                    description: {
+                      long, short,
+                      seo: seo
+                    }
+                  }
                   try {
                     setSubmitting(false);
-                    const response = await dispatch(api.brands.create(values));
+                    const response = await dispatch(api.brands.create(createData));
                     if (typeof onCreate === 'function') {
                       onCreate(response.data);
                     }
@@ -202,10 +215,10 @@ const CreateBrandModal = (
                         label={<>With suitable keywords, write an <span
                           className="accented">SEO copy</span> for
                           this product in 80 - 130 chars</>}
-                        placeholder="Copy"
+                        placeholder="seo"
                         type="textarea"
                         chars={130}
-                        name="copy" />
+                        name="seo" />
                     </Field>
                     <Field>
                       <TextField disabled
