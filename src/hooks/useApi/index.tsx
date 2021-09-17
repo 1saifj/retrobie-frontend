@@ -206,7 +206,7 @@ const useApi = function () {
     get: async slug => (await getAxis()).get(`/products/${slug}`),
     create: data => async () => (await getAxis()).post('/products/new', data),
     reIndex: data => async () => (await getAxis()).post(
-      `/products/re-index?deleteAll=${data.deleteAll}&createIndexIfNotExists=${data.createIndexIfNotExists}`
+      `/products/re-index?deleteAll=${data.deleteAll}&createIndexIfNotExists=${data.createIndexIfNotExists}&setAttributesForFaceting=${data.setAttributesForFaceting}`,
     ),
     update: (id, data) => async () => (await getAxis()).put(`/products/${id}/update`, data),
     deleteImage: async ({productId, fileId}) =>
