@@ -27,7 +27,7 @@ function FilterItem ({product: item}){
         )
       }
       <div className="product__item__image">
-        <RetroImage src={item.url} alt={item.name} />
+        <RetroImage src={item.images[0]?.thumbnailUrl} alt={item.name} />
       </div>
       <div
         className={'product__item__footer'}>
