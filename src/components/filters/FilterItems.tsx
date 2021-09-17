@@ -10,10 +10,11 @@ import React from 'react';
 
 function FilterItem ({product: item}){
 
+  const isInStock = item.quantity > 0;
   return (
-    <ProductItem isInStock={item.inStock} to={`/product/${item.slug}/`}>
+    <ProductItem isInStock={isInStock} to={`/product/${item.slug}/`}>
       {
-        item.stock.quantity > 1 && (
+        !isInStock && (
           <div className="is-relative">
             <Tag
               isColor={'warning'}
