@@ -160,7 +160,7 @@ const CreateProductModal = props => {
                 productType: {
                   uuid: submitValues.productType,
                 },
-                images: uploadedImages.map(({id, ...rest}) => ({...rest})),
+                images: uploadedImages?.map(({id, ...rest}) => ({...rest})),
                 description: {
                   long: submitValues.long,
                   short: submitValues.short,
