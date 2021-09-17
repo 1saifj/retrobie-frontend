@@ -158,6 +158,7 @@ const ProductPageHeader = () => {
               await dispatch(api.products.reIndex({
                 deleteAll: true,
                 createIndexIfNotExists: true,
+                setAttributesForFaceting: true,
               }));
               notify.success('Indexed products successfully');
             } catch (e) {
