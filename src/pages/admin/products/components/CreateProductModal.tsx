@@ -251,8 +251,9 @@ const CreateProductModal = props => {
                     folder={values.folder}
                     instantUpload={false}
                     isSelectDisabled={!values.brand || !values.name}
-                    onUpload={(err, {uploaderId}) => {
+                    onUpload={(err, {uploaderId, images}) => {
                       setUploaderId(uploaderId);
+                      setFieldValue('images', images);
                     }}
                     onClickSelectedImage={(images) => {
                       props.onClickSelectedImage(images);
