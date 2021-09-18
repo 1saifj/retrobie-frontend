@@ -75,10 +75,10 @@ const Hero = () => {
                 </div>
                 <small className='secondary'>ABOUT US</small>
               </header>
-              <h1>
-                Home of <span> authentic,</span> exclusive sneakers in Nairobi
+              <h1 style={{margin: '1rem 0'}}>
+                Home of <span> authentic,</span> exclusive sneakers and sports shoes in Nairobi
               </h1>
-              <div>
+              <div style={{margin: '1rem 0'}}>
                 <p className='secondary'>
                   Find and discover your favorite brands - from Air Jordans to Yeezys -{' '}
                   <span>original sneakers</span>,{' '}

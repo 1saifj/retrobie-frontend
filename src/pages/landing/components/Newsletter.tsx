@@ -86,6 +86,7 @@ const Newsletter = ()=> {
                       <Button
                         isColor="primary"
                         isSize={'medium'}
+                        style={{fontSize: 'inherit'}}
                         defaultValue="Subscribe"
                         name="subscribe"
                         id="mc-embedded-subscribe"

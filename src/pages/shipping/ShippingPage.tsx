@@ -66,7 +66,11 @@ export default function Shipping(props) {
   const notify = useNotify();
 
   function flip(value?) {
-    setPayOnlineOrBuyGoods(value)
+    if (payOnlineOrBuyGoods !== value) {
+      setPayOnlineOrBuyGoods(value);
+    } else {
+      setPayOnlineOrBuyGoods(null);
+    }
   }
 
   if (!userState.isLoggedIn){
@@ -472,13 +476,12 @@ export default function Shipping(props) {
                           ]}
                         />
                       </div>
+                      <hr />
+
                     </div>
 
-                    <hr/>
                     <div>
-                      <div>
-                        <h3>Confirm your order</h3>
-                      </div>
+
                       <SwitchTransition mode={'out-in'}>
                         <CSSTransition
                           timeout={250}
@@ -488,15 +491,26 @@ export default function Shipping(props) {
                           <div>
                             {
                               !payNowOrOnDelivery &&
-                              <p>
-                                Select a payment method {' '}
-                                <img
-                                  src={IndexFinger}
-                                  alt={'finger pointing up emoji'}
-                                  style={{width: 16}}
-                                />{' '}
-                                to confirm your order
-                              </p>
+                              (
+                                <>
+                                  <hr />
+                                  <div>
+                                    <h3>Confirm your order</h3>
+                                  </div>
+
+                                  <p>
+                                    Select a payment method {' '}
+                                    <img
+                                      src={IndexFinger}
+                                      alt={'finger pointing up emoji'}
+                                      style={{width: 16}}
+                                    />{' '}
+                                    to confirm your order
+                                  </p>
+                                  <hr />
+
+                                </>
+                              )
                             }
                             {
                               payNowOrOnDelivery === 'pay-now' && (
@@ -515,7 +529,7 @@ export default function Shipping(props) {
                                         {/*  >*/}
                                         {/*    <div>*/}
                                         {/*      <h4>Option 1: Pay Online</h4>*/}
-                                        {/*      <p>Receive a prompt on your phone and enter your M-Pesa PIN.</p>*/}
+                                        {/*      <p>Receive a prompt on your phone and enter your M-PESA PIN.</p>*/}
                                         {/*    </div>*/}
                                         {/*    <ChevronRight*/}
                                         {/*      style={{*/}
@@ -594,105 +608,102 @@ export default function Shipping(props) {
                                               classNames="fade"
                                             >
                                               <div>
+                                                <hr />
+
                                                 {payOnlineOrBuyGoods === 'buy-goods' && (
-                                                  <div className={'lipa-na-mpesa'}>
-                                                    <img
-                                                      title="mpesa"
-                                                      src={LipaNaMpesa}
-                                                      alt="mpesa logo"
-                                                      style={{display: 'block', margin: '0 auto'}}
-                                                    />
+                                                  <>
+                                                    <div className={'lipa-na-mpesa'}>
+                                                      <img
+                                                        title="mpesa"
+                                                        src={LipaNaMpesa}
+                                                        alt="mpesa logo"
+                                                        style={{display: 'block', margin: '0 auto'}}
+                                                      />
 
-                                                    <div
-                                                      style={{
-                                                        textAlign: 'center',
-                                                      }}
-                                                    >
-                                                      <h2
-                                                        style={{
-                                                          color: 'white',
-                                                        }}
-                                                      >
-                                                        Buy Goods Till Number
-                                                      </h2>
-                                                      <div className={'boxes'}>
-                                                        <div>
-                                                          <div>5</div>
+                                                      <div style={{textAlign: 'center'}}>
+                                                        <h2 style={{color: 'white'}}>
+                                                          Buy Goods Till Number
+                                                        </h2>
+                                                        <div className={'boxes'}>
+                                                          <div>
+                                                            <div>5</div>
+                                                          </div>
+                                                          <div>
+                                                            <div>6</div>
+                                                          </div>
+                                                          <div>
+                                                            <div>7</div>
+                                                          </div>
+                                                          <div>
+                                                            <div>8</div>
+                                                          </div>
+                                                          <div>
+                                                            <div>5</div>
+                                                          </div>
+                                                          <div>
+                                                            <div>1</div>
+                                                          </div>
+                                                          <div>
+                                                            <div>1</div>
+                                                          </div>
                                                         </div>
                                                         <div>
-                                                          <div>6</div>
-                                                        </div>
-                                                        <div>
-                                                          <div>7</div>
-                                                        </div>
-                                                        <div>
-                                                          <div>8</div>
-                                                        </div>
-                                                        <div>
-                                                          <div>5</div>
-                                                        </div>
-                                                        <div>
-                                                          <div>1</div>
-                                                        </div>
-                                                        <div>
-                                                          <div>1</div>
+                                                          <h3
+                                                            style={{
+                                                              color: 'white',
+                                                              marginTop: 0,
+                                                            }}
+                                                          >
+                                                            RETROBIE LTD
+                                                          </h3>
                                                         </div>
                                                       </div>
-                                                      <div>
-                                                        <h3
-                                                          style={{
-                                                            color: 'white',
-                                                            marginTop: 0,
-                                                          }}
-                                                        >
-                                                          RETROBIE LTD
-                                                        </h3>
+
+                                                      <div className={'steps'}>
+                                                        <h4>Steps</h4>
+                                                        <div>
+                                                          <ol>
+                                                            <li>Open the M-PESA app</li>
+                                                            <li>
+                                                              Tap on <b>Lipa Na M-PESA</b>
+                                                            </li>
+                                                            <li>
+                                                              Tap on <b>Buy Goods and Services</b>
+                                                            </li>
+                                                            <li>
+                                                              Enter the till number above.
+                                                              <img
+                                                                src={IndexFinger}
+                                                                alt={'finger pointing up emoji'}
+                                                                style={{width: 16}}
+                                                              />
+                                                            </li>
+                                                            <li>Enter your M-PESA PIN</li>
+                                                            <li>
+                                                              Click the button below to
+                                                              complete your order.
+                                                              <img
+                                                                src={PointingDown}
+                                                                style={{
+                                                                  width: 16,
+                                                                  verticalAlign: 'middle',
+                                                                }}
+                                                                alt={'peace'}
+                                                              />{' '}
+                                                              We'll let you know (via email) when
+                                                              the payment comes through.
+                                                            </li>
+                                                          </ol>
+                                                        </div>
                                                       </div>
                                                     </div>
-
-                                                    <div className={'steps'}>
-                                                      <h4>Steps</h4>
-                                                      <div>
-                                                        <ol>
-                                                          <li>Open the M-Pesa app</li>
-                                                          <li>
-                                                            Tap on <b>Lipa Na M-Pesa</b>
-                                                          </li>
-                                                          <li>
-                                                            Tap on <b>Buy Goods and Services</b>
-                                                          </li>
-                                                          <li>
-                                                            Enter the till number above.
-                                                            <img
-                                                              src={IndexFinger}
-                                                              alt={'finger pointing up emoji'}
-                                                              style={{width: 16}}
-                                                            />
-                                                          </li>
-                                                          <li>Enter your M-Pesa PIN</li>
-                                                          <li>
-                                                            Click the button below to
-                                                            complete your order.
-                                                            <img
-                                                              src={PointingDown}
-                                                              style={{
-                                                                width: 16,
-                                                                verticalAlign: 'middle',
-                                                              }}
-                                                              alt={'peace'}
-                                                            />{' '}
-                                                            We'll let you know (via email) when
-                                                            the payment comes through.
-                                                          </li>
-                                                        </ol>
-                                                      </div>
-                                                    </div>
-                                                  </div>
+                                                    <hr />
+                                                  </>
                                                 )}
+
                                               </div>
                                             </CSSTransition>
                                           </SwitchTransition>
-                                          <hr/>
                                         </div>
                                       </div>
                                     </CSSTransition>
@@ -703,7 +714,12 @@ export default function Shipping(props) {
 
                             {
                               payNowOrOnDelivery === 'pay-on-delivery' && (
-                                <div>
+                                <div style={{marginBottom: '1rem'}}>
+                                  <hr />
+                                  <div>
+                                    <h3>Confirm your order</h3>
+                                  </div>
+
                                   <p>
                                     Click on the button below
                                     <img
@@ -717,6 +733,8 @@ export default function Shipping(props) {
                                     to complete your order. <b>We'll call you</b> to confirm the delivery
                                     details.
                                   </p>
+                                  <hr />
+
                                 </div>
                               )}
                           </div>
