@@ -23,7 +23,7 @@ function FilterItem({product: item}) {
 }
 
 const OutOfStockTag = () => (
-  <div className="is-relative">
+  <div style={{position: 'absolute', zIndex: 1}}>
     <Tag
       isColor={'warning'}
       className="product__item--in-stock-tag">
@@ -93,9 +93,9 @@ const ProductItemParent = styled(Link)<{isInStock: boolean}>`
   border: 1px solid #f1f1f1;
   border-radius: 4px;
   min-width: 200px;
-  margin-right: 8px;
   max-height: 250px;
   background: #f5f5f5;
+  margin: 0;
   
   .product__item-in-stock-tag {
     position: absolute;
@@ -104,8 +104,8 @@ const ProductItemParent = styled(Link)<{isInStock: boolean}>`
   }
   
   .product__item__image {
-    height: 100%;
-    opacity: ${props=> props.isInStock ? 1 : 0.5},
+    max-height: 100%;
+    opacity: ${props => props.isInStock ? 1 : 0.5};
   }
 
   &:hover {
