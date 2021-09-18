@@ -30,7 +30,7 @@ const RetroImage = function (
   }
 
   function getErrorImageUrl(){
-    return `https://ik.imagekit.io/t25/placeholder-1_czR2yzdt_.png`
+    return `https://ik.imagekit.io/t25/image-not-found_1__GAADOys0Sw.webp?updatedAt=1631955885168`;
   }
 
   return (
