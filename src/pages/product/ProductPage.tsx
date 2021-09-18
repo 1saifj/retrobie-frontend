@@ -176,7 +176,7 @@ function ProductPage({match}) {
       isOnOffer: false,
       slug: lineItem.slug,
       originalPrice: lineItem.originalPrice,
-      thumbnailUrl: lineItem.images[0].thumbnailUrl,
+      thumbnailUrl: lineItem.images[0]?.thumbnailUrl,
       price: lineItem.originalPrice,
       quantity: 1,
       productId: lineItem.uuid,
@@ -314,6 +314,10 @@ function ProductPage({match}) {
     // if it's not in the cart,
     // make sure the variant count from the server is greater than 0
     return variant?.stock?.quantity > 0;
+  }
+
+  function isMaxNumberOfItemInCart(variant: VariantType) {
+    return getVariantFromCart(variant.uuid)?.quantity === variant.stock.quantity;
   }
 
   function isColorActive(color: ProductTypeOptionValue) {
@@ -471,7 +475,12 @@ function ProductPage({match}) {
                             }}
                           >
                             {
-                              !isInStock(currentVariant) ? 'OUT OF STOCK' : !values.size ? 'SELECT A SIZE' : 'ADD TO CART.'
+
+                              isMaxNumberOfItemInCart(currentVariant) ?
+                                'MAXIMUM NUMBER OF ITEMS ALREADY IN CART' :
+                                !isInStock(currentVariant) ? 'OUT OF STOCK' :
+                                  !values.size ? 'SELECT A SIZE'
+                                    : 'ADD TO CART.'
                             }
                           </Button>
                         </div>

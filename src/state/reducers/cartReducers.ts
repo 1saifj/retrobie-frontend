@@ -50,7 +50,7 @@ export default (state = initialState, action: {type: string; payload}) => {
           inStock: addToCartActionItem.inStock,
           price: addToCartActionItem.originalPrice,
           originalPrice: addToCartActionItem.originalPrice,
-          thumbnailUrl: addToCartActionItem.images[0].thumbnailUrl,
+          thumbnailUrl: addToCartActionItem.images[0]?.thumbnailUrl,
           isOnOffer: addToCartActionItem.isOnOffer,
         };
         // add it as a new item
