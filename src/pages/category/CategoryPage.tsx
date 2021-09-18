@@ -10,6 +10,7 @@ import useFetchers from '../../hooks/useFetchers/useFetchers';
 import {Filters} from '../../components/filters/Filters';
 import styled from 'styled-components';
 import FilterItems from '../../components/filters/FilterItems';
+import defaultHelpers from '../../helpers';
 
 
 const CategoryPage = function({match}) {
@@ -71,7 +72,7 @@ const CategoryPage = function({match}) {
         <Container>
           <header>
             <h1>
-              {categoryData.name}
+              {defaultHelpers.titleCase(categoryData.name)}
             </h1>
           </header>
           <Filters products={categoryProducts}>
