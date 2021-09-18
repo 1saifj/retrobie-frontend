@@ -14,6 +14,7 @@ import {loginUserAction} from '../../state/actions';
 import {useDispatch} from 'react-redux';
 import {useApi} from '../../network';
 import responseHelper from '../../helpers/ResponseHelper';
+import posthog from 'posthog-js';
 
 const MESSAGES ={
     REQUIRED: "This field is required.",
@@ -112,6 +113,7 @@ const RegisterUser = ({footer}) => {
                   values.phoneNumber = replaceNonAlphanumeric(values.phoneNumber, '');
                   // @ts-ignore
                   const {data} = await dispatch(api.accounts.register(values));
+                  await posthog.identify(values.email);
                   setUserLoggedIn(data);
                   setSubmitting(false);
                   // // The user is effectively logged in at this point.

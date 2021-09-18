@@ -12,6 +12,7 @@ import {loginUserAction} from '../../state/actions';
 import {extractErrorMessage} from '../../helpers';
 import {notify} from '../../helpers/views';
 import {useApi} from '../../network';
+import posthog from 'posthog-js';
 
 const FormParent = styled.div`
   display: grid;
@@ -70,6 +71,7 @@ export default function LoginUser(props) {
                       if (data.accessToken && data.refreshToken) {
                         // This user doesn't have MFA enabled
                         setUserLoggedIn(data);
+                        await posthog.identify(data.email);
                         if (props.callback && typeof props.callback === 'function') {
                           props.callback(null, data);
                         } else {
