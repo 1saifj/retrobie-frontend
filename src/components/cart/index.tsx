@@ -259,7 +259,7 @@ export default function Cart(
                   TODO: - Add shipping costs
                         - Indicate status of the order
                         - Show delivery location, if any
-                        - 
+                        -
               */}
             </>
           </div>
@@ -276,7 +276,7 @@ export default function Cart(
                   fontWeight: 'bold',
                 }}
               >
-                {checkoutButtonText || 'CHECKOUT'}
+                {checkoutButtonText || 'PROCEED TO CHECKOUT'}
               </Button>
 
             </div>
