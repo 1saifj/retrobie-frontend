@@ -21,7 +21,15 @@ function Slider(props) {
   const paginate = (index) => setCurrentIndex(index);
 
   useEffect(() => {
-    setAllImages(images);
+    if (images?.length) {
+      setAllImages(images);
+    } else {
+      // set at least one image so the error image show up
+      setAllImages([{
+        thumbnailUrl: '',
+        url: '',
+      }]);
+    }
   }, [images]);
 
   const handleDragStart = (e) => e.preventDefault();
