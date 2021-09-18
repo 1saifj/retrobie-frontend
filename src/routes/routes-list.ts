@@ -26,7 +26,7 @@ const CancellingAnOrder = lazy(() => import('../pages/support/orders/cancelling-
 const SupportMaps = lazy(() => import('../pages/support/shipping/maps'));
 
 const Checkout = lazy(() => import('../pages/checkout/CheckoutPage'));
-const Shipping = lazy(() => import('../pages/shipping'));
+const Shipping = lazy(() => import('../pages/shipping/ShippingPage'));
 const OrderCompleted = lazy(() => import('../pages/shipping/order-completed'));
 
 //Admin
