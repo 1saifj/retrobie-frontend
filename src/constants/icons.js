@@ -22,6 +22,7 @@ import EmptyCart from '../assets/images/icons/empty-cart.svg';
 import PaymentCart from '../assets/images/icons/online-payment.webp';
 import NormalCart from '../assets/images/icons/cart.svg';
 import AddToCart from '../assets/images/icons/add-to-cart.svg';
+import CartIcon from '../assets/images/icons/cart.svg';
 import Replace from '../assets/images/icons/replace.svg';
 import FreeDelivery from '../assets/images/icons/free-delivery.webp';
 import FastDelivery from '../assets/images/icons/delivery.svg';
@@ -120,6 +121,7 @@ export {
   AntaLogo,
   AntaWhiteLogo,
   CancelOrder,
+  CartIcon,
   CloseIcon,
   CloseIconSimple,
   Clown,
