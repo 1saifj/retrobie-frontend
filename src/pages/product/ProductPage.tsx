@@ -398,30 +398,15 @@ function ProductPage({match}) {
                 {currentProduct.name}
                 {
                   !isInStock(currentVariant) ? (
-                    <Tag
-                      style={{
-                        verticalAlign: 'middle',
-                        marginLeft: '8px',
-                      }}
-                      isColor={'danger'}>
+                    <Tag isColor={'danger'}>
                       Out of stock
                     </Tag>
                   ) : currentVariant.stock.quantity <= 5 ? (
-                    <Tag isColor={'warning'}
-                         style={{
-                           verticalAlign: 'middle',
-                           marginLeft: '8px',
-                         }}
-                    >
+                    <Tag isColor={'warning'}>
                       {`Only ${currentVariant.stock.quantity} left in stock`}
                     </Tag>
                   ) : (
-                    <Tag isColor={'info'}
-                         style={{
-                           verticalAlign: 'middle',
-                           marginLeft: '8px',
-                         }}
-                    >
+                    <Tag isColor={'info'}>
                       {`${currentVariant.stock.quantity} left in stock`}
                     </Tag>
                   )
@@ -691,6 +676,11 @@ const DescriptionParent = styled.div`
   @media screen and (max-width: 376px) {
     margin-left: 0;
     width: unset;
+  }
+  
+  .tag {
+    vertical-align: middle;
+    margin-left: 8px;
   }
   
   h1 {
