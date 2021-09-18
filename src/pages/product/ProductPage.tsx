@@ -430,28 +430,29 @@ function ProductPage({match}) {
                       <SizesParent>
 
                         {
-                          availableSizes.length ? (
-                            <RadioField
-                              bordered={true}
-                              isGroup={true}
-                              inline={true}
-                              onChange={(value) => {
-                                const variantBySize = deduceVariantByColorAndSize({
-                                  color: selectedColorOption.uuid,
-                                  size: value,
-                                });
-                                setActiveVariant(variantBySize);
-                                setFieldValue('size', value);
-                              }}
-                              options={availableSizes.map(size => ({
-                                value: size.uuid,
-                                label: size.value,
-                              }))}
-                              // intentionally misnamed
-                              // doesn't work with proper naming for some reason
-                              // see onChange instead
-                              name={'productSize'} />
-                          ) : <span>No sizes available.</span>
+                          !selectedColorOption ? 'Please select an option' :
+                            availableSizes.length ? (
+                              <RadioField
+                                bordered={true}
+                                isGroup={true}
+                                inline={true}
+                                onChange={(value) => {
+                                  const variantBySize = deduceVariantByColorAndSize({
+                                    color: selectedColorOption.uuid,
+                                    size: value,
+                                  });
+                                  setActiveVariant(variantBySize);
+                                  setFieldValue('size', value);
+                                }}
+                                options={availableSizes.map(size => ({
+                                  value: size.uuid,
+                                  label: size.value,
+                                }))}
+                                // intentionally misnamed
+                                // doesn't work with proper naming for some reason
+                                // see onChange instead
+                                name={'productSize'} />
+                            ) : <span>No sizes available.</span>
                         }
 
                       </SizesParent>
