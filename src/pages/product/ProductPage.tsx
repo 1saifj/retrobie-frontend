@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Loading from '../../components/loading';
-import {formatNumberWithCommas} from '../../helpers';
+import defaultHelpers, {formatNumberWithCommas} from '../../helpers';
 import styled from 'styled-components';
 import Layout from '../../components/Layout';
 import SEOHeader from '../../components/SEOHeader';
@@ -395,7 +395,7 @@ function ProductPage({match}) {
           <ProductParent className="product--parent">
             <DescriptionParent>
               <h1>
-                {currentProduct.name}
+                {defaultHelpers.titleCase(currentProduct.name)}
                 {
                   !isInStock(currentVariant) ? (
                     <Tag isColor={'danger'}>

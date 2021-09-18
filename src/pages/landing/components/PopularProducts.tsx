@@ -9,7 +9,7 @@ import ServerError from '../../../assets/images/vectors/dead.svg';
 import {ProductType} from '../../../types';
 import {Container, Section} from 'bloomer';
 import Fire from '../../../assets/images/icons/fire.svg';
-import Layout from '../../../components/Layout';
+import defaultHelpers from '../../../helpers';
 
 function PopularProducts() {
   const api = useApi();
@@ -62,7 +62,7 @@ function PopularProducts() {
                         />
                       </div>
                       <div className={'footer'}>
-                        <p>{product.name}</p>
+                        <p>{defaultHelpers.titleCase(product.name)}</p>
                       </div>
                     </BrandParent>
                   </Link>
