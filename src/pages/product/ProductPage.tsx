@@ -330,6 +330,30 @@ function ProductPage({match}) {
     setConditionModalOpen(open);
   }
 
+  const isSmallScreen = () => window.screen.width < 500;
+
+  const getCartButtonText = (variant: VariantType, values) => {
+
+    if (isMaxNumberOfItemInCart(variant)) {
+      if (isSmallScreen()) {
+        return <>MAXIMUM NUMBER OF <br /> ITEMS ALREADY IN CART</>;
+      }
+
+      return <>MAXIMUM NUMBER OF ITEMS ALREADY IN CART</>;
+    }
+
+    if (!isInStock(variant)) {
+      return <>OUT OF STOCK</>;
+    }
+
+    if (!values.size) {
+      return <>SELECT A SIZE</>;
+    }
+
+    return <>ADD TO CART</>;
+
+  };
+
   return (
     <>
       <SEOHeader
@@ -472,20 +496,13 @@ function ProductPage({match}) {
                             type="submit"
                             disabled={!isInStock(currentVariant) || !values.size}
                             style={{
+                              flex: '1 1 250px',
                               width: '100%',
-                              fontWeight: 'bold',
                             }}
                           >
-                            {
-
-                              isMaxNumberOfItemInCart(currentVariant) ?
-                                'MAXIMUM NUMBER OF ITEMS ALREADY IN CART' :
-                                !isInStock(currentVariant) ? 'OUT OF STOCK' :
-                                  !values.size ? 'SELECT A SIZE'
-                                    : 'ADD TO CART.'
-                            }
+                            {getCartButtonText(currentVariant, values)}
                           </Button>
-                          <Button className={'is-tiny'}
+                          <Button isSize={'medium'}
                                   onClick={openSidebar}
                           >
                             <img style={{maxWidth: 25}} src={CartIcon} alt="Open cart" />
@@ -695,7 +712,7 @@ const AvailableColors = styled.div`
 const Color = styled.div<{isActive?: boolean}>`
   max-width: 80px;
   border-radius: 0.2rem;
-  border: ${props => !props.isActive ? '2px solid lightgray' : '2px solid red'};
+  border: ${props => !props.isActive ? '2px solid lightgray' : '2px solid var(--color-primary)'};
   width: max-content;
   transition: all 0.25s ease-in-out;
   display: flex;
@@ -729,5 +746,10 @@ const CartButtonsParent = styled.div`
   display: flex;
   gap: 1rem;
   align-items: center;
+  flex-wrap: wrap;
+  
+  button {
+    font-weight: bold;
+  }
 
 `;
