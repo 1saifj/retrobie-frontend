@@ -3,6 +3,7 @@ import {Helmet} from 'react-helmet';
 import site from '../site-details';
 import {env} from '../config';
 import {JsonLd} from 'react-schemaorg';
+import defaultHelpers from '../helpers';
 
 function SEOHeader(params: {
     description: string,
@@ -19,7 +20,7 @@ function SEOHeader(params: {
         htmlAttributes={{
           lang: 'en',
         }}
-        title={`${(params.title)}`}
+        title={`${(defaultHelpers.titleCase(params.title))}`}
         titleTemplate={`${site.siteMetadata.title} | %s  `}
         link={[
           {
