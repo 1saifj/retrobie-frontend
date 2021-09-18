@@ -27,6 +27,7 @@ function CheckoutLoggedinContainer (props: {
             alignItems: "center"
           }}>
             <Avatar
+              size={'L'}
               src={props.user.avatar}
               name={`${props.user.firstName}`}/>
           </div>

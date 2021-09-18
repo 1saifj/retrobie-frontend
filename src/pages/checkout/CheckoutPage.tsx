@@ -108,7 +108,6 @@ export default function CheckoutPage(props) {
                 isUserLoggedIn ? (
                   <Column isSize={{
                     mobile: 'full',
-                    tablet: 'full',
                     desktop: '1/2',
                   }}>
                     <CheckoutLoggedInContainer user={userInfo} />
@@ -117,7 +116,6 @@ export default function CheckoutPage(props) {
                   <Column
                     isSize={{
                       mobile: 'full',
-                      tablet: 'full',
                       desktop: '1/2',
                     }}>
                     <CheckoutLogInContainer submitCart={submitCart} />
