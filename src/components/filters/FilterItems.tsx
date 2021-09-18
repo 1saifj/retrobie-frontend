@@ -90,7 +90,7 @@ export const FilterItems = function(props: {
 export default FilterItems;
 
 const ProductItemParent = styled(Link)<{isInStock: boolean}>`
-  border: 1px solid #f1f1f1;
+  border: 1px solid #f6f6f6;
   border-radius: 4px;
   min-width: 200px;
   max-height: 250px;
