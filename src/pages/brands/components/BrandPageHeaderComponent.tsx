@@ -41,6 +41,7 @@ const BrandHeaderParent = styled.header`
   justify-content: space-around;
   align-items: center;
   gap: 3rem;
+  padding: 0 1rem;
   
   .brand__header__image {
     flex: 0 1 150px;

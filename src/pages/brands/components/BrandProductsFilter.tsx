@@ -191,6 +191,7 @@ const BrandProductsFilterParent = styled.div`
       row-gap: 6rem;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       justify-content: space-between;
+      padding: 0 1rem;
     }
   }
 }

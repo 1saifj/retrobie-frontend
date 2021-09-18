@@ -123,7 +123,8 @@ const CategoryPageParent = styled(Container)`
       row-gap: 72px;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       justify-content: space-between;
-    }
+      padding: 0 1rem;
+}
   }
 }
 
