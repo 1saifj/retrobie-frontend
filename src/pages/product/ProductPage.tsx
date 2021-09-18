@@ -4,7 +4,7 @@ import {formatNumberWithCommas} from '../../helpers';
 import styled from 'styled-components';
 import Layout from '../../components/Layout';
 import SEOHeader from '../../components/SEOHeader';
-import {DeadEyes, Replace, Return} from '../../constants/icons';
+import {CartIcon, DeadEyes, Replace, Return} from '../../constants/icons';
 import '../../assets/style/index.scss';
 import {JsonLd} from 'react-schemaorg';
 import productJsonld, {subProduct} from './product.jsonld';
@@ -186,15 +186,17 @@ function ProductPage({match}) {
     if (shouldAddToCart) {
       if (!isSidebarOpen) {
         notify.info(`${lineItem.name} added to cart`, {
-          onClick: () => {
-            dispatch(toggleSidebarAction({open: true}));
-          },
+          onClick: openSidebar,
         });
       }
       dispatch(addItemToCartAction({item: cartItem}));
     } else {
       notify.error(message);
     }
+  }
+
+  function openSidebar() {
+    dispatch(toggleSidebarAction({open: true}));
   }
 
   function setActiveVariant(variant: VariantType) {
@@ -462,9 +464,9 @@ function ProductPage({match}) {
                       </SizesParent>
                     </div>
 
-                    <Buttons>
+                    <div>
                       <div style={{margin: '18px 0'}}>
-                        <div>
+                        <CartButtonsParent>
                           <Button
                             isColor="primary"
                             type="submit"
@@ -483,7 +485,12 @@ function ProductPage({match}) {
                                     : 'ADD TO CART.'
                             }
                           </Button>
-                        </div>
+                          <Button className={'is-tiny'}
+                                  onClick={openSidebar}
+                          >
+                            <img style={{maxWidth: 25}} src={CartIcon} alt="Open cart" />
+                          </Button>
+                        </CartButtonsParent>
                       </div>
                       <div>
                         {
@@ -613,7 +620,7 @@ function ProductPage({match}) {
                           </Modal>
                         </div>
                       </ConditionParent>
-                    </Buttons>
+                    </div>
                   </Form>
                 )}
               </Formik>
@@ -718,13 +725,9 @@ const InDepth = styled.div`
   }
 `;
 
-const Buttons = styled.div`
+const CartButtonsParent = styled.div`
   display: flex;
-  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
 
-  .cart-open {
-    &:hover {
-      cursor: pointer;
-    }
-  }
 `;
