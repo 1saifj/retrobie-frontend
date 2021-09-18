@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
-import {formatNumberWithCommas} from '../../helpers';
+import defaultHelpers, {formatNumberWithCommas} from '../../helpers';
 import {
   addItemToCartAction,
   deleteCheckoutAction,
@@ -205,7 +205,7 @@ export default function Cart(
 
                 <div className="desc">
                   <div style={{maxWidth: '225px'}}>
-                    <p>{cartItem.productName}</p>
+                    <p>{defaultHelpers.titleCase(cartItem.productName)}</p>
                   </div>
                   <div style={{textAlign: 'right'}}>
                     <p>Ksh. {formatNumberWithCommas(cartItem.price)}</p>
