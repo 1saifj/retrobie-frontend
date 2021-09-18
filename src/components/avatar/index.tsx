@@ -53,7 +53,7 @@ const AvatarParent = styled.div<{size?: "S" | "L"}>`
     border: 2px solid seagreen;
     padding: 2px;
     border-radius: 50%;
-    max-width: 40px;
+    max-width: ${props => props.size === 'L' ? 'unset' : '40px'};
   }
 
   &:hover {
