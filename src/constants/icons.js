@@ -101,7 +101,9 @@ import Listing from '../assets/images/icons/listing.svg';
 import Password from '../assets/images/icons/password.svg';
 import Tick from '../assets/images/icons/tick.svg';
 import TickDark from '../assets/images/icons/tick-dark.svg';
-import Refund from '../assets/images/icons/refund.svg'
+import Refund from '../assets/images/icons/refund.svg';
+import HomeDelivery from '../assets/images/icons/delivery-home.svg';
+import PickupDelivery from '../assets/images/icons/delivery-pickup.svg';
 
 import SoundWaves from '../assets/images/icons/sound-waves.svg';
 import LocationIcon from '../assets/images/icons/location-pin.svg';
@@ -155,6 +157,8 @@ export {
   TwitterLogoDark,
   InstagramLogoDark,
   HelpIcon,
+  HomeDelivery,
+  PickupDelivery,
   InstagramLogoWhite,
   JJY,
   KobeLogo,
