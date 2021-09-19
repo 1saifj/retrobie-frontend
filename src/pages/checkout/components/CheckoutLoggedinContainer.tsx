@@ -15,40 +15,45 @@ function CheckoutLoggedinContainer (props: {
 
   return (
     <>
-      <LoggedInContainer>
-        <h2>Your Information</h2>
-        <p>
-          This information will be used to get in touch with you concerning your
-          order, should the need arise.
-        </p>
-        <div style={{display: 'flex'}}>
-          <div style={{
-            display: "flex",
-            alignItems: "center"
-          }}>
-            <Avatar
-              size={'L'}
-              src={props.user.avatar}
-              name={`${props.user.firstName}`}/>
+      <Column isSize={{
+        mobile: 'full',
+        desktop: '1/2',
+      }}>
+        <LoggedInContainer>
+          <h2>Your Information</h2>
+          <p>
+            This information will be used to get in touch with you concerning your
+            order, should the need arise.
+          </p>
+          <div style={{display: 'flex'}}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+            }}>
+              <Avatar
+                size={'L'}
+                src={props.user.avatar}
+                name={`${props.user.firstName}`} />
+            </div>
+            <div className={'user-info'}>
+              <div>
+                <User />
+                <p>
+                  {props.user.firstName} {props.user.lastName}
+                </p>
+              </div>
+              <div>
+                <Phone />
+                <p>+254-{addDashes(props.user.phoneNumber)}</p>
+              </div>
+              <div>
+                <AtSign />
+                <p>{props.user.email}</p>
+              </div>
+            </div>
           </div>
-          <div className={'user-info'}>
-            <div>
-              <User />
-              <p>
-                {props.user.firstName} {props.user.lastName}
-              </p>
-            </div>
-            <div>
-              <Phone />
-              <p>+254-{addDashes(props.user.phoneNumber)}</p>
-            </div>
-            <div>
-              <AtSign />
-              <p>{props.user.email}</p>
-            </div>
-          </div>
-        </div>
-      </LoggedInContainer>
+        </LoggedInContainer>
+      </Column>
     </>
   )
 }

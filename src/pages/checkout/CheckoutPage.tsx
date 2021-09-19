@@ -95,9 +95,7 @@ export default function CheckoutPage(props) {
 
   return (
     <>
-      <Layout
-        withoutNav
-      >
+      <Layout withoutNav>
         <Helmet>
           <title>Retrobie | Checkout</title>
         </Helmet>
@@ -105,28 +103,15 @@ export default function CheckoutPage(props) {
           <Container>
             <Columns>
               {
-                isUserLoggedIn ? (
-                  <Column isSize={{
-                    mobile: 'full',
-                    desktop: '1/2',
-                  }}>
-                    <CheckoutLoggedInContainer user={userInfo} />
-                  </Column>
-                ) : (
-                  <Column
-                    isSize={{
-                      mobile: 'full',
-                      desktop: '1/2',
-                    }}>
-                    <CheckoutLogInContainer submitCart={submitCart} />
-                  </Column>
 
-                )}
+                isUserLoggedIn ?
+                  <CheckoutLoggedInContainer user={userInfo} />
+                  : <CheckoutLogInContainer submitCart={submitCart} />}
 
               <Column
                 isSize={{
                   desktop: '1/2',
-                }} >
+                }}>
                 <CheckoutCart
                   cartId={cartId}
                   submitCart={submitCart} />
