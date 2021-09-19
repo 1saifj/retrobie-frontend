@@ -27,7 +27,7 @@ const SupportMaps = lazy(() => import('../pages/support/shipping/maps'));
 
 const Checkout = lazy(() => import('../pages/checkout/CheckoutPage'));
 const Shipping = lazy(() => import('../pages/shipping/ShippingPage'));
-const OrderCompleted = lazy(() => import('../pages/shipping/order-completed'));
+const OrderCompleted = lazy(() => import('../pages/shipping/OrderCompletedPage'));
 
 //Admin
 const AdminLogin = lazy(() => import('../pages/admin/login'));

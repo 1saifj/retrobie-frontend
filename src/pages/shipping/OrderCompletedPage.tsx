@@ -9,14 +9,14 @@ import {RootStateOrAny, useSelector} from 'react-redux';
 import {useApi} from '../../hooks';
 import NotFound from '../not-found';
 
-const OrderCompleted = function(props) {
+const OrderCompletedPage = function(props) {
 
-  const orderId = props.match.params.orderId
+  const orderId = props.match.params.orderId;
 
-  const user: UserState = useSelector((state: RootStateOrAny)=> state.user)
+  const user: UserState = useSelector((state: RootStateOrAny) => state.user);
   const api = useApi();
 
-  const orderDataFetcher = (key, orderId) => api.orders.checkStatus(orderId).then(({data})=> data);
+  const orderDataFetcher = (key, orderId) => api.orders.checkStatus(orderId).then(({data}) => data);
   const {data: orderStatusResult, error: fetchOrderStatusError} = useSWR<{
     paymentStatus: PaymentStatus,
     orderStatus: OrderStatus,
@@ -103,4 +103,4 @@ const OrderCompleted = function(props) {
   )
 }
 
-export default OrderCompleted;
+export default OrderCompletedPage;
