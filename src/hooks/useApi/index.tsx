@@ -133,7 +133,7 @@ const useApi = function () {
     complete: (data: {
       orderId: string;
       address: {latLng: [number, number]};
-      paymentType: 'pay-now' | 'pay-on-delivery';
+      paymentType: 'payNow' | 'payOnDelivery';
     }) => async () => (await getAxis()).post(`/orders/${data.orderId}/complete`, data),
     cancel: async data => (await getAxis()).post(`/orders/${data.id}/cancel`),
   };
