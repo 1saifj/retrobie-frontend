@@ -145,11 +145,16 @@ export default function SimpleMap(
 
       map.on('zoom', ()=> {
         if (typeof onZoom === 'function') {
-          onZoom(map.getZoom())
+          onZoom(map.getZoom());
         }
       })
 
       marker.on('dragend', () => {
+        const lngLat = marker.getLngLat();
+        onMapLocateUser(lngLat);
+      });
+
+      map.on('load', () => {
         const lngLat = marker.getLngLat();
         onMapLocateUser(lngLat);
       });
