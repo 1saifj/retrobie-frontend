@@ -30,6 +30,7 @@ import {
 import {useNotify} from '../../hooks';
 import ServerError from '../../assets/images/vectors/dead.svg';
 import LipaNaMpesaSection from './components/LipaNaMpesaSection';
+import humps from '../../helpers/humps';
 
 // const CompleteOrderValidationSchema = Yup.object({
 //   deliveryLocation: Yup.string().required(),
@@ -275,7 +276,13 @@ export default function Shipping(props) {
                       to add back the alternative form-filling functionality though,
                       it will be pretty handy.
                     */}
-                    <Formik initialValues={{}}
+                    <Formik initialValues={{
+                      shippingMethod: {
+                        method: '',
+                        value: '',
+                      },
+                      paymentMethod: '',
+                    }}
                       /*
                                   validate={(values) => {
                                     const errors = {
@@ -314,7 +321,7 @@ export default function Shipping(props) {
 
                             }}
                     >
-                      {({setFieldValue}) => (
+                      {({setFieldValue, values}) => (
                         <Form>
 
                           <div>
@@ -365,16 +372,21 @@ export default function Shipping(props) {
                                           },
                                         }}
                                         help={`Note: if the marker is not accurate, drag and drop it to your preferred location.`}
-                                        onLocateUser={(
+                                        onLocateUser={async (
                                           [lng, lat],
                                           item,
-                                        ) => onLocateUser(
-                                          {
+                                        ) => {
+                                          const address = {
                                             lat, lng,
                                             location: item?.location,
                                             placeId: item?.value.placeId,
-                                          },
-                                        )} />
+                                          };
+                                          setFieldValue('shippingMethod', {
+                                            method: 'homeOrOfficeDelivery',
+                                            value: address,
+                                          });
+                                          await onLocateUser(address);
+                                        }} />
                                       {/*<div>
                     <div>
                       <div>
@@ -523,7 +535,12 @@ export default function Shipping(props) {
                                           bordered={true}
                                           isGroup={true}
                                           inline={true}
-                                          name={'shipping-method'}
+                                          onChange={(value) => {
+                                            setFieldValue('shippingMethod', {
+                                              method: 'pickupAtLocation',
+                                              value,
+                                            });
+                                          }}
                                           options={[
                                             {
                                               label: 'Monday - Between 12:00-1:30PM',
@@ -562,6 +579,7 @@ export default function Shipping(props) {
                                     onChange={value => {
                                       // @ts-ignore
                                       setPayNowOrOnDelivery(value);
+                                      setFieldValue('paymentMethod', value);
                                       setCompletedOrder({
                                         payNowOrOnDelivery,
                                       });
@@ -719,6 +737,35 @@ export default function Shipping(props) {
                                                             </>
                                                           )}
 
+                                                          <div>
+                                                            <h2>C. Confirm Your Order Details</h2>
+                                                          </div>
+
+                                                          <div>
+                                                            <div style={{
+                                                              display: 'flex',
+                                                              gap: '1rem',
+                                                              alignItems: 'center',
+                                                            }}>
+                                                              <h4>Shipping method: </h4>
+                                                              <div style={{display: 'flex'}}>
+                                                                <p>{
+                                                                  humps.titleCase(humps.depascalize(values.shippingMethod.method)) || 'Please select a shipping method'
+                                                                }</p>
+                                                              </div>
+                                                            </div>
+
+                                                            <div style={{
+                                                              display: 'flex',
+                                                              gap: '1rem',
+                                                              alignItems: 'center',
+                                                            }}>
+                                                              <h4>Payment method: </h4>
+                                                              <p>{humps.titleCase(humps.depascalize(values.paymentMethod))}</p>
+                                                            </div>
+
+                                                          </div>
+
                                                         </div>
                                                       </CSSTransition>
                                                     </SwitchTransition>
@@ -735,9 +782,24 @@ export default function Shipping(props) {
                                           <div style={{marginBottom: '1rem'}}>
                                             <hr />
                                             <div>
-                                              <h2>C. Confirm Your Order</h2>
+                                              <h2>C. Confirm Your Order Details</h2>
                                             </div>
 
+                                            <div>
+                                              <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
+                                                <h4>Shipping method: </h4>
+                                                <div style={{display: 'flex'}}>
+                                                  <p>{
+                                                    humps.titleCase(humps.depascalize(values.shippingMethod.method)) || 'Please select a shipping method'
+                                                  }</p>
+                                                </div>
+                                              </div>
+
+                                              <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
+                                                <h4>Payment method: </h4>
+                                                <p>{humps.titleCase(humps.depascalize(values.paymentMethod))}</p>
+                                              </div>
+                                            </div>
                                             <p>
                                               Click on the button below
                                               <img
@@ -834,9 +896,13 @@ export default function Shipping(props) {
                                           paymentType: payNowOrOnDelivery,
                                           address: checkout.delivery?.address,
                                         })}
+                                        disabled={!values.shippingMethod.method}
                                         style={{width: '100%', fontWeight: 'bold'}}
                                       >
-                                        Complete your order
+                                        {
+                                          !values.shippingMethod.method ? 'SELECT A SHIPPING METHOD'
+                                            : 'COMPLETE YOUR ORDER'
+                                        }
                                       </Button>
                                     </div>
                                   )
