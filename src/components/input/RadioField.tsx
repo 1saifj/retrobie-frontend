@@ -137,11 +137,6 @@ export default function RadioField(props: RadioFieldProps) {
           ))
         }
       </RadioGroupParent>
-      {hasError ? (
-        <div className="error">
-          <small>{meta.error}</small>
-        </div>
-      ) : null}
     </>
   )
 
