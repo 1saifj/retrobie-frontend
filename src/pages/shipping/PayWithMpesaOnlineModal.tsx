@@ -76,7 +76,7 @@ export default function PayWithMpesaOnlineModal(
     try {
       setIsCompleteOrderLoading(false);
       await dispatch(api.orders.complete({
-          paymentType: 'pay-now',
+          paymentType: 'payNow',
           orderId,
           address: {
             latLng: [address.lat, address.lng],

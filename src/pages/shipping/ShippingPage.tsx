@@ -8,7 +8,6 @@ import {ErrorIconDark, GrimacingEmoji, HomeDelivery, NormalCart, PickupDelivery}
 import {Button} from 'bloomer';
 import {Form, Formik} from 'formik';
 import RadioField from '../../components/input/RadioField';
-import LipaNaMpesa from '../../assets/images/logos/lipa-na-mpesa.png';
 import PointingDown from '../../assets/images/emoji/backhand-index-pointing-down.png';
 import IndexFinger from '../../assets/images/emoji/backhand-index-pointing-up.png';
 import {ChevronRight} from 'react-feather';
@@ -56,7 +55,7 @@ export default function Shipping(props) {
   }>(userState.isLoggedIn ? [`orders/${paramOrderId}/status`, paramOrderId] : null, orderDataFetcher);
 
 
-  const [payNowOrOnDelivery, setPayNowOrOnDelivery] = useState<'pay-on-delivery' | 'pay-now'>(null);
+  const [payNowOrOnDelivery, setPayNowOrOnDelivery] = useState<'payOnDelivery' | 'payNow'>(null);
 
   const [shippingMethod, setShippingMethod] = useState<'pickupAtLocation' | 'homeOrOfficeDelivery'>(null);
 
@@ -95,7 +94,6 @@ export default function Shipping(props) {
   }
 
   if (!checkout.items?.length) {
-    console.log("Current checkout ")
     return (
       <EmptyState
         title={'Your Cart is Empty'}
@@ -166,7 +164,7 @@ export default function Shipping(props) {
 
   async function completeOrder(order: {
     orderId: string,
-    paymentType: 'pay-now' | 'pay-on-delivery',
+    paymentType: 'payNow' | 'payOnDelivery',
     address: AddressType
   }) {
     if (!order?.paymentType) {
@@ -326,7 +324,7 @@ export default function Shipping(props) {
                                 <header onClick={() => flip(setShippingMethod, shippingMethod, 'homeOrOfficeDelivery')}>
                                   <div>
                                     <div className="sub-title">
-                                      <img src={HomeDelivery} alt={'homr delivery icon'} />
+                                      <img src={HomeDelivery} alt={'home delivery icon'} />
 
                                       <h3>
                                         Home or Office Delivery.
@@ -495,7 +493,7 @@ export default function Shipping(props) {
                                 <header onClick={() => flip(setShippingMethod, shippingMethod, 'pickupAtLocation')}>
                                   <div>
                                     <div className="sub-title">
-                                      <img src={PickupDelivery} alt={'homr delivery icon'} />
+                                      <img src={PickupDelivery} alt={'home delivery icon'} />
 
                                       <h3>
                                         Pick up at location.
@@ -558,7 +556,6 @@ export default function Shipping(props) {
                               <div className="payment-options">
                                 <div>
                                   <RadioField
-                                    name={'payment-method'}
                                     isGroup={true}
                                     inline
                                     bordered
@@ -571,11 +568,11 @@ export default function Shipping(props) {
                                     }}
                                     options={[
                                       {
-                                        value: 'pay-now',
+                                        value: 'payNow',
                                         label: 'Pay now',
                                       },
                                       {
-                                        value: 'pay-on-delivery',
+                                        value: 'payOnDelivery',
                                         label: 'Pay on Delivery',
                                       },
                                     ]}
@@ -618,7 +615,7 @@ export default function Shipping(props) {
                                         )
                                       }
                                       {
-                                        payNowOrOnDelivery === 'pay-now' && (
+                                        payNowOrOnDelivery === 'payNow' && (
                                           <div>
                                             <SwitchTransition mode={'out-in'}>
                                               <CSSTransition
@@ -734,7 +731,7 @@ export default function Shipping(props) {
                                         )}
 
                                       {
-                                        payNowOrOnDelivery === 'pay-on-delivery' && (
+                                        payNowOrOnDelivery === 'payOnDelivery' && (
                                           <div style={{marginBottom: '1rem'}}>
                                             <hr />
                                             <div>
@@ -766,7 +763,7 @@ export default function Shipping(props) {
                               </div>
                               <Totals>
                                 <div>
-                                  <h2>The Maths</h2>
+                                  <h3>The Maths</h3>
                                 </div>
                                 <div style={{
                                   display: 'grid',
@@ -822,7 +819,7 @@ export default function Shipping(props) {
 
                             <div id={'footer'}>
                               {
-                                payNowOrOnDelivery === 'pay-on-delivery' ||
+                                payNowOrOnDelivery === 'payOnDelivery' ||
                                 payOnlineOrBuyGoods === 'buy-goods' ?
                                   (
                                     <div style={{
