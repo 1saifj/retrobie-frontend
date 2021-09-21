@@ -143,10 +143,11 @@ const CreateProductModal = (props: {
               uuid,
               name: '',
               brand: '',
-              productTypeId: '',
+              productType: {
+                uuid: '',
+              },
               images: [],
               folder: '',
-              purchasePrice: 0,
               availableOptions: [],
               description: {
                 long: '',
@@ -171,9 +172,7 @@ const CreateProductModal = (props: {
 
               const values = {
                 ...submitValues,
-                productType: {
-                  uuid: submitValues.productTypeId,
-                },
+                productType: submitValues.productType,
                 images: submitValues.images?.map(({id, ...rest}) => ({...rest})),
                 description: submitValues.description,
                 brands: [
@@ -219,7 +218,7 @@ const CreateProductModal = (props: {
                 })),
               };
 
-              // delete values.brand;
+              delete values.brand;
 
               if (!values.images) {
                 notify.warning('Please select a few images before proceeding.');
@@ -318,7 +317,7 @@ const CreateProductModal = (props: {
                       placeholder={'eg. Sneakers, Men\'s shoes`'}
                       onChange={selectedCategories => {
                         const mappedCategories = selectedCategories.map(item => ({
-                          name: item.label,
+                          name: humps.titleCase(item.label),
                           uuid: item.value,
                         }));
                         setFieldValue('categories', mappedCategories);
@@ -430,7 +429,7 @@ const CreateProductModal = (props: {
                   </Columns>
                 </div>
                 {
-                  values.productTypeId && (
+                  values.productType.uuid && (
                     <CreateProductComponent
                       allProductTypes={allProductTypes}
                       setFieldValue={setFieldValue}
