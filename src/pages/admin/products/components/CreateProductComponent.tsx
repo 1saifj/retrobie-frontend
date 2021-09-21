@@ -31,7 +31,7 @@ function CreateProductComponent(props: {
                       <CreateVariantComponent
                         variantIndex={index}
                         onDeleteVariant={(index) => arrayHelpers.remove(index)}
-                        productTypeId={props.values.productType.id}
+                        productTypeId={props.values.productType.uuid}
                         allProductTypes={props.allProductTypes}
                         setFieldValue={props.setFieldValue}
                         name={variant.name}

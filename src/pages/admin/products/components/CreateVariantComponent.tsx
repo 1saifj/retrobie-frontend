@@ -27,7 +27,9 @@ const CreateVariantComponent = ({allProductTypes, onDeleteVariant, productTypeId
     setUploaderName(name);
   }, [name]);
 
-  if (!productTypeId) return <span />;
+  if (!productTypeId) {
+    return <span>No productId provided</span>;
+  }
 
   return (
     <VariantParent className="bordered">

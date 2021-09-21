@@ -418,7 +418,7 @@ const CreateProductModal = (props: {
                             };
                           })}
                           onChange={({value}) => {
-                            setFieldValue('productTypeId', value);
+                            setFieldValue('productType.uuid', value);
                             // push an empty variant to the list to have it render immediately
                             // a product type is selected
                             setFieldValue('variants', [{}]);
