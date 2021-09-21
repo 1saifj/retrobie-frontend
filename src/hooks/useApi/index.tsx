@@ -209,8 +209,8 @@ const useApi = function () {
       `/products/re-index?deleteAll=${data.deleteAll}&createIndexIfNotExists=${data.createIndexIfNotExists}&setAttributesForFaceting=${data.setAttributesForFaceting}`,
     ),
     update: (id, data) => async () => (await getAxis()).put(`/products/${id}/update`, data),
-    deleteImage: async ({productId, fileId}) =>
-      (await getAxis()).delete(`/products/${productId}/image/${fileId}`),
+    deleteImage: async ({fileId}) =>
+      (await getAxis()).delete(`/image/${fileId}`),
     getBrandProductsWithQuery: async (brandName) => (await getAxis()).get(`/products/brand/${brandName}`),
   };
 
