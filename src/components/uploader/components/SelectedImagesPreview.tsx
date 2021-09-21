@@ -104,6 +104,7 @@ function SelectedImagesPreview({folder, uploaderId, onUpload, allowMultiple, isS
             }),
           );
 
+          setUploadingPercent(0);
           if (uploadData) {
             const uploadedImage: UploadedImageType = {
               id: currentImage.id,
@@ -167,7 +168,7 @@ function SelectedImagesPreview({folder, uploaderId, onUpload, allowMultiple, isS
                         }}>
                           <CircularProgressbar
                             value={uploadingPercent}
-                            text={`${uploadingPercent}%`} />;
+                            text={`${uploadingPercent !== 100 ? uploadingPercent : 'Finishing up...'}%`} />;
                         </div>
                       )
                     }
