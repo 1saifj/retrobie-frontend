@@ -27,6 +27,7 @@ import styled from 'styled-components';
 import CreateProductComponent from './CreateProductComponent';
 import {deleteAllImagesForUploaderAction} from '../../../../state/actions';
 import humps from '../../../../helpers/humps';
+import {Persist} from 'formik-persist';
 
 
 // const MESSAGES = {
@@ -236,6 +237,7 @@ const CreateProductModal = (props: {
                 values.variants.forEach(variant => {
                   deleteLocallyStoredUploads({uploaderId: humps.generateUploaderId(variant.name)});
                 });
+                localStorage.removeItem('createProductForm');
                 notify.success('Created product successfully');
               } catch (e) {
                 setSubmitting(false);
@@ -248,6 +250,7 @@ const CreateProductModal = (props: {
           >
             {({values, isSubmitting, setFieldValue}) => (
               <Form>
+                <Persist name="createProductForm" />
                 <div className="bordered">
                   <h4>Product images</h4>
                   <ImageUploader
