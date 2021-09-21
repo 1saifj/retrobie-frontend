@@ -10,7 +10,13 @@ import {
   TOGGLE_SIDEBAR,
   SAVE_CHECKOUT_ADDRESS,
   SAVE_SHIPPING_QUOTE,
-  SAVE_ZOOM_LEVEL, FETCH_REMOTE_CART, EMPTY_CART, IMAGE_UPLOADED, REMOVE_UPLOADED_IMAGE, FETCH_FILTERED_PRODUCTS,
+  SAVE_ZOOM_LEVEL,
+  FETCH_REMOTE_CART,
+  EMPTY_CART,
+  ADD_IMAGE_TO_STATE,
+  REMOVE_UPLOADED_IMAGE,
+  FETCH_FILTERED_PRODUCTS,
+  REMOVE_ALL_UPLOADED_IMAGES,
 } from './constants';
 import {AddressType, CartItemType, CartType, LoginResponseType} from '../../types';
 import {UploadedImageType} from '../../components/uploader/ImageUploader';
@@ -55,6 +61,8 @@ export const fetchFilteredProductsAction = (payload: {query: string}) =>
 export const toggleSidebarAction = (payload: {open: boolean}) =>
   createAction(TOGGLE_SIDEBAR, payload);
 export const imageUploadedAction = (payload: {image: UploadedImageType, uploaderId: string}) =>
-  createAction(IMAGE_UPLOADED, payload);
-export const deleteUploadedImageAction = (payload: {uploaderId: string}) =>
+  createAction(ADD_IMAGE_TO_STATE, payload);
+export const deleteUploadedImageAction = (payload: {uploaderId: string, fileId: string}) =>
   createAction(REMOVE_UPLOADED_IMAGE, payload);
+export const deleteAllImagesForUploaderAction = (payload: {uploaderId: string}) =>
+  createAction(REMOVE_ALL_UPLOADED_IMAGES, payload);
