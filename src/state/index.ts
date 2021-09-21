@@ -11,10 +11,10 @@ const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || compo
 
 const rootState = function() {
   const persistConfig = {
-    key: env.isStaging() || env.isDev() ? `redux:${env.getEnvironment()}`: 'redux',
+    key: env.isStaging() || env.isDev() ? `redux:${env.getEnvironment()}` : 'redux',
     storage: storage,
     stateReconciler: autoMergeLevel2, // see "Merge Process" section for details.
-    whitelist: ['cart', 'meta', 'user'],
+    whitelist: ['cart', 'meta', 'user', 'uploader'],
   };
 
   const tabsSyncMiddleWareConfig = {
