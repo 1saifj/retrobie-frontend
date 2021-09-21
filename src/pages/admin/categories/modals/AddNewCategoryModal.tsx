@@ -42,15 +42,10 @@ export default function({isActive, onClose}){
                 <Form>
                   <ImageUploader
                     folder={`/category/${slugify(values.name, {strict: true})}`}
-                    id={slugify(values.name, {strict: true})}
-                    onInit={(images => {
-                      if (images && images.length) {
-                        setFieldValue('landingImage', images[0]);
-                      }
-                    })}
-                    onUpload={(err, {images}) => {
+                    id={values.name}
+                    onUpload={(err, {uploadedImage}) => {
                       if (!err) {
-                        setFieldValue('landingImage', images[0]);
+                        setFieldValue('landingImage', uploadedImage);
                       }
                     }}
                     allowMultiple={false} />

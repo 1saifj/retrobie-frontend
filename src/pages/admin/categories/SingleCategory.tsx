@@ -54,21 +54,16 @@ export default function({match}){
                 <div>
                   <ImageUploader
                     folder={`/category/${match.params.slug}`}
-                    onInit={(images)=> {
-                      if (images?.length) {
-                        setUploadedImage(images[0]);
-                      }
-                    }}
                     initialImages={thisCategory.landingImage && [
                       {
                         ...thisCategory.landingImage,
                         md5: null,
                         fileId: thisCategory.landingImage.fileId,
                         uploaded: true,
-                        id: null
-                      }
+                        id: null,
+                      },
                     ]}
-                    onUpload={async (err, {images}) => await uploadLandingImage(images[0])}
+                    onUpload={async (err, {uploadedImage}) => await uploadLandingImage(uploadedImage)}
                     allowMultiple={false}
                     id={`category/${match.params.slug}`}/>
                 </div>
