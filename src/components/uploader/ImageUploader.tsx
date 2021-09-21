@@ -59,12 +59,12 @@ function ImageUploader(props: CustomImageUploaderParams) {
     allowMultiple,
   } = props;
 
+  if (!id) id = 'empty';
 
-  const cleanUploaderId = (id: string) => id.toLowerCase().trim().replace(/[^a-zA-Z0-9]/g, '');
 
-  const hashUploaderId = (id: string) => humps.md5(id);
+  const generateId = (id: string) => humps.generateUploaderId(id);
 
-  const uploaderId = useMemo(() => hashUploaderId(cleanUploaderId(id)), [id]);
+  const uploaderId = useMemo(() => generateId(id), [id]);
 
   const uploaderState: UploaderState = useSelector((state: RootStateOrAny) => state.uploader);
   const uploadedImages: UploadedImageType[] = uploaderState[uploaderId];

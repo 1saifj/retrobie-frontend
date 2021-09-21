@@ -123,6 +123,10 @@ var humps = {
   pascalize: pascalize,
   depascalize: decamelize,
   md5: md5,
+  generateUploaderId: (id) => {
+    const newId = id.toLowerCase().trim().replace(/[^a-zA-Z0-9]/g, '');
+    return md5(newId);
+  },
   camelizeKeys: function(object, options) {
     return _processKeys(_processor(camelize, options), object);
   },
