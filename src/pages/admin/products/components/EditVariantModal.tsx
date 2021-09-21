@@ -9,7 +9,7 @@ import {useApi, useNotify} from '../../../../hooks';
 import defaultHelpers, {extractErrorMessage} from '../../../../helpers';
 import useSWR from 'swr/esm/use-swr';
 import {useDispatch} from 'react-redux';
-import {deleteUploadedImageAction} from '../../../../state/actions';
+import {deleteAllImagesForUploaderAction} from '../../../../state/actions';
 
 
 const EditVariantModal = (props: {
@@ -29,10 +29,9 @@ const EditVariantModal = (props: {
 
   if (!workingVariant) return <span />;
 
-  const uploaderId = defaultHelpers.md5(workingVariant.name);
 
   const removeLocalUploaderId = (id) => {
-    return dispatch(deleteUploadedImageAction({uploaderId: id}));
+    return dispatch(deleteAllImagesForUploaderAction({uploaderId: id}));
   };
 
   return (
@@ -51,9 +50,11 @@ const EditVariantModal = (props: {
               stock: {
                 ...workingVariant.stock,
                 warehouse: {
-                  name: "retrobie warehouse"
-                }
-              }
+                  name: 'retrobie warehouse',
+                },
+              },
+              uploaderId: '',
+              folder: workingVariant.slug,
             }}
             onSubmit={async (values, {setSubmitting}) => {
               const {uuid, ...rest} = values;
@@ -100,7 +101,7 @@ const EditVariantModal = (props: {
                   },
                 });
 
-                removeLocalUploaderId(uploaderId);
+                removeLocalUploaderId(values.uploaderId);
                 setSubmitting(false);
                 notify.success('Updated variant successfully.');
                 // props.onClose();
@@ -116,17 +117,17 @@ const EditVariantModal = (props: {
                 <div>
                   <div className='bordered'>
                     <ImageUploader
-                      folder={'fold'}
+                      folder={values.folder}
                       // @ts-ignore
                       initialImages={workingVariant.images}
-                      onUpload={(err, {images, uploaderId}) => {
+                      onUpload={(err, {uploadedImage}) => {
+                        const images = values.images?.length ? [...values.images, uploadedImage] : [uploadedImage];
+
                         setFieldValue('images', images);
                       }}
                       allowMultiple={true}
-                      onInit={(images) => {
-                        setFieldValue('images', images);
-                      }}
-                      id={uploaderId} />
+                      onIdGenerated={({uploaderId}) => setFieldValue('uploaderId', uploaderId)}
+                      id={workingVariant.name} />
                   </div>
                   <div>
                     <EditVariantComponent
@@ -138,6 +139,7 @@ const EditVariantModal = (props: {
                     <Button
                       style={{width: "100%", marginTop: '1rem'}}
                       type="submit"
+                      isLoading={isSubmitting}
                       isColor="primary">
                       Submit
                     </Button>

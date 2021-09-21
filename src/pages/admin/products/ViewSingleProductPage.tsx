@@ -19,7 +19,7 @@ import defaultHelpers, {
 } from '../../../helpers';
 import {useDispatch} from 'react-redux';
 import useSWR from 'swr/esm/use-swr';
-import {deleteUploadedImageAction} from '../../../state/actions';
+import {deleteAllImagesForUploaderAction} from '../../../state/actions';
 import {BrandType, ProductTypeType, VariantType} from '../../../types';
 import {EmptyState} from '../../../components';
 import {DeadEyes2} from '../../../constants/icons';
@@ -44,8 +44,6 @@ const UpdateProductValidationSchema = Yup.object().shape({
 export default function ViewSingleProductPage(props) {
   const api = useApi();
   const dispatch = useDispatch();
-  const [showImageModal, setImageModalShown] = useState(false);
-  const [selectedImages, setSelectedImages] = useState([]);
 
   const [isCreateVariantModalActive, setCreateVariantModalActive] = useState(false);
   const [isEditVariantModalActive, setEditVariantModalActive] = useState(false);
@@ -122,6 +120,7 @@ export default function ViewSingleProductPage(props) {
         <Formik
           initialValues={{
             ...thisProductData,
+            uploaderId: '',
           }}
           onSubmit={async (values, {setSubmitting}) => {
             console.log('Submitting form...', values);
@@ -162,9 +161,7 @@ export default function ViewSingleProductPage(props) {
               // @ts-ignore
               await dispatch(api.products.update(thisProductData.uuid, diff));
               // Delete the now uploaded images
-              dispatch(deleteUploadedImageAction({
-                uploaderId: 'retro-image-uploader-' + productSlug,
-              }));
+              dispatch(deleteAllImagesForUploaderAction({uploaderId: values.uploaderId}));
               await mutate(null, true);
               notify('success', 'Updated product successfully.');
             } catch (e) {

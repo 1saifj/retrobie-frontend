@@ -16,7 +16,6 @@ const CreateVariantModal = (props: {
   // required when creating a new variant
   productTypeId?: string;
   productId: string;
-  // required when viewing/editing an existing variant
 }) => {
 
 
@@ -26,8 +25,6 @@ const CreateVariantModal = (props: {
 
   const allProductTypesFetcher = () => api.productTypes.getAll().then((result) => result.data);
   const {data: allProductTypes} = useSWR<ProductTypeType[]>('/product-type', allProductTypesFetcher);
-
-  const [uploadedImages, setUploadedImages] = useState([]);
 
   return (
     <div>
@@ -41,7 +38,9 @@ const CreateVariantModal = (props: {
 
           <Formik
             initialValues={{
-              variants: [{}],
+              variants: [],
+              name: '',
+              folder: '',
             }}
             onSubmit={async (submitValues, {setSubmitting}) => {
 
@@ -84,13 +83,15 @@ const CreateVariantModal = (props: {
                           {
                             values.variants?.map((variant, index) => (
                               <div>
-                                  <CreateVariantComponent
-                                    variantIndex={index}
-                                    onDeleteVariant={(index) => arrayHelpers.remove(index)}
-                                    productTypeId={props.productTypeId}
-                                    allProductTypes={allProductTypes}
-                                    setFieldValue={setFieldValue}
-                                  />
+                                <CreateVariantComponent
+                                  variantIndex={index}
+                                  folder={values.folder}
+                                  name={values.name}
+                                  onDeleteVariant={(index) => arrayHelpers.remove(index)}
+                                  productTypeId={props.productTypeId}
+                                  allProductTypes={allProductTypes}
+                                  setFieldValue={setFieldValue}
+                                />
                                 </div>
                               ))
                             }

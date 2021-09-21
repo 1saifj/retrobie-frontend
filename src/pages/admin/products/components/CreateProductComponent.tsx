@@ -7,9 +7,8 @@ import {ProductTypeType, VariantType} from '../../../../types';
 
 function CreateProductComponent(props: {
   allProductTypes: Array<ProductTypeType>;
-  productTypeId: string;
-  variants: Array<VariantType>;
   setFieldValue
+  values
 
 }){
 
@@ -27,14 +26,16 @@ function CreateProductComponent(props: {
             <div>
               <div>
                 {
-                  props.variants?.map((variant, index) => (
+                  props.values.variants?.map((variant, index) => (
                     <Columns>
                       <CreateVariantComponent
                         variantIndex={index}
-                        onDeleteVariant={(index)=> arrayHelpers.remove(index)}
-                        productTypeId={props.productTypeId}
+                        onDeleteVariant={(index) => arrayHelpers.remove(index)}
+                        productTypeId={props.values.productTypeId}
                         allProductTypes={props.allProductTypes}
                         setFieldValue={props.setFieldValue}
+                        name={props.values.name}
+                        folder={props.values.folder}
                       />
                     </Columns>
                   ))

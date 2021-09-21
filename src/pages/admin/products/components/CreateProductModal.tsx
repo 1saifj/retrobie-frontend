@@ -7,7 +7,7 @@
 import React, {useEffect, useState} from 'react';
 import Select from 'react-select';
 import {Button, Column, Columns, Field} from 'bloomer';
-import {FieldArray, Form, Formik, useFormikContext} from 'formik';
+import {Form, Formik, useFormikContext} from 'formik';
 import TextField from '../../../../components/input/TextField';
 import '../../../../assets/style/bulma-fx';
 import {v4 as uuidv4} from 'uuid';
@@ -17,16 +17,15 @@ import Editor from '../../../../components/editor/Editor';
 import ImageUploader from '../../../../components/uploader/ImageUploader';
 import {SelectField} from '../../../../components/input';
 import {useApi} from '../../../../network';
-import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import useSWR from 'swr/esm/use-swr';
 import CreatableSelect from 'react-select/creatable';
 import {BrandType, CategoryType, ProductTypeType} from '../../../../types';
-import {MetaState} from '../../../../state/reducers/metaReducers';
 import {useNotify} from '../../../../hooks';
 import CustomModal from '../../../../components/CustomModal';
 import styled from 'styled-components';
-import { deleteUploadedImageAction } from '../../../../state/actions';
 import CreateProductComponent from './CreateProductComponent';
+import {deleteAllImagesForUploaderAction} from '../../../../state/actions';
 
 
 // const MESSAGES = {
@@ -103,11 +102,7 @@ const CreateProductModal = props => {
 
   const notify = useNotify();
 
-  const [uploaderId, setUploaderId] = useState('create-product-uploader');
-
-  const metaState: MetaState = useSelector((state: RootStateOrAny) => state.meta);
-
-  const uploadedImages = metaState.components.imageUploader['retro-image-uploader-'+ uploaderId];
+  const [uploaderId, setUploaderId] = useState(null);
 
   const allBrandsFetcher = () => api.brands.getAll().then(({data}) => data);
   const {data: allBrands} = useSWR<BrandType[]>('/brands/all', allBrandsFetcher);
@@ -128,6 +123,8 @@ const CreateProductModal = props => {
     }
   }, [allCategories]);
 
+  const deleteLocallyStoredUploads = ({uploaderId}) => dispatch(deleteAllImagesForUploaderAction({uploaderId}));
+
   return (
     <div>
       <CustomModal
@@ -142,82 +139,82 @@ const CreateProductModal = props => {
               uuid,
               name: '',
               brand: '',
-              productType: '',
+              productTypeId: '',
               images: [],
               folder: '',
               purchasePrice: 0,
               availableOptions: [],
-              long: '',
-              short: '',
-              seo: '',
+              description: {
+                long: '',
+                short: '',
+                seo: '',
+              },
               categories: [],
-              variants: [],
+              variants: [{
+                options: [{
+                  name: '',
+                  uuid: '',
+                  attribute: {
+                    uuid: '',
+                    value: '',
+                  },
+                }],
+              }],
             }}
             onSubmit={async (submitValues, {setSubmitting}) => {
 
               const values = {
                 ...submitValues,
                 productType: {
-                  uuid: submitValues.productType,
+                  uuid: submitValues.productTypeId,
                 },
-                images: uploadedImages?.map(({id, ...rest}) => ({...rest})),
-                description: {
-                  long: submitValues.long,
-                  short: submitValues.short,
-                  seo: submitValues.seo,
-                },
+                images: submitValues.images?.map(({id, ...rest}) => ({...rest})),
+                description: submitValues.description,
                 brands: [
                   submitValues.brand,
                 ],
-                admin: {
-                  purchasePrice: submitValues.purchasePrice,
-                },
                 availableOptions: Object.values( // we only want the values present in the reduced object
-                                                // the keys are only used to ensure uniqueness
+                  // the keys are only used to ensure uniqueness
                   submitValues.variants
                     // first flatten the options
-                    .flatMap(variant=> variant.options)
+                    .flatMap(variant => variant.options)
                     // and map them so that they conform to our API's expectations
-                    .reduce((accumulator, currentValue)=> {
+                    .reduce((accumulator, currentValue) => {
                       // check if the accumulator object already contains the current option's name
-                      if (accumulator[currentValue.name]){
+                      if (accumulator[currentValue.name]) {
                         accumulator[currentValue.name].uuid = currentValue.uuid;
                         // if the optionValue doesn't already exist in the accumulator
                         if (
                           !accumulator[currentValue.name]
                             .optionValues
-                            .some(item => item.uuid === currentValue.value.uuid)
+                            .some(item => item.uuid === currentValue.attribute.uuid)
                         ) {
-                          accumulator[currentValue.name].optionValues.push(currentValue.value);
+                          accumulator[currentValue.name].optionValues.push(currentValue.attribute);
                         } //  else {
                           //  console.log('Already exists. Not pushing: ', currentValue);
                         //  }
-                      }else {
+                      } else {
                         accumulator[currentValue.name] = {
                           name: currentValue.name,
                           uuid: currentValue.uuid,
-                          optionValues: [currentValue.value]
-                        }
+                          optionValues: [currentValue.attribute],
+                        };
                       }
                       return accumulator;
-                    }, {})
+                    }, {}),
                 ),
-                variants: submitValues.variants.map(({options, ...rest})=> ({
+                variants: submitValues.variants.map(({options, ...rest}) => ({
                   ...rest,
-                  optionValues: options.map(option=> ({
+                  optionValues: options.map(option => ({
                     uuid: option.attribute.uuid,
                     value: option.attribute.value,
-                  }))
-                }))
+                  })),
+                })),
               };
 
-              // clean up
-              delete values.long;
-              delete values.short;
-              delete values.seo;
-              delete values.brand;
+              // delete values.brand;
 
-              console.log('Submitting: ', values);
+              console.log('Submitting: ', submitValues);
 
               if (!values.images) {
                 notify.warning('Please select a few images before proceeding.');
@@ -228,11 +225,10 @@ const CreateProductModal = props => {
 
               try {
                 await dispatch<any>(api.products.create(values));
-
                 setSubmitting(false);
-                dispatch(deleteUploadedImageAction({uploaderId}));
-                notify.success("Created product successfully");
-              }catch (e){
+                deleteLocallyStoredUploads({uploaderId});
+                notify.success('Created product successfully');
+              } catch (e) {
                 setSubmitting(false);
                 const message = extractErrorMessage(e);
                 notify.error(message);
@@ -247,16 +243,16 @@ const CreateProductModal = props => {
                   <h4>Product images</h4>
                   <ImageUploader
                     allowMultiple={true}
-                    id={`create-product-uploader`}
+                    id={values.name}
                     folder={values.folder}
-                    instantUpload={false}
-                    isSelectDisabled={!values.brand || !values.name}
-                    onUpload={(err, {uploaderId, images}) => {
+                    isSelectDisabled={!values.name}
+                    onIdGenerated={({uploaderId, uploadedImages}) => {
                       setUploaderId(uploaderId);
-                      setFieldValue('images', images);
+                      setFieldValue('images', uploadedImages);
                     }}
-                    onClickSelectedImage={(images) => {
-                      props.onClickSelectedImage(images);
+                    onUpload={(err, {uploadedImage}) => {
+                      const newImages = values.images?.length ? [...values.images, uploadedImage] : [uploadedImage];
+                      setFieldValue('images', newImages);
                     }}
                   />
                 </div>
@@ -269,8 +265,12 @@ const CreateProductModal = props => {
                     gridGap: '18px',
                   }}>
                     <TextField
-                      label={<>What's the <span className="accented">name</span> of this
-                        product?</>}
+                      label={
+                        <>
+                          What's the <span className="accented">name</span> of this
+                          product?
+                        </>
+                      }
                       placeholder="eg. Air Force 1" type="text"
                       name="name" />
 
@@ -284,7 +284,7 @@ const CreateProductModal = props => {
                           label: capitalize(item.name),
                           value: {
                             uuid: item.uuid,
-                            name: item.name
+                            name: item.name,
                           },
                         }))}
                         onChange={({value}) => setFieldValue('brand', value)}
@@ -330,38 +330,17 @@ const CreateProductModal = props => {
                   </Field>
                 </div>
 
-                <div className="bordered">
-                  <div>
-                    <h4>Admin details</h4>
-                    <Columns>
-                      <Column isSize={{desktop: '1/2'}}>
-                        <Field>
-                          <TextField
-                            label={<>
-                              What was the &nbsp;
-                              <span className='accented'>purchase price</span> &nbsp;
-                              of this product?</>}
-                            type="number"
-                            placeholder="eg. 10"
-                            name="purchasePrice" />
-                        </Field>
-
-                      </Column>
-                    </Columns>
-                  </div>
-                </div>
-
                 <Monitor />
                 <div className="bordered">
                   <h4>Product description</h4>
                   <Field>
                     <Editor
-                      defaultValue={values.long}
+                      defaultValue={values.description.long}
                       label={<>Describe this product <span
                         className="accented">in as many or few words</span> as
                         possible.</>}
                       placeholder="Please enter a description"
-                      onChange={value => setFieldValue('long', value)}
+                      onChange={value => setFieldValue('description.long', value)}
                     />
                     <span id="word-count" />
                   </Field>
@@ -374,7 +353,7 @@ const CreateProductModal = props => {
                       placeholder="Short description"
                       type="textarea"
                       chars={80}
-                      name="short" />
+                      name="description.short" />
 
                   </Field>
                   <Field>
@@ -385,7 +364,7 @@ const CreateProductModal = props => {
                       placeholder="Copy"
                       type="textarea"
                       chars={150}
-                      name="seo" />
+                      name="description.seo" />
 
                   </Field>
                 </div>
@@ -393,17 +372,6 @@ const CreateProductModal = props => {
                   <div className="bordered">
                     <h4>Stock</h4>
                     <Columns>
-                      <Column isSize={{desktop: '1/2'}}>
-                        <Field>
-                          <TextField
-                            label={<>
-                              <span className='accented'>How many products</span> are in stock?</>}
-                            type="number"
-                            placeholder="eg. 10"
-                            name="inStock" />
-                        </Field>
-
-                      </Column>
                       <Column isSize={{desktop: '1/2'}}>
                         <Field>
                           <TextField
@@ -441,7 +409,7 @@ const CreateProductModal = props => {
                             };
                           })}
                           onChange={({value}) => {
-                            setFieldValue('productType', value);
+                            setFieldValue('productTypeId', value);
                             // push an empty variant to the list to have it render immediately
                             // a product type is selected
                             setFieldValue('variants', [{}]);
@@ -452,12 +420,11 @@ const CreateProductModal = props => {
                   </Columns>
                 </div>
                 {
-                  values.productType && (
+                  values.productTypeId && (
                     <CreateProductComponent
                       allProductTypes={allProductTypes}
-                      productTypeId={values.productType}
                       setFieldValue={setFieldValue}
-                      variants={values.variants}/>
+                      values={values} />
                   )
                 }
                 <div style={{marginTop: 24}}>
@@ -475,6 +442,8 @@ const CreateProductModal = props => {
           </Formik>
         </CreateProductParent>
       </CustomModal>
+
+
     </div>
   );
 };

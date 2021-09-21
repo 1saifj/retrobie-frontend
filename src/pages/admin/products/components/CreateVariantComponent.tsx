@@ -10,17 +10,15 @@ import RadioField from '../../../../components/input/RadioField';
 import ImageUploader from '../../../../components/uploader/ImageUploader';
 
 
-const CreateVariantComponent = ({allProductTypes, onDeleteVariant, productTypeId, setFieldValue, variantIndex}: {
+const CreateVariantComponent = ({allProductTypes, onDeleteVariant, productTypeId, folder, name, setFieldValue, variantIndex}: {
   allProductTypes: Array<ProductTypeType>
   productTypeId: string,
   onDeleteVariant: Function,
   variantIndex: number,
-  setFieldValue: Function
+  setFieldValue: Function,
+  folder: string
+  name: string
 }) => {
-
-  const [variantName, setVariantName] = useState(null);
-
-  const uploaderId = variantName ? defaultHelpers.md5(variantName) : '';
 
   if (!productTypeId) return <span />;
 
@@ -36,15 +34,11 @@ const CreateVariantComponent = ({allProductTypes, onDeleteVariant, productTypeId
         </div>
       </header>
       <ImageUploader
-        folder={'fold'}
-        onInit={(images) => {
-          setFieldValue('images', images);
-        }}
-        onUpload={(err, {images, uploaderId}) => {
-          setFieldValue('images', images);
+        folder={folder}
+        onUpload={() => {
         }}
         allowMultiple={true}
-        id={uploaderId} />
+        id={name} />
 
       <Columns>
         <Column>
@@ -53,7 +47,6 @@ const CreateVariantComponent = ({allProductTypes, onDeleteVariant, productTypeId
             name={`variants.${(variantIndex)}.name`}
             placeholder={'The name of this variant'}
             type={'text'}
-            onBlur={(e) => setVariantName(e.target.value)}
           />
         </Column>
       </Columns>

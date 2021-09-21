@@ -129,24 +129,7 @@ const ProductPageHeader = () => {
     <>
       <div>
 
-        <CreateProductModal
-          isActive={isCreateProductModalActive}
-          onClickSelectedImage={images => {
-            setShowSelectedImageModal(true);
-            setSelectedImages(images);
-          }}
-          onClose={() => {
-            setCreateProductModalActive(false);
-            setShowSelectedImageModal(false);
-          }}
-        />
-        <SelectedImageModal
-          showModal={showSelectedImageModal}
-          images={selectedImages}
-          onClose={() => {
-            setShowSelectedImageModal(false);
-          }}
-        />
+        <CreateProductModal isActive={isCreateProductModalActive} />
       </div>
       <div className="buttons mt-4 is-flex">
         <Button
