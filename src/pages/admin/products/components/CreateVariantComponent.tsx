@@ -10,18 +10,24 @@ import RadioField from '../../../../components/input/RadioField';
 import ImageUploader from '../../../../components/uploader/ImageUploader';
 
 
-const CreateVariantComponent = ({allProductTypes, onDeleteVariant, productTypeId, folder, name, setFieldValue, variantIndex}: {
+const CreateVariantComponent = ({allProductTypes, onDeleteVariant, productTypeId, folder, values, name, setFieldValue, variantIndex}: {
   allProductTypes: Array<ProductTypeType>
   productTypeId: string,
   onDeleteVariant: Function,
   variantIndex: number,
   setFieldValue: Function,
+  values,
   folder: string
   name: string
 }) => {
 
-  if (!productTypeId) return <span />;
+  const [uploaderName, setUploaderName] = useState(name);
 
+  useEffect(() => {
+    setUploaderName(name);
+  }, [name]);
+
+  if (!productTypeId) return <span />;
 
   return (
     <VariantParent className="bordered">
@@ -35,10 +41,13 @@ const CreateVariantComponent = ({allProductTypes, onDeleteVariant, productTypeId
       </header>
       <ImageUploader
         folder={folder}
-        onUpload={() => {
+        onIdGenerated={({uploadedImages}) => setFieldValue(`variants.${(variantIndex)}.images`, uploadedImages)}
+        onUpload={(err, {uploadedImage}) => {
+          const uploadedImages = values.images ? [...values.images, uploadedImage] : [uploadedImage];
+          setFieldValue(`variants.${(variantIndex)}.images`, uploadedImages);
         }}
         allowMultiple={true}
-        id={name} />
+        id={uploaderName} />
 
       <Columns>
         <Column>
