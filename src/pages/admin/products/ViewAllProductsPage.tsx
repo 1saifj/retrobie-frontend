@@ -121,15 +121,15 @@ const ProductPageHeader = () => {
 
   const [indexingProducts, setIndexingProducts] = useState(false);
 
-  const [showSelectedImageModal, setShowSelectedImageModal] = useState(false);
-  const [selectedImages, setSelectedImages] = useState([]);
   const [isCreateProductModalActive, setCreateProductModalActive] = useState(false);
 
   return (
     <>
       <div>
 
-        <CreateProductModal isActive={isCreateProductModalActive} />
+        <CreateProductModal
+          onClose={() => setCreateProductModalActive(false)}
+          isActive={isCreateProductModalActive} />
       </div>
       <div className="buttons mt-4 is-flex">
         <Button
