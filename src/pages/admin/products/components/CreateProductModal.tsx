@@ -226,7 +226,12 @@ const CreateProductModal = props => {
               try {
                 await dispatch<any>(api.products.create(values));
                 setSubmitting(false);
+                // delete the product image
                 deleteLocallyStoredUploads({uploaderId});
+                // and delete the variant images
+                values.variants.forEach(variant => {
+                  deleteLocallyStoredUploads({uploaderId: humps.generateUploaderId(variant.name)});
+                });
                 notify.success('Created product successfully');
               } catch (e) {
                 setSubmitting(false);
