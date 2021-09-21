@@ -34,7 +34,7 @@ const uploaderReducers = (state = initialState, action) => {
     case REMOVE_ALL_UPLOADED_IMAGES:
       let removeAllImagesState = Object.assign({}, state);
       const {uploaderId: rId}: {uploaderId: string;} = action.payload;
-      removeAllImagesState[rId] = [];
+      delete removeAllImagesState[rId];
       return removeAllImagesState;
     default:
       return state;
