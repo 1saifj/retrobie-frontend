@@ -204,7 +204,7 @@ class DefaultHelpers {
   titleCase(str: string) {
     if (str) {
       return str.split(' ')
-        .map(w => w[0].toUpperCase() + w.substr(1).toLowerCase())
+        .map(w => w[0]?.toUpperCase() + w?.substr(1).toLowerCase())
         .join(' ');
     }
     return '';
