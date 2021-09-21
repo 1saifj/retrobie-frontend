@@ -26,6 +26,7 @@ import CustomModal from '../../../../components/CustomModal';
 import styled from 'styled-components';
 import CreateProductComponent from './CreateProductComponent';
 import {deleteAllImagesForUploaderAction} from '../../../../state/actions';
+import humps from '../../../../helpers/humps';
 
 
 // const MESSAGES = {
@@ -96,7 +97,10 @@ function Monitor() {
   return <span />;
 }
 
-const CreateProductModal = props => {
+const CreateProductModal = (props: {
+  isActive?: boolean,
+  onClose: Function
+}) => {
   const api = useApi();
   const dispatch = useDispatch();
 
@@ -129,7 +133,7 @@ const CreateProductModal = props => {
     <div>
       <CustomModal
         closeOnClickBackground={true}
-        onClose={() => props.onClose()}
+        onClose={() => props.onClose?.()}
         isActive={props.isActive}>
         <CreateProductParent isActive={props.isActive}>
           <h2>Create a new product or variant</h2>
@@ -151,6 +155,8 @@ const CreateProductModal = props => {
               },
               categories: [],
               variants: [{
+                name: '',
+                images: [],
                 options: [{
                   name: '',
                   uuid: '',
@@ -214,8 +220,6 @@ const CreateProductModal = props => {
               };
 
               // delete values.brand;
-
-              console.log('Submitting: ', submitValues);
 
               if (!values.images) {
                 notify.warning('Please select a few images before proceeding.');
