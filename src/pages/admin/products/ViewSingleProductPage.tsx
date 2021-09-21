@@ -183,40 +183,23 @@ export default function ViewSingleProductPage(props) {
                 <div>
                   <ImageUploader
                     allowMultiple={true}
-                    id={productSlug}
+                    id={values.name}
                     folder={`products/${slugify(thisProductData.brand, {lower: true})}/${slugify(values.name)}`}
                     initialImages={values.images}
-                    onClickSelectedImage={images => {
-                      setImageModalShown(!showImageModal);
-                      setSelectedImages(images);
+                    onIdGenerated={({uploaderId}) => {
+                      setFieldValue('uploaderId', uploaderId);
                     }}
-                    onDeleteUploadedImage={async ({fileId}) => {
-                      try {
-                        await api.products.deleteImage({
-                          productId: thisProductData.uuid,
-                          fileId,
-                        });
-                        await mutate(null, true);
-                        notify('success', 'Image deleted');
-                      } catch (e) {
-                        const message = extractErrorMessage(e);
-                        notify('error', message);
-                      }
-                    }}
-                    onInit={images => setFieldValue('images', images)}
-                    onUpload={(err, {images: all}) => {
+                    onUpload={(err, {uploadedImage}) => {
                       notify('success', 'Image uploaded successfully.');
                       if (err) {
                         notify('error', 'Failed to upload one or more of your images');
                         return;
                       }
-                      setFieldValue('images', all);
+                      const newImages = values.images?.length ? [...values.images, uploadedImage] : [uploadedImage];
+
+
+                      setFieldValue('images', newImages);
                     }}
-                  />
-                  <SelectedImageModal
-                    showModal={showImageModal}
-                    onClose={() => setImageModalShown(false)}
-                    images={selectedImages}
                   />
                 </div>
                 <div>

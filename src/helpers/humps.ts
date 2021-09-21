@@ -7,7 +7,7 @@
 // humps is copyright © 2012+ Dom Christie
 // Released under the MIT license.
 
-
+import md5 from 'md5';
 var _processKeys = function(convert, obj, options?) {
   if (!_isObject(obj) || _isDate(obj) || _isRegExp(obj) || _isBoolean(obj) || _isFunction(obj)) {
     return obj;
@@ -122,6 +122,7 @@ var humps = {
   decamelize: decamelize,
   pascalize: pascalize,
   depascalize: decamelize,
+  md5: md5,
   camelizeKeys: function(object, options) {
     return _processKeys(_processor(camelize, options), object);
   },
