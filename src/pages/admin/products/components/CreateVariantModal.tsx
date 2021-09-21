@@ -86,10 +86,11 @@ const CreateVariantModal = (props: {
                                 <CreateVariantComponent
                                   variantIndex={index}
                                   folder={values.folder}
-                                  name={values.name}
+                                  name={variant.name}
                                   onDeleteVariant={(index) => arrayHelpers.remove(index)}
                                   productTypeId={props.productTypeId}
                                   allProductTypes={allProductTypes}
+                                  values={values}
                                   setFieldValue={setFieldValue}
                                 />
                                 </div>

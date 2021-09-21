@@ -34,7 +34,8 @@ function CreateProductComponent(props: {
                         productTypeId={props.values.productTypeId}
                         allProductTypes={props.allProductTypes}
                         setFieldValue={props.setFieldValue}
-                        name={props.values.name}
+                        name={variant.name}
+                        values={props.values}
                         folder={props.values.folder}
                       />
                     </Columns>
