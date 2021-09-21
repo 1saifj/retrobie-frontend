@@ -210,7 +210,7 @@ const useApi = function () {
     ),
     update: (id, data) => async () => (await getAxis()).put(`/products/${id}/update`, data),
     deleteImage: async ({fileId}) =>
-      (await getAxis()).delete(`/image/${fileId}`),
+      (await getAxis()).delete(`/images/${fileId}`),
     getBrandProductsWithQuery: async (brandName) => (await getAxis()).get(`/products/brand/${brandName}`),
   };
 

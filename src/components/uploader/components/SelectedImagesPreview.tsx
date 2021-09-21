@@ -245,6 +245,7 @@ const SelectedImage = styled.div`
     
     .CircularProgressbar-text, .CircularProgressbar-path {
        stroke: var(--color-primary);
+       fill: var(--color-primary-dark);
     }
   }
   
