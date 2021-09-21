@@ -205,6 +205,7 @@ const CreateProductModal = props => {
                 ),
                 variants: submitValues.variants.map(({options, ...rest}) => ({
                   ...rest,
+                  images: rest.images?.map(({id, ...rest}) => rest),
                   optionValues: options.map(option => ({
                     uuid: option.attribute.uuid,
                     value: option.attribute.value,
