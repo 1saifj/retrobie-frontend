@@ -46,7 +46,7 @@ const CreateVariantComponent = ({allProductTypes, onDeleteVariant, productTypeId
         onIdGenerated={({uploadedImages}) => setFieldValue(`variants.${(variantIndex)}.images`, uploadedImages)}
         onUpload={(err, {uploadedImage}) => {
           const images = values.variants[variantIndex].images;
-          const uploadedImages = images.length ? [...images, uploadedImage] : [uploadedImage];
+          const uploadedImages = images?.length ? [...images, uploadedImage] : [uploadedImage];
           setFieldValue(`variants.${(variantIndex)}.images`, uploadedImages);
         }}
         allowMultiple={true}
