@@ -36,7 +36,7 @@ const OutOfStockTag = () => (
 
 const ProductItemImage = ({thumbnailUrl, alt}) => (
   <div className="product__item__image">
-    <RetroImage src={thumbnailUrl} alt={alt} />
+    <RetroImage style={{height: '100%'}} src={thumbnailUrl} alt={alt} />
   </div>
 
 );
@@ -104,7 +104,7 @@ const ProductItemParent = styled(Link)<{isInStock: boolean}>`
   }
   
   .product__item__image {
-    max-height: 100%;
+    height: 100%;
     opacity: ${props => props.isInStock ? 1 : 0.5};
   }
 
