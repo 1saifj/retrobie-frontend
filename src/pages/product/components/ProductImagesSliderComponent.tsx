@@ -1,10 +1,10 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import RetroImage from '../../../components/image';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
 import {ImageType} from '../../../types';
+import {Dot} from '../ProductPage';
 
 function isNarrowDevice() {
   return window.innerWidth <= 600;
@@ -88,41 +88,6 @@ export default function ProductImagesSliderComponent({images, productName}) {
   );
 }
 
-const Dot = styled.div<{
-  isActive: boolean,
-  isNarrow: boolean
-}>`
-    border: 2px solid ${p=> p.isActive ? "#444": "#ccc"};
-    border-radius: 4px;
-    margin-right: 8px;
-    margin-bottom: 8px;
-    max-width: ${p => (p.isNarrow ? '40px' : '70px')};
-    min-height: 64px;
-    -webkit-transition: all 0.25s ease-in-out;
-    transition: all 0.25s ease-in-out;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-pack: center;
-    -webkit-justify-content: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    -webkit-align-items: center;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    background: #f6f6f6;
-    
-    &:hover {
-      border: 2px solid #444444;
-      cursor: pointer;
-    }
-    &:active,
-    &:focus {
-      outline: none;
-    }
-`
 
 const ProductSliderParent = styled.div`
   width: 80%;

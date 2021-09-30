@@ -699,23 +699,40 @@ const AvailableColors = styled.div`
   gap: 0.5rem;
 `;
 
-const Color = styled.div<{isActive?: boolean}>`
-  max-width: 80px;
-  border-radius: 0.2rem;
-  border: ${props => !props.isActive ? '2px solid lightgray' : '2px solid var(--color-primary)'};
-  width: max-content;
-  transition: all 0.25s ease-in-out;
-  display: flex;
-  align-items: center;
-
-  @media screen and (max-width: 768px) {
-     padding: 8px 10px;      
-  }
-
-  &:hover {
-    cursor: pointer;
-    border: 2px solid gray;
-  }
+export const Dot = styled.div<{
+  isActive: boolean,
+  isNarrow?: boolean
+}>`
+    border: 2px solid ${p => p.isActive ? '#444' : '#ccc'};
+    border-radius: 4px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    max-width: ${p => (p.isNarrow ? '40px' : '70px')};
+    min-height: 64px;
+    -webkit-transition: all 0.25s ease-in-out;
+    transition: all 0.25s ease-in-out;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    background: #f6f6f6;
+    
+    &:hover {
+      border: 2px solid #444444;
+      cursor: pointer;
+    }
+    &:active,
+    &:focus {
+      outline: none;
+    }
 `;
 
 const InDepth = styled.div`
