@@ -19,9 +19,9 @@ import useSWR from 'swr/esm/use-swr';
 import ServerError from '../../assets/images/vectors/dead.svg';
 import {useNotify} from '../../hooks';
 import {UserInfoType} from '../../state/reducers/userReducers';
-import CheckoutLoggedInContainer from './components/CheckoutLoggedinContainer';
-import CheckoutLogInContainer from './components/CheckoutLogInContainer';
-import CheckoutCart from './components/CheckoutCart';
+import UserComponent from './components/LoggedinContainer';
+import SignInComponent from './components/CheckoutLogInContainer';
+import Cart from './components/CheckoutCart';
 import useFetchers from '../../hooks/useFetchers/useFetchers';
 
 
@@ -99,33 +99,29 @@ export default function CheckoutPage(props) {
         <Helmet>
           <title>Retrobie | Checkout</title>
         </Helmet>
-        <CheckoutPageParent>
+        <Section>
           <Container>
             <Columns>
-              {
 
-                isUserLoggedIn ?
-                  <CheckoutLoggedInContainer user={userInfo} />
-                  : <CheckoutLogInContainer submitCart={submitCart} />}
+              <Column isSize={{mobile: 'full', desktop: '1/2'}}>
+                {
 
-              <Column
-                isSize={{
-                  desktop: '1/2',
-                }}>
-                <CheckoutCart
-                  cartId={cartId}
-                  submitCart={submitCart} />
+                  isUserLoggedIn ?
+                    <SignInComponent submitCart={submitCart} /> :
+                    <UserComponent user={userInfo} />
+
+                }
+              </Column>
+
+
+              <Column isSize={{desktop: '1/2'}}>
+                <Cart cartId={cartId} submitCart={submitCart} />
               </Column>
             </Columns>
 
           </Container>
-        </CheckoutPageParent>
+        </Section>
       </Layout>
     </>
   );
 }
-
-const CheckoutPageParent = styled(Section)`
-
-
-`
