@@ -9,7 +9,7 @@ import SEOHeader from '../../components/SEOHeader';
 import useFetchers from '../../hooks/useFetchers/useFetchers';
 import {Filters} from '../../components/filters/Filters';
 import styled from 'styled-components';
-import FilterItems from '../../components/filters/FilterItems';
+import ProductList from '../../components/filters/ProductList';
 import defaultHelpers from '../../helpers';
 
 
@@ -78,7 +78,7 @@ const CategoryPage = function({match}) {
           <Filters products={categoryProducts}>
             {
               filteredProducts =>
-                <FilterItems products={filteredProducts} />
+                <ProductList products={filteredProducts} />
             }
           </Filters>
         </Container>

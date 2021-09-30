@@ -12,7 +12,7 @@ import SEOHeader from '../../components/SEOHeader';
 import useFetchers from '../../hooks/useFetchers/useFetchers';
 import BrandPageHeaderComponent from './components/BrandPageHeaderComponent';
 import {Filters} from '../../components/filters/Filters';
-import FilterItems from '../../components/filters/FilterItems';
+import ProductList from '../../components/filters/ProductList';
 
 function BrandProductsPage(props) {
 
@@ -75,7 +75,7 @@ function BrandProductsPage(props) {
             <Filters products={brandProducts}>
               {
                 filteredProducts => (
-                  <FilterItems products={filteredProducts} />
+                  <ProductList products={filteredProducts} />
                 )
               }
             </Filters>
