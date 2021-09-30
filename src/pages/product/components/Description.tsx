@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 
-function ProductDescriptionComponent(){
+function Description() {
 
   return (
     <>
@@ -11,7 +11,7 @@ function ProductDescriptionComponent(){
   );
 }
 
-export default ProductDescriptionComponent;
+export default Description;
 
 
 const ProductDescriptionParent = styled.div`

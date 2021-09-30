@@ -9,14 +9,14 @@ import '../../assets/style/index.scss';
 import {JsonLd} from 'react-schemaorg';
 import productJsonld, {subProduct} from './product.jsonld';
 import {Button, Delete, Help, Modal, ModalBackground, ModalClose, ModalContent, Tag, Title} from 'bloomer';
-import ProductImagesSliderComponent from './components/ProductImagesSliderComponent';
+import ImagesSlider from './components/ImagesSlider';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {useApi} from '../../network';
 import {CartItemType, CartType, ProductType, ProductTypeOptionValue, VariantType} from '../../types';
 import useSWR from 'swr';
 import {useNotify} from '../../hooks';
 import {EmptyState, RetroImage} from '../../components';
-import ValuePropositionComponent from './components/ValuePorposition';
+import ValueProposition from './components/ValueProposition';
 import {useHistory} from 'react-router';
 import RadioField from '../../components/input/RadioField';
 import {Form, Formik} from 'formik';
@@ -381,11 +381,11 @@ function ProductPage({match}) {
 
       <Layout>
         <ProductPageParent>
-          <ProductImagesSliderComponent
+          <ImagesSlider
             productName={currentProduct.name}
             images={currentVariant.images} />
 
-          <ValuePropositionComponent />
+          <ValueProposition />
 
           <AvailableColorsContainer>
             <h4>Available Options</h4>

@@ -80,10 +80,10 @@ function Slider(props) {
   );
 }
 
-export default function ProductImagesSliderComponent({images, productName}) {
+export default function ImagesSlider({images, productName}) {
   return (
     <ProductSliderParent>
-      <Slider productName={productName} images={images}/>
+      <Slider productName={productName} images={images} />
     </ProductSliderParent>
   );
 }
