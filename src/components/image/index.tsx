@@ -2,34 +2,51 @@ import React, {CSSProperties} from 'react';
 import Image from 'react-progressive-graceful-image';
 import {DeadEyes2} from '../../constants/icons';
 
-const RetroImage = function (
-  {
-    src,
-    srcSet,
-    alt,
-    style,
-    solidColor,
-    placeholderStyle,
-    ...props
-  }: {
+
+interface ImageProps {
   src: string,
   alt: string,
   srcSet?: {sizes: string; srcSet: string},
   style?: CSSProperties,
   solidColor?: boolean,
   placeholderStyle?: CSSProperties,
-  [key: string]: any
-}) {
 
-  const getPlaceholderUrl = (src)=> {
+  [key: string]: any
+}
+
+/**
+ * A utility 'img' tag wrapper for taking care of placeholder styles and loading spinners.
+ * @param props.src -
+ * @param props.srcSet - or pass a srcSet instead
+ * @param props.alt - the image 'alt'
+ * @param props.style - additional styles
+ * @param props.solidColor - whether the loader should be a solid color
+ * @param props.placeholderStyle - any styles to be passed to the placeholder 'img' tag
+ * @param props.additionalProps - any more props to be passed to the 'img' tg
+ * @constructor
+ */
+const RetroImage = function(props: ImageProps) {
+
+  const {
+    src,
+    srcSet,
+    alt,
+    style,
+    solidColor,
+    placeholderStyle,
+    // additional props can be passed to the "<img/>" tag
+    ...additionalProps
+  } = props;
+
+  const getPlaceholderUrl = (src) => {
     if (!src) return '';
     const url = new URL(src);
     const queryParam = new URLSearchParams(url.search);
-    queryParam.set('tr', 'bl-6,h-100')
+    queryParam.set('tr', 'bl-6,h-100');
     return `${url.protocol}//${url.host}${url.pathname}?${queryParam.toString()}`;
-  }
+  };
 
-  function getErrorImageUrl(){
+  function getErrorImageUrl() {
     return `https://ik.imagekit.io/t25/image-not-found_1__GAADOys0Sw.webp?updatedAt=1631955885168`;
   }
 
@@ -83,7 +100,7 @@ const RetroImage = function (
                 style={style}
                 srcSet={srcSetData.srcSet}
                 sizes={srcSetData.sizes}
-                {...props}
+                {...additionalProps}
               />);
           }
 
@@ -93,7 +110,7 @@ const RetroImage = function (
               src={src}
               style={style}
               alt={alt}
-              {...props}
+              {...additionalProps}
             />);
         }}
 
