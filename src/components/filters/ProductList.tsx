@@ -51,26 +51,28 @@ export const ProductList = function(props: {products: Array<FilteredProduct>}) {
 
   return (
     <>
-      {
-        props.products.map((item, index) => (
-          <Link to={`/product/${item.slug}/`}>
-            <Product isInStock={isInStock(item)}>
-              {
-                !isInStock(item) && (
-                  <OutOfStockTag isColor={'warning'}>
-                    <small>
-                      OUT OF STOCK
-                    </small>
-                  </OutOfStockTag>
-                )
-              }
-              <Image src={item.images[0]?.thumbnailUrl} alt={item.name} />
-              <Details name={item.name} price={item.originalPrice} />
+      <ProductListContainer>
+        {
+          props.products.map((item, index) => (
+            <Link to={`/product/${item.slug}/`}>
+              <Product isInStock={isInStock(item)}>
+                {
+                  !isInStock(item) && (
+                    <OutOfStockTag isColor={'warning'}>
+                      <small>
+                        OUT OF STOCK
+                      </small>
+                    </OutOfStockTag>
+                  )
+                }
+                <Image src={item.images[0]?.thumbnailUrl} alt={item.name} />
+                <Details name={item.name} price={item.originalPrice} />
 
-            </Product>
-          </Link>
-        ))
-      }
+              </Product>
+            </Link>
+          ))
+        }
+      </ProductListContainer>
     </>
 
   );
@@ -78,8 +80,18 @@ export const ProductList = function(props: {products: Array<FilteredProduct>}) {
 
 export default ProductList;
 
+const ProductListContainer = styled.div`
+    display: grid;
+    column-gap: 1rem;
+    row-gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    justify-content: space-between;
+    padding: 0 1rem;
+`;
+
 const ImageContainer = styled.div`
-    height: 100%;
+    height: 200px;
+    display: flex;
     
     img {
       width: 100%;
@@ -116,6 +128,8 @@ const Product = styled.div<{
   background: #f5f5f5;
   margin: 0;
   opacity: ${props => props.isInStock ? 1 : 0.5};
+  position: relative;
+  transition: transform var(--cubic-bezier) 0.25s;
 
   &:hover {
     cursor:pointer;

@@ -11,7 +11,7 @@ import {EmptyState} from '../../components';
 import SEOHeader from '../../components/SEOHeader';
 import useFetchers from '../../hooks/useFetchers/useFetchers';
 import BrandPageHeaderComponent from './components/BrandPageHeaderComponent';
-import {Filters} from '../../components/filters/Filters';
+import {ProductListWrapper} from '../../components/filters/ProductListWrapper';
 import ProductList from '../../components/filters/ProductList';
 
 function BrandProductsPage(props) {
@@ -72,13 +72,13 @@ function BrandProductsPage(props) {
         <Container>
           <div>
             <BrandPageHeaderComponent brand={brandData} />
-            <Filters products={brandProducts}>
+            <ProductListWrapper products={brandProducts}>
               {
                 filteredProducts => (
                   <ProductList products={filteredProducts} />
                 )
               }
-            </Filters>
+            </ProductListWrapper>
           </div>
         </Container>
       </BrandPageParent>

@@ -12,7 +12,7 @@ interface FiltersParams {
   products?: ProductType[]
 }
 
-export const Filters = (props: FiltersParams) => {
+export const ProductListWrapper = (props: FiltersParams) => {
 
   const {products: allProducts} = props;
 
@@ -24,23 +24,11 @@ export const Filters = (props: FiltersParams) => {
 
   }, [allProducts]);
 
-  console.log('Filtered products: ', filteredProducts);
-
   return (
     <>
-      <FiltersParent>
-        <div className={'product__filters'}>
-          {/*<DesktopFilter*/}
-          {/*  products={products}*/}
-          {/*  criteria={['sex', 'size', 'price']}*/}
-          {/*/>*/}
-
-          {/*<MobileFilter*/}
-          {/*  products={products} />*/}
-
-          {props.children(filteredProducts)}
-        </div>
-      </FiltersParent>
+      <div>
+        {props.children(filteredProducts)}
+      </div>
     </>
   );
 };
@@ -52,48 +40,58 @@ export const MobileFilter = function(props: {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   return (
-    <div className={'product__filters--mobile'}>
-      <div>
-        <DrawerWrapper
-          onClose={() => setDrawerOpen(false)}
-          handler={null}
-          open={isDrawerOpen}>
-          <Section>
-            <Container>
-              <BrandProductsFilter
-                //@ts-ignore
-                products={props.products}
-                allCriteria={['sex', 'size', 'price']}
-              />
-            </Container>
-          </Section>
-        </DrawerWrapper>
-        <Button
-          onClick={() => setDrawerOpen(true)}
-          style={{marginRight: 12}}>
-          Filters
-        </Button>
-      </div>
-
-    </div>
+    <MobileFilterContainer>
+      <DrawerWrapper
+        onClose={() => setDrawerOpen(false)}
+        handler={null}
+        open={isDrawerOpen}>
+        <Section>
+          <Container>
+            <BrandProductsFilter
+              //@ts-ignore
+              products={props.products}
+              allCriteria={['sex', 'size', 'price']}
+            />
+          </Container>
+        </Section>
+      </DrawerWrapper>
+      <Button
+        onClick={() => setDrawerOpen(true)}
+        style={{marginRight: 12}}>
+        Filters
+      </Button>
+    </MobileFilterContainer>
   );
 }
+
+const MobileFilterContainer = styled.div`
+    display: none;
+    @media screen and (max-width: 800px) {
+      display: block;
+    }
+`;
 
 export const DesktopFilter = function(props: {
   products: Array<ProductType>,
   criteria: Array<string>
-}){
+}) {
 
   return (
-    <div className={'product__filters--desktop'}>
+    <DesktopFiltersContainer>
       <BrandProductsFilter
         // @ts-ignore
         products={props.products}
         allCriteria={props.criteria}
       />
-    </div>
+    </DesktopFiltersContainer>
   );
-}
+};
+
+const DesktopFiltersContainer = styled.div`
+    @media screen and (max-width: 800px) {
+          display: none;
+    }
+`;
 
 /**
  * In order to work, this component requires an array of criteria and an array of
@@ -216,33 +214,6 @@ const FiltersParent = styled(Container)`
     flex-direction: column;
     gap: 32px;
   }
-
-  .product__filters--desktop {
-    @media screen and (max-width: 800px) {
-      display: none;
-    }
-  }
-
-  .product__filters--mobile {
-    display: none;
-    @media screen and (max-width: 800px) {
-      display: block;
-    }
-  }
-
-  .product__filters--products-parent {
-    width: 100%;
-    flex: 1 0;
-    min-height: 100vh;
-
-    & > div {
-      display: grid;
-      column-gap: 24px;
-      row-gap: 72px;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      justify-content: space-between;
-      padding: 0 1rem;
-}
   }
 }
 

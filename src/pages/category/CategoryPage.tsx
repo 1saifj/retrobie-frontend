@@ -7,7 +7,7 @@ import {Container} from 'bloomer';
 import {DeadEyes2, EmptyBox} from '../../constants/icons';
 import SEOHeader from '../../components/SEOHeader';
 import useFetchers from '../../hooks/useFetchers/useFetchers';
-import {Filters} from '../../components/filters/Filters';
+import {ProductListWrapper} from '../../components/filters/ProductListWrapper';
 import styled from 'styled-components';
 import ProductList from '../../components/filters/ProductList';
 import defaultHelpers from '../../helpers';
@@ -75,12 +75,12 @@ const CategoryPage = function({match}) {
               {defaultHelpers.titleCase(categoryData.name)}
             </h1>
           </header>
-          <Filters products={categoryProducts}>
+          <ProductListWrapper products={categoryProducts}>
             {
               filteredProducts =>
                 <ProductList products={filteredProducts} />
             }
-          </Filters>
+          </ProductListWrapper>
         </Container>
       </div>
     </Layout>
