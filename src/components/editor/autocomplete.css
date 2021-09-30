@@ -31,7 +31,7 @@
     top: 51px;
     width: 280px;
     box-shadow: var(--box-shadow);
-    transition: var(--cubic-bezier);
+    transition: all var(--cubic-bezier) 0.3s;
     border-radius: 4px;
     background-color: #fff;
     font-size: 14px;
@@ -39,7 +39,7 @@
 }
 
 .react-autosuggest__suggestions-list li {
-    transition: var(--cubic-bezier);
+    transition: all var(--cubic-bezier) 0.3s;
 }
 
 .react-autosuggest__suggestions-list li:first-of-type {
