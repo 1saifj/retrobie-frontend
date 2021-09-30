@@ -43,33 +43,6 @@ export const FakeBorder = styled.div`
 `;
 
 
-export const ValueProposition = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  justify-content: space-around;
-
-  & > div {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin: 0 12px;
-    text-align: center;
-
-    @media screen and (max-width: 376px) {
-        margin: 12px
-    }
-
-    h4 {
-      margin-bottom: 6px;
-    }
-
-    p {
-      margin: 0;
-      text-align: center;
-    }
-  }
-`;
 
 
 
