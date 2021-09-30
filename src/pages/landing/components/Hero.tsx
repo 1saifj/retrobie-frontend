@@ -5,6 +5,7 @@ import FeaturedSneaker from '../../../assets/images/vectors/featured-sneaker.svg
 import RetroImage from '../../../components/image';
 import HowItWorksModal from '../modals/HowItWorksModal';
 import RegisterModal from '../modals/RegisterModal';
+import {H1, P} from '../../../components/Text/Text';
 
 const images = {
   landing: {
@@ -29,98 +30,199 @@ const images = {
 
 const Hero = () => {
 
-  const [isHowItWorksModalActive, setIsHowItWorksModalActive] = useState(false);
-  const [isRegisterModalActive, setRegisterModalActive] = useState(false);
-
   return (
     <>
       <Section>
-        <HeroSection>
-          <Column className='image'>
-            <div>
-              <RetroImage
-                src={images.landing.big}
-                alt=''
-                srcSet={{
-                  srcSet: `
+        <HeroColumns>
+          <Image />
+          <Description />
+        </HeroColumns>
+      </Section>
+    </>
+  );
+};
+
+const Image = () => {
+  return (
+    <>
+      <ImageContainer className='image'>
+        <RetroImage
+          src={images.landing.big}
+          alt=''
+          srcSet={{
+            srcSet: `
                     ${images.landing.small} 350w,
                     ${images.landing.mid}   450w,
                     ${images.landing.mid2}  500w,
                     ${images.landing.mid3}  550w,
                     ${images.landing.big}   1140w,
                 `,
-                  sizes: `
+            sizes: `
                     (max-width: 428px) 350px,
                     (max-width: 510px) 450px,
                     (max-width: 630px) 500px,
                     (max-width: 1024px) 550px,
                     1140px
                 `,
-                }}
-              />
-              {/*<picture>*/}
-              {/*  <source media={'(max-width:428px)'} srcSet={images.landing.small} />*/}
-              {/*  <source media={'(max-width:510px)'} srcSet={images.landing.mid} />*/}
-              {/*  <source media={'(max-width:630px)'} srcSet={images.landing.mid2} />*/}
-              {/*  <source media={'(max-width:1024px)'} srcSet={images.landing.mid3} />*/}
-              {/*  <img src={images.landing.big} alt={'landing page'} />*/}
-              {/*</picture>*/}
-            </div>
-          </Column>
-          <Column className='description'>
-            <div>
-              <header>
-                <div style={{width: '48px', marginLeft: '8px'}}>
-                  <img src={FeaturedSneaker} alt="just a sneaker" />
-                </div>
-                <small className='secondary'>ABOUT US</small>
-              </header>
-              <h1 style={{margin: '1rem 0'}}>
-                Home of <span> authentic,</span> exclusive sneakers and sports shoes in Nairobi
-              </h1>
-              <div style={{margin: '1rem 0'}}>
-                <p className='secondary'>
-                  Find and discover your favorite brands - from Air Jordans to Yeezys -{' '}
-                  <span>original sneakers</span>,{' '}
-                  basketball shoes, and many more fashion pieces
-                  at the best sneaker shop in Nairobi.
-                </p>
-              </div>
-            </div>
-            <div className='buttons'>
-              <Button
-                isColor='primary'
-                style={{
-                  margin: '4px 4px',
-                }}
-                onClick={() => setRegisterModalActive(true)}
-              >
-                Get started
-              </Button>
-              <Button
-                isOutlined
-                style={{margin: '4px 4px', minWidth: '200px'}}
-                onClick={() => setIsHowItWorksModalActive(true)}
-              >
-                Learn more
-              </Button>
-            </div>
-          </Column>
-          <RegisterModal isActive={isRegisterModalActive} onClose={()=> setRegisterModalActive(false)}/>
-          <HowItWorksModal
-            isActive={isHowItWorksModalActive}
-            onClose={() => {
-              setIsHowItWorksModalActive(false);
-            }} />
-        </HeroSection>
-      </Section>
+          }}
+        />
+      </ImageContainer>
     </>
   );
 };
 
-Hero.propTypes = {};
+const Description = () => {
 
-const HeroSection = styled(Columns)`
+  const [isHowItWorksModalActive, setIsHowItWorksModalActive] = useState(false);
+  const [isRegisterModalActive, setRegisterModalActive] = useState(false);
+
+  return (
+    <>
+      <DescriptionContainer>
+        <div>
+
+          <header>
+            <div style={{width: '48px', marginLeft: '8px'}}>
+              <img src={FeaturedSneaker} alt="just a sneaker" />
+            </div>
+            <small className='secondary'>ABOUT US</small>
+          </header>
+
+          <H1>
+            Home of <span> authentic,</span> exclusive sneakers and sports shoes in Nairobi
+          </H1>
+
+          <div style={{margin: '1rem 0'}}>
+            <P fontSize={1.75} className='secondary'>
+              Find and discover your favorite brands - from Air Jordans to Yeezys -{' '}
+              <span>original sneakers</span>,{' '}
+              basketball shoes, and many more fashion pieces
+              at the best sneaker shop in Nairobi.
+            </P>
+          </div>
+        </div>
+        <CTAButtons>
+          <Button
+            isColor='primary'
+            onClick={() => setRegisterModalActive(true)}
+          >
+            Get started
+          </Button>
+          <Button
+            isOutlined
+            onClick={() => setIsHowItWorksModalActive(true)}
+          >
+            Learn more
+          </Button>
+        </CTAButtons>
+        <RegisterModal
+          isActive={isRegisterModalActive}
+          onClose={() => setRegisterModalActive(false)} />
+
+        <HowItWorksModal
+          isActive={isHowItWorksModalActive}
+          onClose={() => setIsHowItWorksModalActive(false)} />
+      </DescriptionContainer>
+    </>
+  );
+};
+
+const DescriptionContainer = styled(Column)`
+  display: flex;
+  flex-direction: column;
+  max-width: 800px;
+
+  h1 {
+    line-height: 78px;
+  }
+  
+
+  @media (min-width: 320px) and (max-width: 1024px) {
+    max-width: 100vw;
+    margin-bottom: 24px;
+    
+    h1 {
+      line-height: 55px;
+    }
+  }
+
+  small {
+    font-size: 16px;
+    margin-left: 8px;
+    font-weight: 600;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+  }
+
+  span {
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+
+`;
+
+const CTAButtons = styled.div`
+  display: flex;
+  margin-top: 12px;
+
+  button {
+    flex: 1 1 150px;
+    font-size: 18px;
+    padding: 16px 60px;
+    height: unset;
+    margin: 4px 4px;
+    font-weight: bold;
+    max-height: 4rem;
+
+    &:hover {
+      box-shadow: 0 3px 12px 2px rgba(0, 0, 0, 0.16);
+    }
+  }
+
+  @media screen and (max-width: 1024px) {
+    padding: 0;
+    flex-direction: column;
+
+    button {
+      margin-left: 0;
+    }
+  }
+  
+`;
+
+const ImageContainer = styled(Column)`
+    margin: 0 auto;
+    min-height: 350px;
+
+    img {
+      border-radius: 6px;
+      object-fit: contain;
+      height: 100%;
+    }
+    
+    @media screen and (max-width: 1024px) {
+      .image {
+        display: flex;
+        align-self: center;
+        height: unset;
+        margin-bottom: 24px;
+  
+        img {
+          width: 100%;
+        }
+      }
+  
+      img {
+        margin-right: auto;
+        margin-left: auto;
+      }
+    }
+`;
+
+const HeroColumns = styled(Columns)`
   display: flex;
   align-items: center;
   min-height: 75vh;
@@ -131,7 +233,7 @@ const HeroSection = styled(Columns)`
 
   span {
     font-weight: 600;
-    color: var(--color-accent);
+    color: var(--color-primary);
   }
 
   h1,
@@ -147,80 +249,6 @@ const HeroSection = styled(Columns)`
     max-width: 64px;
   }
 
-  .description {
-    display: flex;
-    flex-direction: column;
-    max-width: 800px;
-
-    p {
-      font-size: 28px;
-      line-height: normal;
-    }
-
-    h1 {
-      font-size: 5em;
-      line-height: 78px;
-    }
-
-    @media (min-width: 320px) and (max-width: 1024px) {
-      max-width: 100vw;
-      h1 {
-        font-size: 4em;
-        line-height: 55px;
-      }
-
-      p {
-        font-size: 24px;
-      }
-    }
-
-    small {
-      font-size: 16px;
-      margin-left: 8px;
-      font-weight: 600;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-    }
-
-    .ctas {
-      display: flex;
-      margin-top: 12px;
-
-      button {
-        margin-left: 0;
-        font-size: 18px;
-        padding: 16px 60px;
-        height: unset;
-
-        &:hover {
-          box-shadow: 0 3px 12px 2px rgba(0, 0, 0, 0.16);
-        }
-      }
-
-      @media screen and (max-width: 1024px) {
-        padding: 0;
-      }
-    }
-
-    span {
-      font-weight: 600;
-      color: var(--color-primary);
-    }
-  }
-
-  .image {
-    margin: 0 auto;
-    min-height: 350px;
-
-    img {
-      border-radius: 6px;
-      object-fit: contain;
-      height: 100%;
-    }
-  }
 
   @media screen and (max-width: 1024px) {
     background: none;
@@ -231,34 +259,6 @@ const HeroSection = styled(Columns)`
     p,
     header {
       margin: 0;
-    }
-
-    .image {
-      display: flex;
-      align-self: center;
-      height: unset;
-      margin-bottom: 24px;
-
-      img {
-        width: 100%;
-      }
-    }
-
-    .description {
-      margin-bottom: 24px;
-
-      .ctas {
-        flex-direction: column;
-
-        button {
-          margin-left: 0;
-        }
-      }
-    }
-
-    img {
-      margin-right: auto;
-      margin-left: auto;
     }
   }
 `;
