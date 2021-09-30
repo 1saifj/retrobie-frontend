@@ -31,7 +31,7 @@ function slugify(string, options?: {
           return result + (locale[ch] || charMap[ch] || ch);
       }, '')
       // remove not allowed characters
-      .replace(options.remove || /[^\w\s$*_+~.()'"!\-:@]+/g, '')
+      .replace(options.remove || /[^\w\s$*_+~.()!\-:@]+/g, '')
       // trim leading/trailing spaces
       .trim()
       // convert spaces to replacement character
