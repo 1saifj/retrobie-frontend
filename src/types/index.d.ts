@@ -39,11 +39,10 @@ export type FilteredProduct = {
   quantity?: number
   condition: string;
   uuid: string;
-  url: string;
   name: string;
-  thumbnailUrl: string;
   brands?: BrandType;
   description?: string;
+  images: ImageType[]
 };
 
 type ProductDetailType = {
