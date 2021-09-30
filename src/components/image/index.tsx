@@ -51,11 +51,7 @@ const RetroImage = function(props: ImageProps) {
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
+    <>
       <Image
         placeholder={getPlaceholderUrl(src)}
         src={src}
@@ -115,7 +111,7 @@ const RetroImage = function(props: ImageProps) {
         }}
 
       </Image>
-    </div>
+    </>
 
   );
 }
