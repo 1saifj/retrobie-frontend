@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import useApi from '../useApi';
+import useApi from '../useApi/useApi';
 import qs from 'qs';
 
 
