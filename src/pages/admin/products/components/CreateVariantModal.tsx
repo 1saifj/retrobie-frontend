@@ -45,7 +45,7 @@ const CreateVariantModal = (props: {
             onSubmit={async (submitValues, {setSubmitting}) => {
 
               const variants = submitValues.variants.map((variant: any) => {
-                const {options, ...rest} = variant;
+                const {options, id, ...rest} = variant;
                 return {
                   ...rest,
                   optionValues: options.map(option => {
