@@ -1,7 +1,7 @@
 import React, {ReactElement, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import AnimatedLogo from '../../components/logo/AnimatedLogo';
+import Logo from '../../components/logo/Logo';
 import {useHistory, useLocation, useParams} from 'react-router';
 import {ChevronDown} from 'react-feather';
 
@@ -61,7 +61,7 @@ const Sidebar = props => {
                 alignItems: 'center',
               }}
             >
-              <AnimatedLogo plain />
+              <Logo />
               <ChevronDown color="#fff" style={{width: 24, marginTop: 0}} />
             </div>
           </SidebarItem>

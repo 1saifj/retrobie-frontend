@@ -80,7 +80,6 @@ const SingleOrder= function({match: {params: {orderId}}}) {
   return (
     <>
       <Layout
-        internal
         style={{maxWidth: 600, margin: '0 auto'}}>
         <div style={{marginTop: 128}}>
           <div>

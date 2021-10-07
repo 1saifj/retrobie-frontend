@@ -34,16 +34,4 @@ function Landing() {
 }
 
 
-export const FakeBorder = styled.div`
-  background: ${p => (p.color ? p.color : '#004196')};
-  width: 100px;
-  border-radius: 4px;
-  height: 6px;
-  margin-top: 8px;
-`;
-
-
-
-
-
 export default Landing;

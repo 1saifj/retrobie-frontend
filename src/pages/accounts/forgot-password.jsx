@@ -35,18 +35,16 @@ export default function ForgotPassword(props) {
     return (
         <>
             <div>
-                <Layout
-                  internal
-                  withoutNav={true}>
-                    <FormParent>
-                        <Formik initialValues={{}}
-                                validationSchema={ResetPasswordSchema}
-                                onSubmit={async (values, {setSubmitting}) => {
-                                    setSubmitting(true);
-                                    try {
-                                        const {data} = await dispatch(api.accounts.requestPasswordReset(values));
-                                        setSubmitting(false);
-                                        notify('info', data.message);
+                <Layout hideNav>
+                  <FormParent>
+                    <Formik initialValues={{}}
+                            validationSchema={ResetPasswordSchema}
+                            onSubmit={async (values, {setSubmitting}) => {
+                              setSubmitting(true);
+                              try {
+                                const {data} = await dispatch(api.accounts.requestPasswordReset(values));
+                                setSubmitting(false);
+                                notify('info', data.message);
 
                                         sessionStorage.setItem('password_reset_email', values.email);
                                         props.history.push('/accounts/reset-password');

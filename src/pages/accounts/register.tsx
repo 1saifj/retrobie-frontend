@@ -64,11 +64,11 @@ export const FormParent = styled.div`
   }
 `;
 
-const RegisterUser = ({footer}) => {
+const RegisterUser = ({hideFooter}) => {
 
   const api = useApi();
 
-  const history = useHistory()
+  const history = useHistory();
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
@@ -82,10 +82,9 @@ const RegisterUser = ({footer}) => {
     <>
       <div>
         <Layout
-          footer={footer}
-          internal
-          withoutNav={true}
-          topRightButton={() => {
+          hideFooter={hideFooter}
+          hideNav={true}
+          TopRightComponent={() => {
             return (
               <>
                 <Link to={'/accounts/login'}>

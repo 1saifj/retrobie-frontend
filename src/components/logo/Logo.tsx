@@ -1,39 +1,44 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import './animated-logo.scoped.css';
 import styled from 'styled-components';
 
 const NAV_ANIMATION_PLAYED = 'NAV_ANIMATION_PLAYED';
 
-const AnimatedLogo = props => {
+type LogoProps = {
+    animated?: boolean
+}
+
+const Logo = (props: LogoProps) => {
     const navAnimationPlayed = sessionStorage.getItem(NAV_ANIMATION_PLAYED);
 
+    const color = '#444';
+
     return (
-        <>
-            {
-                props.plain || Boolean(navAnimationPlayed) ?
-                    <PlainLogo>
-                        <div style={{color: props.color}} className="text">
-                            RETROBIE
-                        </div>
-                    </PlainLogo>
-                    :
-                    <div className="stage" onAnimationEnd={()=> sessionStorage.setItem(NAV_ANIMATION_PLAYED, 'true')}>
-                        <div className="wrapper">
-                            <div className="slash"/>
-                            <div className="sides">
+      <>
+          {
+              !props.animated || Boolean(navAnimationPlayed) ?
+                <PlainLogo>
+                    <div style={{color: color}} className="text">
+                        RETROBIE
+                    </div>
+                </PlainLogo>
+                :
+                <div className="stage" onAnimationEnd={() => sessionStorage.setItem(NAV_ANIMATION_PLAYED, 'true')}>
+                    <div className="wrapper">
+                        <div className="slash" />
+                        <div className="sides">
                                 <div className="side"/>
                                 <div className="side"/>
                                 <div className="side"/>
                                 <div className="side"/>
                             </div>
                             <div className="text">
-                                <div className="text--backing" style={{color: props.color}}>RETROBIE</div>
+                                <div className="text--backing" style={{color}}>RETROBIE</div>
                                 <div className="text--left">
-                                    <div className="inner" style={{color: props.color}}>RETROBIE</div>
+                                    <div className="inner" style={{color}}>RETROBIE</div>
                                 </div>
                                 <div className="text--right">
-                                    <div className="inner" style={{color: props.color}}>RETROBIE</div>
+                                    <div className="inner" style={{color}}>RETROBIE</div>
                                 </div>
                             </div>
                         </div>
@@ -41,11 +46,6 @@ const AnimatedLogo = props => {
             }
         </>
     );
-};
-
-AnimatedLogo.propTypes = {
-    plain: PropTypes.bool,
-    color: PropTypes.string
 };
 
 const PlainLogo = styled.div`
@@ -62,4 +62,4 @@ const PlainLogo = styled.div`
     }
 `;
 
-export default AnimatedLogo;
+export default Logo;

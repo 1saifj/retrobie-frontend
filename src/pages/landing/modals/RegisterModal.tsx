@@ -13,7 +13,7 @@ const RegisterModal = function(props: {
         isActive={props.isActive}
         onClose={props.onClose}>
         <div>
-          <RegisterUser footer={false}/>
+          <RegisterUser hideFooter={true} />
         </div>
       </CustomModal>
     </div>

@@ -86,7 +86,7 @@ export default function ResetPassword ({history}) {
 
     return (
       <>
-          <Layout internal>
+          <Layout>
               <FormParent
                 style={{marginTop: 48}}>
                   <Formik

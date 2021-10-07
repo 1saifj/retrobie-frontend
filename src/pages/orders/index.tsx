@@ -162,7 +162,6 @@ const AllOrders = function() {
   return (
     <div>
       <Layout
-        internal
         style={{width: '80%', margin: '0 auto', marginTop: 148}}>
         <div style={{margin: "24px 48px"}}>
           <div>

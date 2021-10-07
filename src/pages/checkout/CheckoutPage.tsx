@@ -95,7 +95,7 @@ export default function CheckoutPage(props) {
 
   return (
     <>
-      <Layout withoutNav>
+      <Layout hideNav>
         <Helmet>
           <title>Retrobie | Checkout</title>
         </Helmet>

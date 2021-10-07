@@ -4,51 +4,68 @@ import Nav from '../nav/nav';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import {Navbar, NavbarBrand, NavbarBurger, NavbarItem, NavbarMenu} from 'bloomer';
-import AnimatedLogo from '../logo/AnimatedLogo';
+import Logo from '../logo/Logo';
 import 'rc-drawer/assets/index.css';
 import MobileSidebar from './mobile-sidebar';
 
 const headerStyling = {
-    top: 0,
-    zIndex: 9,
+  top: 0,
+  zIndex: 9,
 };
-const Header = ({style, withoutNav, topRightButton, rootStyle}: {
-    style?
-    withoutNav?
-    topRightButton?
-    rootStyle?
-}) => {
 
+
+const LogoParent = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
     <>
-      <div style={{...headerStyling, ...rootStyle}}>
+      <NavbarBrand style={{alignItems: 'center', justifyContent: 'center', marginTop: 36}}>
+        <LogoContainer>
+          <Link to="/">
+            <Logo animated />
+          </Link>
+        </LogoContainer>
+        <NavbarBurger onClick={() => setDrawerOpen(true)} />
+      </NavbarBrand>
+
+      <Drawer
+        open={drawerOpen}
+        duration={'.25s'}
+        placement={'left'}
+        handler={false}
+        onClose={() => setDrawerOpen(false)}>
+        <MobileSidebar onClose={() => setDrawerOpen(false)} />
+      </Drawer>
+
+    </>
+
+  );
+};
+
+type HeaderProps = {
+  hideNav?: boolean
+  TopRightComponent: Function
+}
+
+const Header = (props: HeaderProps) => {
+
+  const {TopRightComponent} = props;
+
+
+  return (
+    <>
+      <div style={{...headerStyling}}>
         <NavbarContainer>
-          <Navbar style={{...style, alignItems: 'center'}}>
-            <NavbarBrand style={{alignItems: 'center', justifyContent: 'center', marginTop: 36}}>
-              <NavbarItem className={'logo'}>
-                <Link to="/"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        lineHeight: 'normal',
-                      }}>
-                  <AnimatedLogo color="#444" />
-                </Link>
-              </NavbarItem>
-              <NavbarBurger onClick={()=> setDrawerOpen(true)}/>
-            </NavbarBrand>
+          <Navbar style={{alignItems: 'center'}}>
+            <LogoParent />
             <NavbarMenu style={{marginTop: 48, justifyContent: 'flex-end'}}>
               {
-                !withoutNav && <Nav />
+                !props.hideNav && <Nav />
               }
 
               {
-                withoutNav && topRightButton && (
-                  <div>
-                    {topRightButton()}
-                  </div>
+                props.hideNav && TopRightComponent && (
+                  <TopRightComponent />
                 )
               }
 
@@ -57,20 +74,26 @@ const Header = ({style, withoutNav, topRightButton, rootStyle}: {
         </NavbarContainer>
       </div>
 
-      <Drawer
-        open={drawerOpen}
-        duration={'.25s'}
-        placement={'left'}
-        handler={false}
-        onClose={() => setDrawerOpen(false)}>
-        <MobileSidebar onClose={()=> setDrawerOpen(false)} />
-      </Drawer>
     </>
 
   );
 };
 
 export default Header;
+
+const LogoContainer = styled(NavbarItem)`
+    margin-top: 13px;
+    
+    a {
+      display: flex;
+      align-items: center;
+      line-height: normal;
+      
+      &:hover {
+        text-decoration: none;
+      }
+    }
+`;
 
 const NavbarContainer = styled.header`
     padding: 0 48px;
@@ -89,16 +112,7 @@ const NavbarContainer = styled.header`
     text-decoration: none;
     font-weight: 600;
   }
-  
-  .logo {
-    margin-top: 13px;
-    
-    a {
-      &:hover {
-        text-decoration: none;
-      }
-    }
-  }
+ 
   
   @media screen and (max-width: 1024px) {
     .logo {

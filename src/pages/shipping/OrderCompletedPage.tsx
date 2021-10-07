@@ -26,7 +26,7 @@ const OrderCompletedPage = function(props) {
 
   if (!user.isLoggedIn){
     return (
-      <Layout internal>
+      <Layout>
         <EmptyState
           icon={SecurityGuard}
           centerAlign={true}
@@ -39,7 +39,7 @@ const OrderCompletedPage = function(props) {
 
   if (fetchOrderStatusError){
     return (
-      <Layout internal>
+      <Layout>
         <EmptyState
           centerAlign={true}
           icon={GrimacingEmoji}
@@ -53,15 +53,15 @@ const OrderCompletedPage = function(props) {
 
   if (!orderStatusResult){
     return (
-      <Layout internal>
-        <Loading/>
+      <Layout>
+        <Loading />
       </Layout>
     )
   }
 
   if (orderStatusResult?.orderStatus === "pendingPayment")
     return (
-      <Layout internal>
+      <Layout>
         <div>
           <EmptyState
             icon={'https://ik.imagekit.io/t25/development/order-completed_5XPuIXI9k.png'}

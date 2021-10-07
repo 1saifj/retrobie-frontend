@@ -46,16 +46,14 @@ export default function LoginUser(props) {
 
   return (
     <>
-      <Layout
-        internal
-        withoutNav={true}
-        topRightButton={() => (
-          <Link to={'/accounts/register'}>
-            <Button>
-              Create a New Account
-            </Button>
-          </Link>
-        )}
+      <Layout hideNav
+              TopRightComponent={() => (
+                <Link to={'/accounts/register'}>
+                  <Button>
+                    Create a New Account
+                  </Button>
+                </Link>
+              )}
       >
         <FormParent>
           <Formik initialValues={{

@@ -48,7 +48,7 @@ const AdminLogin = props => {
   }
 
   return (
-    <Layout withoutNav={true}>
+    <Layout hideNav={true}>
       <FormParent>
         <Formik
           initialValues={{

@@ -8,7 +8,7 @@ import {
 } from '../../../constants/icons';
 import CustomModal from '../../../components/CustomModal';
 import styled from 'styled-components';
-import AnimatedLogo from '../../../components/logo/AnimatedLogo';
+import Logo from '../../../components/logo/Logo';
 import {Link} from 'react-router-dom';
 
 const HowItWorksModal = function(props){
@@ -22,7 +22,7 @@ const HowItWorksModal = function(props){
           <div>
             <div>
               <div>
-                <AnimatedLogo color={'#444'} />
+                <Logo />
               </div>
               <h3>Who we are</h3>
               <p>

@@ -178,9 +178,7 @@ export default function VerifyAccount(props) {
 
   return (
     <>
-      <Layout
-        internal
-        withoutNav={true}>
+      <Layout hideNav>
         <FormParent>
           <Formik
             initialValues={{
