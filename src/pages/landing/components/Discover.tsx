@@ -1,17 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
-import BrandSlider from '../../../components/slider/BrandSlider';
-import { AdidasBlackLogo, AirJordanBlackLogo, ConverseLogo, NikeBlackLogo, YeezyLogo } from '../../../constants/icons';
+import BrandSlider from './BrandSlider';
+import {
+  AdidasBlackLogo,
+  AirJordanBlackLogo,
+  ConverseLogo,
+  NikeBlackLogo,
+  VansBlackLogo,
+  YeezyLogo,
+} from '../../../constants/icons';
 import RetroImage from '../../../components/image';
-import { useSelector } from 'react-redux';
-import { RootStateOrAny } from 'react-redux'
 import {Container, Section} from 'bloomer';
 import DotPattern from '../../../assets/images/patterns/dots.svg';
-import Layout from '../../../components/Layout';
+import {Link} from 'react-router-dom';
 
 function Discover() {
-
-  const theme = useSelector((state: RootStateOrAny) => state.meta.theme);
 
   return (
     <Section style={{background: `url('${DotPattern}')`}} id="app-body">
@@ -39,7 +42,7 @@ function Discover() {
                 // {image: AdidasOriginalsLogo, link: '/brands/adidas-originals'},
                 // {image: NewBalanceLogo, link: '/brands/new-balance'},
                 {image: ConverseLogo, link: '/brands/converse'},
-                // {image: VansBlackLogo, link: '/brands/vans'},
+                {image: VansBlackLogo, link: '/brands/vans'},
                 // {image: KobeLogo, link: '/brands/kobe'},
                 // {image: LebronLogo, link: '/brands/lebron'},
                 // {image: AntaLogo, link: '/brands/anta'},
@@ -48,12 +51,12 @@ function Discover() {
 
           <div style={{display: 'flex', justifyContent: 'center'}}>
             <BrandImages>
-              <div style={{position: 'relative'}}>
+              <Link to={'/brands/converse'} style={{position: 'relative'}}>
                 <RetroImage
                   style={{maxHeight: 550}}
                   src={'https://ik.imagekit.io/t25/v2/landing/converse-girl_xBGozjXIT.webp?tr=h-540'}
                   alt={'woman wearing converse'} />
-              </div>
+              </Link>
               <div style={{display: 'flex', flexDirection: 'column'}}>
                 <RetroImage
                   src={'https://ik.imagekit.io/t25/v2/landing/vans-old-skool-1_fx5NrnSi6.webp?tr=w-400'}
@@ -64,9 +67,11 @@ function Discover() {
                   alt={'red black and white air jordan 1'} />
               </div>
               <div>
-                <RetroImage
-                  src={'https://ik.imagekit.io/t25/v2/landing/adidas-superstars-1_aUAyIuusI.webp?tr=h-540'}
-                  alt={'adidas superstars'} />
+                <Link to={'/brands/adidas'}>
+                  <RetroImage
+                    src={'https://ik.imagekit.io/t25/v2/landing/adidas-superstars-1_aUAyIuusI.webp?tr=h-540'}
+                    alt={'adidas superstars'} />
+                </Link>
               </div>
 
             </BrandImages>
