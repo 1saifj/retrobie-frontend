@@ -6,17 +6,13 @@ import Layout from '../../components/Layout';
 import SEOHeader from '../../components/SEOHeader';
 import {CartIcon, DeadEyes, Replace, Return} from '../../constants/icons';
 import '../../assets/style/index.scss';
-import {JsonLd} from 'react-schemaorg';
-import productJsonld, {subProduct} from './product.jsonld';
 import {Button, Delete, Help, Modal, ModalBackground, ModalClose, ModalContent, Tag, Title} from 'bloomer';
-import ImagesSlider from './components/ImagesSlider';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
-import {useApi} from '../../network';
 import {CartItemType, CartType, ProductType, ProductTypeOptionValue, VariantType} from '../../types';
 import useSWR from 'swr';
-import {useNotify} from '../../hooks';
+import {useNotify, useApi} from '../../hooks';
 import {EmptyState, RetroImage} from '../../components';
-import ValueProposition from './components/ValueProposition';
+import {ValueProposition, ImageSlider, JSONLD} from './components';
 import {useHistory} from 'react-router';
 import RadioField from '../../components/input/RadioField';
 import {Form, Formik} from 'formik';
@@ -56,7 +52,7 @@ function ProductPage({match}) {
 
   const [availableSizes, setAvailableSizes] = useState<ProductTypeOptionValue[]>([]);
 
-  const [isInvalidVariant, setIsInvalidVariant] = useState(false);
+  const [variantDoesNotExist, setVariantDoesNotExist] = useState(false);
 
   const isSidebarOpen = useSelector((state: RootStateOrAny) => state.meta.isSidebarOpen);
 
@@ -77,14 +73,14 @@ function ProductPage({match}) {
       if (query) {
         const searchParams = new URLSearchParams(query);
         if (searchParams.has('variant')) {
-          const currentVariant = currentProduct.variants.find(
+          const existingVariant = currentProduct.variants.find(
             variant => variant.uuid === searchParams.get('variant'),
           );
 
-          if (currentVariant) {
-            setActiveVariant(currentVariant);
+          if (existingVariant) {
+            setActiveVariant(existingVariant);
           } else {
-            setIsInvalidVariant(true);
+            setVariantDoesNotExist(true);
           }
         } else {
           setActiveVariant(currentProduct.defaultVariant);
@@ -107,7 +103,7 @@ function ProductPage({match}) {
 
   }, [currentProduct]);
 
-  if (isInvalidVariant) {
+  if (variantDoesNotExist) {
     return (
       <Layout>
         <EmptyState
@@ -376,12 +372,11 @@ function ProductPage({match}) {
       />
 
 
-      <JsonLd item={{...productJsonld(currentProduct)}} />
-      <JsonLd item={{...subProduct(currentProduct)}} />
+      <JSONLD product={currentProduct} />
 
       <Layout>
         <ProductPageParent>
-          <ImagesSlider
+          <ImageSlider
             productName={currentProduct.name}
             images={currentVariant.images} />
 
