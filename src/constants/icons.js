@@ -55,7 +55,7 @@ import AdidasOriginalsWhiteLogo from '../assets/images/logos/shoes/adidas-origin
 import YeezyLogo from '../assets/images/logos/shoes/yeezy.webp';
 import YeezyWhiteLogo from '../assets/images/logos/shoes/yeezy-white.svg';
 
-import VansBlackLogo from '../assets/images/logos/shoes/Vans_company_logo.svg';
+import VansBlackLogo from '../assets/images/logos/shoes/vans.png';
 import VansWhiteLogo from '../assets/images/logos/shoes/vans_white.svg';
 
 import NewBalanceLogo from '../assets/images/logos/shoes/new-balance.svg';
