@@ -45,9 +45,10 @@ const CreateVariantModal = (props: {
             onSubmit={async (submitValues, {setSubmitting}) => {
 
               const variants = submitValues.variants.map((variant: any) => {
-                const {options, id, ...rest} = variant;
+                const {options, images, ...rest} = variant;
                 return {
                   ...rest,
+                  images: images.map(({id, ...rest}) => rest),
                   optionValues: options.map(option => {
                     return {
                       uuid: option.attribute.uuid,
