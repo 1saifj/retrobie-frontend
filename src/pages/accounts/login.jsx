@@ -13,6 +13,7 @@ import {extractErrorMessage} from '../../helpers';
 import {notify} from '../../helpers/views';
 import {useApi} from '../../network';
 import posthog from 'posthog-js';
+import responseHelper from '../../helpers/ResponseHelper';
 
 const FormParent = styled.div`
   display: grid;
@@ -56,41 +57,46 @@ export default function LoginUser(props) {
               )}
       >
         <FormParent>
-          <Formik initialValues={{
-            login: '',
-            password: '',
-          }}
-                  onSubmit={async (values, {setSubmitting}) => {
-                    setSubmitting(true);
-                    try {
-                      const {data} = await dispatch(api.accounts.login(values));
-                      setSubmitting(false);
+          <Formik
+            initialValues={{
+              login: '',
+              password: '',
+            }}
+            onSubmit={async (values, {setSubmitting, setFieldError, setErrors}) => {
+              setSubmitting(true);
+              try {
+                const {data} = await dispatch(api.accounts.login(values));
+                setSubmitting(false);
 
-                      if (data.accessToken && data.refreshToken) {
-                        // This user doesn't have MFA enabled
-                        setUserLoggedIn(data);
-                        await posthog.identify(data.email);
-                        if (props.callback && typeof props.callback === 'function') {
-                          props.callback(null, data);
-                        } else {
-                          props.history.push('/');
-                        }
-                      } else {
-                        //todo: two factor authentication
-                      }
+                if (data.accessToken && data.refreshToken) {
+                  // This user doesn't have MFA enabled
+                  setUserLoggedIn(data);
+                  await posthog.identify(data.email);
+                  if (props.callback && typeof props.callback === 'function') {
+                    props.callback(null, data);
+                  } else {
+                    props.history.push('/');
+                  }
+                } else {
+                  //todo: two factor authentication
+                }
 
-                    } catch (e) {
-                      setSubmitting(false);
-                      const message = extractErrorMessage(e);
-                      notify('error', message);
-                      if (props.callback && typeof props.callback === 'function') {
-                        props.callback(e, null);
-                      }
-                    }
-                  }}
-                  validationSchema={UserLoginSchema}
+              } catch (e) {
+                setSubmitting(false);
+                const message = extractErrorMessage(e);
+                notify('error', message);
+
+                const errors = responseHelper.getFormErrorsFromResponse({e, setFieldError});
+                setErrors(errors);
+
+                if (props.callback && typeof props.callback === 'function') {
+                  props.callback(e, null);
+                }
+              }
+            }}
+            validationSchema={UserLoginSchema}
           >
-            {({isSubmitting}) => (
+            {({isSubmitting, values}) => (
               <Form>
                 <div>
                   <img src={LoginVector} alt={'login vector'} />
@@ -110,27 +116,31 @@ export default function LoginUser(props) {
                   />
                 </div>
                 <div>
-                  <TextField type={'password'}
-                             placeholder={`●●●●●●●●●●●●`}
-                             name={'password'}
-                             label={'Password'}
+                  <TextField
+                    type={'password'}
+                    placeholder={`●●●●●●●●●●●●`}
+                    name={'password'}
+                    label={'Password'}
                   />
                 </div>
                 <div style={{marginTop: 8}}>
 
-                  <Checkbox checked={staySignedIn}
-                            onChange={(e) => {
-                              setStaySignedIn(e.target.checked);
-                            }}
+                  <Checkbox
+                    checked={staySignedIn}
+                    onChange={(e) => {
+                      setStaySignedIn(e.target.checked);
+                    }}
                   >
                     <label>Keep me signed in</label>
                   </Checkbox>
                 </div>
                 <div style={{marginTop: 16, textAlign: 'center'}}>
-                  <Button isColor={'primary'}
-                          type={'submit'}
-                          isLoading={isSubmitting}
-                          style={{minWidth: 250}}>
+                  <Button
+                    isColor={'primary'}
+                    type={'submit'}
+                    disabled={isSubmitting || !Object.values(values).length}
+                    isLoading={isSubmitting}
+                    style={{minWidth: 250}}>
                     Sign in
                   </Button>
                   <p>

@@ -126,20 +126,9 @@ const RegisterUser = ({hideFooter}) => {
                   if (e.response) {
                     notify('error', e.response.data.message);
 
-                    if (e.response.data?.validation?.errors){
-                      const responseErrors = e.response.data.validation.errors;
-                      const errors = {};
-                      responseErrors.forEach(error => {
-                        setFieldError(error.path, error['messages'].join('\n'));
-                        errors[error.path] = error['messages'].join('\n');
-                      });
-                      setFormErrors(errors);
-                    } else if (e.response.data?.errors) {
-                      const responseErrors = e.response.data.errors;
-                      responseErrors.forEach(error => {
-                        setFieldError(error.path, error['message']);
-                      });
-                    }
+                    const errors = responseHelper.getFormErrorsFromResponse({e, setFieldError});
+                    setFormErrors(errors);
+
                   } else {
                     const message = responseHelper.extractErrorMessage(e);
                     notify('error', message);
