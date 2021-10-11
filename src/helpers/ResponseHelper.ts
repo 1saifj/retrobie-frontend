@@ -36,7 +36,7 @@ class ResponseHelper {
           }
 
           return 'Up';
-        }).catch(e=> {
+        }).catch(e => {
 
         return e.message;
       });
@@ -45,6 +45,26 @@ class ResponseHelper {
     }
   }
 
+  getFormErrorsFromResponse({e, setFieldError}) {
+    if (e.response.data?.validation?.errors) {
+      const responseErrors = e.response.data.validation.errors;
+      const errors = {};
+      responseErrors.forEach(error => {
+        setFieldError(error.path, error['messages'].join('\n'));
+        errors[error.path] = error['messages'].join('\n');
+      });
+      return errors;
+    } else if (e.response.data?.errors) {
+      const responseErrors = e.response.data.errors;
+      const errors = {};
+      responseErrors.forEach(error => {
+        setFieldError(error.path, error['message']);
+        errors[error.path] = error['message'];
+      });
+      return errors;
+    } else
+      return {};
+  }
 
 }
 
