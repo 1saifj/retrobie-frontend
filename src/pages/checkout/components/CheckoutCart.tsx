@@ -15,7 +15,8 @@ import styled from 'styled-components';
 
 function CheckoutCart (props: {
   cartId: string,
-  submitCart: Function
+  submitCart: Function,
+  disableCheckoutButton?: boolean
 }){
 
   const {cartId} = props;
@@ -144,7 +145,7 @@ function CheckoutCart (props: {
           source={remoteCart}
           hideCloseButton={true}
           hideCheckoutButton={!isUserLoggedIn}
-          checkoutButtonDisabled={Boolean(fetchRemoteCartError)}
+          checkoutButtonDisabled={Boolean(fetchRemoteCartError) || props.disableCheckoutButton}
           checkoutButtonIsLoading={!isLocalCart && !remoteCart}
           checkoutButtonText={
             !fetchRemoteCartError ? 'Proceed to Payment & Delivery' :
@@ -154,7 +155,7 @@ function CheckoutCart (props: {
             const data = {
               cart: {
                 ...checkoutState,
-                uuid: checkoutState.id,
+                uuid: checkoutState.uuid,
               },
             };
             await props.submitCart(data);
