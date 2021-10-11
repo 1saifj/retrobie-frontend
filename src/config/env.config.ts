@@ -12,10 +12,10 @@ dotenv.config();
 class Env {
   getApiHost() {
     return this.isStaging()
-      ? 'https://api.staging.retrobie.com/api'
+      ? 'https://api.staging.retrobie.com'
       : this.isDev()
-      ? 'http://localhost:2500/api'
-      : 'https://api.retrobie.com/api';
+        ? 'http://localhost:2500/api'
+        : 'https://api.retrobie.com';
   }
 
   getApiVersion() {

@@ -145,8 +145,8 @@ generateSitemap(
   regularRoutes,
   'https://retrobie.com',
   process.env.REACT_APP_ENV === 'development' ? 'http://localhost:2500/api/v2' :
-    process.env.REACT_APP_ENV === 'staging' ? 'https://api.staging.retrobie.com/api/v2' :
-        process.env.REACT_APP_ENV === 'production' ? 'https://api.retrobie.com/api/v2' :
-          undefined,
+    process.env.REACT_APP_ENV === 'staging' ? 'https://api.staging.retrobie.com/v2' :
+      process.env.REACT_APP_ENV === 'production' ? 'https://api.retrobie.com/v2' :
+        undefined,
   'xml',
 );
