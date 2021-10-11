@@ -94,7 +94,7 @@ const userReducers = (state = initialState, action) => {
         ...createCheckoutState,
         checkout: {
           ...createCheckoutState.checkout,
-          id: createCheckoutPayload.id,
+          uuid: createCheckoutPayload.id,
           total: createCheckoutPayload.total,
           count: createCheckoutPayload.count,
           items: createCheckoutPayload.items,
@@ -109,7 +109,7 @@ const userReducers = (state = initialState, action) => {
         ...deleteCheckoutState,
         checkout: {
           ...deleteCheckoutState.checkout,
-          id: null,
+          uuid: null,
           total: null,
           count: 0,
           items: null,

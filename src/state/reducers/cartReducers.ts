@@ -3,7 +3,7 @@ import {CartItemType} from '../../types';
 import {ADD_TO_CART, DELETE_CART, EMPTY_CART, REMOVE_FROM_CART} from '../actions/constants';
 
 type CartState = {
-  id?: number;
+  id?: string;
   count: number;
   total: number;
   items: Array<CartItemType>;

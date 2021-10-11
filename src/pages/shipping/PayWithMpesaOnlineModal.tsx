@@ -175,7 +175,7 @@ export default function PayWithMpesaOnlineModal(
                           style={{borderBottom: '1px solid lightgray'}}
                           isColor={'ghost'}
                           isLoading={isPaymentLoading}
-                          onClick={() => initiateOnlinePayment(checkout.id)}
+                          onClick={() => initiateOnlinePayment(checkout.uuid)}
                         >
                           Try again
                         </Button>
@@ -217,7 +217,7 @@ export default function PayWithMpesaOnlineModal(
                   <Button
                     isColor="primary"
                     isLoading={isPaymentLoading}
-                    onClick={async () => initiateOnlinePayment(checkout.id)}
+                    onClick={async () => initiateOnlinePayment(checkout.uuid)}
                   >
                     Pay now
                   </Button>

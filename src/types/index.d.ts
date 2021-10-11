@@ -159,7 +159,8 @@ export type DeliveryType = {
   courierOrderNo?: string;
 };
 
-export interface CheckoutType extends CartType {
+export type CheckoutType = Omit<CartType, 'id'> & {
+  uuid: string
   delivery: DeliveryType;
   meta?: {
     zoomLevel?: number;
