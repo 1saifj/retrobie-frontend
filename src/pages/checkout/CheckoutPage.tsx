@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import Layout from '../../components/Layout';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {EmptyState} from '../../components';
@@ -20,9 +19,10 @@ import ServerError from '../../assets/images/vectors/dead.svg';
 import {useNotify} from '../../hooks';
 import {UserInfoType} from '../../state/reducers/userReducers';
 import UserComponent from './components/LoggedinContainer';
-import SignInComponent from './components/CheckoutLogInContainer';
+import SignInComponent from './components/SignIn';
 import Cart from './components/CheckoutCart';
 import useFetchers from '../../hooks/useFetchers/useFetchers';
+import responseHelper from '../../helpers/ResponseHelper';
 
 
 export default function CheckoutPage(props) {
@@ -66,17 +66,27 @@ export default function CheckoutPage(props) {
     )
   }
 
-  async function submitCart(cartInfo) {
+  async function submitCart(cartInfo: {
+    customer?
+    cart
+  }, setFieldError) {
 
-    const {items, ...rest} = cartInfo.cart;
-    const submitData = {
-      ...rest,
+    const {cart, customer, ...cartInfoRest} = cartInfo;
+    const {items, ...cartRest} = cart;
+    const submitCart = {
+      ...cartRest,
       cartItems: items,
+    };
+
+    const submitData = {
+      cart: submitCart,
+      customer,
+      ...cartInfoRest,
     };
 
     try {
 
-      const {data} = await api.cart.new({cart: submitData});
+      const {data} = await api.cart.new(submitData);
       if (data.tokens) {
         // if the user doesn't have an account,
         // log them in
@@ -90,6 +100,8 @@ export default function CheckoutPage(props) {
     } catch (e) {
       const message = extractErrorMessage(e);
       notify.error(message);
+
+      responseHelper.getFormErrorsFromResponse({e, setFieldError});
     }
   }
 
@@ -106,7 +118,7 @@ export default function CheckoutPage(props) {
               <Column isSize={{mobile: 'full', desktop: '1/2'}}>
                 {
 
-                  isUserLoggedIn ?
+                  !isUserLoggedIn ?
                     <SignInComponent submitCart={submitCart} /> :
                     <UserComponent user={userInfo} />
 
@@ -115,7 +127,12 @@ export default function CheckoutPage(props) {
 
 
               <Column isSize={{desktop: '1/2'}}>
-                <Cart cartId={cartId} submitCart={submitCart} />
+                <Cart
+                  cartId={cartId}
+                  submitCart={submitCart}
+                  disableCheckoutButton={!isUserLoggedIn}
+
+                />
               </Column>
             </Columns>
 
