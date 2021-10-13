@@ -136,7 +136,7 @@ const SingleOrder= function({match: {params: {orderId}}}) {
             <Cart
               bordered={true}
               hideCloseButton={true}
-              title={true}
+              showTitle={true}
               //@ts-ignore
               source={orderData.cart}
               hideCheckoutButton={

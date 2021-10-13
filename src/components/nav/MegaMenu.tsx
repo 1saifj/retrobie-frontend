@@ -198,9 +198,7 @@ const MegaMenu = () => {
                     <div>
                       <Cart
                         size={'L'}
-                        title={true}
-                        showAddButton={true}
-                        showRemoveButton={true}
+                        showTitle={true}
                         bordered={false}
                       />
                     </div>

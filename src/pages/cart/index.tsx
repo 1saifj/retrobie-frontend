@@ -15,11 +15,11 @@ function CartPage(props) {
             props.state.cart.items && props.state.cart.items.length ?
               <CartParent>
                 <Cart
-                  title={true}
+                  showTitle={true}
                   hideCloseButton={true}
                   size={'L'}
                   bordered
-                  showRemoveButton={true}
+                  hideRemoveButton={true}
                 />
                 <small style={{margin: '8px 0'}}>*Total not inclusive of delivery fee, if
                   present</small>
