@@ -24,7 +24,7 @@ function Landing() {
       <Perks />
       <PopularProducts />
       <Discover />
-      <Values />
+      {/*<Values />*/}
       <Categories />
       <Newsletter />
       <FAQs />
