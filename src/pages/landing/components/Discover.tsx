@@ -14,70 +14,94 @@ import {Container, Section} from 'bloomer';
 import DotPattern from '../../../assets/images/patterns/dots.svg';
 import {Link} from 'react-router-dom';
 
+const PopularBrands = () => {
+  return (
+    <PopularBrandsContainer>
+      <div className="header">
+        <h2>Discover your favorite brands and collaborations</h2>
+      </div>
+      <div className="brand-slider--container">
+        <BrandSlider
+          items={[
+            {image: AdidasBlackLogo, link: '/brands/adidas'},
+            {image: AirJordanBlackLogo, link: '/brands/jordan'},
+            {image: YeezyLogo, link: '/brands/yeezy'},
+            {image: NikeBlackLogo, link: '/brands/nike'},
+            // {image: AdidasOriginalsLogo, link: '/brands/adidas-originals'},
+            // {image: NewBalanceLogo, link: '/brands/new-balance'},
+            {image: ConverseLogo, link: '/brands/converse'},
+            {image: VansBlackLogo, link: '/brands/vans'},
+            // {image: KobeLogo, link: '/brands/kobe'},
+            // {image: LebronLogo, link: '/brands/lebron'},
+            // {image: AntaLogo, link: '/brands/anta'},
+          ]} />
+      </div>
+    </PopularBrandsContainer>
+  );
+};
+
+const PopularBrandsContainer = styled.div`
+     background: var(--color-background--light);
+
+  .header {
+    text-align: center;
+  }
+  
+  .brand-slider--container {
+     gap: 16px;
+  }
+
+`;
+
+const DiscoveryGrid = () => {
+  return (
+    <>
+      <div style={{display: 'flex', justifyContent: 'center'}}>
+        <BrandImages>
+          <Link to={'/brands/converse'} style={{position: 'relative'}}>
+            <RetroImage
+              className="popular-brand--image"
+              style={{maxHeight: 550}}
+              id="popularBrandConverse"
+              src={'https://ik.imagekit.io/t25/v2/landing/converse-girl_xBGozjXIT.webp?tr=h-540'}
+              alt={'woman wearing converse'} />
+          </Link>
+          <div style={{display: 'flex', flexDirection: 'column'}}>
+            <RetroImage
+              className="popular-brand--image"
+              id="popularBrandVansOldSkool"
+              src={'https://ik.imagekit.io/t25/v2/landing/vans-old-skool-1_fx5NrnSi6.webp?tr=w-400'}
+              alt={'vans old skool'} />
+
+            <RetroImage
+              className="popular-brand--image"
+              id="popularBrandAirJordan1"
+              src={'https://ik.imagekit.io/t25/v2/landing/air-jordan-1_Qtle7cPaS.webp?tr=w-400,ar-3-2'}
+              alt={'red black and white air jordan 1'} />
+          </div>
+          <div>
+            <Link to={'/brands/adidas'}>
+              <RetroImage
+                className="popular-brand--image"
+                id="popularBrandAdidas"
+                src={'https://ik.imagekit.io/t25/v2/landing/adidas-superstars-1_aUAyIuusI.webp?tr=h-540'}
+                alt={'adidas superstars'} />
+            </Link>
+          </div>
+
+        </BrandImages>
+      </div>
+    </>
+  );
+};
+
 function Discover() {
 
   return (
     <Section style={{background: `url('${DotPattern}')`}} id="app-body">
-      <Container>
-        <div
-          style={{paddingTop: 32}}>
-          <div
-            style={{
-              textAlign: 'center',
-              background: 'var(--color-background--light)',
-            }}>
-            <h2>Discover your favorite brands and collaborations</h2>
-          </div>
-          <div
-            style={{
-              background: 'var(--color-background--light)',
-              gap: 16,
-            }}>
-            <BrandSlider
-              items={[
-                {image: AdidasBlackLogo, link: '/brands/adidas'},
-                {image: AirJordanBlackLogo, link: '/brands/jordan'},
-                {image: YeezyLogo, link: '/brands/yeezy'},
-                {image: NikeBlackLogo, link: '/brands/nike'},
-                // {image: AdidasOriginalsLogo, link: '/brands/adidas-originals'},
-                // {image: NewBalanceLogo, link: '/brands/new-balance'},
-                {image: ConverseLogo, link: '/brands/converse'},
-                {image: VansBlackLogo, link: '/brands/vans'},
-                // {image: KobeLogo, link: '/brands/kobe'},
-                // {image: LebronLogo, link: '/brands/lebron'},
-                // {image: AntaLogo, link: '/brands/anta'},
-              ]} />
-          </div>
-
-          <div style={{display: 'flex', justifyContent: 'center'}}>
-            <BrandImages>
-              <Link to={'/brands/converse'} style={{position: 'relative'}}>
-                <RetroImage
-                  style={{maxHeight: 550}}
-                  src={'https://ik.imagekit.io/t25/v2/landing/converse-girl_xBGozjXIT.webp?tr=h-540'}
-                  alt={'woman wearing converse'} />
-              </Link>
-              <div style={{display: 'flex', flexDirection: 'column'}}>
-                <RetroImage
-                  src={'https://ik.imagekit.io/t25/v2/landing/vans-old-skool-1_fx5NrnSi6.webp?tr=w-400'}
-                  alt={'vans old skool'} />
-
-                <RetroImage
-                  src={'https://ik.imagekit.io/t25/v2/landing/air-jordan-1_Qtle7cPaS.webp?tr=w-400,ar-3-2'}
-                  alt={'red black and white air jordan 1'} />
-              </div>
-              <div>
-                <Link to={'/brands/adidas'}>
-                  <RetroImage
-                    src={'https://ik.imagekit.io/t25/v2/landing/adidas-superstars-1_aUAyIuusI.webp?tr=h-540'}
-                    alt={'adidas superstars'} />
-                </Link>
-              </div>
-
-            </BrandImages>
-          </div>
-        </div>
-
+      <Container style={{paddingTop: 32}}>
+        <PopularBrands />
+        <DiscoveryGrid />
       </Container>
     </Section>
 

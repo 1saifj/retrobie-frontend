@@ -46,6 +46,7 @@ const Categories = () => {
                 allCategories.slice(0, 4).map(item => (
                   <Link
                     key={item.name}
+                    className="category--link"
                     to={`/category/${item.slug}`}>
                     <Category>
                       <header>

@@ -104,12 +104,14 @@ const Description = () => {
         <CTAButtons>
           <Button
             isColor='primary'
+            id="getStartedButton"
             onClick={() => setRegisterModalActive(true)}
           >
             Get started
           </Button>
           <Button
             isOutlined
+            id="howItWorksButton"
             onClick={() => setIsHowItWorksModalActive(true)}
           >
             Learn more

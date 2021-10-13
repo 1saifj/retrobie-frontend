@@ -8,7 +8,7 @@ function BrandSlider(props: {items: any[]}) {
     <BrandSliderContainer>
       {
         props.items.map(item => (
-          <Link to={item.link}>
+          <Link className="popular-brand--link" to={item.link}>
             <img src={item.image} alt={'logo'} />
           </Link>
         ))

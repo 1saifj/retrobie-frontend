@@ -53,7 +53,10 @@ function PopularProducts() {
               <BrandImagesParent>
                 {featuredProducts?.length &&
                 featuredProducts.map(product => (
-                  <Link to={`/product/${product.slug}`} key={product.name}>
+                  <Link to={`/product/${product.slug}`}
+                        key={product.name}
+                        className="featured-product"
+                  >
                     <BrandParent>
                       <div className={'image'}>
                         <RetroImage
