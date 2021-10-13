@@ -12,7 +12,7 @@ export const Popup = ({ children, map, latitude, longitude, ...mapboxPopupProps 
       .setDOMContent(popupRef.current)
       .addTo(map);
 
-    return popup.remove;
+    popup.remove();
   }, [children, mapboxPopupProps, longitude, latitude]);
 
   return (
