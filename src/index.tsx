@@ -12,11 +12,14 @@ import {FilterProviderV2} from './hooks/useFiltersV2';
 import posthog from 'posthog-js';
 import {env} from './config';
 
+import './assets/style/index.scss';
+
+
 require('react-hot-loader/patch');
 
 toast.configure({
-    autoClose: 5000,
-    draggable: false,
+  autoClose: 5000,
+  draggable: false,
 });
 
 // Make sure to check the current environment is not staging
