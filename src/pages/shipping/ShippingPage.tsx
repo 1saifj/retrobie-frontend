@@ -31,6 +31,7 @@ import {useNotify} from '../../hooks';
 import ServerError from '../../assets/images/vectors/dead.svg';
 import LipaNaMpesaSection from './components/LipaNaMpesaSection';
 import humps from '../../helpers/humps';
+import posthog from 'posthog-js';
 
 // const CompleteOrderValidationSchema = Yup.object({
 //   deliveryLocation: Yup.string().required(),
@@ -181,16 +182,22 @@ export default function Shipping(props) {
     try {
       const {data} = await dispatch(api.orders.complete({
         address: {
-          latLng: [order.address.lat, order.address.lng]
+          latLng: [order.address.lat, order.address.lng],
         },
         paymentType: order.paymentType,
         orderId: order.orderId,
       }));
 
       notify.success(data.message);
-      dispatch(deleteCartAction())
+      dispatch(deleteCartAction());
 
-      props.history.push(`/checkout/shipping/order-completed/${data.uuid}`)
+      posthog.capture('completed order', {
+        order_id: data.uuid,
+        delivery_method: shippingMethod,
+        checkout_total: checkout.total,
+        payment_type: order.paymentType,
+      });
+      props.history.push(`/checkout/shipping/order-completed/${data.uuid}`);
 
     }catch (e){
       const message = extractErrorMessage(e);

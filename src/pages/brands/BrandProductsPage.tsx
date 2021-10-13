@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Layout from '../../components/Layout';
 import styled from 'styled-components';
 import Loading from '../../components/loading';
@@ -13,6 +13,8 @@ import useFetchers from '../../hooks/useFetchers/useFetchers';
 import BrandPageHeaderComponent from './components/BrandPageHeaderComponent';
 import {ProductListWrapper} from '../../components/filters/ProductListWrapper';
 import ProductList from '../../components/filters/ProductList';
+import posthog from 'posthog-js';
+
 
 function BrandProductsPage(props) {
 
@@ -29,6 +31,14 @@ function BrandProductsPage(props) {
     `/brands/${brandData.slug}/products/filtered`,
     brandData?.slug,
   ] : undefined, productsFetcher.getFilteredProducts);
+
+  useEffect(() => {
+    if (brandData) {
+      posthog.capture('brand viewed', {
+        brand_name: brandData.name,
+      });
+    }
+  }, [brandData]);
 
   if (fetchBrandError) {
     return (

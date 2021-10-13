@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Layout from '../../components/Layout';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {EmptyState} from '../../components';
@@ -23,6 +23,7 @@ import SignInComponent from './components/SignIn';
 import Cart from './components/CheckoutCart';
 import useFetchers from '../../hooks/useFetchers/useFetchers';
 import responseHelper from '../../helpers/ResponseHelper';
+import posthog from 'posthog-js';
 
 
 export default function CheckoutPage(props) {
@@ -37,22 +38,27 @@ export default function CheckoutPage(props) {
   const isUserLoggedIn = useSelector((state: RootStateOrAny) => state.user.isLoggedIn);
 
   const {data: userInfo, error: fetchUserInfoError} = useSWR<UserInfoType>(
-    isUserLoggedIn ? '/me': null,
-    userFetchers.userInfoFetcher
-  )
+    isUserLoggedIn ? '/me' : null,
+    userFetchers.userInfoFetcher,
+  );
 
   const setUserLoggedIn = (payload: LoginResponseType) => dispatch(loginUserAction(payload));
 
+  useEffect(() => {
+    if (!fetchUserInfoError) {
+      posthog.capture('visited checkout page');
+    }
+  }, [userInfo, fetchUserInfoError]);
 
   // if a 500 error occurs while fetching the
   // user's information
-  if (fetchUserInfoError){
+  if (fetchUserInfoError) {
     return (
       <Layout>
         <EmptyState
           style={{minWidth: 400}}
           icon={ServerError}
-          title={"Oops. That's an error."}
+          title={'Oops. That\'s an error.'}
           message={'We could not reach our servers. Please try again in a short while.'}
           prompt={()=> (
             <Button
@@ -96,6 +102,7 @@ export default function CheckoutPage(props) {
         });
       }
 
+      posthog.capture('successfully completed checkout');
       props.history.push(`/checkout/shipping/${data.orderId}`);
     } catch (e) {
       const message = extractErrorMessage(e);

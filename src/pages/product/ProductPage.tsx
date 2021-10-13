@@ -19,6 +19,8 @@ import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {isProductInStock} from '../../components/cart';
 import {addItemToCartAction, toggleSidebarAction} from '../../state/actions';
+import posthog from 'posthog-js';
+
 
 const AddToCartValidationSchema = Yup.object({
   size: Yup.string().required(),
@@ -99,6 +101,10 @@ function ProductPage({match}) {
     if (currentProduct) {
       const variantsSortedByColor = getVariantsSortedByColor(currentProduct);
       setSortedVariants(variantsSortedByColor);
+      posthog.capture('viewed product', {
+        product_name: currentProduct.name,
+        product_price: currentProduct.originalPrice,
+      });
     }
 
   }, [currentProduct]);
@@ -198,6 +204,9 @@ function ProductPage({match}) {
         });
       }
       dispatch(addItemToCartAction({item: cartItem}));
+      posthog.capture('added item to cart', {
+        line_item: cartItem,
+      });
     } else {
       notify.error(message);
     }

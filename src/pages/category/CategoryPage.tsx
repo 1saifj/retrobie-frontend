@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {EmptyState, Layout, Loading} from '../../components';
 import useSWR from 'swr/esm/use-swr';
 import {CategoryType, FilteredProduct, ProductType} from '../../types';
@@ -11,6 +11,7 @@ import {ProductListWrapper} from '../../components/filters/ProductListWrapper';
 import styled from 'styled-components';
 import ProductList from '../../components/filters/ProductList';
 import defaultHelpers from '../../helpers';
+import posthog from 'posthog-js';
 
 
 const CategoryPage = function({match}) {
@@ -28,6 +29,14 @@ const CategoryPage = function({match}) {
     categoryData ? [`/category/${categoryData.slug}/products`, categoryData.slug] : null,
     categoriesFetcher.getProducts,
   );
+
+  useEffect(() => {
+    if (categoryData) {
+      posthog.capture('viewed category page', {
+        category_name: categoryData.name,
+      });
+    }
+  }, [categoryData]);
 
   if (fetchCategoryError || fetchCategoryProductsError) {
     return (
