@@ -1,14 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
+import useWindowSize from '../../hooks/useWindowResize/useWindowResize';
 
 const pixelRatio = window.devicePixelRatio;
-const deviceWidth = window.screen.width;
 const deviceHeight = window.screen.height;
 
-console.log('Pixel ratio: ', pixelRatio);
-
 // https://dev.to/jasurkurbanovinit/how-to-create-custom-fully-responsive-text-component-in-react-native-51d8
-const getFontSize = (size) => {
+const getFontSize = (size = 5, screenWidth?) => {
+  const deviceWidth = screenWidth || window.screen.width;
+
   if (pixelRatio > 1) {
     if (pixelRatio >= 2 && pixelRatio < 3) {
       // iphone 5s and older Androids
@@ -65,6 +65,7 @@ const getFontSize = (size) => {
       // catch larger phablet devices
       return size * 1.4;
     }
+    return size;
   } else {
 
     if (deviceWidth >= 320 && deviceWidth <= 1024) {
@@ -87,10 +88,20 @@ type TextProps = {
  * @param props.fontSize - An optional font size in em
  * @constructor
  */
-const H1 = (props: TextProps) => <H1Container {...props}>{props.children}</H1Container>;
+const H1 = (props: TextProps) => {
+
+  const width = useWindowSize();
+
+  const fontSize = getFontSize(props.fontSize, width);
+
+  return (
+    <H1Container fontSize={fontSize} {...props}>{props.children}</H1Container>
+  );
+
+};
 
 const H1Container = styled.h1<{fontSize?: number}>`
-  font-size: ${props => getFontSize(props.fontSize ? props.fontSize : 5)}em;
+  font-size: ${props => getFontSize(props.fontSize || 5)}em;
 `;
 
 const H2 = (props: TextProps) => <H2Container {...props}>{props.children}</H2Container>;
