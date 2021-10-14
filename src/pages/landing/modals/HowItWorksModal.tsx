@@ -28,16 +28,10 @@ const HowItWorksModal = function(props){
               <p>
                 <strong>
                   Retrobie
-                </strong> is the newest kid on the block and we've got a lot to prove.
-              </p>
-              <p>
-                We are an
-                online sneaker shop and tech startup founded in 2018 with the goal of delivering
-                the cleanest & freshest kicks right to your doorstep.
-              </p>
-              <p>
-                All our stuff - from the cheapest Converse to the most expensive Yeezys - is original.
-                That's the Retrobie guarantee.
+                </strong> is a tech/e-commerce startup/shop founded and run by {' '}
+                <a href="https://twitter.com/bradleykingz">
+                  @bradleykingz
+                </a> from his brother's basement.
               </p>
               <p>
                 We stock a wide variety of sneakers - from popular stuff like Air Jordans, Yeezys,
@@ -49,126 +43,18 @@ const HowItWorksModal = function(props){
 
           <div>
             <h3>
-              How it works
+              Get in touch
             </h3>
             <p>
-              Buying stuff on our store is a simple 5-step process. If you're still confused
-              after this, feel free to reach us at our socials -{' '}
-              <a href={'https://twitter.com/retrobie'}>@retrobie</a> on Twitter for the cool cats,{' '}
-              <a href={'tel:+254796610303'}>+254-796-610-303</a>{' '} on Whatsapp or
-              email us at{' '}
+              For the cool cats, DM me on Twitter - {' '}
+              <a href={'https://twitter.com/retrobie'}>@retrobie</a>,{' '}
+              <a href={'tel:+254796610303'}>+254-796-610-303</a>{' '}
+              on Whatsapp or
+              via email at {' '}
               <a href={'mailto:customer.support@retrobie.com'}>customer.support@retrobie.com</a>{' '}
-              if you prefer old school.
+              if you're old school.
             </p>
 
-          </div>
-          <div>
-            <div style={{margin: '16px 0'}}>
-              <div>
-                <img
-                  src={SoundWaves}
-                  alt={'shoes you vibe with'}
-                  style={{width: 64}}
-                />
-              </div>
-              <div>
-                <h4>Step 1: Find Something you vibe with.</h4>
-                <p>
-                  This one should be easy.
-                </p>
-                <p>
-                  Retrobie is full of a wide selection of
-                  sneakers and other sports shoes you're going to love.
-                </p>
-              </div>
-            </div>
-
-            <div style={{margin: '16px 0'}}>
-              <div>
-                <img
-                  src={AddToCart}
-                  alt={'add to cart'}
-                  style={{width: 48}} />
-              </div>
-              <div>
-                <h4>Step 2: Add it to your cart</h4>
-                <p>
-                  Once you've found something you like, add it/them to your cart
-                  and proceed to the checkout page.
-                </p>
-              </div>
-            </div>
-
-            <div style={{margin: '16px 0'}}>
-              <div>
-                <img
-                  alt={'your location'}
-                  src={LocationIcon}
-                  style={{width: 48}} />
-              </div>
-              <div>
-                <h4>Step 3: Pick a delivery location & checkout</h4>
-                <p>
-                  Use the map on our checkout page to select where you'd like your stuff to be
-                  delivered. The delivery fee will be calculated and shown on this page.
-                </p>
-                <p>
-                  You can either pay for your order before or after delivery via M-pesa.
-                </p>
-                <p>
-                  PS: Paying before delivery helps us expedite your order. No pressure, though.
-                </p>
-              </div>
-            </div>
-
-            <div style={{margin: '16px 0'}}>
-              <img
-                src={FastDelivery}
-                alt={'fast delivery'}
-                style={{width: 48}}
-              />
-              <div>
-                <h4>
-                  Step 3: Wait for the delivery to be completed or pick up your order
-                  directly.
-                </h4>
-                <p>
-                  Deliveries take two days maximum to complete.
-                </p>
-                <p>
-                  If you're feeling feisty or
-                  would prefer not to cover the delivery fee, you can arrange for a pickup
-                  of your product within the CBD.
-                </p>
-              </div>
-            </div>
-
-            <div style={{margin: '16px 0'}}>
-              <img
-                src={CoolPeach}
-                alt={'cool peach'}
-                style={{width: 48}} />
-
-              <div>
-                <h4>Step 4: Rock your new kicks and keep being a cool peach.</h4>
-                <p>
-                   You earned it.
-                </p>
-              </div>
-            </div>
-
-            <div style={{margin: '16px 0'}}>
-              <img
-                alt={'confetti'}
-                src={Confetti} style={{width: 48}} />
-
-              <div>
-                <h4>Step 5: Party??</h4>
-                <p>Pop one on us, and spread the word if you enjoyed
-                  the experience.
-                </p>
-              </div>
-            </div>
           </div>
 
           <div style={{marginTop: 48}}>

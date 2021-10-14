@@ -6,7 +6,7 @@ const HowItWorks = lazy(() => import('../pages/how-it-works'));
 const Blog = lazy(() => import('../pages/blog'));
 const Category = lazy(() => import('../pages/category/CategoryPage'));
 const Collection = lazy(() => import('../pages/collections'));
-const About = lazy(() => import('../pages/about'));
+const About = lazy(() => import('../pages/AboutUsPage'));
 const Product = lazy(() => import('../pages/product/ProductPage'));
 
 const TermsOfService = lazy(() => import('../pages/policies/terms-of-service'));
@@ -110,7 +110,7 @@ const regularRoutes = [
     component: UserSingleOrder,
   },
   {
-    path: '/company/about',
+    path: '/company/about-us',
     exact: true,
     component: About,
   },
