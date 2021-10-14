@@ -1,12 +1,18 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Layout from '../../components/Layout';
 import {SupportParent} from './shipping-policy';
 import {Return} from '../../constants/icons';
 import SEOHeader from '../../components/SEOHeader';
 import {Container} from 'bloomer';
 import {Link} from 'react-router-dom';
+import posthog from 'posthog-js';
 
 function ReturnsPolicy() {
+
+  useEffect(() => {
+    posthog.capture('viewed refund policy page');
+  }, []);
+
   return (
     <Layout style={{display: 'flex', justifyContent: 'center', marginTop: '48px'}}>
       <SEOHeader

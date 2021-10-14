@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Layout from '../../components/Layout';
 import {CenterPageContent} from '../support';
 import styled from 'styled-components';
@@ -6,9 +6,15 @@ import {FastDelivery} from '../../constants/icons';
 import {Section} from 'bloomer';
 import {Link} from 'react-router-dom';
 import SEOHeader from '../../components/SEOHeader';
+import posthog from 'posthog-js';
 
 
 export default function ShippingPolicy(props) {
+
+  useEffect(() => {
+    posthog.capture('viewed shipping policy page');
+  }, []);
+
   return (
     <Layout>
       <SEOHeader

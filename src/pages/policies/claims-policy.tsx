@@ -1,18 +1,23 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Layout} from '../../components';
 import {CenterPageContent} from '../support';
 import {SupportParent} from './shipping-policy';
 import {Link} from 'react-router-dom';
 import SEOHeader from '../../components/SEOHeader';
+import posthog from 'posthog-js';
 
 export default function() {
+
+  useEffect(() => {
+    posthog.capture('viewed claims policy page');
+  }, []);
 
   return (
     <Layout>
       <SEOHeader
         description={'You can make a claim on any sneakers or shoes we delivered to you if you aren\'t happy with them.'}
         title={'Claims policy'}
-        path={'/policies/claims-policy'}/>
+        path={'/policies/claims-policy'} />
       <CenterPageContent>
         <SupportParent>
           <h2>

@@ -1,10 +1,16 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Layout from '../../components/Layout';
 import SEOHeader from '../../components/SEOHeader';
 import {CenterPageContent} from '../support';
 import {SupportParent} from './shipping-policy';
+import posthog from 'posthog-js';
 
 const PrivacyAndCookiePolicy = () => {
+
+  useEffect(() => {
+    posthog.capture('viewed privacy & cookie policy page');
+  }, []);
+
   return (
     <Layout>
       <CenterPageContent>

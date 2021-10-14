@@ -1,10 +1,16 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {CenterPageContent} from '../support';
 import {Layout} from '../../components';
 import {SupportParent} from './shipping-policy';
 import {Refund, Return} from '../../constants/icons';
+import posthog from 'posthog-js';
 
 export default function() {
+
+  useEffect(() => {
+    posthog.capture('viewed refund policy page');
+  }, []);
+
 
   return (
     <Layout>
@@ -12,7 +18,7 @@ export default function() {
         <SupportParent>
           <header>
             <img style={{width: 48}}
-              src={Refund} alt={'returns icon'}/>
+                 src={Refund} alt={'returns icon'} />
             <h1>
               Refund policy
             </h1>

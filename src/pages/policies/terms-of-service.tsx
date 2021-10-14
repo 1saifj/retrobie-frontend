@@ -1,12 +1,18 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import styled from 'styled-components';
 import Layout from '../../components/Layout';
 import SEOHeader from '../../components/SEOHeader';
 import {CenterPageContent} from '../support';
 import {SupportParent} from './shipping-policy';
 import {Link} from 'react-router-dom';
+import posthog from 'posthog-js';
 
 const Tos = () => {
+
+  useEffect(() => {
+    posthog.capture('viewed terms of service page');
+  }, []);
+
   return (
     <>
       <Layout>
@@ -15,7 +21,7 @@ const Tos = () => {
             <SEOHeader
               path={'/privacy/terms-of-service'}
               title={'Privacy Policy'}
-              description={'Curious to see how Retrobie manage your data? Here\'s all the information you need.' }
+              description={'Curious to see how Retrobie manage your data? Here\'s all the information you need.'}
             />
             <div>
               <h2>

@@ -1,10 +1,15 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Layout} from '../../components';
 import {CenterPageContent} from '../support';
 import {SupportParent} from './shipping-policy';
 import SEOHeader from '../../components/SEOHeader';
+import posthog from 'posthog-js';
 
 export default function() {
+
+  useEffect(() => {
+    posthog.capture('viewed exchange policy page');
+  }, []);
 
   return (
     <Layout>
