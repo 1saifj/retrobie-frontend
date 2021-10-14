@@ -180,7 +180,7 @@ body,
 
 h1 {
   font-size: 2.074em;
-  margin: 0.5em 0;
+  margin: 0.25em 0;
 }
 
 h2 {
@@ -347,12 +347,7 @@ p.help {
     left: 0;
     top: 0;
     position: absolute;
-    -webkit-transition: opacity var(--d-o, 0.2s),
-      -webkit-transform var(--d-t, 0.3s) var(--d-t-e, ease);
-    transition: opacity var(--d-o, 0.2s), -webkit-transform var(--d-t, 0.3s) var(--d-t-e, ease);
     transition: transform var(--d-t, 0.3s) var(--d-t-e, ease), opacity var(--d-o, 0.2s);
-    transition: transform var(--d-t, 0.3s) var(--d-t-e, ease), opacity var(--d-o, 0.2s),
-      -webkit-transform var(--d-t, 0.3s) var(--d-t-e, ease);
   }
   input[type='checkbox']:checked,
   input[type='radio']:checked {
