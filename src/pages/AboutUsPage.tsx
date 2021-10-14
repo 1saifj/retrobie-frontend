@@ -54,8 +54,8 @@ function AboutUsPage() {
             </Container>
           </Section>
         </MainCopy>
-        <>
-          <WhoWeAreContainer style={{marginTop: '2rem'}}>
+        <Section>
+          <WhoWeAreContainer>
             <div>
               <div>
                 <h1>Who are we?</h1>
@@ -159,7 +159,7 @@ function AboutUsPage() {
               {/*</div>*/}
             </div>
           </WhoWeAreContainer>
-        </>
+        </Section>
         <Section>
           <HowItWorksLanding>
             <div>
@@ -279,7 +279,7 @@ const ProcessParent = styled.div`
 
 export default AboutUsPage;
 
-const HowItWorksLanding = styled.div``;
+const HowItWorksLanding = styled(Container)``;
 
 const WhoWeAreContainer = styled(Container)`
   .me {
