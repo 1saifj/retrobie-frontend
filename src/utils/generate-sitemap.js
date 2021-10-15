@@ -7,6 +7,21 @@ const path = require('path');
 
 dotenv.config();
 
+async function getAccessToken() {
+  const login = process.env.REACT_APP_ADMIN_USERNAME;
+  const password = process.env.REACT_APP_ADMIN_PASSWORD;
+  try {
+    const {data} = await axios.post('/accounts/login', {
+      login,
+      password,
+    });
+    return data.accessToken;
+  } catch (e) {
+    console.error(e);
+    return undefined;
+  }
+}
+
 /**
  *
  * @param {{path: string, exact: boolean, apiPath?: string}[]} allRoutes
@@ -45,19 +60,20 @@ function generateSitemap(
 
           // if there are 2 params to query
           if (routePaths.length >1){
+            // only valid for /brands/all/
             if (routePaths.length === 2) {
               try {
-                const response = await axios.get(apiBaseUrl + route.apiPath);
                 // get all the brands
-                const allDataLength = response.data.length;
-                for (let i = 0; i < allDataLength; i++) {
+                const response = await axios.get(apiBaseUrl + route.apiPath);
+                const allBrandsDataLength = response.data.length;
+                for (let i = 0; i < allBrandsDataLength; i++) {
                   //for each brand
 
                   const response1 = await axios.get(
                     apiBaseUrl +
                     // replace any instance of ':name' from the api path
                     // with the 'name' from the response
-                    route.apiPath1.replace(routePaths[0], response.data[i][routePaths[0].slice(1)]),
+                    route.childPath.replace(routePaths[0], response.data[i][routePaths[0].slice(1)]),
                   );
 
                   for (let j = 0; j < response1.data.length; j++) {
@@ -108,33 +124,40 @@ function generateSitemap(
   if (type === 'txt')
     fs.writeFileSync('./sitemap.txt', allRoutes.map(item => clientBaseUrl + item.path).join('\n'));
   else if (type === 'xml') {
+
+    const sitemapPath = './sitemap.xml';
+
     //read the xml file
-    fs.readFile('./sitemap.xml', {}, async (err, data) => {
+    fs.readFile(sitemapPath, {}, async (err, data) => {
       let sitemapData = data;
       // if the file doesn't exist
       if (err && err.code === 'ENOENT') {
         // create it
         fs.writeFileSync(
-          './sitemap.xml',
+          sitemapPath,
           '<?xml version="1.0" encoding="UTF-8"?>',
           {encoding: 'utf-8'},
         );
         // and re-read it
-        sitemapData = fs.readFileSync('./sitemap.xml');
+        sitemapData = fs.readFileSync(sitemapPath);
       }
 
       // we can be sure the file exists at this point
       const sitemapJSON = parser.toJson(sitemapData, {reversible: true});
       const sitemapObject = JSON.parse(sitemapJSON);
 
+      const routes = await mapRoutes();
+
       sitemapObject['urlset'] = {
         xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9',
-        url: await mapRoutes(),
+        url: routes,
       };
 
       const sitemapXML = parser.toXml(JSON.stringify(sitemapObject));
-      const buildDir = path.join(__dirname, '..', '..', 'public', 'sitemap.xml')
+
+      const buildDir = path.resolve(sitemapPath);
       fs.writeFileSync(buildDir, `<?xml version="1.0" encoding="UTF-8"?>${sitemapXML}`);
+
     });
   } else {
     console.log('Doing nothing. type: ', type);
@@ -147,6 +170,6 @@ generateSitemap(
   process.env.REACT_APP_ENV === 'development' ? 'http://localhost:2500/api/v2' :
     process.env.REACT_APP_ENV === 'staging' ? 'https://api.staging.retrobie.com/v2' :
       process.env.REACT_APP_ENV === 'production' ? 'https://api.retrobie.com/v2' :
-        undefined,
+        'http://localhost:2500/api/v2',
   'xml',
 );

@@ -102,10 +102,10 @@
     "apiPath": "/brands/all"
   },
   {
-    "path": "/brands/:name/:slug",
+    "path": "/brands/:slug/",
     "exact": false,
     "apiPath": "/brands/all/",
-    "apiPath1": "/brands/:name/products"
+    "childPath": "/products/brand/:slug"
   },
   {
     "path": "/category/:slug/",
