@@ -125,7 +125,7 @@ function generateSitemap(
     fs.writeFileSync('./sitemap.txt', allRoutes.map(item => clientBaseUrl + item.path).join('\n'));
   else if (type === 'xml') {
 
-    const sitemapPath = './sitemap.xml';
+    const sitemapPath = '../../public/sitemap.xml';
 
     //read the xml file
     fs.readFile(sitemapPath, {}, async (err, data) => {
@@ -158,6 +158,7 @@ function generateSitemap(
       const buildDir = path.resolve(sitemapPath);
       fs.writeFileSync(buildDir, `<?xml version="1.0" encoding="UTF-8"?>${sitemapXML}`);
 
+      console.log('Generated sitemap successfully.');
     });
   } else {
     console.log('Doing nothing. type: ', type);
