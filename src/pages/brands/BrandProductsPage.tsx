@@ -34,7 +34,7 @@ function BrandProductsPage(props) {
 
   useEffect(() => {
     if (brandData) {
-      posthog.capture('brand viewed', {
+      posthog.capture('visited brand page', {
         brand_name: brandData.name,
       });
     }

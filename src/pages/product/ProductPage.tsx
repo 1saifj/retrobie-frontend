@@ -103,7 +103,7 @@ function ProductPage({match}) {
     if (currentProduct) {
       const variantsSortedByColor = getVariantsSortedByColor(currentProduct);
       setSortedVariants(variantsSortedByColor);
-      posthog.capture('viewed product', {
+      posthog.capture('viewed product page', {
         product_name: currentProduct.name,
         product_price: currentProduct.originalPrice,
       });
