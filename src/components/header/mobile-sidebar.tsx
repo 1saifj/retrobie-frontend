@@ -36,9 +36,10 @@ export default function MobileSidebar(props){
       }}>
         <div>
           <Button
-            onClick={()=> {
-              props.onClose()
-              openOrCloseCart(true)
+            id={'openCartButton'}
+            onClick={() => {
+              props.onClose();
+              openOrCloseCart(true);
             }}
             isColor={'ghost'}>
             <img
@@ -68,7 +69,7 @@ export default function MobileSidebar(props){
                   alignItems: "center",
                   gap: "12px"
                 }}>
-                  <a href={`/category/mens-shoes`}>
+                  <a id={'mens-category-link'} href={`/category/mens-shoes`}>
                     Men's Shoes
                   </a>
                 </li>
@@ -77,7 +78,7 @@ export default function MobileSidebar(props){
                   alignItems: "center",
                   gap: "12px"
                 }}>
-                  <a href={`/category/womens-shoes`}>
+                  <a id={'womens-category-link'} href={`/category/womens-shoes`}>
                     Women's Shoes
                   </a>
                 </li>
@@ -87,7 +88,7 @@ export default function MobileSidebar(props){
                   gap: "12px"
                 }}>
 
-                  <a href={`/category/kids-shoes`}>
+                  <a id={'kids-category-link'} href={`/category/kids-shoes`}>
                     Kids' Shoes
                   </a>
                 </li>
@@ -147,11 +148,11 @@ export default function MobileSidebar(props){
                   <p>Don't have an account? Join us for exclusive deals, offers and perks!</p>
                   <div style={{display: 'flex', justifyContent: 'space-between'}}>
                     <Link to={'/accounts/register'}>
-                      <Button isColor={'primary'}>
+                      <Button id={'mobileSignUpButton'} isColor={'primary'}>
                         Join us
                       </Button>
                     </Link>
-                    <Link to={'/accounts/login'}>
+                    <Link id={'mobileLoginButton'} to={'/accounts/login'}>
                       <Button>
                         Log in
                       </Button>
