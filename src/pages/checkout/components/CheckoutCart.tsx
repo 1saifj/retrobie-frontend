@@ -9,7 +9,7 @@ import Layout from '../../../components/Layout';
 import {EmptyState, Loading} from '../../../components';
 import {EmptyCart, ErrorIconDark} from '../../../constants/icons';
 import {Button} from 'bloomer';
-import {useHistory} from 'react-router';
+import {useNavigate} from 'react-router';
 import styled from 'styled-components';
 
 
@@ -45,7 +45,7 @@ function CheckoutCart (props: {
 
   const isUserLoggedIn = useSelector((state: RootStateOrAny) => state.user.isLoggedIn);
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const createCheckout = (payload: CartType) => dispatch(createCheckoutAction(payload));
@@ -98,7 +98,7 @@ function CheckoutCart (props: {
           prompt={() => (
             <Button
               isColor={'primary'}
-              onClick={() => history.push('/')}
+              onClick={() => navigate('/')}
               style={{marginTop: '4px', width: '100%'}}
             >
               Start Shopping

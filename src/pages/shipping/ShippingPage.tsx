@@ -32,6 +32,7 @@ import ServerError from '../../assets/images/vectors/dead.svg';
 import LipaNaMpesaSection from './components/LipaNaMpesaSection';
 import humps from '../../helpers/humps';
 import posthog from 'posthog-js';
+import {useNavigate} from 'react-router-dom';
 
 // const CompleteOrderValidationSchema = Yup.object({
 //   deliveryLocation: Yup.string().required(),
@@ -56,6 +57,7 @@ export default function Shipping(props) {
     referenceNo: string
   }>(userState.isLoggedIn ? [`orders/${paramOrderId}/status`, paramOrderId] : null, orderDataFetcher);
 
+  const navigate = useNavigate();
 
   const [payNowOrOnDelivery, setPayNowOrOnDelivery] = useState<'payOnDelivery' | 'payNow'>(null);
 
@@ -104,7 +106,7 @@ export default function Shipping(props) {
         prompt={() => (
           <Button
             isColor="primary"
-            onClick={() => props.history.push('/')}
+            onClick={() => navigate('/')}
             style={{marginTop: '12px', width: '250px'}}
           >
             Start Shopping
@@ -197,7 +199,7 @@ export default function Shipping(props) {
         checkout_total: checkout.total,
         payment_type: order.paymentType,
       });
-      props.history.push(`/checkout/shipping/order-completed/${data.uuid}`);
+      navigate(`/checkout/shipping/order-completed/${data.uuid}`);
 
     }catch (e){
       const message = extractErrorMessage(e);

@@ -5,8 +5,12 @@ import Cart from '../../components/cart';
 import {EmptyState} from '../../components';
 import {EmptyCart} from '../../constants/icons';
 import {Button} from 'bloomer';
+import {useNavigate} from 'react-router-dom';
 
 function CartPage(props) {
+
+  const navigate = useNavigate();
+
   return (
     <Layout>
       <CartItemParent>
@@ -30,7 +34,7 @@ function CartPage(props) {
                 icon={EmptyCart}
                 message={'Do some shopping and check back later.'}
                 prompt={() =>
-                  <Button type={'primary'} onClick={() => props.history.push('/')}
+                  <Button type={'primary'} onClick={() => navigate('/')}
                           style={{marginTop: '12px', width: '250px'}}>
                     Start Shopping
                   </Button>

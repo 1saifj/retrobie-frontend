@@ -14,7 +14,7 @@ import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {UserState} from '../../state/reducers/userReducers';
 import {EmptyState} from '../../components';
 import {HelpIcon, TickDark} from '../../constants/icons';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {loginUserAction} from '../../state/actions';
 import {LoginResponseType} from '../../types';
 import qs from 'qs'
@@ -66,6 +66,8 @@ function setFormSubmitted(submitted) {
 export default function VerifyAccount(props) {
   const api = useApi();
   const dispatch = useDispatch();
+
+  const navigate = useNavigate();
   const countdownTime = 60;
 
   const [timeRemaining, setTimeRemaining] = useState(0);
@@ -75,7 +77,7 @@ export default function VerifyAccount(props) {
   const [isRequestingTOTP, setIsRequestingTOTP] = useState(false);
   const [isConfirmModalEmailOpen, setIsConfirmModalEmailOpen] = useState(false);
 
-  const accessToken = user?.tokens?.accessToken
+  const accessToken = user?.tokens?.accessToken;
   const decodedAccessToken = accessToken ? jwtDecode(accessToken): undefined;
 
   // Track whether this form has been submitted or not.
@@ -213,7 +215,7 @@ export default function VerifyAccount(props) {
                 setSubmitting(false);
                 startTimer();
                 setUserLoggedIn(data);
-                props.history.push('/');
+                navigate('/');
               } catch (e) {
                 setSubmitting(false);
                 const message = extractErrorMessage(e);

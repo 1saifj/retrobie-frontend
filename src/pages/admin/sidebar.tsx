@@ -2,8 +2,8 @@ import React, {ReactElement, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Logo from '../../components/logo/Logo';
-import {useHistory, useLocation, useParams} from 'react-router';
 import {ChevronDown} from 'react-feather';
+import {useLocation, useNavigate} from 'react-router-dom';
 
 type RouteItem = {
   name: string;
@@ -14,24 +14,26 @@ type RouteItem = {
 
 const Sidebar = props => {
   const {items: sidebarItems} = props;
-  const history = useHistory();
+  const navigate = useNavigate();
   const [currentActive, setCurrentActive] = useState(0);
   const [sidebarRoutes, setSidebarRoutes] = useState<RouteItem[]>(sidebarItems);
 
+  const location = useLocation();
+
   useEffect(() => {
-    setActiveItem()
+    setActiveItem();
   }, [currentActive]);
 
   function changeActiveItem(item) {
     if (item) {
-      history.push(item.route);
+      navigate(item.route);
       setActiveItem();
     }
   }
 
   function setActiveItem(){
     // first split the url using the string 'dashboard'
-    const locationWithoutDashboard = history.location.pathname.split('dashboard');
+    const locationWithoutDashboard = location.pathname.split('dashboard');
     // and drop the first part of the array
     locationWithoutDashboard.shift();
     // then pick the only remaining item in the array

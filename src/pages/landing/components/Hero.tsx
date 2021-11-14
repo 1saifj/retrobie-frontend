@@ -93,7 +93,7 @@ const Description = () => {
           </H1>
 
           <div style={{margin: '1rem 0'}}>
-            <P fontSize={1.75} className='secondary'>
+            <P fontSize={1.75} className="secondary">
               Find and discover your favorite brands - from Air Jordans to Yeezys -{' '}
               <span>original sneakers</span>,{' '}
               basketball shoes, and many more fashion pieces
@@ -102,20 +102,20 @@ const Description = () => {
           </div>
         </div>
         <CTAButtons>
-          <Button
-            isColor='primary'
-            id="getStartedButton"
-            onClick={() => setRegisterModalActive(true)}
-          >
-            Get started
-          </Button>
-          <Button
-            isOutlined
-            id="howItWorksButton"
-            onClick={() => setIsHowItWorksModalActive(true)}
-          >
-            Learn more
-          </Button>
+          {/*<Button*/}
+          {/*  isColor='primary'*/}
+          {/*  id="getStartedButton"*/}
+          {/*  onClick={() => setRegisterModalActive(true)}*/}
+          {/*>*/}
+          {/*  Get started*/}
+          {/*</Button>*/}
+          {/*<Button*/}
+          {/*  isOutlined*/}
+          {/*  id="howItWorksButton"*/}
+          {/*  onClick={() => setIsHowItWorksModalActive(true)}*/}
+          {/*>*/}
+          {/*  Learn more*/}
+          {/*</Button>*/}
         </CTAButtons>
         <RegisterModal
           isActive={isRegisterModalActive}

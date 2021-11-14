@@ -13,13 +13,13 @@ import useSWR from 'swr';
 import {useNotify, useApi} from '../../hooks';
 import {EmptyState, RetroImage} from '../../components';
 import {ValueProposition, ImageSlider, JSONLD} from './components';
-import {useHistory} from 'react-router';
 import RadioField from '../../components/input/RadioField';
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {isProductInStock} from '../../components/cart';
 import {addItemToCartAction, toggleSidebarAction} from '../../state/actions';
 import posthog from 'posthog-js';
+import {useLocation, useNavigate} from 'react-router-dom';
 
 
 const AddToCartValidationSchema = Yup.object({
@@ -42,8 +42,10 @@ function ProductPage({match}) {
   const dispatch = useDispatch();
   const {slug} = match.params;
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const notify = useNotify();
+
+  const location = useLocation();
 
 
   const [sortedVariants, setSortedVariants] = useState<VariantType[]>([]);
@@ -70,7 +72,7 @@ function ProductPage({match}) {
   useEffect(() => {
 
     if (currentProduct) {
-      const query = history.location.search;
+      const query = location.search;
 
       if (query) {
         const searchParams = new URLSearchParams(query);
@@ -230,7 +232,7 @@ function ProductPage({match}) {
   }
 
   function setVariantIdToUrl(variant: VariantType) {
-    const query = history.location.search;
+    const query = location.search;
     const searchParams = new URLSearchParams(query);
 
     if (searchParams.has('variant')) {
@@ -238,7 +240,7 @@ function ProductPage({match}) {
     }
 
     searchParams.append('variant', variant.uuid);
-    history.replace(`?${searchParams.toString()}`);
+    navigate(`?${searchParams.toString()}`, {replace: true});
   }
 
   function getAvailableSizesForVariant(currentVariant: VariantType) {

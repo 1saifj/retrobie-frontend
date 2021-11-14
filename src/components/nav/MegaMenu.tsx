@@ -1,6 +1,6 @@
 import React, {CSSProperties, useEffect, useState} from 'react';
 import './megamenu.scoped.css';
-import { Link, useHistory } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {getMenuItemLinks, newItems, menuItemsToMap} from './Items';
 import CartIcon from '../../assets/images/icons/cart.svg';
 import Drawer from 'rc-drawer';
@@ -31,7 +31,7 @@ type NavbarItemType = {
 
 const MegaMenu = () => {
   const api = useApi();
-  const history = useHistory();
+  const navigate = useNavigate();
   const isDrawerOpen = useSelector((state: RootStateOrAny) => state.meta.isSidebarOpen);
   const userState: UserState = useSelector((state: RootStateOrAny) => state.user);
   const dispatch = useDispatch<PromiseThunk<any>>();
@@ -50,7 +50,7 @@ const MegaMenu = () => {
           refreshToken: userState.tokens.refreshToken
         }),
       ).then(() => {
-        history.push('/')
+        navigate('/');
       });
     }
   };

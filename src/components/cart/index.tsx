@@ -9,16 +9,16 @@ import {
   removeItemFromCartAction,
   toggleSidebarAction,
 } from '../../state/actions';
-import PropTypes from 'prop-types';
 import {Button} from 'bloomer';
 import Manga from '../../assets/images/icons/marginalia-online-shopping.png';
 import {EmptyState} from '../../components';
 import {notify} from '../../helpers/views';
-import {useHistory} from 'react-router';
 import {Minus, Plus, X} from 'react-feather';
 import {CartItemType, CartType, ServerCartType} from '../../types';
 import Loading from '../loading';
 import posthog from 'posthog-js';
+import {useNavigate} from 'react-router-dom';
+import {useLocation} from 'react-router';
 
 /**
  * This function checks whether it's safe to add the current product
@@ -78,18 +78,19 @@ const TotalSection = ({hideCheckoutButton, onCheckout, cart, checkoutButtonDisab
 
   const dispatch = useDispatch();
 
+  const location = useLocation();
+
   const openOrCloseSidebar = (open: boolean) => dispatch(toggleSidebarAction({open}));
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   function redirectOrCloseSidebar(path: string) {
     openOrCloseSidebar(false);
 
-    if (history.location.pathname === path) {
+    if (location.pathname === path) {
       openOrCloseSidebar(false);
     } else {
-      if (history) history.push(path);
-      else window.location.href = path;
+      navigate(path);
     }
   }
 
@@ -292,9 +293,10 @@ export default function Cart(
   const cartState: CartType = useSelector((state: RootStateOrAny) => state.cart);
   const [cart, setCart] = useState<CartType>(null);
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  useEffect(()=> {
+  useEffect(() => {
     if (source?.cartItems) {
       setCart({
         ...source,
@@ -302,7 +304,7 @@ export default function Cart(
         items: source.cartItems,
       });
     } else {
-      setCart(cartState)
+      setCart(cartState);
     }
   }, [source, cartState])
 
@@ -311,11 +313,10 @@ export default function Cart(
   function redirectOrCloseSidebar(path: string) {
     openOrCloseSidebar(false);
 
-    if (history.location.pathname === path) {
+    if (location.pathname === path) {
       openOrCloseSidebar(false);
     } else {
-      if (history) history.push(path);
-      else window.location.href = path;
+      navigate(path);
     }
   }
 

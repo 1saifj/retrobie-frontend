@@ -1,6 +1,6 @@
 import {Button, Column, Columns, Input} from 'bloomer';
 import React, {useEffect, useState} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import useSWR from 'swr';
 import {Loading} from '../../../components';
@@ -9,6 +9,8 @@ import {ProductTypeType} from '../../../types';
 
 export default function ViewAllProductTypesPage(props) {
   const api = useApi();
+
+  const navigate = useNavigate();
 
   const productTypeFetcher = () =>
     api.productTypes.getAll().then(({data}) => {
@@ -65,7 +67,7 @@ export default function ViewAllProductTypesPage(props) {
         <Column>
           <Button
             isColor="light"
-            onClick={() => props.history.push('/company/admin/dashboard/product-types/create')}
+            onClick={() => navigate('/company/admin/dashboard/product-types/create')}
           >
             Add a new Product type
           </Button>

@@ -74,7 +74,7 @@ function useBrandFilters({slug}) {
     setQueryParamString(appliedParams.toString);
     const url = `${window.location.pathname}?${appliedParams.toString()}`;
 
-    window.history.pushState({}, "", url);
+    // window.history.pushState({}, "", url);
     return await fetchFilteredProducts(appliedParams)
   }
 

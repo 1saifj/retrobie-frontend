@@ -11,6 +11,7 @@ import InputMask from 'react-input-mask';
 import {logoutUserAction} from '../../state/actions';
 import {useDispatch} from 'react-redux';
 import {useApi} from '../../network';
+import {useNavigate} from 'react-router-dom';
 
 const FormParent = styled.div`
   display: flex;
@@ -65,20 +66,23 @@ const ResetPasswordSchema = Yup.object().shape({
 
 export default function ResetPassword ({history}) {
 
-    const [formErrors, setFormErrors] = useState([])
+    const [formErrors, setFormErrors] = useState([]);
 
     const api = useApi();
     const dispatch = useDispatch();
     const logOut = () => {
-        dispatch(logoutUserAction())
+        dispatch(logoutUserAction());
     };
 
-    const getErrors = ()=> {
+    const navigate = useNavigate();
+
+
+    const getErrors = () => {
         if (formErrors.length) {
             const errors = {};
-            formErrors.forEach(err=> {
-                errors[err.field] = err.messages
-            })
+            formErrors.forEach(err => {
+                errors[err.field] = err.messages;
+            });
             return errors;
         }
 
@@ -146,7 +150,7 @@ export default function ResetPassword ({history}) {
 
                                 logOut();
 
-                                history.push('/accounts/login');
+                                navigate('/accounts/login');
                             } catch (e) {
                                 const message = extractErrorMessage(e);
 
@@ -167,7 +171,7 @@ export default function ResetPassword ({history}) {
                         } else {
                             // If key is missing for whatever reason,
                             // push user to the forgot-password page
-                            history.push('/accounts/forgot-password');
+                            navigate('/accounts/forgot-password');
                         }
                     }}
                   >

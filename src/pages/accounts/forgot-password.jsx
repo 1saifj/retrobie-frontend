@@ -10,6 +10,7 @@ import {notify} from '../../helpers/views';
 import TextField from '../../components/input/TextField';
 import {useApi} from '../../network';
 import {useDispatch} from 'react-redux';
+import {useNavigate} from 'react-router-dom';
 
 const FormParent = styled.div`
   display: flex;
@@ -31,6 +32,7 @@ export default function ForgotPassword(props) {
 
   const api = useApi();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
     return (
         <>
@@ -46,8 +48,8 @@ export default function ForgotPassword(props) {
                                 setSubmitting(false);
                                 notify('info', data.message);
 
-                                        sessionStorage.setItem('password_reset_email', values.email);
-                                        props.history.push('/accounts/reset-password');
+                                sessionStorage.setItem('password_reset_email', values.email);
+                                navigate('/accounts/reset-password');
                                     } catch (e) {
                                         setSubmitting(false)
                                         const message = extractErrorMessage(e);

@@ -24,6 +24,7 @@ import Cart from './components/CheckoutCart';
 import useFetchers from '../../hooks/useFetchers/useFetchers';
 import responseHelper from '../../helpers/ResponseHelper';
 import posthog from 'posthog-js';
+import {useNavigate} from 'react-router-dom';
 
 
 export default function CheckoutPage(props) {
@@ -34,6 +35,8 @@ export default function CheckoutPage(props) {
   const notify = useNotify();
   const dispatch = useDispatch();
   const {userFetchers} = useFetchers();
+
+  const navigate = useNavigate();
 
   const isUserLoggedIn = useSelector((state: RootStateOrAny) => state.user.isLoggedIn);
 
@@ -103,7 +106,7 @@ export default function CheckoutPage(props) {
       }
 
       posthog.capture('successfully completed checkout');
-      props.history.push(`/checkout/shipping/${data.orderId}`);
+      navigate(`/checkout/shipping/${data.orderId}`);
     } catch (e) {
       const message = extractErrorMessage(e);
       notify.error(message);

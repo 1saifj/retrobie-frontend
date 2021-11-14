@@ -13,20 +13,23 @@ import {notify} from '../../../helpers/views';
 import useSWR from 'swr/esm/use-swr';
 import {useApi} from '../../../hooks';
 import {BrandType} from '../../../types';
+import {useNavigate} from 'react-router-dom';
 
 
 function AllBrandsAdmin(props) {
-    const api = useApi();
+  const api = useApi();
 
-    const getAllBrands = () => api.brands.getAll().then(({data})=> data);
+  const navigate = useNavigate();
 
-    const [allBrandsState, setAllBrands] = useState([]);
-    const [showCreateBrandModal, setShowCreateBrandModal] = useState(false);
-    const {data: allBrands, error} = useSWR<Array<BrandType>>('/brands/all', getAllBrands);
+  const getAllBrands = () => api.brands.getAll().then(({data}) => data);
 
-    useEffect(() => {
-        if (allBrands) {
-            if (!allBrands) {
+  const [allBrandsState, setAllBrands] = useState([]);
+  const [showCreateBrandModal, setShowCreateBrandModal] = useState(false);
+  const {data: allBrands, error} = useSWR<Array<BrandType>>('/brands/all', getAllBrands);
+
+  useEffect(() => {
+    if (allBrands) {
+      if (!allBrands) {
                 setAllBrands([]);
             } else {
                 setAllBrands(
@@ -157,27 +160,27 @@ function AllBrandsAdmin(props) {
                                 </BrandItem>
                                 <Box className='extra'>
                                     <div style={{display: "flex", paddingBottom: '0'}}>
-                                        <Button isColor="white"
-                                                onClick={() => props.history.push(`brands/${brand.slug}`)}>
-                                            <Eye style={{marginRight: '8px'}}/>
-                                            View Details
-                                        </Button>
-                                        <Button isColor="white">
-                                            <Truck style={{marginRight: '8px'}}/>
-                                            View Orders
-                                        </Button>
-                                        <Button isColor="white"
-                                                onClick={() => props.history.push(`brands/${brand.name}/products`)}>
-                                            <img src={SidebarShoe}
-                                                 style={{marginRight: '12px', width: '21px'}}
-                                                 alt={'shoe box'}
-                                            />
-                                            View Products
-                                        </Button>
-                                        <Button isColor="white">
-                                            <img src={Sale} style={{marginRight: '12px', width: '21px'}}
-                                                 alt={'for sale'}
-                                            />
+                                      <Button isColor="white"
+                                              onClick={() => navigate(`brands/${brand.slug}`)}>
+                                        <Eye style={{marginRight: '8px'}} />
+                                        View Details
+                                      </Button>
+                                      <Button isColor="white">
+                                        <Truck style={{marginRight: '8px'}} />
+                                        View Orders
+                                      </Button>
+                                      <Button isColor="white"
+                                              onClick={() => navigate(`brands/${brand.name}/products`)}>
+                                        <img src={SidebarShoe}
+                                             style={{marginRight: '12px', width: '21px'}}
+                                             alt={'shoe box'}
+                                        />
+                                        View Products
+                                      </Button>
+                                      <Button isColor="white">
+                                        <img src={Sale} style={{marginRight: '12px', width: '21px'}}
+                                             alt={'for sale'}
+                                        />
                                             View Offers
                                         </Button>
                                     </div>

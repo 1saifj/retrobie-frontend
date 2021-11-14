@@ -104,7 +104,7 @@ function useProvideFilters() {
 
     const url = `${window.location.pathname}?${appliedParams.toString()}`;
 
-    window.history.pushState({}, "", url);
+    // window.history.pushState({}, "", url);
 
     // the url params have changed, so we have to parse them again
     // const newParamCriteria = qs.parse(window.location.search, {ignoreQueryPrefix: true});

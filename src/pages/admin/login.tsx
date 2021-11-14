@@ -13,10 +13,12 @@ import {loginUserAction} from '../../state/actions';
 import {useApi} from '../../network';
 import {LoginResponseType, PromiseThunk} from '../../types';
 import {AxiosResponse} from 'axios';
+import {useNavigate} from 'react-router-dom';
 
 const AdminLogin = props => {
   const api = useApi();
   const dispatch = useDispatch<PromiseThunk<AxiosResponse<LoginResponseType>>>();
+  const navigate = useNavigate();
 
   const setUserLoggedIn = payload => dispatch(loginUserAction(payload));
 
@@ -34,7 +36,7 @@ const AdminLogin = props => {
 
         if (decoded.role === 'ROLE_ADMIN') {
           setUserLoggedIn(data);
-          props.history.push('/company/admin/dashboard');
+          navigate('/company/admin/dashboard');
         } else {
           notify('error', 'Invalid account type.');
         }
