@@ -12,22 +12,25 @@ import Values from './components/Values';
 import Perks from './components/Perks';
 import FAQs from './components/FAQs';
 
-import meta from './meta'
+import meta from './meta';
+import {EmptyState} from '../../components';
+import UnderConstructionEmoji from '../../assets/images/emoji/under-construction.png';
 
 
 function Landing() {
   return (
-    <Layout style={{maxWidth: '1684px'}}>
-      <SEOHeader path={'/'} description={meta.description} title={meta.title} jsonld={meta.jsonld} />
+    <Layout hideNav={true}
+            hideFooter={true}
+            style={{maxWidth: '1684px'}}>
 
       <Hero />
-      <Perks />
-      <PopularProducts />
-      <Discover />
-      {/*<Values />*/}
-      <Categories />
-      <Newsletter />
-      <FAQs />
+
+      <EmptyState
+        icon={UnderConstructionEmoji}
+        iconWidth={36}
+        message={`We're taking a break to figure 
+        things out and make Retrobie better for you. Don't miss us too much ;).`}
+        title={'We\'ll be back!'} />
 
     </Layout>
   );
