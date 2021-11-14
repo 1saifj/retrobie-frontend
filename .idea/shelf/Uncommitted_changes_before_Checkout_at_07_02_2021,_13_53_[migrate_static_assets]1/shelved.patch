@@ -1,0 +1,214 @@
+Index: src/components/internal/layout/index.jsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React from 'react';\nimport styled from 'styled-components';\nimport Sidebar from '../../../pages/admin/sidebar';\nimport AuthenticatedMenu from '../../nav/AuthenticatedMenu';\nimport {Box as LayoutBox} from 'bloomer';\nimport {Anchor, BarChart2, Box, Flag, Home, Settings, Truck, Users} from 'react-feather';\nimport {ReactComponent as SidebarShoe} from '../../../../public/assets/images/icons/shoe.svg';\n\n\nclass InternalLayout extends React.Component {\n\n    constructor(props) {\n        super(props);\n        this.props = props;\n    }\n\n    render() {\n        const sidebarItems = [\n            {\n                name: 'Dashboard',\n                icon: <Home color={\"#fff\"}/>,\n                route: '/company/admin/dashboard',\n            },\n            {\n                name: 'Orders',\n                icon: <Truck color={\"#fff\"}/>,\n                route: '/company/admin/dashboard/orders',\n            },\n            {\n                name: 'Analytics',\n                icon: <BarChart2 color={\"#fff\"}/>,\n                route: '/company/admin/dashboard/analytics',\n            },\n            {\n                name: 'Products',\n                icon: <SidebarShoe fill={\"#fff\"} style={{width: '24px', marginTop: 0}}/>,\n                route: '/company/admin/dashboard/products',\n            },\n            {\n                name: 'Categories',\n                icon: <Flag color={'#fff'}/>,\n                route: '/company/admin/dashboard/categories'\n            },\n            {\n              name: 'Deliveries',\n              icon: <Truck color={\"#fff\"}/>,\n              route: '/company/admin/dashboard/deliveries'\n            },\n            {\n                name: 'Brands',\n                icon: <Box color={\"#fff\"}/>,\n                route: '/company/admin/dashboard/brands'\n            },\n            {\n                name: 'Users',\n                icon: <Users color={\"#fff\"}/>,\n                route: '/company/admin/dashboard/brands'\n            },\n            {\n                name: 'Misc',\n                icon: <Anchor color={\"#fff\"}/>,\n                route: '/company/admin/dashboard/misc',\n            },\n            {\n                name: 'Settings',\n                icon: <Settings color={\"#fff\"}/>,\n                route: '/company/admin/dashboard/settings',\n            },\n\n        ];\n        return (\n            <div className='layout--root'>\n\n                <div style={{display: 'flex', background: 'var(--color-primary)'}}>\n                    <Sidebar items={sidebarItems}/>\n\n                    <div style={{display: 'flex', flexDirection: 'column', width: '100%'}}>\n                        <AuthenticatedMenu/>\n\n                        <LayoutParent {...this.props} style={{...this.props.style}}>\n                            <div style={{width: '100%'}}>\n                                <LayoutBox style={{width: '100%', minHeight: '80vh'}}>\n                                    {this.props.children}\n                                </LayoutBox>\n                            </div>\n                        </LayoutParent>\n                    </div>\n                </div>\n            </div>\n        );\n    }\n}\n\nconst LayoutParent = styled.div`\n  padding: 32px;\n  background: #eeeeee;\n  height: 100%;\n`;\n\nexport default InternalLayout;\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/components/internal/layout/index.jsx	(revision 460c8c0312fb5b806a79d42b1bd65695fac217dc)
++++ src/components/internal/layout/index.jsx	(date 1612694044531)
+@@ -4,7 +4,6 @@
+ import AuthenticatedMenu from '../../nav/AuthenticatedMenu';
+ import {Box as LayoutBox} from 'bloomer';
+ import {Anchor, BarChart2, Box, Flag, Home, Settings, Truck, Users} from 'react-feather';
+-import {ReactComponent as SidebarShoe} from '../../../../public/assets/images/icons/shoe.svg';
+ 
+ 
+ class InternalLayout extends React.Component {
+@@ -33,7 +32,6 @@
+             },
+             {
+                 name: 'Products',
+-                icon: <SidebarShoe fill={"#fff"} style={{width: '24px', marginTop: 0}}/>,
+                 route: '/company/admin/dashboard/products',
+             },
+             {
+Index: src/state/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import {applyMiddleware, compose, createStore} from 'redux';\nimport {persistReducer, persistStore} from 'redux-persist';\nimport {createStateSyncMiddleware, initStateWithPrevTab} from 'redux-state-sync';\nimport storage from 'redux-persist/lib/storage';\nimport thunk from 'redux-thunk';\nimport autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';\nimport rootReducer from './combineReducers';\nimport { env } from '../config';\n\nconst composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || compose;\n\nconst rootState = function() {\n  const persistConfig = {\n    key: env.isProduction() ? 'redux': `redux:${env.getEnvironment()}`,\n    storage: storage,\n    stateReconciler: autoMergeLevel2, // see \"Merge Process\" section for details.\n    whitelist: ['cart', 'meta', 'user'],\n  };\n\n  const tabsSyncMiddleWareConfig = {\n    // we don't want these actions to be synced across tabs\n    blacklist: [\n      \"persist/PERSIST\",\n      \"persist/REHYDRATE\"\n    ],\n  };\n\n  const pReducer = persistReducer(persistConfig, rootReducer);\n\n  const middlewares = [thunk, createStateSyncMiddleware(tabsSyncMiddleWareConfig)];\n\n  const store = createStore(pReducer, composeEnhancers(applyMiddleware(...middlewares)));\n\n  // initialize our tabs sync middleware\n  initStateWithPrevTab(store);\n\n  if (process.env.NODE_ENV !== 'production') {\n    // @ts-ignore\n    if (module.hot) {\n      // @ts-ignore\n      module.hot.accept('./combineReducers', () => {\n        const nextRootReducer = require('./combineReducers').default;\n        store.replaceReducer(persistReducer(persistConfig, nextRootReducer));\n      });\n    }\n  }\n\n  const persistor = persistStore(store);\n  return {store, persistor};\n}\nexport default rootState;
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/state/index.ts	(revision 460c8c0312fb5b806a79d42b1bd65695fac217dc)
++++ src/state/index.ts	(date 1612695021181)
+@@ -7,7 +7,7 @@
+ import rootReducer from './combineReducers';
+ import { env } from '../config';
+ 
+-const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || compose;
++const composeEnhancers = /*window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] ||*/ compose;
+ 
+ const rootState = function() {
+   const persistConfig = {
+@@ -34,16 +34,16 @@
+   // initialize our tabs sync middleware
+   initStateWithPrevTab(store);
+ 
+-  if (process.env.NODE_ENV !== 'production') {
+-    // @ts-ignore
+-    if (module.hot) {
+-      // @ts-ignore
+-      module.hot.accept('./combineReducers', () => {
+-        const nextRootReducer = require('./combineReducers').default;
+-        store.replaceReducer(persistReducer(persistConfig, nextRootReducer));
+-      });
+-    }
+-  }
++  // if (process.env.NODE_ENV !== 'production') {
++  //   // @ts-ignore
++  //   if (module.hot) {
++  //     // @ts-ignore
++  //     module.hot.accept('./combineReducers', () => {
++  //       const nextRootReducer = require('./combineReducers').default;
++  //       store.replaceReducer(persistReducer(persistConfig, nextRootReducer));
++  //     });
++  //   }
++  // }
+ 
+   const persistor = persistStore(store);
+   return {store, persistor};
+Index: src/components/Layout/index.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React, {useEffect, useState} from 'react';\nimport styled from 'styled-components';\nimport Header from '../header/header';\nimport Footer from '../footer/footer';\nimport {Delete, Notification} from 'bloomer';\nimport {Helmet} from 'react-helmet';\nimport {Transition} from 'react-transition-group';\nimport {ErrorIconDark} from '../../constants/icons';\nimport {RootStateOrAny, useSelector} from 'react-redux';\n\nexport default function(props) {\n    const warning = sessionStorage.getItem('hide-beta-warning');\n\n    const [hideWarning, setWarningHidden] = useState(Boolean(warning));\n\n    const currentTheme = useSelector((state: RootStateOrAny) => state.meta.theme)\n\n    const [mounted, setMounted] = useState(false);\n\n    const defaultStyle = {\n        transition: `opacity 250ms ease-in-out`,\n        opacity: 0,\n        background: currentTheme === 'dark' ?\n            'var(--color-background--dark)' :\n            'var(--color-background--light)'\n    };\n\n    const transitionStyles = {\n        entering: {opacity: 0},\n        entered: {opacity: 1},\n        exiting: {opacity: 0},\n        exited: {opacity: 0},\n    };\n\n    function hideBetaWarning() {\n        setWarningHidden(true);\n        sessionStorage.setItem('hide-beta-warning', String(true));\n    }\n\n    useEffect(() => {\n\n        setMounted(true);\n\n        const element = document.getElementById('feedback-trigger');\n\n        window['ATL_JQ_PAGE_PROPS'] = {\n            \"triggerFunction\": function (showCollectorDialog) {\n                element.addEventListener('click', (e) => {\n                    e.preventDefault();\n                    showCollectorDialog();\n\n                });\n            }\n        };\n\n    }, []);\n\n    return (\n        <>\n            <Transition in={mounted} timeout={100}>\n                {\n                    state => (\n                        <div style={{...defaultStyle, ...transitionStyles[state]}}>\n                            <div className='layout--root'>\n                                <div>\n                                    <Helmet>\n                                        <script type=\"text/javascript\"\n                                                src=\"https://retrobie.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-zafpfn/b/23/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=1b12b0dd\"/>\n                                    </Helmet>\n                                    <Notification isColor={'warning'}\n                                                  style={{display: Boolean(hideWarning) ? 'none' : 'block'}}>\n                                        <Delete onClick={() => hideBetaWarning()}/>\n                                        <div style={{display: 'flex'}}>\n                                            <img src={ErrorIconDark}\n                                                 style={{width: '24px', margin: '0 12px', display: 'inline'}}\n                                                 alt=\"error icon\"/>\n                                            <p>\n                                                We are in the process of redesigning our website. Some things don't work\n                                                yet and others might break occasionally.\n                                                If you notice anything broken or have any general feedback, feel free to\n                                                report it <a id='feedback-trigger' href=\"#\">here</a>\n                                            </p>\n                                        </div>\n                                    </Notification>\n\n                                    <Header withoutNav={props.withoutNav}\n                                            topRightButton={props.topRightButton}/>\n                                    <LayoutParent className='layout--parent' {...props} style={{...props.style}}>\n                                        {props.children}\n                                    </LayoutParent>\n                                    <div style={{marginTop: 48}}>\n                                        <Footer/>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    )\n                }\n            </Transition>\n\n        </>\n    );\n\n}\n\nconst LayoutParent = styled.div`\n  margin-top: 48px;\n`;\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/components/Layout/index.tsx	(revision 460c8c0312fb5b806a79d42b1bd65695fac217dc)
++++ src/components/Layout/index.tsx	(date 1612694798198)
+@@ -9,7 +9,14 @@
+ import {RootStateOrAny, useSelector} from 'react-redux';
+ 
+ export default function(props) {
+-    const warning = sessionStorage.getItem('hide-beta-warning');
++
++    const [warning, setWarning] = useState(false);
++
++    useEffect(() => {
++        const warning = sessionStorage.getItem('hide-beta-warning');
++        setWarning(Boolean(warning));
++    }, []);
++
+ 
+     const [hideWarning, setWarningHidden] = useState(Boolean(warning));
+ 
+Index: src/components/nav/MegaMenu.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React, { useEffect, useState } from 'react';\nimport './megamenu.scoped.css';\nimport { Link, useHistory } from 'react-router-dom';\nimport { getBrandLinks, menuItems, newItems, sortBrands } from './Items';\nimport CartIcon from '../../../public/assets/images/icons/cart.svg';\nimport Drawer from 'rc-drawer';\nimport { Button, Container, Section } from 'bloomer';\nimport Cart from '../cart';\nimport { RootStateOrAny, useDispatch, useSelector } from 'react-redux';\nimport { useAuth } from '../../hooks';\nimport RetroImage from '../image';\nimport { ChevronDown } from 'react-feather';\nimport Tooltip from '../tooltip';\nimport styled from 'styled-components';\nimport { UserState } from '../../state/reducers/userReducers';\nimport { env } from '../../config';\nimport useSWR from 'swr/esm/use-swr';\nimport { toggleSidebarAction } from '../../state/actions';\nimport { PromiseThunk } from '../../types';\n\nconst MegaMenu = () => {\n  const api = useAuth();\n  const history = useHistory();\n  const isDrawerOpen = useSelector((state: RootStateOrAny) => state.meta.isSidebarOpen);\n  const userState: UserState = useSelector((state: RootStateOrAny) => state.user);\n  const dispatch = useDispatch<PromiseThunk<any>>();\n\n  const allBrandsFetcher = () => api.brands.getAll().then(({data}) => data);\n  const {data: allBrands} = useSWR('/brands/all', allBrandsFetcher);\n  const [menuList, setMenuList] = useState(menuItems);\n\n  const logout = () => {\n    if (userState.isLoggedIn) {\n      dispatch(\n        api.accounts.logOut({\n          accessToken: userState.tokens?.accessToken,\n          refreshToken: userState.tokens.refreshToken\n        }),\n      ).then(() => {\n        history.push('/')\n      });\n    }\n  };\n\n  const cartCount = useSelector((state: RootStateOrAny) => state.cart.count);\n  const theme = useSelector((state: RootStateOrAny) => state.meta.theme);\n\n  useEffect(() => {\n    if (allBrands) {\n      const sortedBrands = sortBrands(allBrands);\n      const newList = [...menuList];\n      newList[0].links = getBrandLinks(sortedBrands);\n      setMenuList(newList);\n    }\n\n  }, [allBrands]);\n\n  const openOrCloseSidebar = (open) => dispatch(toggleSidebarAction({open}));\n\n  return (\n    <>\n      <nav className=\"navbar\" style={{alignItems: 'center'}}>\n        <ul className=\"menu hover-enabled\">\n          <li className=\"default\">\n            <Tooltip\n              interactive={true}\n              theme={'light'}\n              arrow={true}\n              inertia={true}\n              position={'bottom'}\n              html={(\n                <ul style={{display: 'flex', listStyle: 'none', gap: 12, padding: 0}}>\n\n                  {\n                    newItems.map((item, index) => (\n                      <div className=\"submenu-flex\" key={String(index)}>\n                        <li className=\"promo-container\">\n                          <Link tabIndex={0}\n                             role=\"menuitem\"\n                             className=\"promo-imglink\"\n                             to={item.to}\n                             title={item.title}>\n                            <RetroImage\n                              alt={item.title}\n                              src={item.image}\n                            />\n                          </Link>\n                        </li>\n                      </div>\n                    ))\n                  }\n                </ul>\n              )}>\n              <Link\n                className=\"nav-toplink \"\n                to=\"#\" title=\"New\">\n                New\n              </Link>\n            </Tooltip>\n          </li>\n\n          {\n            menuList.map((item, index) => (\n              item &&\n              <NavbarItem\n                key={String(index)}\n                title={item.title}\n                links={item.links}\n                style={item.style}\n                featured={item.featured}/>\n            ))\n          }\n\n          <li className=\"default\">\n\n            <Tooltip\n              interactive={true}\n              theme={'light'}\n              arrow={true}\n              inertia={true}\n              position={'bottom'}\n              html={(\n                <ul className=\"submenu\" style={{padding: 0}}>\n\n                  <div style={{display: 'flex', gap: 12}}>\n\n                    <li\n                      style={{listStyle: 'none'}}\n                      className=\"promo-container\">\n                      <Link tabIndex={0} role=\"menuitem\" className=\"promo-imglink\" to=\"/sale\"\n                         title=\"Promo\">\n                        <RetroImage\n                          alt=\"Promo\"\n                          src={'https://ik.imagekit.io/t25/v2/landing/architecture-buildings-business-car-331990_Ht9UI78PA.webp?tr=w-250'}\n                        />\n                      </Link>\n                    </li>\n                    <li\n                      style={{listStyle: 'none'}}\n                      className=\"promo-container\">\n                      <Link tabIndex={0} role=\"menuitem\" className=\"promo-imglink\" to=\"/sale\"\n                         title=\"Promo\">\n                        <RetroImage\n                          alt=\"Promo\"\n                          src={'https://ik.imagekit.io/t25/v2/landing/architecture-buildings-business-car-331990_Ht9UI78PA.webp?tr=w-250'}\n                        />\n                      </Link>\n                    </li>\n                    <li\n                      style={{listStyle: 'none'}}\n                      className=\"promo-container\">\n                      <Link tabIndex={0} role=\"menuitem\" className=\"promo-imglink\" to=\"/sale\"\n                         title=\"Promo\">\n                        <RetroImage\n                          alt=\"Promo\"\n                          src={'https://ik.imagekit.io/t25/v2/landing/architecture-buildings-business-car-331990_Ht9UI78PA.webp?tr=w-250'}\n                        />\n                      </Link>\n                    </li>\n\n                  </div>\n\n                </ul>\n              )}>\n              <Link className=\"nav-toplink \" tabIndex={0} to=\"#\" title=\"Sale\">\n                Sale\n              </Link>\n\n            </Tooltip>\n\n\n          </li>\n          <li className=\"default\">\n\n            <Link className=\"nav-toplink \" tabIndex={0} to=\"/company/blog\" title=\"Blog\">\n              Blog\n            </Link>\n\n          </li>\n          <li className=\"default\">\n            <Button\n              isColor={'ghost'}\n              className=\"nav-toplink\"\n               onClick={() => openOrCloseSidebar(true)}\n               tabIndex={0}\n               title=\"Sale\">\n              <div style={{\n                marginBottom: '4px', display: 'inherit',\n              }}\n                   className=\"has-badge-rounded\"\n                   data-badge={cartCount}>\n                <img style={{width: '24px'}} className={'cart'} src={CartIcon} alt={'cart'}/>\n              </div>\n            </Button>\n            <Drawer open={isDrawerOpen}\n                    duration={'.25s'}\n                    placement={'left'}\n                    handler={false}\n                    onClose={() => openOrCloseSidebar(false)}>\n              <div style={{\n                background: theme === 'light' ?\n                  'var(--color-background--light)' :\n                  'var(--color-background--dark)',\n              }}>\n                <Section>\n                  <Container>\n                    <h2>\n                      Your Cart\n                    </h2>\n                    <div>\n                      <Cart\n                        size={'L'}\n                        showAddButton={true}\n                        showRemoveButton={true}\n                        bordered={false}\n                      />\n                    </div>\n\n                  </Container>\n                </Section>\n              </div>\n            </Drawer>\n\n          </li>\n        </ul>\n        <div className={'cta'}>\n          {\n            !userState?.isLoggedIn ? (\n                <>\n                  <div style={{display: 'flex', gap: 8}}>\n                    <Link to={'/accounts/login'}>\n                      <Button style={{fontWeight: 500}} isColor={'secondary'}>\n                        Log in\n                      </Button>\n                    </Link>\n\n                    <Link to={'/accounts/register'}>\n                      <Button style={{fontWeight: 500}} isColor={'primary'}>\n                        Create a New Account\n                      </Button>\n                    </Link>\n                  </div>\n                </>\n              ) :\n              (\n                <>\n                  <Tooltip\n                    // options\n                    position=\"bottom\"\n                    theme={'light'}\n                    interactive={true}\n                    arrow={true}\n                    trigger={'click'}\n                    html={\n                      <div>\n                        <ul style={{\n                          padding: '4px',\n                          listStyle: 'none',\n                          textAlign: 'left',\n                          margin: 0,\n                        }}>\n                          <li style={{padding: '0 8px'}}>\n                            <Link to={'/accounts/me'}>\n                              Your account\n                            </Link>\n                          </li>\n                          <li style={{padding: '0 8px'}}>\n                            <Link to={'/accounts/me/orders'}>\n                              Your orders\n                            </Link>\n                          </li>\n                          <li style={{padding: '0 8px'}}>\n                            <Button\n                              isColor={'ghost'}\n                              onClick={() => logout()}>\n                              Log out\n                            </Button>\n                          </li>\n                        </ul>\n                      </div>\n                    }\n                  >\n                    <AvatarComponent>\n                      <ChevronDown width={18}/>\n\n                      <div>\n                        <img src={env.getApiBaseUrl() + userState.avatar.thumbnailUrl} alt={'avatar'}/>\n                      </div>\n                    </AvatarComponent>\n                  </Tooltip>\n\n                </>\n              )\n          }\n        </div>\n      </nav>\n\n    </>\n  );\n};\n\nMegaMenu.propTypes = {};\n\nconst AvatarComponent = styled.div`\n  display: flex;\n  align-items: center;\n  gap: 4px;\n\n  img {\n    border: 2px solid seagreen;\n    padding: 2px;\n    border-radius: 50%;\n    max-width: 40px;\n  }\n\n  &:hover {\n    cursor:pointer;\n  }\n`\n\nconst NavbarItem = ({title, links, featured, style}) => {\n    return (\n        <li className=\"default\">\n\n            <Tooltip\n              interactive={true}\n              theme={'light'}\n              arrow={true}\n              inertia={true}\n              position={'bottom'}\n              html={(\n                <ul style={{\n                    display: 'flex',\n                    flexWrap: 'wrap',\n                    padding: \"0 12px\",\n                    listStyle: 'none',\n                    ...style\n                }}>\n\n                    {\n                        links &&\n                        links.map(category => (\n                          <div style={{\n                              flex: '1 0 150px',\n                              textAlign: 'left',\n                              maxWidth: \"100%\",\n                              margin: \"0 0.5rem\",\n                          }} key={category.title}>\n                              <li style={{\n                                  fontWeight: \"bold\",\n                                  margin: \"0 0 0.625rem\",\n                                  borderBottom: \"1px solid #d8d8d8\",\n                                  paddingBottom: 8\n                              }}>\n                                  <Link\n                                    tabIndex={0}\n                                     to={category.to} title={category.title}>\n                                      {category.title}\n                                  </Link>\n                              </li>\n                              {\n                                  category.items?.map(item => (\n                                    <li key={item.title}>\n                                        <Link tabIndex={0} to={item.to} title={item.title}>\n                                            {item.title}\n                                        </Link>\n                                    </li>\n                                  ))\n                              }\n                          </div>\n                        ))\n                    }\n\n                    {\n                        featured &&\n                        <div className=\"submenu-flex\">\n\n                            <li className=\"promo-container\">\n                                <Link\n                                  tabIndex={0}\n                                  role=\"menuitem\"\n                                  className=\"promo-imglink\" to={featured.link}\n                                   title={`${title} promo`}>\n                                    <img tabIndex={-1} alt={`Shop ${title}`} src={featured.image} width=\"340\" height=\"580\"/>\n                                </Link>\n                            </li>\n\n                        </div>\n                    }\n                </ul>\n              )}>\n                <Link className=\"nav-toplink \" tabIndex={0} to=\"#\" title={title}>\n                    {title}\n                </Link>\n            </Tooltip>\n        </li>\n    );\n};\n\nexport default MegaMenu;\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/components/nav/MegaMenu.tsx	(revision 460c8c0312fb5b806a79d42b1bd65695fac217dc)
++++ src/components/nav/MegaMenu.tsx	(date 1612694625352)
+@@ -1,5 +1,5 @@
+ import React, { useEffect, useState } from 'react';
+-import './megamenu.scoped.css';
++import './megamenu.module.css';
+ import { Link, useHistory } from 'react-router-dom';
+ import { getBrandLinks, menuItems, newItems, sortBrands } from './Items';
+ import CartIcon from '../../../public/assets/images/icons/cart.svg';
+@@ -14,7 +14,7 @@
+ import styled from 'styled-components';
+ import { UserState } from '../../state/reducers/userReducers';
+ import { env } from '../../config';
+-import useSWR from 'swr/esm/use-swr';
++// import useSWR from 'swr/esm/use-swr';
+ import { toggleSidebarAction } from '../../state/actions';
+ import { PromiseThunk } from '../../types';
+ 
+@@ -25,8 +25,8 @@
+   const userState: UserState = useSelector((state: RootStateOrAny) => state.user);
+   const dispatch = useDispatch<PromiseThunk<any>>();
+ 
+-  const allBrandsFetcher = () => api.brands.getAll().then(({data}) => data);
+-  const {data: allBrands} = useSWR('/brands/all', allBrandsFetcher);
++  // const allBrandsFetcher = () => api.brands.getAll().then(({data}) => data);
++  // const {data: allBrands} = useSWR('/brands/all', allBrandsFetcher);
+   const [menuList, setMenuList] = useState(menuItems);
+ 
+   const logout = () => {
+@@ -46,14 +46,18 @@
+   const theme = useSelector((state: RootStateOrAny) => state.meta.theme);
+ 
+   useEffect(() => {
+-    if (allBrands) {
+-      const sortedBrands = sortBrands(allBrands);
++    // if (allBrands) {
++      // const sortedBrands = sortBrands(allBrands);
+       const newList = [...menuList];
+-      newList[0].links = getBrandLinks(sortedBrands);
++      // newList[0].links = getBrandLinks(sortedBrands);
+       setMenuList(newList);
+-    }
++    // }
+ 
+-  }, [allBrands]);
++  },
++    [
++      // allBrands
++    ]
++  );
+ 
+   const openOrCloseSidebar = (open) => dispatch(toggleSidebarAction({open}));
+ 
+Index: src/components/logo/AnimatedLogo.jsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React from 'react';\nimport PropTypes from 'prop-types';\nimport './animated-logo.scoped.css';\nimport styled from 'styled-components';\n\nconst NAV_ANIMATION_PLAYED = 'NAV_ANIMATION_PLAYED';\n\nconst AnimatedLogo = props => {\n    const navAnimationPlayed = sessionStorage.getItem(NAV_ANIMATION_PLAYED);\n\n    return (\n        <>\n            {\n                props.plain || Boolean(navAnimationPlayed) ?\n                    <PlainLogo>\n                        <div style={{color: props.color}} className=\"text\">\n                            RETROBIE\n                        </div>\n                    </PlainLogo>\n                    :\n                    <div className=\"stage\" onAnimationEnd={()=> sessionStorage.setItem(NAV_ANIMATION_PLAYED, 'true')}>\n                        <div className=\"wrapper\">\n                            <div className=\"slash\"/>\n                            <div className=\"sides\">\n                                <div className=\"side\"/>\n                                <div className=\"side\"/>\n                                <div className=\"side\"/>\n                                <div className=\"side\"/>\n                            </div>\n                            <div className=\"text\">\n                                <div className=\"text--backing\" style={{color: props.color}}>RETROBIE</div>\n                                <div className=\"text--left\">\n                                    <div className=\"inner\" style={{color: props.color}}>RETROBIE</div>\n                                </div>\n                                <div className=\"text--right\">\n                                    <div className=\"inner\" style={{color: props.color}}>RETROBIE</div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n            }\n        </>\n    );\n};\n\nAnimatedLogo.propTypes = {\n    plain: PropTypes.bool,\n    color: PropTypes.string\n};\n\nconst PlainLogo = styled.div`\n    position: relative;\n    color: #fff;\n    font-size: 2.5rem;\n    letter-spacing: 0.25rem;\n    padding-top: 0.65rem;\n    padding-right: 0.36rem;\n    padding-bottom: 0.2rem;\n    \n    div {\n      color: inherit;\n    }\n`;\n\nexport default AnimatedLogo;\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/components/logo/AnimatedLogo.jsx	(revision 460c8c0312fb5b806a79d42b1bd65695fac217dc)
++++ src/components/logo/AnimatedLogo.tsx	(date 1612694184095)
+@@ -1,24 +1,31 @@
+-import React from 'react';
+-import PropTypes from 'prop-types';
+-import './animated-logo.scoped.css';
++import React, {useEffect, useState} from 'react';
++import './animated-logo.module.css';
+ import styled from 'styled-components';
+ 
+ const NAV_ANIMATION_PLAYED = 'NAV_ANIMATION_PLAYED';
+ 
+ const AnimatedLogo = props => {
+-    const navAnimationPlayed = sessionStorage.getItem(NAV_ANIMATION_PLAYED);
++
++    const [isNavAnimationPlayed, setNavAnimationPlayed] = useState(null);
++
++    useEffect(()=> {
++
++        const navAnimationPlayed = sessionStorage?.getItem(NAV_ANIMATION_PLAYED)
++        setNavAnimationPlayed(navAnimationPlayed);
++    }, [])
++
+ 
+     return (
+         <>
+             {
+-                props.plain || Boolean(navAnimationPlayed) ?
++                props.plain || Boolean(isNavAnimationPlayed) ?
+                     <PlainLogo>
+                         <div style={{color: props.color}} className="text">
+                             RETROBIE
+                         </div>
+                     </PlainLogo>
+                     :
+-                    <div className="stage" onAnimationEnd={()=> sessionStorage.setItem(NAV_ANIMATION_PLAYED, 'true')}>
++                    <div className="stage" onAnimationEnd={()=> sessionStorage?.setItem(NAV_ANIMATION_PLAYED, 'true')}>
+                         <div className="wrapper">
+                             <div className="slash"/>
+                             <div className="sides">
+@@ -43,11 +50,6 @@
+     );
+ };
+ 
+-AnimatedLogo.propTypes = {
+-    plain: PropTypes.bool,
+-    color: PropTypes.string
+-};
+-
+ const PlainLogo = styled.div`
+     position: relative;
+     color: #fff;

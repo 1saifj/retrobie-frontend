@@ -1,0 +1,1481 @@
+Index: src/hooks/useApi/index.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios';\nimport {env} from '../../config';\nimport {logoutUserAction, refreshSessionAction} from '../../state/actions';\nimport {RootStateOrAny, useDispatch, useSelector} from 'react-redux';\nimport {UserState} from '../../state/reducers/userReducers';\nimport {AuthenticatedUser} from '../../types';\nimport jwtDecode from 'jwt-decode';\n\ntype TOTPRequestBody = {\n  email: string;\n  phoneNumber?: string;\n  purpose: 'verify-account' | 'reset-password';\n  clientStrategy: 'email' | 'sms' | 'api';\n};\n\nfunction isExpiredOrCloseToExpiry(token: string) {\n  const decoded: AuthenticatedUser = jwtDecode(token);\n  const expiryTime = decoded.exp * 1000;\n  return expiryTime < 0 || expiryTime - Date.now() < 60 * 1000;\n}\n\n// when we\nlet gettingTokenPromise = null;\n\n/**\n * This serves as a replacement for useApi.\n * <br/>\n *\n * NOTE: Non-idempotent requests (POST, PUT, etc) are thunks. GET requests are normal\n * async functions\n */\nconst useApi = function () {\n  const dispatch = useDispatch();\n  const userState: UserState = useSelector((state: RootStateOrAny) => state.user);\n\n  /**\n   * Get a new access token\n   * @param expiredToken\n   * @param refreshToken\n   */\n  async function getFreshToken({expiredToken, refreshToken}): Promise<{accessToken: string}> {\n    // if there is no other request underway\n    if (gettingTokenPromise == null) {\n      // create and assign a new request\n      gettingTokenPromise = axios\n        .post(\n          `${env.getApiBaseUrl()}/auth/session/refresh`,\n          {\n            expiredToken,\n          },\n          {\n            headers: {\n              Authorization: `Bearer ${refreshToken}`,\n            },\n          }\n        )\n        .then(({data}) => {\n          // set the\n          gettingTokenPromise = null;\n          dispatch(refreshSessionAction({accessToken: data.accessToken}));\n          return Promise.resolve(data);\n        })\n        .catch(err => {\n          gettingTokenPromise = null;\n          // todo?\n          throw err;\n        });\n    }\n\n    // otherwise, return the underway request\n    return gettingTokenPromise;\n  }\n\n  /**\n   * Returns the Bearer together with a fresh access\n   * token if the current one is almost stale.\n   */\n  async function getBearer(): Promise<string> {\n    if (userState.tokens) {\n      const {accessToken, refreshToken} = userState.tokens;\n      // if both the access token and refresh token are available in state\n      if (accessToken && refreshToken) {\n        if (isExpiredOrCloseToExpiry(accessToken)) {\n          // if (isExpiredOrCloseToExpiry(refreshToken)) {\n          //   // todo: logout\n          // }\n\n          // if the access token is expired or close to expiry\n          // get a new access token from the server\n          const {accessToken: newAccessToken} = await getFreshToken({\n            expiredToken: accessToken,\n            refreshToken,\n          });\n          return `Bearer ${newAccessToken}`;\n        } else {\n          return `Bearer ${accessToken}`;\n        }\n      }\n      console.warn('Missing access or refresh token. Authenticated requests will not succeed.');\n    }\n\n    return undefined;\n  }\n\n  const getAxis: () => Promise<AxiosInstance> = async () => {\n    const bearer = await getBearer();\n    const axis = axios.create({\n      baseURL: env.getApiBaseUrl(),\n      headers: {\n        ...(bearer && {\n          Authorization: bearer,\n        }),\n      },\n    });\n    axis.interceptors.response.use(\n      value => value,\n      err => {\n        if (err.response?.status === 401) {\n          console.log('Got 401 error');\n        }\n        throw err;\n      }\n    );\n    return axis;\n  };\n\n  const orders = {\n    getAll: async () => (await getAxis()).get(`/orders/all`),\n    getSingle: async uuid => (await getAxis()).get(`/orders/${uuid}`),\n    new: data => async () => (await getAxis()).post('/orders/new', data),\n    mine: async params => (await getAxis()).get(`/orders/mine?include=${params}`),\n    checkStatus: async id => (await getAxis()).get(`/orders/${id}/status`),\n    complete: (data: {\n      orderId: string;\n      address: {latLng: [number, number]};\n      paymentType: 'pay-now' | 'pay-on-delivery';\n    }) => async () => (await getAxis()).post(`/orders/${data.orderId}/complete`, data),\n    cancel: async data => (await getAxis()).post(`/orders/${data.id}/cancel`),\n  };\n\n  const payments = {\n    initiateMpesaOnlinePayment: data => async () =>\n      (await getAxis()).post('/payments/mpesa/pay-online/initiate', data),\n  };\n\n  const imageKit = {\n    getSignature: () => async () => (await getAxis()).get(`/auth/imagekit/signature`),\n    upload: (data, config?: AxiosRequestConfig) => async () =>\n      axios.post('https://upload.imagekit.io/api/v1/files/upload', data, config),\n    delete: data => async () => axios.delete(`https://api.imagekit.io/v1/files/${data.fileId}`),\n  };\n\n  /**\n   * Use this to access all methods related to the '/brands' route\n   * @param name\n   * @return {{getSingle: (function(): Promise<AxiosResponse<*>>), getAll: (function(): Promise<AxiosResponse<*>>), get: (function(): Promise<AxiosResponse<*>>), create: (function(Object): Promise<AxiosResponse<*>>), updateImage: (function(*): Promise<AxiosResponse<any>>), getProducts: (function(): Promise<AxiosResponse<*>>)}}\n   */\n  const brands = {\n    /**\n     * Get all products\n     * @returns {Promise<AxiosResponse<any>>}\n     */\n    getAll: async () => (await getAxis()).get(`/brands/all`),\n    /**\n     * Get a single brand\n     * @returns {Promise<AxiosResponse<any>>}\n     */\n    getBrandBySlug: async ({slug}) => (await getAxis()).get(`/brands/${slug}`),\n    getBrandByUuid: async ({uuid}) => (await getAxis()).get(`/brands/${uuid}`),\n    /**\n     * Get a single brand's products\n     * @returns {Promise<AxiosResponse<any>>}\n     */\n    getProducts: async (name) => (await getAxis()).get(`/brands/${name}/products`),\n    getFilteredProducts: async ({brandName}) => (await getAxis()).get(`/products/brand/${brandName}`),\n    updateImage: (uuid) => async () => (await getAxis()).put(`/brands/images/${uuid}`),\n    /**\n     * Create a single brand\n     * @param {object}data\n     * @returns {Promise<AxiosResponse<any>>}\n     */\n    create: data => async () => (await getAxis()).post(`/brands/new`, data),\n  };\n\n  const category = {\n    getOne: async id => (await getAxis()).get(`/category/${id}`),\n    getProducts: async uuid => (await getAxis()).get(`/products/category/${uuid}`),\n    getAll: async () => (await getAxis()).get('/categories'),\n    create: data => async () => (await getAxis()).post('/categories', data),\n    update: (uuid, data) => async () => (await getAxis()).put(`/categories/${uuid}`, data),\n  };\n\n  const productTypes = {\n    create: data => async () => (await getAxis()).post('/product-types', data),\n    getAll: async () => (await getAxis()).get('/product-types'),\n    getSingle: async slug => (await getAxis()).get(`/product-types/${slug}`),\n    update: async ({uuid, payload}) => (await getAxis()).patch(`/product-types/${uuid}`, payload),\n  };\n\n  const products = {\n    getAll: async () => (await getAxis()).get('/products/all'),\n    getFeatured: async () => (await getAxis()).get('/products/popular'),\n    getSingle: async slug => (await getAxis()).get(`/products/${slug}`),\n    get: async slug => (await getAxis()).get(`/products/${slug}`),\n    create: data => async () => (await getAxis()).post('/products/new', data),\n    reIndex: data => async () => (await getAxis()).post(\n      `/products/re-index?deleteAll=${data.deleteAll}&createIndexIfNotExists=${data.createIndexIfNotExists}`\n    ),\n    update: (id, data) => async () => (await getAxis()).put(`/products/${id}/update`, data),\n    deleteImage: async ({productId, fileId}) =>\n      (await getAxis()).delete(`/products/${productId}/image/${fileId}`),\n  };\n\n  const deliveries = {\n    getQuote: async data => (await getAxis()).post('/delivery/quote', data),\n    populate: () => async () => (await getAxis()).post('/delivery/locations/populate'),\n    getLocations: async ({q}: {q: string}) => (await getAxis()).get(`/delivery/locations?q=${q}`),\n  };\n\n  const accounts = {\n    register: data => async () => (await getAxis()).post('auth/register', data),\n    requestPasswordReset: data => async () =>\n      (await getAxis()).post('auth/request-password-reset', data),\n    requestTOTP: (data: TOTPRequestBody) => async () =>\n      (await getAxis()).post('auth/totp/request', data),\n    resetPassword: data => async () => (await getAxis()).post('auth/reset-password', data),\n    verify: data => async () => (await getAxis()).post('auth/verify-account', data),\n    me: async () => (await getAxis()).get('accounts/me'),\n    login: (data: {login: string; password: string}) => async () =>\n      (await getAxis()).post('auth/login', data),\n    logOut: (data: {accessToken: string; refreshToken: string}) => async dispatch => {\n      dispatch(logoutUserAction());\n      return (await getAxis()).post('/accounts/logout', data);\n    },\n    check: () => async () => (await getAxis()).get('auth/check'),\n    update: diff => async () => (await getAxis()).post('/accounts/me', diff),\n  };\n\n  const cart = {\n    getOne: async id => (await getAxis()).get(`carts/${id}`),\n    checkPaymentStatus: async id => (await getAxis()).get(`carts/${id}/payment-status`),\n  };\n\n  const variants = {\n    getOne: async uuid => (await getAxis()).get(`variants/${uuid}`),\n    updateOne: async ({uuid, payload}) => (await getAxis()).patch(`variants/${uuid}`, payload),\n    create: async ({uuid, payload}) => (await getAxis()).post(`variants/`, payload),\n  }\n\n  async function ping() {\n    return (await getAxis()).get('up');\n  }\n\n  return {\n    accounts,\n    brands,\n    cart,\n    category,\n    deliveries,\n    imageKit,\n    orders,\n    payments,\n    products,\n    productTypes,\n    ping,\n    variants\n  };\n};\n\nexport default useApi;\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/hooks/useApi/index.tsx	(revision b1ab4bc68d0a863345864a603eee77b6ef7adcd7)
++++ src/hooks/useApi/index.tsx	(date 1627303497766)
+@@ -180,6 +180,8 @@
+      * @returns {Promise<AxiosResponse<any>>}
+      */
+     create: data => async () => (await getAxis()).post(`/brands/new`, data),
++    getBrandFilters:
++      async (brandName: string) => (await getAxis()).get(`/brands/filters/${brandName}`),
+   };
+ 
+   const category = {
+@@ -209,6 +211,7 @@
+     update: (id, data) => async () => (await getAxis()).put(`/products/${id}/update`, data),
+     deleteImage: async ({productId, fileId}) =>
+       (await getAxis()).delete(`/products/${productId}/image/${fileId}`),
++    getBrandProductsWithQuery: async (brandName) => (await getAxis()).get(`/products/brand/${brandName}`),
+   };
+ 
+   const deliveries = {
+@@ -263,7 +266,8 @@
+     products,
+     productTypes,
+     ping,
+-    variants
++    variants,
++    get: (url)=> (getAxis().then((instance) => instance.get(url))),
+   };
+ };
+ 
+Index: src/state/actions/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import {\n  ADD_TO_CART,\n  CREATE_CHECKOUT,\n  DELETE_CART,\n  DELETE_CHECKOUT,\n  LOG_IN_USER,\n  LOG_OUT_USER,\n  REFRESH_SESSION,\n  REMOVE_FROM_CART,\n  TOGGLE_SIDEBAR,\n  SAVE_CHECKOUT_ADDRESS,\n  SAVE_SHIPPING_QUOTE,\n  SAVE_ZOOM_LEVEL, FETCH_REMOTE_CART, EMPTY_CART, IMAGE_UPLOADED, REMOVE_UPLOADED_IMAGE,\n} from './constants';\nimport {AddressType, CartItemType, CartType, LoginResponseType} from '../../types';\nimport {UploadedImageType} from '../../components/uploader/ImageUploader';\n\nconst createAction = (type: string, payload?: any) => ({type, payload});\n\n// cart\nexport const addItemToCartAction = (payload: {item: CartItemType}) =>\n  createAction(ADD_TO_CART, payload);\nexport const removeItemFromCartAction = (payload: {item: CartItemType}) =>\n  createAction(REMOVE_FROM_CART, payload);\n\n// emptying a cart involves getting rid of all the cart items\n// but doesn't delete the cartId\nexport const emptyCartAction = () => createAction(EMPTY_CART);\n// deleting a cart deletes everything to do with the cart.\n// This is normally done only after a successful checkout.\nexport const deleteCartAction = () => createAction(DELETE_CART);\nexport const fetchRemoteCartAction = (payload: {id: string}) => createAction(FETCH_REMOTE_CART, payload);\n\nexport const createCheckoutAction = (payload: CartType) => createAction(CREATE_CHECKOUT, payload);\n// since the checkoutId is taken directly from the cartId\n// there is no need to have separate 'delete' and 'empty' actions\nexport const deleteCheckoutAction = () => createAction(DELETE_CHECKOUT);\n\n//user\nexport const loginUserAction = (payload: LoginResponseType) =>\n  createAction(LOG_IN_USER, payload);\nexport const logoutUserAction = () => createAction(LOG_OUT_USER);\nexport const saveCheckoutAddressAction = (data: {address: AddressType})=> createAction(SAVE_CHECKOUT_ADDRESS, data)\nexport const saveShippingQuoteAction = (data: {cost: number, courierOrderNo?: string})=>\n  createAction(SAVE_SHIPPING_QUOTE, data)\nexport const refreshSessionAction = (payload: {accessToken: string}) =>\n  createAction(REFRESH_SESSION, payload);\nexport const setZoomLevelAction = (payload: {level: number}) => createAction(SAVE_ZOOM_LEVEL, payload);\n\n// meta\nexport const toggleSidebarAction = (payload: {open: boolean}) =>\n  createAction(TOGGLE_SIDEBAR, payload);\nexport const imageUploadedAction = (payload: {image: UploadedImageType, uploaderId: string}) =>\n  createAction(IMAGE_UPLOADED, payload);\nexport const deleteUploadedImageAction = (payload: {uploaderId: string}) =>\n  createAction(REMOVE_UPLOADED_IMAGE, payload);\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/state/actions/index.ts	(revision b1ab4bc68d0a863345864a603eee77b6ef7adcd7)
++++ src/state/actions/index.ts	(date 1627366709696)
+@@ -10,7 +10,7 @@
+   TOGGLE_SIDEBAR,
+   SAVE_CHECKOUT_ADDRESS,
+   SAVE_SHIPPING_QUOTE,
+-  SAVE_ZOOM_LEVEL, FETCH_REMOTE_CART, EMPTY_CART, IMAGE_UPLOADED, REMOVE_UPLOADED_IMAGE,
++  SAVE_ZOOM_LEVEL, FETCH_REMOTE_CART, EMPTY_CART, IMAGE_UPLOADED, REMOVE_UPLOADED_IMAGE, FETCH_FILTERED_PRODUCTS,
+ } from './constants';
+ import {AddressType, CartItemType, CartType, LoginResponseType} from '../../types';
+ import {UploadedImageType} from '../../components/uploader/ImageUploader';
+@@ -47,6 +47,10 @@
+   createAction(REFRESH_SESSION, payload);
+ export const setZoomLevelAction = (payload: {level: number}) => createAction(SAVE_ZOOM_LEVEL, payload);
+ 
++// products
++export const fetchFilteredProductsAction = (payload: {query: string}) =>
++  createAction(FETCH_FILTERED_PRODUCTS, payload);
++
+ // meta
+ export const toggleSidebarAction = (payload: {open: boolean}) =>
+   createAction(TOGGLE_SIDEBAR, payload);
+Index: src/components/footer/footer.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React from 'react';\nimport {Link} from 'react-router-dom';\nimport styled from 'styled-components';\nimport {FacebookLogoDark, GithibLogoDark, InstagramLogoDark, TwitterLogoDark} from '../../constants/icons';\nimport AnimatedLogo from '../logo/AnimatedLogo';\nimport {Footer} from 'bloomer';\n\nconst DefaultFooter = ({internal}) => {\n  return (\n    <div>\n      <Foot>\n        <div style={{width: '100%'}}>\n          <div style={{textAlign: 'center'}}>\n            <AnimatedLogo plain={true} color=\"#444\" />\n            <SocialButtonsParent>\n              <SocialButtons>\n                <a href={'https://instagram.com/retrobie_co'}>\n                  <img src={InstagramLogoDark} alt={'Instagram logo'} />\n                </a>\n                <a href={'https://twitter.com/retrobie'}>\n                  <img src={TwitterLogoDark} alt={'Twitter logo'} />\n                </a>\n                <a href={'https://www.facebook.com/retrobie'}>\n                  <img src={FacebookLogoDark} alt={'Facebook logo'} />\n                </a>\n                <a href={'https://github.com/retrobie'}>\n                  <img src={GithibLogoDark} alt={'Github logo'} />\n                </a>\n              </SocialButtons>\n            </SocialButtonsParent>\n          </div>\n          {\n            !internal && (\n              <div\n                style={{\n                  textAlign: 'left',\n                  maxWidth: 600,\n                  margin: '0 auto'\n                }}>\n                <p>\n                  Retrobie is a relatively young brand and sneaker shop,\n                  founded in 2018 with the goal of providing authentic sneakers,\n                  high-quality sports shoes and unique apparel to everyone in Nairobi.\n                </p>\n                <p>\n                  Aside from sneakers in Nairobi, we are also passionate\n                  about sports, with out main area of expertise being basketball. We've\n                  got everything you'll need on the court - Air Jordans, Lebrons, Kyries, Currys,\n                  KDs, PGs, CP3s and even rare treats like Iversons.\n                </p>\n                <p>\n                  Try us out. You won't be disappointed.\n                </p>\n              </div>\n            )\n          }\n          <ListParent>\n            <ul>\n              <p>The Company</p>\n              <li>\n                <Link to=\"/privacy/cookies\">About us</Link>\n              </li>\n              <li>\n                <Link to=\"/privacy/terms-of-service\">Get in touch</Link>\n              </li>\n              <li>\n                <Link to=\"/support/custom-requests\">Requesting for a specific shoe</Link>\n              </li>\n            </ul>\n\n            <ul>\n              <p>Our Policies</p>\n              <li>\n                <Link to=\"/policies/claims-policy\">Claims policy</Link>\n              </li>\n              <li>\n                <Link to=\"/policies/returns-policy\">Returns policy</Link>\n              </li>\n              <li>\n                <Link to=\"/policies/refund-policy\">Refund policy</Link>\n              </li>\n              <li>\n                <Link to=\"/policies/exchange-policy\">Exchange policy</Link>\n              </li>\n              <li>\n                <Link to=\"/policies/shipping-policy\">Shipping policy</Link>\n              </li>\n            </ul>\n            <ul>\n              <p>Legal & Privacy</p>\n              <li>\n                <Link to=\"/privacy/privacy-and-cookie-policy\">Cookie Policy</Link>\n              </li>\n              <li>\n                <Link to=\"/privacy/terms-of-service\">Terms of use</Link>\n              </li>\n            </ul>\n            <ul>\n              <p>Popular categories</p>\n              <li>\n                <Link to=\"/brands/adidas\">Adidas shoes</Link>\n              </li>\n              <li>\n                <Link to=\"/brands/nike\">Nike shoes</Link>\n              </li>\n              <li>\n                <Link to=\"/brands/air-force-1\">Nike Air Force 1 sneakers</Link>\n              </li>\n              <li>\n                <Link to=\"/category/basketball-shoes\">Basketball shoes</Link>\n              </li>\n            </ul>\n          </ListParent>\n          <div style={{textAlign: 'center'}}>\n            <p style={{marginBottom: 0, fontSize: '14px', paddingBottom: '12px'}}>\n              Copyright &copy; {new Date().getFullYear()} Retrobie LTD\n            </p>\n          </div>\n        </div>\n      </Foot>\n    </div>\n  );\n};\n\nexport default DefaultFooter;\n\nconst SocialButtons = styled.div`\n  img {\n    width: 18px;\n    margin-right: 12px;\n  }\n`;\n\nconst SocialButtonsParent = styled.div`\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin: 14px 0;\n`;\n\nconst ListParent = styled.div`\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: space-between;\n  gap: 16px;\n  margin: 64px 0;\n`;\n\nconst Foot = styled(Footer)`\n  min-height: 250px;\n  padding: 2rem;\n  display: flex;\n  justify-content: center;\n\n  ul {\n    list-style: none;\n    margin: 0;\n    padding: 0;\n    flex: 0 1 185px;\n    \n    li, p {\n      margin: 0;\n    }\n\n    & > p {\n      font-weight: 600;\n    }\n  }\n\n  a {\n    text-decoration: none;\n    font-size: .9em;\n  }\n  a:hover {\n    opacity: 0.8;\n  }\n`;\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/components/footer/footer.tsx	(revision b1ab4bc68d0a863345864a603eee77b6ef7adcd7)
++++ src/components/footer/footer.tsx	(date 1627282308091)
+@@ -29,31 +29,6 @@
+               </SocialButtons>
+             </SocialButtonsParent>
+           </div>
+-          {
+-            !internal && (
+-              <div
+-                style={{
+-                  textAlign: 'left',
+-                  maxWidth: 600,
+-                  margin: '0 auto'
+-                }}>
+-                <p>
+-                  Retrobie is a relatively young brand and sneaker shop,
+-                  founded in 2018 with the goal of providing authentic sneakers,
+-                  high-quality sports shoes and unique apparel to everyone in Nairobi.
+-                </p>
+-                <p>
+-                  Aside from sneakers in Nairobi, we are also passionate
+-                  about sports, with out main area of expertise being basketball. We've
+-                  got everything you'll need on the court - Air Jordans, Lebrons, Kyries, Currys,
+-                  KDs, PGs, CP3s and even rare treats like Iversons.
+-                </p>
+-                <p>
+-                  Try us out. You won't be disappointed.
+-                </p>
+-              </div>
+-            )
+-          }
+           <ListParent>
+             <ul>
+               <p>The Company</p>
+Index: src/state/actions/constants.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';\nexport const DELETE_CART = 'DELETE_CART';\nexport const EMPTY_CART = 'EMPTY_CART';\nexport const ADD_TO_CART = 'ADD_TO_CART';\nexport const FETCH_REMOTE_CART = 'FETCH_REMOTE_CART';\n\nexport const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';\n\nexport const LOG_IN_USER = 'LOG_IN_USER';\nexport const LOG_OUT_USER = 'LOG_OUT_USER';\nexport const SAVE_CHECKOUT_ADDRESS = 'user/saveUserInfo';\nexport const SAVE_ZOOM_LEVEL = 'checkout/setZoomLevel';\nexport const SAVE_SHIPPING_QUOTE = 'checkout/saveQuote'\nexport const REFRESH_SESSION = 'REFRESH_SESSION_USER';\n\nexport const CREATE_CHECKOUT = 'CREATE_CHECKOUT';\nexport const DELETE_CHECKOUT = 'DELETE_CHECKOUT';\n\nexport const IMAGE_UPLOADED = 'IMAGE_UPLOADED';\nexport const REMOVE_UPLOADED_IMAGE = 'REMOVE_UPLOADED_IMAGE';\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/state/actions/constants.ts	(revision b1ab4bc68d0a863345864a603eee77b6ef7adcd7)
++++ src/state/actions/constants.ts	(date 1627366709848)
+@@ -4,6 +4,8 @@
+ export const ADD_TO_CART = 'ADD_TO_CART';
+ export const FETCH_REMOTE_CART = 'FETCH_REMOTE_CART';
+ 
++export const FETCH_FILTERED_PRODUCTS = 'products/fetchFilteredProducts';
++
+ export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
+ 
+ export const LOG_IN_USER = 'LOG_IN_USER';
+Index: src/components/date/DatePickerWrapper.jsx
+===================================================================
+--- src/components/date/DatePickerWrapper.jsx	(revision b1ab4bc68d0a863345864a603eee77b6ef7adcd7)
++++ src/components/date/DatePickerWrapper.jsx	(revision b1ab4bc68d0a863345864a603eee77b6ef7adcd7)
+@@ -1,61 +0,0 @@
+-import React from 'react';
+-import omit from 'lodash/omit';
+-
+-import {DateRangePicker} from 'react-dates';
+-
+-class DateRangePickerWrapper extends React.Component {
+-    constructor(props) {
+-        super(props);
+-
+-
+-        this.state = {
+-            startDate: props.initialStartDate,
+-            endDate: props.initialEndDate,
+-        };
+-
+-        this.onDatesChange = this.onDatesChange.bind(this);
+-        this.onFocusChange = this.onFocusChange.bind(this);
+-    }
+-
+-    onDatesChange({startDate, endDate}) {
+-        const {stateDateWrapper} = this.props;
+-        this.setState({
+-            startDate: startDate && stateDateWrapper(startDate),
+-            endDate: endDate && stateDateWrapper(endDate),
+-        });
+-    }
+-
+-    onFocusChange(focusedInput) {
+-        this.setState({focusedInput});
+-    }
+-
+-    render() {
+-        const {focusedInput, startDate, endDate} = this.state;
+-
+-        // autoFocus, autoFocusEndDate, initialStartDate and initialEndDate are helper props for the
+-        // example wrapper but are not props on the SingleDatePicker itself and
+-        // thus, have to be omitted.
+-        const props = omit(this.props, [
+-            'autoFocus',
+-            'autoFocusEndDate',
+-            'initialStartDate',
+-            'initialEndDate',
+-            'stateDateWrapper',
+-        ]);
+-
+-        return (
+-            <div>
+-                <DateRangePicker
+-                    {...props}
+-                    onDatesChange={this.onDatesChange}
+-                    onFocusChange={this.onFocusChange}
+-                    focusedInput={focusedInput}
+-                    startDate={startDate}
+-                    endDate={endDate}
+-                />
+-            </div>
+-        );
+-    }
+-}
+-
+-export default DateRangePickerWrapper;
+Index: src/data/categories.json
+===================================================================
+--- src/data/categories.json	(revision b1ab4bc68d0a863345864a603eee77b6ef7adcd7)
++++ src/data/categories.json	(revision b1ab4bc68d0a863345864a603eee77b6ef7adcd7)
+@@ -1,17 +0,0 @@
+-[
+-  {
+-    "name": "Men",
+-    "link": "men",
+-    "image": "/"
+-  },
+-  {
+-    "name": "Women",
+-    "link": "women",
+-    "image": "/"
+-  },
+-  {
+-    "name": "Children",
+-    "link": "children",
+-    "image": "/"
+-  }
+-]
+Index: src/components/color/ColorExtractor.jsx
+===================================================================
+--- src/components/color/ColorExtractor.jsx	(revision b1ab4bc68d0a863345864a603eee77b6ef7adcd7)
++++ src/components/color/ColorExtractor.jsx	(revision b1ab4bc68d0a863345864a603eee77b6ef7adcd7)
+@@ -1,50 +0,0 @@
+-import React from 'react'
+-import {ColorExtractor} from 'react-color-extractor'
+-
+-class RetrobieColorExtractor extends React.Component {
+-    state = {colors: []}
+-
+-    renderSwatches = () => {
+-        const {colors} = this.state
+-
+-        return colors.map((color, id) => {
+-            return (
+-                <div
+-                    key={id}
+-                    style={{
+-                        backgroundColor: color,
+-                        width: 100,
+-                        height: 100
+-                    }}
+-                />
+-            )
+-        })
+-    }
+-
+-    getColors = colors =>
+-        this.setState(state => ({colors: [...state.colors, ...colors]}))
+-
+-    render() {
+-        return (
+-            <div>
+-                <ColorExtractor getColors={this.getColors}>
+-                    <img
+-                        src="https://i.imgur.com/OCyjHNF.jpg"
+-                        style={{width: 700, height: 500}}
+-                    />
+-                </ColorExtractor>
+-                <div
+-                    style={{
+-                        marginTop: 20,
+-                        display: 'flex',
+-                        justifyContent: 'center'
+-                    }}
+-                >
+-                    {this.renderSwatches()}
+-                </div>
+-            </div>
+-        )
+-    }
+-}
+-
+-export default RetrobieColorExtractor;
+Index: src/components/filters/Filters.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import {FilteredProduct, ProductType} from '../../types';\nimport React, {useEffect, useState} from 'react';\nimport DrawerWrapper from 'rc-drawer';\nimport {Button, Container, Section} from 'bloomer';\nimport useFiltersV2 from '../../hooks/useFiltersV2';\nimport {capitalize, formatNumberWithCommas} from '../../helpers';\nimport qs from 'qs';\nimport styled from 'styled-components';\n\nexport const MobileFilter = function(props: {\n  products: Array<ProductType>\n}){\n\n  const [isDrawerOpen, setDrawerOpen] = useState(false);\n\n  return (\n    <div>\n      <DrawerWrapper\n        onClose={() => setDrawerOpen(false)}\n        handler={null}\n        open={isDrawerOpen}>\n        <Section>\n          <Container>\n            <ProductFilters\n              //@ts-ignore\n              products={props.products}\n              allCriteria={['sex', 'size', 'price']}\n            />\n          </Container>\n        </Section>\n      </DrawerWrapper>\n      <Button\n        onClick={() => setDrawerOpen(true)}\n        style={{marginRight: 12}}>\n        Filters\n      </Button>\n    </div>\n  )\n}\n\nexport const DesktopFilter = function(props: {\n  products: Array<ProductType>,\n  criteria: Array<string>\n}){\n\n  return (\n    <ProductFilters\n      // @ts-ignore\n      products={props.products}\n      allCriteria={props.criteria}\n    />\n  );\n}\n\n/**\n * In order to work, this component requires an array of criteria and an array of\n * products.\n *\n * @param props\n * @param {string[]} props.allCriteria - a list of criteria to be used for filtering.\n * These should be the same as the set of keys in the {@link ProductType} object.\n * @param {ProductType[]} props.products - a list of products to be filtered through\n */\nconst ProductFilters =  function(\n  {\n    allCriteria,\n    products,\n  }: {\n    allCriteria: Array<string>,\n    products: FilteredProduct[]\n  }) {\n\n  const {\n    setAllCriteria,\n    filterByCriteria,\n    criteriaValues: criteriaMap,\n    setAllProducts,\n  } = useFiltersV2();\n\n  const criteriaLength = allCriteria.length;\n\n  useEffect(() => {\n      if (allCriteria?.length) {\n        setAllCriteria(allCriteria)\n      }\n    },\n    // a bit hacky, but it renders forever otherwise\n    [criteriaLength]\n  );\n\n  useEffect(() => {\n    if (products) {\n      setAllProducts(products);\n    }\n  }, [products]);\n\n  if (!allCriteria?.length) {\n    return (\n      <>\n        <div>No criteria provided.</div>\n      </>\n    );\n  }\n\n  return (\n    <>\n      <div>\n        <div style={{maxWidth: 200}}>\n          <h4>Filters</h4>\n          {\n            Array.from(criteriaMap.keys()).map((criteriaKey, index) => (\n              <div key={String(index)}>\n                <h4>\n                  {\n                    capitalize(criteriaKey)\n                  }\n                </h4>\n                <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>\n                  {\n                    // loop through the list of criteria\n                    Array.from(criteriaMap.get(criteriaKey).keys())?.map((criteriaValue, index) => (\n                      <FilterItem\n                        applied={(() => {\n                          const params = qs.parse(window.location.search, {\n                            ignoreQueryPrefix: true,\n                          });\n                          return String(criteriaValue) === String(params[criteriaKey]);\n                        })()}\n                        onClick={() => filterByCriteria(criteriaKey, criteriaValue)}\n                        key={String(index)}>\n                        <p>\n                          {\n                            typeof criteriaValue === 'string' ?\n                              capitalize(criteriaValue) :\n                              formatNumberWithCommas(criteriaValue)\n                          }\n                        </p>\n                      </FilterItem>\n                    ))\n                  }\n                </div>\n              </div>\n            ))\n          }\n        </div>\n      </div>\n    </>\n  );\n};\n\nconst FilterItem = styled.div<{applied?: boolean}>`\n  border: 1px solid ${p => p.applied ? 'var(--color-primary)' : 'var(--color-border-gray)'};\n  padding: 10px 8px 8px;\n  border-radius: 2px;\n  width: max-content;\n  transition: all 0.25s ease-in-out;\n  flex: 0 1 auto;\n  \n  p {\n    margin: 0;\n    font-size: .9rem;\n  }\n  \n  &:hover {\n    cursor: pointer;\n    border: 1px solid var(--color-border-lightgray);\n  }\n`;\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/components/filters/Filters.tsx	(revision b1ab4bc68d0a863345864a603eee77b6ef7adcd7)
++++ src/components/filters/Filters.tsx	(date 1627307614883)
+@@ -21,7 +21,7 @@
+         open={isDrawerOpen}>
+         <Section>
+           <Container>
+-            <ProductFilters
++            <BrandProductsFilter
+               //@ts-ignore
+               products={props.products}
+               allCriteria={['sex', 'size', 'price']}
+@@ -44,7 +44,7 @@
+ }){
+ 
+   return (
+-    <ProductFilters
++    <BrandProductsFilter
+       // @ts-ignore
+       products={props.products}
+       allCriteria={props.criteria}
+@@ -61,14 +61,7 @@
+  * These should be the same as the set of keys in the {@link ProductType} object.
+  * @param {ProductType[]} props.products - a list of products to be filtered through
+  */
+-const ProductFilters =  function(
+-  {
+-    allCriteria,
+-    products,
+-  }: {
+-    allCriteria: Array<string>,
+-    products: FilteredProduct[]
+-  }) {
++const BrandProductsFilter =  function({allCriteria, products}: {allCriteria: Array<string>, products: FilteredProduct[]}) {
+ 
+   const {
+     setAllCriteria,
+@@ -80,10 +73,13 @@
+   const criteriaLength = allCriteria.length;
+ 
+   useEffect(() => {
++    // if criteria has been provided in props
+       if (allCriteria?.length) {
++        // set it to state
+         setAllCriteria(allCriteria)
+       }
+     },
++    // if the length of the criteria props changes, re-render this component.
+     // a bit hacky, but it renders forever otherwise
+     [criteriaLength]
+   );
+Index: src/hooks/useFiltersV3/useBrandFilters.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/hooks/useFiltersV3/useBrandFilters.tsx	(date 1627366988442)
++++ src/hooks/useFiltersV3/useBrandFilters.tsx	(date 1627366988442)
+@@ -0,0 +1,93 @@
++import {useEffect, useState} from 'react';
++import useSWR from 'swr/esm/use-swr';
++import useApi from '../useApi';
++import qs from 'qs';
++import {useDispatch} from 'react-redux';
++
++
++function useBrandFilters({brandName}){
++
++  const api = useApi();
++
++  const dispatch = useDispatch();
++
++  const [queryParamString, setQueryParamString] = useState<string>(null);
++  const [loadingNewItems, setLoadingNewItems] = useState(false);
++
++  const [filteredProducts, setFilteredProducts] = useState(null);
++
++  const [allProducts, setAllProducts] = useState([])
++
++  useEffect(()=> {
++    api.brands.getFilteredProducts({brandName})
++      .then(({data}) => setAllProducts(data));
++  }, [brandName, api.brands])
++
++
++  async function fetchFilteredProducts(params){
++
++    // the url params have changed, so we have to parse them again
++    const newParamCriteria = qs.parse(window.location.search, {ignoreQueryPrefix: true});
++    // if no criteria has been applied
++    if (!Object.keys(newParamCriteria).length){
++      // return all the products
++      setFilteredProducts(allProducts)
++      return allProducts;
++    }
++
++    // otherwise, fetch a list of products with the new criteria
++
++    await api.brands.getFilteredProducts({brandName})
++
++    // find any products that match the provided criteria
++    // const transformed =  transformedProducts.filter((product) => product[queryToAddOrRemove] === value);
++    // if no products match, return an empty array
++    // if (!transformed.length) {
++    //   setFilteredProducts([])
++    //   return [];
++    // }
++    // and map the transformed products back to their full types
++    // const filteredProducts = transformed.map(product => allProducts.find(item => item.uuid === product.uuid));
++    // setFilteredProducts(filteredProducts);
++    // return filteredProducts;
++  }
++
++  /**
++   * This method adds a key and value to the url params or
++   * deletes a query key from the url params
++   * @param queryToAddOrRemove - the query to add or remove
++   * @param value - the value to set if adding a query param. Not required when
++   *        deleting a value
++   */
++  async function alterUrlParams(queryToAddOrRemove: string, value?: string): Promise<void> {
++
++    const appliedCriteria = qs.parse(window.location.search, {ignoreQueryPrefix: true});
++
++    // @ts-ignore
++    const appliedParams = new URLSearchParams(appliedCriteria);
++
++    // if this param is already applied
++    if (appliedParams.get(queryToAddOrRemove) !== null && appliedParams.get(queryToAddOrRemove) === String(value)) {
++      // delete it from the query params
++      appliedParams.delete(queryToAddOrRemove);
++    } else {
++      // if it's not applied, add it to the query params
++      appliedParams.set(queryToAddOrRemove, value);
++    }
++
++    setQueryParamString(appliedParams.toString);
++    const url = `${window.location.pathname}?${appliedParams.toString()}`;
++
++    window.history.pushState({}, "", url);
++    return await fetchFilteredProducts(appliedParams)
++  }
++
++
++  return {
++    queryParamString,
++    fetchFilteredProducts,
++    loadingNewItems
++  }
++}
++
++export default useBrandFilters;
+Index: src/pages/product/components/ProductDescriptionComponent.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/pages/product/components/ProductDescriptionComponent.tsx	(date 1627242655655)
++++ src/pages/product/components/ProductDescriptionComponent.tsx	(date 1627242655655)
+@@ -0,0 +1,23 @@
++import styled from 'styled-components';
++
++
++function ProductDescriptionComponent(){
++
++  return (
++    <>
++
++    </>
++  );
++}
++
++export default ProductDescriptionComponent;
++
++
++const ProductDescriptionParent = styled.div`
++  display: flex;
++  
++  @media screen and (max-width: 376px) {
++    flex-direction: column;
++    padding: 0;
++  }
++`;
+Index: src/pages/product/index.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React, {useState} from 'react';\nimport Loading from '../../components/loading';\nimport {addItemToCartAction, toggleSidebarAction} from '../../state/actions';\nimport {capitalize, formatNumberWithCommas} from '../../helpers';\nimport styled from 'styled-components';\nimport Layout from '../../components/Layout';\nimport SEOHeader from '../../components/SEOHeader';\nimport {DeadEyes, Diamond, FastDelivery, HelpIcon, Replace, Return} from '../../constants/icons';\nimport '../../assets/style/index.scss';\nimport {JsonLd} from 'react-schemaorg';\nimport productJsonld, {subProduct} from './product.jsonld';\nimport {Button, Delete, Help, Modal, ModalBackground, ModalClose, ModalContent, Tag, Title} from 'bloomer';\nimport ProductSlider from '../../components/slider/ProductSlider';\nimport {RootStateOrAny, useDispatch, useSelector} from 'react-redux';\nimport {isProductInStock} from '../../components/cart';\nimport {useApi} from '../../network';\nimport {CartItemType, CartType, ProductType} from '../../types';\nimport useSWR from 'swr';\nimport {useNotify} from '../../hooks';\nimport {EmptyState} from '../../components';\n\nfunction Product({ match }) {\n  const api = useApi();\n  const dispatch = useDispatch();\n  const { slug } = match.params;\n\n  const isSidebarOpen = useSelector((state: RootStateOrAny) => state.meta.isSidebarOpen);\n\n  const [conditionModalOpen, setConditionModalOpen] = useState(false);\n  const cart: CartType = useSelector((state: RootStateOrAny) => state.cart);\n\n  const singleDataFetcher = (_key, slug) => api.products.getSingle(slug).then(({ data }) => data)\n  const {data: currentProduct, error: fetchProductError} = useSWR<ProductType>(\n    [`/product/${slug}`, slug],\n    singleDataFetcher,\n  );\n\n  const notify = useNotify();\n\n  if (!currentProduct && !fetchProductError) {\n    return <Loading message={false} />;\n  }\n\n  if (fetchProductError) {\n    return (\n      <Layout\n      >\n        <EmptyState\n          icon={DeadEyes}\n          title={'Yikes. A server error occurred.'}\n          message={\"It's not you. It's us. Our engineers have been notified and are on the case.\"}\n        />\n      </Layout>\n    );\n  }\n\n  function getProductFromCart(uuid): CartItemType | undefined {\n    if (!cart.items.length) return null;\n\n    return cart.items.find(item => item.productId === uuid);\n  }\n\n  function dispatchToCart(productItem: ProductType) {\n\n    let cartItem: CartItemType = {\n      productName: productItem.name,\n      inStock: productItem.inStock,\n      images: productItem.images,\n      uuid: productItem.uuid,\n      isOnOffer: productItem.isOnOffer,\n      slug: productItem.slug,\n      originalPrice: productItem.originalPrice,\n      thumbnailUrl: productItem.images[0].thumbnailUrl,\n      price: productItem.originalPrice,\n      quantity: 1,\n      productId: productItem.uuid\n    };\n\n    const { shouldAddToCart, message } = isProductInStock(cart, cartItem);\n    if (shouldAddToCart) {\n      if (!isSidebarOpen) {\n        const toastId = notify.info( `${productItem.name} added to cart`, {\n          onClick: () => {\n            dispatch(toggleSidebarAction({open: true}))\n          },\n        });\n\n      }\n      dispatch(addItemToCartAction({ item: cartItem }));\n    } else {\n      notify.error(message);\n    }\n  }\n\n\n  function isInStock(product: ProductType) {\n    // get the item from the user's cart\n    const cartItem = getProductFromCart(product.uuid);\n    // if it exists in the cart\n    if (cartItem) {\n      // make sure the user hasn't selected more products than are in stock\n      return (\n        (cartItem.inStock > 0) &&\n        (cartItem.quantity < cartItem.inStock)\n      );\n    }\n\n    // if it's not in the cart,\n    // make sure the product count from the server is greater than 0\n    return product?.inStock > 0;\n  }\n\n  function openModal(open) {\n    setConditionModalOpen(open);\n  }\n\n  return (\n    <>\n      <SEOHeader\n        path={`/product/${currentProduct.slug}`}\n        title={currentProduct.name + ' for sale in Nairobi'}\n        description={currentProduct.description.seo}\n      />\n\n      <JsonLd item={{...productJsonld(currentProduct)}} />\n      <JsonLd item={{...subProduct(currentProduct)}} />\n\n      <Layout>\n        <ProductRoot>\n          <div\n            style={{\n              display: 'flex',\n              flexDirection: 'column',\n              alignItems: 'center',\n            }}\n          >\n            <ProductSlider\n              productName={currentProduct.name}\n              images={currentProduct.defaultVariant.images} />\n\n            <div style={{\n              width: '80%',\n              borderRadius: '4px',\n              marginTop: 84,\n            }}>\n              <div>\n                <ValueProposition>\n                  <div>\n                    <img style={{width: '50px'}} src={FastDelivery} alt={'Free Delivery'} />\n                    <h4>Next-day Delivery</h4>\n                    <p>Anywhere within Nairobi</p>\n                  </div>\n                  <div>\n                    <img style={{width: '50px'}} src={HelpIcon} alt={'easy payment'} />\n                    <h4>Any questions? Need help?</h4>\n                    <p>\n                      Hit us up on Twitter <a href=\"https://twitter.com/retrbobie\">@retrobie</a> or\n                      give us a call at <a\n                      href={'tel:+254-796-610-303'}\n                      type={'tel'}>\n                      +254 796 610 303\n                    </a>\n                    </p>\n                  </div>\n                  <div>\n                    <img style={{width: '50px'}} src={Diamond} alt={'easy payment'} />\n                    <h4>Assured Quality</h4>\n                    <p>100% original product guarantee</p>\n                  </div>\n                </ValueProposition>\n              </div>\n            </div>\n\n            <ProductParent className=\"product--parent\">\n              <SEOHeader\n                description={`${currentProduct.description.seo}`}\n                path={`/product/${slug}`}\n                title={`${currentProduct.name} shoes in Nairobi`}\n              />\n              <DescriptionParent>\n                <h1>\n                  {currentProduct.name}\n                  {\n                    !isInStock(currentProduct) && (\n                      <Tag\n                        style={{\n                          verticalAlign: \"middle\",\n                          marginLeft: \"8px\"\n                        }}\n                        isColor={'warning'}>\n                        Out of stock\n                      </Tag>\n                    )\n                  }\n                </h1>\n                <h2>\n                  {\n                    `${currentProduct.currency || 'Ksh'\n                    }.  \n                    ${formatNumberWithCommas(currentProduct.originalPrice)\n                    }`\n                  }\n                </h2>\n                <div>\n                  <h4>Description</h4>\n                  <p>{currentProduct.description.short}</p>\n                  <InDepth>\n                    <div\n                      dangerouslySetInnerHTML={{\n                        __html: currentProduct.description.long,\n                      }}\n                    />\n                  </InDepth>\n                </div>\n\n                {\n                  currentProduct.inStock !== null && (\n                    <div>\n                      <h4>Stock</h4>\n                      {\n                        currentProduct.inStock === 0 ? (\n                            <CustomTag>\n                              <p>Not in stock</p>\n                            </CustomTag>\n                          ) :\n                          currentProduct.inStock <= 5 ? (\n                            <CustomTag>\n                              <p>Only {currentProduct.defaultVariant.stock.quantity} left in stock</p>\n                            </CustomTag>\n                          ) : (\n                            <CustomTag>\n                              <p>{currentProduct.defaultVariant.stock.quantity} left in stock</p>\n                            </CustomTag>\n                          )\n                      }\n                    </div>\n                  )\n                }\n                <Buttons>\n                  <div style={{margin: '18px 0'}}>\n                    <div>\n                      <Button\n                        isColor=\"primary\"\n                        onClick={() => {\n                          return dispatchToCart({\n                            ...currentProduct,\n                            price: currentProduct.originalPrice,\n                          });\n                        }}\n                        disabled={!isInStock(currentProduct)}\n                        style={{\n                          width: '100%',\n                          fontWeight: 'bold',\n                        }}\n                      >\n                        {!isInStock(currentProduct) ? 'OUT OF STOCK' : 'ADD TO CART.'}\n                      </Button>\n                    </div>\n                  </div>\n                  <div>\n                    {\n                      !isInStock(currentProduct) && (\n                        <div>\n                          <Help>\n                            Want to be the first to know when this product in back in stock? {' '}\n                            <Button\n                              isColor={'ghost'}>\n                              We can let you know!\n                            </Button>\n                          </Help>\n\n                        </div>\n                      )\n                    }\n                  </div>\n\n                  <div>\n                    <header>\n                      <h3>What if it doesn't fit?</h3>\n                    </header>\n                    <div\n                      style={{\n                        display: 'flex',\n                        gap: '16px',\n                        flexWrap: 'wrap',\n                      }}\n                    >\n                      <div style={{flex: '1 0 180px'}}>\n                        <img alt={'return'} src={Return} style={{width: '48px'}} />\n                        <h4 style={{color: '#353535'}}>Returns accepted within 7 days</h4>\n                        <p>\n                          &#10003; Direct returns - money refunded to your M-Pesa or Paypal account.\n                        </p>\n                      </div>\n                      <div style={{flex: '1 0 180px'}}>\n                        <img alt={'replace'} src={Replace} style={{width: '48px'}} />\n                        <h4 style={{color: '#353535'}}>Replacements accepted within 14 days</h4>\n                        <p>&#10003; Replace your product with any other of similar value</p>\n                      </div>\n                    </div>\n                  </div>\n\n                  <hr />\n\n                  <div>\n                    <h3>Missing your size?</h3>\n                    <p>\n                      Didn't find these shoes in your size? Hit us up and we'll try and get it for\n                      you. ✌️\n                    </p>\n                  </div>\n\n                  <ConditionParent>\n                    <div style={{textAlign: 'center', color: '#222'}}>\n                      <Modal isActive={conditionModalOpen}>\n                        <Delete onClick={() => openModal(false)} />\n                        <ModalBackground />\n                        <ModalContent>\n                          <Title>Condition Guide</Title>\n                          <p style={{color: '#222'}}>\n                            All products on T25 are divided into three distinct categories:\n                          </p>\n                          <ul>\n                            <li>\n                              <Tag\n                                style={{\n                                  background: 'dodgerblue',\n                                  color: 'white',\n                                }}\n                              >\n                                Repackaged:\n                              </Tag>\n                              <p\n                                style={{\n                                  color: '#222',\n                                  display: 'inline',\n                                  marginLeft: '4px',\n                                }}\n                              >\n                                New with box: unused, unworn and unblemished. Are repackaged in T25\n                                boxes.\n                              </p>\n                            </li>\n                            <li>\n                              <Tag\n                                style={{\n                                  background: 'green',\n                                  color: 'white',\n                                }}\n                              >\n                                Refurbished:\n                              </Tag>\n                              <p\n                                style={{\n                                  color: '#222',\n                                  display: 'inline',\n                                  marginLeft: '4px',\n                                }}\n                              >\n                                Like-new with minimal blemishes and wear. Does not come with box.\n                              </p>\n                            </li>\n                            <li>\n                              <Tag\n                                style={{\n                                  background: 'violet',\n                                  color: 'white',\n                                }}\n                              >\n                                Slightly Worn:\n                              </Tag>\n                              <p\n                                style={{\n                                  color: '#222',\n                                  display: 'inline',\n                                  marginLeft: '4px',\n                                }}\n                              >\n                                Visible wear and tear, but still reasonably new.\n                              </p>\n                            </li>\n                          </ul>\n                        </ModalContent>\n                        <ModalClose />\n                      </Modal>\n                    </div>\n                  </ConditionParent>\n                </Buttons>\n              </DescriptionParent>\n            </ProductParent>\n          </div>\n        </ProductRoot>\n      </Layout>\n    </>\n  );\n}\n\nexport default Product;\n\nconst ValueProposition = styled.div`\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));\n  justify-content: space-around;\n  padding: 24px;\n  text-align: center;\n\n  & > div {\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    align-items: center;\n    margin: 0 12px;\n    \n    @media screen and (max-width: 376px) {\n       margin: 12px;\n    }\n\n    h4 {\n      margin-bottom: 6px;\n    }\n\n    a {\n      color: dodgerblue;\n      text-decoration: underline;\n    }\n    \n    p {\n      margin: 0;\n      text-align: center;\n    }\n  }\n`;\n\nconst ConditionParent = styled.div`\n  display: flex;\n  flex-direction: column;\n  text-align: left;\n\n  p {\n    display: inline-block;\n  }\n`;\n\nconst ProductRoot = styled.div`\n  .layout--parent {\n    margin: 0;\n  }\n`;\n\nconst ProductParent = styled.div`\n  display: flex;\n  \n  @media screen and (max-width: 376px) {\n    flex-direction: column;\n    padding: 0;\n  }\n`;\n\nconst DescriptionParent = styled.div`\n  max-width: 800px;\n  min-width: 300px;\n  padding: 32px 64px 0 64px;\n  border-radius: 6px;\n\n  @media screen and (max-width: 376px) {\n    margin-left: 0;\n    width: unset;\n  }\n  \n  h1 {\n  }\n`;\n\nconst ColorsRoot = styled.div`\n  & > h4 {\n    margin-bottom: 8px;\n  }\n`;\n\nconst ColorsParent = styled.div<{src: string}>`\n  border: 2px solid ${props => props.src};\n  padding: 2px;\n  border-radius: 50%;\n  width: -moz-min-content;\n  width: 32px;\n  -webkit-transition: all 0.25s ease-in-out;\n  transition: all 0.25s ease-in-out;\n  height: 32px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n`;\n\nconst Color = styled.div<{src: string}>`\n  background: ${props => props.src};\n  border-radius: 50%;\n  width: 24px;\n  height: 24px;\n\n  &:hover {\n    cursor: pointer;\n  }\n`;\n\nconst SizesParent = styled.div`\n  display: flex;\n  align-items: center;\n`;\n\nconst Sizes = styled.div`\n  display: flex;\n\n  .rs-radio-group-picker {\n    border: none;\n  }\n\n  .rs-radio-checker {\n    label {\n      padding: 0;\n    }\n  }\n`;\n\nconst CustomTag = styled.div`\n  border: 1px solid rgba(0, 0, 0, 0.1);\n  border-radius: 4px;\n  margin-right: 6px;\n  padding: 10px 12px 8px;\n  width: max-content;\n  transition: all 0.25s ease-in-out;\n  display: flex;\n  align-items: center;\n\n  @media screen and (max-width: 768px) {\n     padding: 8px 10px;      \n  }\n\n  p {\n    margin: 0;\n    padding: 0;\n    color: #353535;\n  }\n\n  &:hover {\n    cursor: pointer;\n    border: 1px solid rgba(0, 0, 0, 0.3);\n  }\n`;\n\nconst InDepth = styled.div`\n  max-width: 800px;\n  min-width: 300px;\n  width: 800px;\n\n  @media screen and (max-width: 768px) {\n      width: unset; \n  }\n  \n  ul, li, p {\n    color: #353535;\n  }\n`;\n\nconst Buttons = styled.div`\n  display: flex;\n  flex-direction: column;\n\n  .cart-open {\n    &:hover {\n      cursor: pointer;\n    }\n  }\n`;\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/pages/product/index.tsx	(revision b1ab4bc68d0a863345864a603eee77b6ef7adcd7)
++++ src/pages/product/index.tsx	(date 1627242665475)
+@@ -10,7 +10,7 @@
+ import {JsonLd} from 'react-schemaorg';
+ import productJsonld, {subProduct} from './product.jsonld';
+ import {Button, Delete, Help, Modal, ModalBackground, ModalClose, ModalContent, Tag, Title} from 'bloomer';
+-import ProductSlider from '../../components/slider/ProductSlider';
++import ProductImagesSliderComponent from './components/ProductImagesSliderComponent';
+ import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
+ import {isProductInStock} from '../../components/cart';
+ import {useApi} from '../../network';
+@@ -18,8 +18,9 @@
+ import useSWR from 'swr';
+ import {useNotify} from '../../hooks';
+ import {EmptyState} from '../../components';
++import ValuePropositionComponent from './components/ValuePorposition';
+ 
+-function Product({ match }) {
++function ProductPage({ match }) {
+   const api = useApi();
+   const dispatch = useDispatch();
+   const { slug } = match.params;
+@@ -117,319 +118,249 @@
+   return (
+     <>
+       <SEOHeader
+-        path={`/product/${currentProduct.slug}`}
+-        title={currentProduct.name + ' for sale in Nairobi'}
+-        description={currentProduct.description.seo}
++        description={`${currentProduct.description.seo}`}
++        path={`/product/${slug}`}
++        title={`${currentProduct.name} shoes in Nairobi`}
+       />
++
+ 
+       <JsonLd item={{...productJsonld(currentProduct)}} />
+       <JsonLd item={{...subProduct(currentProduct)}} />
+ 
+       <Layout>
+-        <ProductRoot>
+-          <div
+-            style={{
+-              display: 'flex',
+-              flexDirection: 'column',
+-              alignItems: 'center',
+-            }}
+-          >
+-            <ProductSlider
+-              productName={currentProduct.name}
+-              images={currentProduct.defaultVariant.images} />
++        <ProductPageParent>
++          <ProductImagesSliderComponent
++            productName={currentProduct.name}
++            images={currentProduct.defaultVariant.images} />
+ 
+-            <div style={{
+-              width: '80%',
+-              borderRadius: '4px',
+-              marginTop: 84,
+-            }}>
+-              <div>
+-                <ValueProposition>
+-                  <div>
+-                    <img style={{width: '50px'}} src={FastDelivery} alt={'Free Delivery'} />
+-                    <h4>Next-day Delivery</h4>
+-                    <p>Anywhere within Nairobi</p>
+-                  </div>
+-                  <div>
+-                    <img style={{width: '50px'}} src={HelpIcon} alt={'easy payment'} />
+-                    <h4>Any questions? Need help?</h4>
+-                    <p>
+-                      Hit us up on Twitter <a href="https://twitter.com/retrbobie">@retrobie</a> or
+-                      give us a call at <a
+-                      href={'tel:+254-796-610-303'}
+-                      type={'tel'}>
+-                      +254 796 610 303
+-                    </a>
+-                    </p>
+-                  </div>
+-                  <div>
+-                    <img style={{width: '50px'}} src={Diamond} alt={'easy payment'} />
+-                    <h4>Assured Quality</h4>
+-                    <p>100% original product guarantee</p>
+-                  </div>
+-                </ValueProposition>
+-              </div>
+-            </div>
++          <div style={{
++            width: '80%',
++            borderRadius: '4px',
++            marginTop: 84,
++          }}>
++            <ValuePropositionComponent/>
++          </div>
+ 
+-            <ProductParent className="product--parent">
+-              <SEOHeader
+-                description={`${currentProduct.description.seo}`}
+-                path={`/product/${slug}`}
+-                title={`${currentProduct.name} shoes in Nairobi`}
+-              />
+-              <DescriptionParent>
+-                <h1>
+-                  {currentProduct.name}
+-                  {
+-                    !isInStock(currentProduct) && (
+-                      <Tag
+-                        style={{
+-                          verticalAlign: "middle",
+-                          marginLeft: "8px"
+-                        }}
+-                        isColor={'warning'}>
+-                        Out of stock
+-                      </Tag>
+-                    )
+-                  }
+-                </h1>
+-                <h2>
+-                  {
+-                    `${currentProduct.currency || 'Ksh'
+-                    }.  
++          <ProductParent className="product--parent">
++            <DescriptionParent>
++              <h1>
++                {currentProduct.name}
++                {
++                  !isInStock(currentProduct) && (
++                    <Tag
++                      style={{
++                        verticalAlign: "middle",
++                        marginLeft: "8px"
++                      }}
++                      isColor={'warning'}>
++                      Out of stock
++                    </Tag>
++                  )
++                }
++              </h1>
++              <h2>
++                {
++                  `${currentProduct.currency || 'Ksh'
++                  }.  
+                     ${formatNumberWithCommas(currentProduct.originalPrice)
+-                    }`
+-                  }
+-                </h2>
+-                <div>
+-                  <h4>Description</h4>
+-                  <p>{currentProduct.description.short}</p>
+-                  <InDepth>
+-                    <div
+-                      dangerouslySetInnerHTML={{
+-                        __html: currentProduct.description.long,
+-                      }}
+-                    />
+-                  </InDepth>
+-                </div>
++                  }`
++                }
++              </h2>
++              <div>
++                <h4>Description</h4>
++                <p>{currentProduct.description.short}</p>
++                <InDepth>
++                  <div
++                    dangerouslySetInnerHTML={{
++                      __html: currentProduct.description.long,
++                    }}
++                  />
++                </InDepth>
++              </div>
+ 
+-                {
+-                  currentProduct.inStock !== null && (
+-                    <div>
+-                      <h4>Stock</h4>
+-                      {
+-                        currentProduct.inStock === 0 ? (
+-                            <CustomTag>
+-                              <p>Not in stock</p>
+-                            </CustomTag>
+-                          ) :
+-                          currentProduct.inStock <= 5 ? (
+-                            <CustomTag>
+-                              <p>Only {currentProduct.defaultVariant.stock.quantity} left in stock</p>
+-                            </CustomTag>
+-                          ) : (
+-                            <CustomTag>
+-                              <p>{currentProduct.defaultVariant.stock.quantity} left in stock</p>
+-                            </CustomTag>
+-                          )
+-                      }
+-                    </div>
+-                  )
+-                }
+-                <Buttons>
+-                  <div style={{margin: '18px 0'}}>
+-                    <div>
+-                      <Button
+-                        isColor="primary"
+-                        onClick={() => {
+-                          return dispatchToCart({
+-                            ...currentProduct,
+-                            price: currentProduct.originalPrice,
+-                          });
+-                        }}
+-                        disabled={!isInStock(currentProduct)}
+-                        style={{
+-                          width: '100%',
+-                          fontWeight: 'bold',
+-                        }}
+-                      >
+-                        {!isInStock(currentProduct) ? 'OUT OF STOCK' : 'ADD TO CART.'}
+-                      </Button>
+-                    </div>
+-                  </div>
+-                  <div>
+-                    {
+-                      !isInStock(currentProduct) && (
+-                        <div>
+-                          <Help>
+-                            Want to be the first to know when this product in back in stock? {' '}
+-                            <Button
+-                              isColor={'ghost'}>
+-                              We can let you know!
+-                            </Button>
+-                          </Help>
++              {
++                currentProduct.inStock !== null && (
++                  <div>
++                    <h4>Stock</h4>
++                    {
++                      currentProduct.inStock === 0 ? (
++                          <CustomTag>
++                            <p>Not in stock</p>
++                          </CustomTag>
++                        ) :
++                        currentProduct.inStock <= 5 ? (
++                          <CustomTag>
++                            <p>Only {currentProduct.defaultVariant.stock.quantity} left in stock</p>
++                          </CustomTag>
++                        ) : (
++                          <CustomTag>
++                            <p>{currentProduct.defaultVariant.stock.quantity} left in stock</p>
++                          </CustomTag>
++                        )
++                    }
++                  </div>
++                )
++              }
++              <Buttons>
++                <div style={{margin: '18px 0'}}>
++                  <div>
++                    <Button
++                      isColor="primary"
++                      onClick={() => {
++                        return dispatchToCart({
++                          ...currentProduct,
++                          price: currentProduct.originalPrice,
++                        });
++                      }}
++                      disabled={!isInStock(currentProduct)}
++                      style={{
++                        width: '100%',
++                        fontWeight: 'bold',
++                      }}
++                    >
++                      {!isInStock(currentProduct) ? 'OUT OF STOCK' : 'ADD TO CART.'}
++                    </Button>
++                  </div>
++                </div>
++                <div>
++                  {
++                    !isInStock(currentProduct) && (
++                      <div>
++                        <Help>
++                          Want to be the first to know when this product in back in stock? {' '}
++                          <Button
++                            isColor={'ghost'}>
++                            We can let you know!
++                          </Button>
++                        </Help>
+ 
+-                        </div>
+-                      )
+-                    }
+-                  </div>
++                      </div>
++                    )
++                  }
++                </div>
+ 
+-                  <div>
+-                    <header>
+-                      <h3>What if it doesn't fit?</h3>
+-                    </header>
+-                    <div
+-                      style={{
+-                        display: 'flex',
+-                        gap: '16px',
+-                        flexWrap: 'wrap',
+-                      }}
+-                    >
+-                      <div style={{flex: '1 0 180px'}}>
+-                        <img alt={'return'} src={Return} style={{width: '48px'}} />
+-                        <h4 style={{color: '#353535'}}>Returns accepted within 7 days</h4>
+-                        <p>
+-                          &#10003; Direct returns - money refunded to your M-Pesa or Paypal account.
+-                        </p>
+-                      </div>
+-                      <div style={{flex: '1 0 180px'}}>
+-                        <img alt={'replace'} src={Replace} style={{width: '48px'}} />
+-                        <h4 style={{color: '#353535'}}>Replacements accepted within 14 days</h4>
+-                        <p>&#10003; Replace your product with any other of similar value</p>
+-                      </div>
+-                    </div>
+-                  </div>
++                <div>
++                  <header>
++                    <h3>What if it doesn't fit?</h3>
++                  </header>
++                  <div
++                    style={{
++                      display: 'flex',
++                      gap: '16px',
++                      flexWrap: 'wrap',
++                    }}
++                  >
++                    <div style={{flex: '1 0 180px'}}>
++                      <img alt={'return'} src={Return} style={{width: '48px'}} />
++                      <h4 style={{color: '#353535'}}>Returns accepted within 7 days</h4>
++                      <p>
++                        &#10003; Direct returns - money refunded to your M-Pesa or Paypal account.
++                      </p>
++                    </div>
++                    <div style={{flex: '1 0 180px'}}>
++                      <img alt={'replace'} src={Replace} style={{width: '48px'}} />
++                      <h4 style={{color: '#353535'}}>Replacements accepted within 14 days</h4>
++                      <p>&#10003; Replace your product with any other of similar value</p>
++                    </div>
++                  </div>
++                </div>
+ 
+-                  <hr />
++                <hr />
+ 
+-                  <div>
+-                    <h3>Missing your size?</h3>
+-                    <p>
+-                      Didn't find these shoes in your size? Hit us up and we'll try and get it for
+-                      you. ✌️
+-                    </p>
+-                  </div>
++                <div>
++                  <h3>Missing your size?</h3>
++                  <p>
++                    Didn't find these shoes in your size? Hit us up and we'll try and get it for
++                    you. ✌️
++                  </p>
++                </div>
+ 
+-                  <ConditionParent>
+-                    <div style={{textAlign: 'center', color: '#222'}}>
+-                      <Modal isActive={conditionModalOpen}>
+-                        <Delete onClick={() => openModal(false)} />
+-                        <ModalBackground />
+-                        <ModalContent>
+-                          <Title>Condition Guide</Title>
+-                          <p style={{color: '#222'}}>
+-                            All products on T25 are divided into three distinct categories:
+-                          </p>
+-                          <ul>
+-                            <li>
+-                              <Tag
+-                                style={{
+-                                  background: 'dodgerblue',
+-                                  color: 'white',
+-                                }}
+-                              >
+-                                Repackaged:
+-                              </Tag>
+-                              <p
+-                                style={{
+-                                  color: '#222',
+-                                  display: 'inline',
+-                                  marginLeft: '4px',
+-                                }}
+-                              >
+-                                New with box: unused, unworn and unblemished. Are repackaged in T25
+-                                boxes.
+-                              </p>
+-                            </li>
+-                            <li>
+-                              <Tag
+-                                style={{
+-                                  background: 'green',
+-                                  color: 'white',
+-                                }}
+-                              >
+-                                Refurbished:
+-                              </Tag>
+-                              <p
+-                                style={{
+-                                  color: '#222',
+-                                  display: 'inline',
+-                                  marginLeft: '4px',
+-                                }}
+-                              >
+-                                Like-new with minimal blemishes and wear. Does not come with box.
+-                              </p>
+-                            </li>
+-                            <li>
+-                              <Tag
+-                                style={{
+-                                  background: 'violet',
+-                                  color: 'white',
+-                                }}
+-                              >
+-                                Slightly Worn:
+-                              </Tag>
+-                              <p
+-                                style={{
+-                                  color: '#222',
+-                                  display: 'inline',
+-                                  marginLeft: '4px',
+-                                }}
+-                              >
+-                                Visible wear and tear, but still reasonably new.
+-                              </p>
+-                            </li>
+-                          </ul>
+-                        </ModalContent>
+-                        <ModalClose />
+-                      </Modal>
+-                    </div>
+-                  </ConditionParent>
+-                </Buttons>
+-              </DescriptionParent>
+-            </ProductParent>
+-          </div>
+-        </ProductRoot>
++                <ConditionParent>
++                  <div style={{textAlign: 'center', color: '#222'}}>
++                    <Modal isActive={conditionModalOpen}>
++                      <Delete onClick={() => openModal(false)} />
++                      <ModalBackground />
++                      <ModalContent>
++                        <Title>Condition Guide</Title>
++                        <p style={{color: '#222'}}>
++                          All products on T25 are divided into three distinct categories:
++                        </p>
++                        <ul>
++                          <li>
++                            <Tag
++                              style={{
++                                background: 'dodgerblue',
++                                color: 'white',
++                              }}
++                            >
++                              Repackaged:
++                            </Tag>
++                            <p
++                              style={{
++                                color: '#222',
++                                display: 'inline',
++                                marginLeft: '4px',
++                              }}
++                            >
++                              New with box: unused, unworn and unblemished. Are repackaged in T25
++                              boxes.
++                            </p>
++                          </li>
++                          <li>
++                            <Tag
++                              style={{
++                                background: 'green',
++                                color: 'white',
++                              }}
++                            >
++                              Refurbished:
++                            </Tag>
++                            <p
++                              style={{
++                                color: '#222',
++                                display: 'inline',
++                                marginLeft: '4px',
++                              }}
++                            >
++                              Like-new with minimal blemishes and wear. Does not come with box.
++                            </p>
++                          </li>
++                          <li>
++                            <Tag
++                              style={{
++                                background: 'violet',
++                                color: 'white',
++                              }}
++                            >
++                              Slightly Worn:
++                            </Tag>
++                            <p
++                              style={{
++                                color: '#222',
++                                display: 'inline',
++                                marginLeft: '4px',
++                              }}
++                            >
++                              Visible wear and tear, but still reasonably new.
++                            </p>
++                          </li>
++                        </ul>
++                      </ModalContent>
++                      <ModalClose />
++                    </Modal>
++                  </div>
++                </ConditionParent>
++              </Buttons>
++            </DescriptionParent>
++          </ProductParent>
++        </ProductPageParent>
+       </Layout>
+     </>
+   );
+ }
+ 
+-export default Product;
+-
+-const ValueProposition = styled.div`
+-  display: grid;
+-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+-  justify-content: space-around;
+-  padding: 24px;
+-  text-align: center;
++export default ProductPage;
+ 
+-  & > div {
+-    display: flex;
+-    flex-direction: column;
+-    justify-content: center;
+-    align-items: center;
+-    margin: 0 12px;
+-    
+-    @media screen and (max-width: 376px) {
+-       margin: 12px;
+-    }
+-
+-    h4 {
+-      margin-bottom: 6px;
+-    }
+-
+-    a {
+-      color: dodgerblue;
+-      text-decoration: underline;
+-    }
+-    
+-    p {
+-      margin: 0;
+-      text-align: center;
+-    }
+-  }
+-`;
+ 
+ const ConditionParent = styled.div`
+   display: flex;
+@@ -441,9 +372,13 @@
+   }
+ `;
+ 
+-const ProductRoot = styled.div`
+-  .layout--parent {
+-    margin: 0;
++const ProductPageParent = styled.div`
++    display: flex;
++    flex-direction: column;
++    align-items: center;
++  
++  .product__page__slider__parent {
++    
+   }
+ `;
+ 
+Index: src/routes/routes-list.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import {lazy} from 'react';\n\nconst Cart = lazy(() => import('../pages/cart'));\nconst Landing = lazy(() => import('../pages/landing'));\nconst HowItWorks = lazy(() => import('../pages/how-it-works'));\nconst Blog = lazy(() => import('../pages/blog'));\nconst Category = lazy(() => import('../pages/category/CategoryPage'));\nconst Collection = lazy(() => import('../pages/collections'));\nconst About = lazy(() => import('../pages/about'));\nconst Product = lazy(() => import('../pages/product'));\n\nconst TermsOfService = lazy(() => import('../pages/policies/terms-of-service'));\nconst CookiePolicy = lazy(() => import('../pages/policies/privacy-and-cookie-policy'));\nconst ReturnsPolicy = lazy(() => import('../pages/policies/returns-policy'));\nconst ClaimsPolicy = lazy(() => import('../pages/policies/claims-policy'));\nconst ExchangePolicy = lazy(() => import('../pages/policies/exchange-policy'));\nconst RefundPolicy = lazy(() => import('../pages/policies/refund-policy'));\nconst ShippingPolicy = lazy(() => import('../pages/policies/shipping-policy'));\n\nconst Support = lazy(() => import('../pages/support'));\nconst CustomRequests = lazy(() => import('../pages/support/custom-requests'));\nconst Other = lazy(() => import('../pages/support/other'));\nconst PayingForAnOrder = lazy(() => import('../pages/support/orders/paying-for-an-order'));\nconst MakingAnOrder = lazy(() => import('../pages/support/orders/making-an-order'));\nconst CancellingAnOrder = lazy(() => import('../pages/support/orders/cancelling-an-order'));\nconst SupportMaps = lazy(() => import('../pages/support/shipping/maps'));\n\nconst Checkout = lazy(() => import('../pages/checkout/CheckoutPage'));\nconst Shipping = lazy(() => import('../pages/shipping'));\nconst OrderCompleted = lazy(() => import('../pages/shipping/order-completed'));\n\n//Admin\nconst AdminLogin = lazy(() => import('../pages/admin/login'));\nconst AdminHome = lazy(() => import('../pages/admin/home'));\nconst AdminProductTypesCreate = lazy(() => import('../pages/admin/productTypes/CreateProductTypePage'));\nconst AdminProductTypesList = lazy(() => import('../pages/admin/productTypes/ViewAllProductTypesPage'));\nconst AdminProductTypesDetail = lazy(() => import('../pages/admin/productTypes/ViewSingleProductTypePage'));\nconst AdminAllProducts = lazy(() => import('../pages/admin/products/ViewAllProductsPage'));\nconst AdminDeliveries = lazy(() => import('../pages/admin/deliveries'));\nconst AdminSingleProduct = lazy(() => import('../pages/admin/products/ViewSingleProductPage'));\n\nconst AdminOrders = lazy(() => import('../pages/admin/orders/view-orders'));\nconst AdminCategories = lazy(() => import('../pages/admin/categories'));\nconst AdminSingleCategory = lazy(() => import('../pages/admin/categories/SingleCategory'));\n\nconst AdminSingleOrder = lazy(() => import('../pages/admin/orders/single'));\nconst AdminBrands = lazy(() => import('../pages/admin/brands/AllBrands'));\nconst MiscPages = lazy(() => import('../pages/admin/misc'));\n\nconst AdminSingleBrand = lazy(() => import('../pages/admin/brands/Brand'));\nconst BrandsPage = lazy(() => import('../pages/brands/AllBrandsPage'));\n\nconst SingleBrand = lazy(() => import('../pages/brands/BrandPage'));\n// User\nconst UserProfile = lazy(() => import('../pages/accounts/me'));\nconst UserOrders = lazy(() => import('../pages/orders'));\n\nconst UserSingleOrder = lazy(() => import('../pages/orders/single-order'));\n// auth\nconst RegisterUser = lazy(() => import('../pages/accounts/register'));\nconst LoginUser = lazy(() => import('../pages/accounts/login'));\nconst ForgotPassword = lazy(() => import('../pages/accounts/forgot-password'));\nconst ResetPassword = lazy(() => import('../pages/accounts/reset-password'));\n\nconst VerifyAccount = lazy(() => import('../pages/accounts/verify'));\n\nconst regularRoutes = [\n  {\n    path: '/',\n    exact: true,\n    component: Landing,\n  },\n  {\n    path: '/accounts/register',\n    exact: true,\n    component: RegisterUser,\n  },\n  {\n    path: '/accounts/login',\n    exact: true,\n    component: LoginUser,\n  },\n  {\n    path: '/accounts/verify',\n    exact: true,\n    component: VerifyAccount,\n  },\n  {\n    path: '/accounts/me',\n    exact: true,\n    component: UserProfile,\n  },\n  {\n    path: '/accounts/forgot-password',\n    exact: true,\n    component: ForgotPassword,\n  },\n  {\n    path: '/accounts/reset-password',\n    exact: true,\n    component: ResetPassword,\n  },\n  {\n    path: '/accounts/me/orders',\n    exact: true,\n    component: UserOrders,\n  },\n  {\n    path: '/orders/mine/:orderId',\n    component: UserSingleOrder,\n  },\n  {\n    path: '/company/about',\n    exact: true,\n    component: About,\n  },\n  {\n    path: '/company/blog',\n    exact: true,\n    component: Blog,\n  },\n  {\n    path: '/cart',\n    component: Cart,\n    exact: true,\n  },\n  {\n    path: '/checkout/shipping/order-completed/:orderId',\n    component: OrderCompleted,\n  },\n  {\n    path: '/checkout/shipping/:orderId',\n    component: Shipping,\n  },\n  {\n    path: '/checkout/:cartId',\n    component: Checkout,\n  },\n  {\n    path: '/privacy/privacy-and-cookie-policy',\n    exact: true,\n    component: CookiePolicy,\n  },\n  {\n    path: '/privacy/terms-of-service',\n    exact: true,\n    component: TermsOfService,\n  },\n  {\n    path: '/product/:slug',\n    component: Product,\n  },\n  {\n    path: '/policies/returns-policy',\n    exact: true,\n    component: ReturnsPolicy,\n  },\n  {\n    path: '/policies/claims-policy',\n    exact: true,\n    component: ClaimsPolicy,\n  },\n  {\n    path: '/policies/refund-policy',\n    exact: true,\n    component: RefundPolicy,\n  },\n  {\n    path: '/policies/exchange-policy',\n    exact: true,\n    component: ExchangePolicy,\n  },\n  {\n    path: '/policies/shipping-policy',\n    exact: true,\n    component: ShippingPolicy,\n  },\n  {\n    path: '/support',\n    exact: true,\n    component: Support,\n  },\n  {\n    path: '/support/custom-requests',\n    exact: true,\n    component: CustomRequests,\n  },\n  {\n    path: '/support/shipping/maps',\n    exact: true,\n    component: SupportMaps,\n  },\n  {\n    path: '/support/delivery/maps',\n    exact: true,\n    component: SupportMaps,\n  },\n  {\n    path: '/support/get-in-touch',\n    exact: true,\n    component: Other,\n  },\n  {\n    path: '/support/paying-for-an-order',\n    exact: true,\n    component: PayingForAnOrder,\n  },\n  {\n    path: '/support/making-an-order-for-shoes-sneakers-nairobi',\n    exact: true,\n    component: MakingAnOrder,\n  },\n  {\n    path: '/support/cancelling-an-order',\n    exact: true,\n    component: CancellingAnOrder,\n  },\n  {\n    path: '/brands/',\n    exact: true,\n    component: BrandsPage,\n  },\n  {\n    path: '/brands/:brand/:slug',\n    component: Product,\n  },\n  {\n    path: '/brands/:brand',\n    component: SingleBrand,\n  },\n  {\n    path: '/category/:id/',\n    component: Category,\n  },\n  {\n    path: '/collection/:id/',\n    component: Collection,\n  },\n  {\n    path: '/company/admin/login',\n    exact: true,\n    component: AdminLogin,\n  },\n];\n\nconst adminRoutes = [\n  {\n    path: '/company/admin/dashboard/',\n    exact: true,\n    component: AdminHome,\n  },\n  {\n    path: '/company/admin/dashboard/product-types',\n    exact: true,\n    component: AdminProductTypesList,\n  },\n  {\n    path: '/company/admin/dashboard/product-types/create',\n    exact: true,\n    component: AdminProductTypesCreate,\n  },\n  {\n    path: '/company/admin/dashboard/product-types/:slug',\n    exact: true,\n    component: AdminProductTypesDetail,\n  },\n  {\n    path: '/company/admin/dashboard/products',\n    exact: true,\n    component: AdminAllProducts,\n  },\n  {\n    path: '/company/admin/dashboard/deliveries',\n    exact: true,\n    component: AdminDeliveries,\n  },\n  {\n    path: '/company/admin/dashboard/products/:slug',\n    component: AdminSingleProduct,\n  },\n  {\n    path: '/company/admin/dashboard/orders/',\n    exact: true,\n    component: AdminOrders,\n  },\n  {\n    path: '/company/admin/dashboard/categories',\n    exact: true,\n    component: AdminCategories,\n  },\n  {\n    path: '/company/admin/dashboard/categories/:slug',\n    component: AdminSingleCategory,\n  },\n  {\n    path: '/company/admin/dashboard/orders/:id',\n    component: AdminSingleOrder,\n  },\n  {\n    path: '/company/admin/dashboard/brands',\n    exact: true,\n    component: AdminBrands,\n  },\n  {\n    path: '/company/admin/dashboard/brands/:id',\n    exact: true,\n    component: AdminSingleBrand,\n  },\n  {\n    path: '/company/admin/dashboard/misc',\n    exact: true,\n    component: MiscPages,\n  },\n];\n\nexport {adminRoutes, regularRoutes};\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/routes/routes-list.ts	(revision b1ab4bc68d0a863345864a603eee77b6ef7adcd7)
++++ src/routes/routes-list.ts	(date 1627303574134)
+@@ -50,7 +50,7 @@
+ const AdminSingleBrand = lazy(() => import('../pages/admin/brands/Brand'));
+ const BrandsPage = lazy(() => import('../pages/brands/AllBrandsPage'));
+ 
+-const SingleBrand = lazy(() => import('../pages/brands/BrandPage'));
++const SingleBrand = lazy(() => import('../pages/brands/BrandProductsPage'));
+ // User
+ const UserProfile = lazy(() => import('../pages/accounts/me'));
+ const UserOrders = lazy(() => import('../pages/orders'));
+Index: src/pages/brands/components/BrandProductsFilter.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/pages/brands/components/BrandProductsFilter.tsx	(date 1627307614831)
++++ src/pages/brands/components/BrandProductsFilter.tsx	(date 1627307614831)
+@@ -0,0 +1,198 @@
++import React, {useState} from 'react';
++import {capitalize, formatNumberWithCommas} from '../../../helpers';
++import qs from 'qs';
++import styled from 'styled-components';
++import {useApi} from '../../../hooks';
++import useSWR from 'swr/esm/use-swr';
++import Layout from '../../../components/Layout';
++import {EmptyState} from '../../../components';
++import useBrandFilters from '../../../hooks/useFiltersV3/useBrandFilters';
++import DrawerWrapper from 'rc-drawer';
++import {Button, Container, Section} from 'bloomer';
++
++interface ProductFiltersProps {
++  brandName: string
++  children?: any
++}
++
++/**
++ * In order to work, this component requires an array of criteria and an array of
++ * products.
++ *
++ * @param props
++ * @param {string[]} props.allCriteria - a list of criteria to be used for filtering.
++ * These should be the same as the set of keys in the {@link ProductType} object.
++ * @param {ProductType[]} props.products - a list of products to be filtered through
++ */
++const BrandProductsFilter =  function(props: ProductFiltersProps) {
++
++  const {brandName} = props;
++
++  const api = useApi();
++
++  const {fetchFilteredProducts} = useBrandFilters({brandName})
++
++  const criteriaFetcher = (url) => api.get(url).then(({data}) => data);
++  const {data: brandProductsFilters, error: fetchBrandProductsError} = useSWR<Array<{label: string, key: string, values: string[]}>>(
++    [`/brands/filters/${brandName}`, brandName],
++    criteriaFetcher
++  )
++
++  if (!brandProductsFilters?.length) {
++    return (
++      <>
++        <div>No criteria provided.</div>
++      </>
++    );
++  }
++
++  if (fetchBrandProductsError){
++    return (
++      <Layout>
++        <EmptyState message={'Hmm...'} title={'Thunketh'}/>
++      </Layout>
++    )
++  }
++
++  return (
++    <BrandProductsFilterParent>
++      <div className='product__filters'>
++        <div className='product__filters--desktop'>
++          <div style={{maxWidth: 200}}>
++            <h4>Filters</h4>
++            {
++              brandProductsFilters.map((filter, index) => (
++                <div key={String(index)}>
++                  <h4>
++                    {
++                      capitalize(filter.label)
++                    }
++                  </h4>
++                  <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
++                    {
++                      // loop through the list of criteria
++                      filter.values.map((filterValue, index) => (
++                        <FilterItem
++                          applied={(() => {
++                            const params = qs.parse(window.location.search, {
++                              ignoreQueryPrefix: true,
++                            });
++                            return String(filterValue) === String(params[filter.key]);
++                          })()}
++                          onClick={() => fetchFilteredProducts()}
++                          key={String(index)}>
++                          <p>
++                            {
++                              typeof filterValue === 'string' ?
++                                capitalize(filterValue) :
++                                formatNumberWithCommas(filterValue)
++                            }
++                          </p>
++                        </FilterItem>
++                      ))
++                    }
++                  </div>
++                </div>
++              ))
++            }
++          </div>
++
++          <div className='product__filters--mobile'>
++            <MobileFilter brandName={brandName} />
++          </div>
++
++        </div>
++      </div>
++    </BrandProductsFilterParent>
++  );
++};
++
++export default BrandProductsFilter;
++
++
++export const MobileFilter = function(props: {
++  brandName: string
++}){
++
++  const [isDrawerOpen, setDrawerOpen] = useState(false);
++
++  return (
++    <div>
++      <DrawerWrapper
++        onClose={() => setDrawerOpen(false)}
++        handler={null}
++        open={isDrawerOpen}>
++        <Section>
++          <Container>
++            <BrandProductsFilter brandName={props.brandName}/>
++          </Container>
++        </Section>
++      </DrawerWrapper>
++      <Button
++        onClick={() => setDrawerOpen(true)}
++        style={{marginRight: 12}}>
++        Filters
++      </Button>
++    </div>
++  )
++}
++
++const FilterItem = styled.div<{applied?: boolean}>`
++  border: 1px solid ${p => p.applied ? 'var(--color-primary)' : 'var(--color-border-gray)'};
++  padding: 10px 8px 8px;
++  border-radius: 2px;
++  width: max-content;
++  transition: all 0.25s ease-in-out;
++  flex: 0 1 auto;
++  
++  p {
++    margin: 0;
++    font-size: .9rem;
++  }
++  
++  &:hover {
++    cursor: pointer;
++    border: 1px solid var(--color-border-lightgray);
++  }
++`;
++
++const BrandProductsFilterParent = styled.div`
++.product__filters {
++  display: flex;
++  gap: 64px;
++  flex-wrap: wrap;
++
++  @media screen and (max-width: 800px) {
++    flex-direction: column;
++    gap: 32px;
++  }
++
++  .product__filters--desktop {
++    @media screen and (max-width: 800px) {
++      display: none;
++    }
++  }
++
++  .product__filters--mobile {
++    display: none;
++    @media screen and (max-width: 800px) {
++      display: block;
++    }
++  }
++
++  .product__filters--products-parent {
++    width: 100%;
++    flex: 1 0;
++    min-height: 100vh;
++
++    & > div {
++      display: grid;
++      column-gap: 24px;
++      row-gap: 72px;
++      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
++      justify-content: space-between;
++    }
++  }
++}
++
++`
+Index: src/components/slider/ProductSlider.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React, {useEffect, useRef, useState} from 'react';\nimport styled from 'styled-components';\nimport PropTypes from 'prop-types';\nimport RetroImage from '../image';\nimport AliceCarousel from 'react-alice-carousel';\nimport 'react-alice-carousel/lib/alice-carousel.css';\nimport {ImageType} from '../../types';\n\nfunction isNarrowDevice() {\n  return window.innerWidth <= 600;\n}\n\nfunction Slider(\n  {\n    productName,\n    images\n  }) {\n  const [allImages, ] = useState<Array<ImageType>>(images);\n\n  const [currentIndex, setCurrentIndex] = useState(0);\n\n  const paginate = (index) => setCurrentIndex(index);\n\n  const handleDragStart = (e) => e.preventDefault();\n\n  const items = allImages.map((item)=> (\n    <RetroImage\n      solidColor={true}\n      onDragStart={handleDragStart}\n      alt={productName}\n      style={{maxHeight: '500px'}}\n      src={item.url}\n    />\n  ))\n\n  return (\n    <div>\n      {\n        <div>\n          <div>\n            <AliceCarousel\n              activeIndex={currentIndex}\n              mouseTracking\n              infinite={allImages.length != 1}\n              renderDotsItem={({isActive, activeIndex})=> {\n                return (\n                  <div>\n                    <Dot\n                      isNarrow={isNarrowDevice()}\n                      isActive={isActive}\n                      onClick={() => paginate(activeIndex)}>\n                      <img\n                        alt={`${productName} thumbnail`}\n                        src={allImages[activeIndex].thumbnailUrl}\n                        style={{width: '60px'}}/>\n                    </Dot>\n\n                  </div>\n                );\n              }}\n              disableButtonsControls\n              items={items}\n            />\n          </div>\n        </div>\n\n      }\n    </div>\n  );\n}\n\nexport default function ProductSlider({images, productName}) {\n  return (\n    <ProductSliderParent>\n      <Slider productName={productName} images={images}/>\n    </ProductSliderParent>\n  );\n}\n\nProductSlider.propTypes = {\n  images: PropTypes.array,\n};\n\nconst Dot = styled.div<{\n  isActive: boolean,\n  isNarrow: boolean\n}>`\n    border: 2px solid ${p=> p.isActive ? \"#444\": \"#ccc\"};\n    border-radius: 4px;\n    margin-right: 8px;\n    margin-bottom: 8px;\n    max-width: ${p => (p.isNarrow ? '40px' : '70px')};\n    min-height: 64px;\n    -webkit-transition: all 0.25s ease-in-out;\n    transition: all 0.25s ease-in-out;\n    display: -webkit-box;\n    display: -webkit-flex;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-pack: center;\n    -webkit-justify-content: center;\n    -ms-flex-pack: center;\n    justify-content: center;\n    -webkit-align-items: center;\n    -webkit-box-align: center;\n    -ms-flex-align: center;\n    align-items: center;\n    background: #f6f6f6;\n    \n    &:hover {\n      border: 2px solid #444444;\n      cursor: pointer;\n    }\n    &:active,\n    &:focus {\n      outline: none;\n    }\n`\n\nconst ProductSliderParent = styled.div`\n  width: 80%;\n  background: #f6f6f6;\n  max-height: 525px;\n`;\n
+===================================================================
+--- src/components/slider/ProductSlider.tsx	(revision b1ab4bc68d0a863345864a603eee77b6ef7adcd7)
++++ src/pages/product/components/ProductImagesSliderComponent.tsx	(date 1627242228654)
+@@ -1,10 +1,10 @@
+ import React, {useEffect, useRef, useState} from 'react';
+ import styled from 'styled-components';
+ import PropTypes from 'prop-types';
+-import RetroImage from '../image';
++import RetroImage from '../../../components/image';
+ import AliceCarousel from 'react-alice-carousel';
+ import 'react-alice-carousel/lib/alice-carousel.css';
+-import {ImageType} from '../../types';
++import {ImageType} from '../../../types';
+ 
+ function isNarrowDevice() {
+   return window.innerWidth <= 600;
+@@ -69,7 +69,7 @@
+   );
+ }
+ 
+-export default function ProductSlider({images, productName}) {
++export default function ProductImagesSliderComponent({images, productName}) {
+   return (
+     <ProductSliderParent>
+       <Slider productName={productName} images={images}/>
+@@ -77,10 +77,6 @@
+   );
+ }
+ 
+-ProductSlider.propTypes = {
+-  images: PropTypes.array,
+-};
+-
+ const Dot = styled.div<{
+   isActive: boolean,
+   isNarrow: boolean
+Index: src/pages/product/components/ValuePorposition.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/pages/product/components/ValuePorposition.tsx	(date 1627242228542)
++++ src/pages/product/components/ValuePorposition.tsx	(date 1627242228542)
+@@ -0,0 +1,71 @@
++import {Diamond, FastDelivery, HelpIcon} from '../../../constants/icons';
++import React from 'react';
++import styled from 'styled-components';
++
++
++function ValuePropositionComponent(){
++
++  return (
++    <ValueProposition>
++      <div>
++        <img style={{width: '50px'}} src={FastDelivery} alt={'Free Delivery'} />
++        <h4>Next-day Delivery</h4>
++        <p>Anywhere within Nairobi</p>
++      </div>
++      <div>
++        <img style={{width: '50px'}} src={HelpIcon} alt={'easy payment'} />
++        <h4>Any questions? Need help?</h4>
++        <p>
++          Hit us up on Twitter <a href="https://twitter.com/retrbobie">@retrobie</a> or
++          give us a call at <a
++          href={'tel:+254-796-610-303'}
++          type={'tel'}>
++          +254 796 610 303
++        </a>
++        </p>
++      </div>
++      <div>
++        <img style={{width: '50px'}} src={Diamond} alt={'easy payment'} />
++        <h4>Assured Quality</h4>
++        <p>100% original product guarantee</p>
++      </div>
++    </ValueProposition>
++
++  )
++}
++
++export default ValuePropositionComponent;
++
++const ValueProposition = styled.div`
++  display: grid;
++  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
++  justify-content: space-around;
++  padding: 24px;
++  text-align: center;
++
++  & > div {
++    display: flex;
++    flex-direction: column;
++    justify-content: center;
++    align-items: center;
++    margin: 0 12px;
++    
++    @media screen and (max-width: 376px) {
++       margin: 12px;
++    }
++
++    h4 {
++      margin-bottom: 6px;
++    }
++
++    a {
++      color: dodgerblue;
++      text-decoration: underline;
++    }
++    
++    p {
++      margin: 0;
++      text-align: center;
++    }
++  }
++`;
+Index: src/pages/brands/BrandPage.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React from 'react';\nimport Layout from '../../components/Layout';\nimport styled from 'styled-components';\nimport Loading from '../../components/loading';\nimport {Container} from 'bloomer';\nimport {capitalize} from '../../helpers';\nimport useSWR from 'swr/esm/use-swr';\nimport {BrandType, FilteredProduct} from '../../types';\nimport useFiltersV2 from '../../hooks/useFiltersV2';\nimport {Clown, GrimacingEmoji} from '../../constants/icons';\nimport {EmptyState} from '../../components';\nimport SEOHeader from '../../components/SEOHeader';\nimport useFetchers from '../../hooks/useFetchers/useFetchers';\nimport BrandPageHeaderComponent from './components/BrandPageHeaderComponent';\nimport { DesktopFilter, MobileFilter } from '../../components/filters/Filters';\nimport FilterItems from '../../components/filters/FilterItems';\n\nfunction BrandPage(props) {\n\n  const brandNameOrId = props.match.params.brand;\n\n  const {brandsFetcher, productsFetcher} = useFetchers();\n\n  const {data: brandData, error: fetchBrandError} = useSWR<BrandType>(\n    [`/brands/${brandNameOrId}`, brandNameOrId],\n    brandsFetcher.getOne,\n  );\n\n  const {products: renderProducts} = useFiltersV2();\n\n  const {data: brandProducts, error: fetchProductsError} = useSWR<FilteredProduct[]>([\n    brandData?.name ? `/brands/${brandData.name}/products/filtered` : undefined,\n    brandData?.name,\n  ], productsFetcher.getFilteredProducts);\n\n\n  if (fetchBrandError || fetchProductsError) {\n    return  (\n      <Layout>\n        <EmptyState\n          icon={Clown}\n          title={'Looks like clowns took over our servers.'}\n          message={\"It's not you it's us. We're working on it.\"}\n        />\n      </Layout>\n    )\n  }\n\n  if (!brandProducts || !brandData) {\n    return (\n      <Loading/>\n    )\n  }\n\n  if (!brandProducts.length){\n    return  (\n      <Layout>\n        <EmptyState\n          icon={GrimacingEmoji}\n          iconWidth={52}\n          centerAlign={true}\n          title={`Oops. We haven't uploaded any ${capitalize(brandData.name)} shoes yet.`}\n          message={'We\\'re working on it! Check back soon!' }\n        />\n      </Layout>\n    )\n  }\n\n  return (\n    <Layout>\n      <SEOHeader\n        description={brandData.description.seo}\n        path={`/brand/${brandData.name}`}\n        title={`${brandData.name} shoes`} />\n      <BrandPageParent>\n        <Container>\n          <div>\n            <div className=\"brand__header\">\n              <BrandPageHeaderComponent brand={brandData}/>\n            </div>\n            <div className='product__filters'>\n              <div className='product__filters--desktop'>\n                <DesktopFilter\n                  //@ts-ignore\n                  products={brandProducts}\n                  criteria={['sex', 'size', 'originalPrice', 'style']} />\n              </div>\n              <div className='product__filters--mobile'>\n                <MobileFilter\n                  //@ts-ignore\n                  products={brandProducts}/>\n              </div>\n              <div className='product__filters--products-parent'>\n                <FilterItems products={renderProducts}/>\n              </div>\n            </div>\n          </div>\n        </Container>\n      </BrandPageParent>\n\n    </Layout>\n  );\n}\n\nexport default BrandPage;\n\nconst BrandPageParent = styled(Container)`\n.product__filters {\n  display: flex;\n  gap: 64px;\n  flex-wrap: wrap;\n\n  @media screen and (max-width: 800px) {\n    flex-direction: column;\n    gap: 32px;\n  }\n\n  .product__filters--desktop {\n    @media screen and (max-width: 800px) {\n      display: none;\n    }\n  }\n\n  .product__filters--mobile {\n    display: none;\n    @media screen and (max-width: 800px) {\n      display: block;\n    }\n  }\n\n  .product__filters--products-parent {\n    width: 100%;\n    flex: 1 0;\n    min-height: 100vh;\n\n    & > div {\n      display: grid;\n      column-gap: 24px;\n      row-gap: 72px;\n      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));\n      justify-content: space-between;\n    }\n  }\n}\n`\n
+===================================================================
+--- src/pages/brands/BrandPage.tsx	(revision b1ab4bc68d0a863345864a603eee77b6ef7adcd7)
++++ src/pages/brands/BrandProductsPage.tsx	(date 1627307614975)
+@@ -14,8 +14,9 @@
+ import BrandPageHeaderComponent from './components/BrandPageHeaderComponent';
+ import { DesktopFilter, MobileFilter } from '../../components/filters/Filters';
+ import FilterItems from '../../components/filters/FilterItems';
++import BrandProductsFilter from './components/BrandProductsFilter';
+ 
+-function BrandPage(props) {
++function BrandProductsPage(props) {
+ 
+   const brandNameOrId = props.match.params.brand;
+ 
+@@ -76,22 +77,12 @@
+         <Container>
+           <div>
+             <div className="brand__header">
+-              <BrandPageHeaderComponent brand={brandData}/>
++              <BrandPageHeaderComponent brand={brandData} />
+             </div>
+             <div className='product__filters'>
+-              <div className='product__filters--desktop'>
+-                <DesktopFilter
+-                  //@ts-ignore
+-                  products={brandProducts}
+-                  criteria={['sex', 'size', 'originalPrice', 'style']} />
+-              </div>
+-              <div className='product__filters--mobile'>
+-                <MobileFilter
+-                  //@ts-ignore
+-                  products={brandProducts}/>
+-              </div>
+-              <div className='product__filters--products-parent'>
+-                <FilterItems products={renderProducts}/>
++              <BrandProductsFilter brandName={brandData.name} />
++              <div >
++                <FilterItems products={renderProducts} />
+               </div>
+             </div>
+           </div>
+@@ -102,44 +93,7 @@
+   );
+ }
+ 
+-export default BrandPage;
++export default BrandProductsPage;
+ 
+ const BrandPageParent = styled(Container)`
+-.product__filters {
+-  display: flex;
+-  gap: 64px;
+-  flex-wrap: wrap;
+-
+-  @media screen and (max-width: 800px) {
+-    flex-direction: column;
+-    gap: 32px;
+-  }
+-
+-  .product__filters--desktop {
+-    @media screen and (max-width: 800px) {
+-      display: none;
+-    }
+-  }
+-
+-  .product__filters--mobile {
+-    display: none;
+-    @media screen and (max-width: 800px) {
+-      display: block;
+-    }
+-  }
+-
+-  .product__filters--products-parent {
+-    width: 100%;
+-    flex: 1 0;
+-    min-height: 100vh;
+-
+-    & > div {
+-      display: grid;
+-      column-gap: 24px;
+-      row-gap: 72px;
+-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+-      justify-content: space-between;
+-    }
+-  }
+-}
+ `
+diff --git src/constants/colors.js src/hooks/useFiltersV3/useFilterContext.tsx
+rename from src/constants/colors.js
+rename to src/hooks/useFiltersV3/useFilterContext.tsx

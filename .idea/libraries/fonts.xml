@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="fonts">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/public/assets/fonts/bebas_neue.zip!/" />
+      <root url="jar://$PROJECT_DIR$/public/assets/fonts/myriad-pro-cufonfonts-webfont.zip!/" />
+      <root url="jar://$PROJECT_DIR$/public/assets/fonts/transfonter.org-20200110-095507.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

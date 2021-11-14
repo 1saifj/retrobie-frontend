@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:development" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </select>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="7b9b73c5-5fee-475a-b635-7ada548f6b6b" name="Uncommitted changes before Checkout at 02/09/2021, 15:43 [chores]" comment="feat: adds html.js">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/cart/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/cart/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/nav/MegaMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/nav/MegaMenu.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/useFilters/FilterProvider.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useFilters/FilterProvider.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/useFiltersV2/FilterProvider.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useFiltersV2/FilterProvider.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/useFiltersV3/useBrandFilters.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useFiltersV3/useBrandFilters.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/accounts/forgot-password.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/accounts/forgot-password.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/accounts/login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/accounts/login.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/accounts/register.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/accounts/register.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/accounts/reset-password.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/accounts/reset-password.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/accounts/verify.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/accounts/verify.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/admin/brands/AllBrands.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/admin/brands/AllBrands.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/admin/login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/admin/login.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/admin/productTypes/ViewAllProductTypesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/admin/productTypes/ViewAllProductTypesPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/admin/sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/admin/sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/cart/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/cart/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/checkout/CheckoutPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/checkout/CheckoutPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/checkout/components/CheckoutCart.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/checkout/components/CheckoutCart.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/landing/LandingPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/landing/LandingPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/landing/components/FAQs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/landing/components/FAQs.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/landing/components/Hero.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/landing/components/Hero.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/product/ProductPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/product/ProductPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/shipping/ShippingPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/shipping/ShippingPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/index.tsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GoVcsConfiguration">
+    <option name="GO_FMT" value="false" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedIndex" value="1" />
+  </component>
+  <component name="ProjectId" id="1o31PaB1vRReGUJRHQgvbvUn6EC" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="javascript.nodejs.core.library.configured.version" value="12.16.1" />
+    <property name="javascript.nodejs.core.library.typings.version" value="12.20.36" />
+    <property name="last.edited.regexp" value="file.svg" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/components/modules" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="go" />
+    <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
+    <property name="ts.rename.search.for.js.occurrences" value="false" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/components/modules" />
+      <recent name="$PROJECT_DIR$/src/components/modules/accounts" />
+      <recent name="$PROJECT_DIR$/src/components" />
+      <recent name="$PROJECT_DIR$/src/assets/images/vectors" />
+      <recent name="$PROJECT_DIR$/pages/support" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/static/fonts" />
+      <recent name="$PROJECT_DIR$/static" />
+      <recent name="$PROJECT_DIR$/src/components" />
+      <recent name="$PROJECT_DIR$/src/pages" />
+      <recent name="$PROJECT_DIR$/src/assets/images/logos" />
+    </key>
+  </component>
+  <component name="RunManager" selected="npm.start">
+    <configuration name="index.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/src/utils/generate-sitemap/index.js" working-dir="$PROJECT_DIR$/src/utils/generate-sitemap">
+      <method v="2" />
+    </configuration>
+    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="develop" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="develop" />
+      </scripts>
+      <node-interpreter value="$USER_HOME$/.nvm/versions/node/v15.5.1/bin/node" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="generate-sitemap" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="generate-sitemap" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="npm.generate-sitemap" />
+      <item itemvalue="npm.start" />
+      <item itemvalue="npm.develop" />
+      <item itemvalue="Node.js.index.js" />
+      <item itemvalue="npm.build" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.start" />
+        <item itemvalue="npm.generate-sitemap" />
+        <item itemvalue="npm.build" />
+        <item itemvalue="Node.js.index.js" />
+        <item itemvalue="npm.start" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="development" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="development" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="origin/v3" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="origin/master" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="v3" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="feat/fixes" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <confirmRemoveEmptyChangelist value="2" />
+    <MESSAGE value="refactor: renames `checkout.id`-&gt; `checkout.uuid`" />
+    <MESSAGE value="fix: move api routes from &quot;/api/vx&quot; -&gt; &quot;/vx&quot;" />
+    <MESSAGE value="chore: update" />
+    <MESSAGE value="refactor: change import location" />
+    <MESSAGE value="feat: add posthog event captures" />
+    <MESSAGE value="feat: add classNames &amp; ids to be used in Posthog autocapture" />
+    <MESSAGE value="refactor: remove &quot;values&quot; section" />
+    <MESSAGE value="refactor: rename props" />
+    <MESSAGE value="refactor: convert to components" />
+    <MESSAGE value="refactor: refactors about us page&#10;&#10;- renames about.tsx -&gt; AboutUsPage.tsx&#10;- changes 'learn more' button to &quot;about us&quot;" />
+    <MESSAGE value="refactor: refactors about us page&#10;&#10;- renames about.tsx -&gt; AboutUsPage.tsx&#10;- changes 'learn more' button to &quot;about us&quot;&#10;- adds posthog event for loaded about us page" />
+    <MESSAGE value="feat: adds posthog events" />
+    <MESSAGE value="feat(useWindowResize): adds new hook" />
+    <MESSAGE value="refactor(global.scss): reduces h1 margin" />
+    <MESSAGE value="refactor: minor changes" />
+    <MESSAGE value="feat: resize h1 based on screen width" />
+    <MESSAGE value="refactor: minor change" />
+    <MESSAGE value="feat: adds ids" />
+    <MESSAGE value="refactor: convert to nested components" />
+    <MESSAGE value="fix: rename events" />
+    <MESSAGE value="fix: fixes generate-sitemap.js" />
+    <MESSAGE value="fix: changes sitemap path" />
+    <MESSAGE value="feat: begin gatsby migration" />
+    <MESSAGE value="fix: ignore public dir" />
+    <MESSAGE value="feat: adds html.js" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: adds html.js" />
+    <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+</project>

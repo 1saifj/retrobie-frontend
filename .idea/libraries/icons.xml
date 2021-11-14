@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="icons">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/public/assets/images/icons/976172-clothing.zip!/" />
+      <root url="jar://$PROJECT_DIR$/public/assets/images/icons/2113971-shoes.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,29 @@
+Index: src/routes/routes.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>[\n  {\n    \"path\": \"/\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/accounts/register\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/accounts/login\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/accounts/forgot-password\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/accounts/reset-password\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/company/about\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/company/blog\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/privacy/privacy-and-cookie-policy\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/privacy/terms-of-service\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/product/:slug\",\n    \"exact\": false,\n    \"apiPath\": \"/products/all\"\n  },\n  {\n    \"path\": \"/policies/returns-policy\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/policies/claims-policy\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/policies/refund-policy\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/policies/exchange-policy\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/policies/shipping-policy\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/support\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/support/custom-requests\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/support/shipping/maps\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/support/delivery/maps\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/support/get-in-touch\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/support/paying-for-an-order\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/support/making-an-order-for-shoes-sneakers-nairobi\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/support/cancelling-an-order\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/brands/\",\n    \"exact\": true\n  },\n  {\n    \"path\": \"/brands/:slug\",\n    \"exact\": false,\n    \"apiPath\": \"/brands/all\"\n  },\n  {\n    \"path\": \"/brands/:name/:slug\",\n    \"exact\": false,\n    \"apiPath\": \"/brands/all/\",\n    \"apiPath1\": \"/brands/:name/products\"\n  },\n  {\n    \"path\": \"/category/:slug/\",\n    \"exact\": false,\n    \"apiPath\": \"/categories\"\n  },\n  {\n    \"path\": \"/collection/:slug/\",\n    \"exact\": false\n  }\n]
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/routes/routes.json	(revision 975964f0c3357e1fbac4e02ffcb8ab43d6ad844b)
++++ src/routes/routes.json	(date 1634148597903)
+@@ -102,10 +102,10 @@
+     "apiPath": "/brands/all"
+   },
+   {
+-    "path": "/brands/:name/:slug",
++    "path": "/brands/:slug/",
+     "exact": false,
+     "apiPath": "/brands/all/",
+-    "apiPath1": "/brands/:name/products"
++    "apiPath1": "/products/brand/:slug"
+   },
+   {
+     "path": "/category/:slug/",
+@@ -116,4 +116,4 @@
+     "path": "/collection/:slug/",
+     "exact": false
+   }
+-]
+\ No newline at end of file
++]
