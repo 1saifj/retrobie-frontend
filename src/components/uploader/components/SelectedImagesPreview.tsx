@@ -3,12 +3,12 @@ import {CircularProgressbar} from 'react-circular-progressbar';
 import {Button, Delete} from 'bloomer';
 import styled from 'styled-components';
 import {LocalImageType, UploadedImageType} from '../ImageUploader';
-import SelectedImageModal from '../../../pages/admin/brands/modals/SelectedImageModal';
 import {useDispatch} from 'react-redux';
 import {useApi} from '../../../hooks';
 import {imageUploadedAction} from '../../../state/actions';
 import {generateRandomString} from '../../../helpers';
 import humps from '../../../helpers/humps';
+import SelectedImageModal from '../../SelectedImageModal';
 
 
 function SelectedImagesPreview({folder, uploaderId, onUpload, allowMultiple, isSelectDisabled}) {

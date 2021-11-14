@@ -9,13 +9,16 @@ dotenv.config();
  *  environment, the REACT_APP_ENV variable is used for that purpose.
  */
 
+const process = {
+  env: {
+    REACT_APP_ENV: undefined,
+    NODE_ENV: undefined,
+  },
+};
+
 class Env {
   getApiHost() {
-    return this.isStaging()
-      ? 'https://api.staging.retrobie.com'
-      : this.isDev()
-        ? 'http://localhost:2500/api'
-        : 'https://api.retrobie.com';
+    return 'http://localhost:2500/api';
   }
 
   getApiVersion() {
@@ -38,20 +41,21 @@ class Env {
   }
 
   isDev() {
-    return process.env.NODE_ENV === 'development';
+    return this.getEnvironment() === 'development';
   }
 
-  isStaging() {
+  isStaging(location) {
     return (
       process.env.REACT_APP_ENV === 'staging' ||
-      window.location.hostname.includes('netlify') ||
-      window.location.hostname.includes('vercel') ||
-        window.location.hostname.includes("dev.retrobie")
+      location.hostname.includes('netlify') ||
+      location.hostname.includes('vercel') ||
+      location.hostname.includes('dev.retrobie')
     );
   }
 
   isProduction() {
-    return process.env.NODE_ENV === 'production';
+    // return process.env.NODE_ENV === 'production';
+    return false;
   }
 }
 

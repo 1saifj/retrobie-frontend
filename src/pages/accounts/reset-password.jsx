@@ -146,7 +146,7 @@ export default function ResetPassword ({history}) {
 
                                 logOut();
 
-                                history.push('/accounts/login');
+                                navigate('/accounts/login');
                             } catch (e) {
                                 const message = extractErrorMessage(e);
 
@@ -167,7 +167,7 @@ export default function ResetPassword ({history}) {
                         } else {
                             // If key is missing for whatever reason,
                             // push user to the forgot-password page
-                            history.push('/accounts/forgot-password');
+                          navigate('/accounts/forgot-password');
                         }
                     }}
                   >

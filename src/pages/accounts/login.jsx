@@ -3,7 +3,7 @@ import Layout from '../../components/Layout';
 import {Button, Checkbox} from 'bloomer';
 import styled from 'styled-components';
 import LoginVector from '../../assets/images/vectors/login.svg';
-import {Link} from 'react-router-dom';
+import {Link} from 'gatsby';
 import {Form, Formik} from 'formik';
 import TextField from '../../components/input/TextField';
 import * as Yup from 'yup';
@@ -14,6 +14,7 @@ import {notify} from '../../helpers/views';
 import {useApi} from '../../network';
 import posthog from 'posthog-js';
 import responseHelper from '../../helpers/ResponseHelper';
+import {navigate} from 'gatsby';
 
 const FormParent = styled.div`
   display: grid;
@@ -42,6 +43,7 @@ export default function LoginUser(props) {
   const [staySignedIn, setStaySignedIn] = useState(true);
 
   const dispatch = useDispatch();
+
 
   const setUserLoggedIn = (payload) => dispatch(loginUserAction(payload));
 
@@ -77,7 +79,7 @@ export default function LoginUser(props) {
                   if (props.callback && typeof props.callback === 'function') {
                     props.callback(null, data);
                   } else {
-                    props.history.push('/');
+                    navigate('/');
                   }
                 } else {
                   //todo: two factor authentication

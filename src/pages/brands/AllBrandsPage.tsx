@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import SEOHeader from '../../components/SEOHeader';
 import Layout from '../../components/Layout';
-import {Link} from 'react-router-dom';
+import {Link} from 'gatsby';
 import {Container, Section} from 'bloomer';
 import Loading from '../../components/loading';
 import {useApi} from '../../network';

@@ -18,12 +18,13 @@ import useSWR from 'swr/esm/use-swr';
 import ServerError from '../../assets/images/vectors/dead.svg';
 import {useNotify} from '../../hooks';
 import {UserInfoType} from '../../state/reducers/userReducers';
-import UserComponent from './components/LoggedinContainer';
-import SignInComponent from './components/SignIn';
-import Cart from './components/CheckoutCart';
+import UserComponent from '../../components/modules/checkout/LoggedinContainer';
+import SignInComponent from '../../components/modules/checkout/SignIn';
+import Cart from '../../components/modules/checkout/CheckoutCart';
 import useFetchers from '../../hooks/useFetchers/useFetchers';
 import responseHelper from '../../helpers/ResponseHelper';
 import posthog from 'posthog-js';
+import {navigate} from 'gatsby';
 
 
 export default function CheckoutPage(props) {
@@ -33,6 +34,7 @@ export default function CheckoutPage(props) {
   const api = useApi();
   const notify = useNotify();
   const dispatch = useDispatch();
+
   const {userFetchers} = useFetchers();
 
   const isUserLoggedIn = useSelector((state: RootStateOrAny) => state.user.isLoggedIn);
@@ -103,7 +105,7 @@ export default function CheckoutPage(props) {
       }
 
       posthog.capture('successfully completed checkout');
-      props.history.push(`/checkout/shipping/${data.orderId}`);
+      navigate(`/checkout/shipping/${data.orderId}`);
     } catch (e) {
       const message = extractErrorMessage(e);
       notify.error(message);

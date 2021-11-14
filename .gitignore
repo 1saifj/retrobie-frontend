@@ -30,3 +30,4 @@ yarn-error.log*
 /src/assets/style/.sass-cache/
 
 .eslintcache
+/.cache

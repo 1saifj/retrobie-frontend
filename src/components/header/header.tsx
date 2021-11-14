@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Drawer from 'rc-drawer';
 import Nav from '../nav/nav';
-import {Link} from 'react-router-dom';
+import {Link} from 'gatsby';
 import styled from 'styled-components';
 import {Navbar, NavbarBrand, NavbarBurger, NavbarItem, NavbarMenu} from 'bloomer';
 import Logo from '../logo/Logo';

@@ -3,7 +3,7 @@ import Layout from '../../../components/Layout';
 import {Lock, Users} from 'react-feather';
 import Loading from '../../../components/loading';
 import {Tab, TabLink, TabList, Tabs} from 'bloomer';
-import {UserDetails} from './components';
+import {UserDetails} from '../../../components/modules/accounts';
 import {useApi} from '../../../network';
 import useSWR from 'swr/esm/use-swr';
 import {Tooltip} from 'react-tippy';

@@ -14,7 +14,7 @@ import {ChevronRight} from 'react-feather';
 import SimpleMap from '../../components/map/SimpleMap';
 import Loading from '../../components/loading';
 import {useApi} from '../../network';
-import PayWithMpesaOnlineModal from './PayWithMpesaOnlineModal';
+import PayWithMpesaOnlineModal from '../../components/modals/PayWithMpesaOnlineModal';
 import {ThunkDispatch} from 'redux-thunk';
 import {UserState} from '../../state/reducers/userReducers';
 import {AnyAction} from 'redux';
@@ -29,9 +29,10 @@ import {
 } from '../../state/actions';
 import {useNotify} from '../../hooks';
 import ServerError from '../../assets/images/vectors/dead.svg';
-import LipaNaMpesaSection from './components/LipaNaMpesaSection';
+import LipaNaMpesaSection from '../../components/modules/shipping/LipaNaMpesaSection';
 import humps from '../../helpers/humps';
 import posthog from 'posthog-js';
+import {navigate} from 'gatsby';
 
 // const CompleteOrderValidationSchema = Yup.object({
 //   deliveryLocation: Yup.string().required(),
@@ -40,6 +41,7 @@ import posthog from 'posthog-js';
 
 export default function Shipping(props) {
   const api = useApi();
+
 
   const paramOrderId = props.match.params.orderId;
 
@@ -104,7 +106,7 @@ export default function Shipping(props) {
         prompt={() => (
           <Button
             isColor="primary"
-            onClick={() => props.history.push('/')}
+            onClick={() => navigate('/')}
             style={{marginTop: '12px', width: '250px'}}
           >
             Start Shopping
@@ -197,7 +199,7 @@ export default function Shipping(props) {
         checkout_total: checkout.total,
         payment_type: order.paymentType,
       });
-      props.history.push(`/checkout/shipping/order-completed/${data.uuid}`);
+      navigate(`/checkout/shipping/order-completed/${data.uuid}`);
 
     }catch (e){
       const message = extractErrorMessage(e);

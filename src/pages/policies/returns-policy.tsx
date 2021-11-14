@@ -4,7 +4,7 @@ import {SupportParent} from './shipping-policy';
 import {Return} from '../../constants/icons';
 import SEOHeader from '../../components/SEOHeader';
 import {Container} from 'bloomer';
-import {Link} from 'react-router-dom';
+import {Link} from 'gatsby';
 
 function ReturnsPolicy() {
   return (

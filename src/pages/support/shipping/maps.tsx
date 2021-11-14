@@ -1,6 +1,6 @@
 import React from 'react';
 import {Layout} from '../../../components';
-import CurrentLocationIcon from '../../../assets/images/icons/current-location.svg';
+import CurrentLocationIcon from '../../../assets/images/vectors/icons/current-location.svg';
 
 export default function ShippingMaps(){
 

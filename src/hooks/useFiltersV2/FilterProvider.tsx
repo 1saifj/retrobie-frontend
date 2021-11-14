@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState} from 'react';
 import {FilteredProduct} from '../../types';
 import qs from 'qs';
 import useFilterContext from './useFilterContext';
+import {useLocation} from '@reach/router';
 
 
 export default function ProvideFilters({children}) {
@@ -38,6 +39,8 @@ function useProvideFilters() {
   const [criteriaValues, setCriteriaValues] = useState<Map<string, Set<string | number>>>(null);
   // a list of all the criteria to be applied
   const [allCriteria, setAllCriteria] = useState<Array<string>>([]);
+
+  const location = useLocation();
 
   // this hook is called when allProducts or allCriteria change
   // i.e. when they are set (at any point)
@@ -90,7 +93,7 @@ function useProvideFilters() {
 
   function alterUrlParams(newCriteria: string, value: any): void {
 
-    const appliedCriteria = qs.parse(window.location.search, {ignoreQueryPrefix: true});
+    const appliedCriteria = qs.parse(location.search, {ignoreQueryPrefix: true});
 
     // @ts-ignore
     const appliedParams = new URLSearchParams(appliedCriteria);
@@ -102,12 +105,12 @@ function useProvideFilters() {
       appliedParams.set(newCriteria, value);
     }
 
-    const url = `${window.location.pathname}?${appliedParams.toString()}`;
+    const url = `${location.pathname}?${appliedParams.toString()}`;
 
     window.history.pushState({}, "", url);
 
     // the url params have changed, so we have to parse them again
-    // const newParamCriteria = qs.parse(window.location.search, {ignoreQueryPrefix: true});
+    // const newParamCriteria = qs.parse(location.search, {ignoreQueryPrefix: true});
     // if no criteria has been applied
     // if (!Object.keys(newParamCriteria).length){
     //   // return all the products
@@ -135,7 +138,7 @@ function useProvideFilters() {
 
   function filterChangedProducts() {
     // then parse them again
-    const qsParams = qs.parse(window.location.search, {ignoreQueryPrefix: true});
+    const qsParams = qs.parse(location.search, {ignoreQueryPrefix: true});
 
     // and check if there are any criteria selected
     if (qsParams && Object.keys(qsParams).length) {

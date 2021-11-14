@@ -4,7 +4,7 @@ import {CenterPageContent} from '../support';
 import styled from 'styled-components';
 import {FastDelivery} from '../../constants/icons';
 import {Section} from 'bloomer';
-import {Link} from 'react-router-dom';
+import {Link} from 'gatsby';
 import SEOHeader from '../../components/SEOHeader';
 
 

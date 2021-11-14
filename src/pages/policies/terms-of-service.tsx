@@ -4,7 +4,7 @@ import Layout from '../../components/Layout';
 import SEOHeader from '../../components/SEOHeader';
 import {CenterPageContent} from '../support';
 import {SupportParent} from './shipping-policy';
-import {Link} from 'react-router-dom';
+import {Link} from 'gatsby';
 
 const Tos = () => {
   return (

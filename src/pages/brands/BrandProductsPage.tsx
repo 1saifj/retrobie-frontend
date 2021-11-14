@@ -10,7 +10,7 @@ import {Clown, GrimacingEmoji} from '../../constants/icons';
 import {EmptyState} from '../../components';
 import SEOHeader from '../../components/SEOHeader';
 import useFetchers from '../../hooks/useFetchers/useFetchers';
-import BrandPageHeaderComponent from './components/BrandPageHeaderComponent';
+import BrandPageHeaderComponent from '../../components/modules/brands/BrandPageHeaderComponent';
 import {ProductListWrapper} from '../../components/filters/ProductListWrapper';
 import ProductList from '../../components/filters/ProductList';
 import posthog from 'posthog-js';

@@ -30,7 +30,7 @@ function CartPage(props) {
                 icon={EmptyCart}
                 message={'Do some shopping and check back later.'}
                 prompt={() =>
-                  <Button type={'primary'} onClick={() => props.history.push('/')}
+                  <Button type={'primary'} onClick={() => props.navigate('/')}
                           style={{marginTop: '12px', width: '250px'}}>
                     Start Shopping
                   </Button>

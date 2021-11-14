@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import {Button, Column, Columns, Input} from 'bloomer';
 import {notify} from '../../helpers/views';
 import {extractErrorMessage} from '../../helpers';
-import VerifiedIcon from '../../assets/images/icons/verified.svg';
+// @ts-ignore
+import VerifiedIcon from '../../assets/images/vectors/icons/verified.svg';
 import jwtDecode from 'jwt-decode';
 import * as Yup from 'yup';
 import InputMask from 'react-input-mask';
@@ -14,11 +15,12 @@ import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import {UserState} from '../../state/reducers/userReducers';
 import {EmptyState} from '../../components';
 import {HelpIcon, TickDark} from '../../constants/icons';
-import {Link} from 'react-router-dom';
+import {Link} from 'gatsby';
 import {loginUserAction} from '../../state/actions';
 import {LoginResponseType} from '../../types';
-import qs from 'qs'
-import ConfirmSendVerifyCodeModal from './modals/ConfirmSendVerifyCodeModal';
+import qs from 'qs';
+import ConfirmSendVerifyCodeModal from '../../components/modals/ConfirmSendVerifyCodeModal';
+import {navigate} from 'gatsby';
 
 const FormParent = styled.div`
   display: flex;
@@ -66,6 +68,8 @@ function setFormSubmitted(submitted) {
 export default function VerifyAccount(props) {
   const api = useApi();
   const dispatch = useDispatch();
+
+  const location = props.location;
   const countdownTime = 60;
 
   const [timeRemaining, setTimeRemaining] = useState(0);
@@ -75,7 +79,7 @@ export default function VerifyAccount(props) {
   const [isRequestingTOTP, setIsRequestingTOTP] = useState(false);
   const [isConfirmModalEmailOpen, setIsConfirmModalEmailOpen] = useState(false);
 
-  const accessToken = user?.tokens?.accessToken
+  const accessToken = user?.tokens?.accessToken;
   const decodedAccessToken = accessToken ? jwtDecode(accessToken): undefined;
 
   // Track whether this form has been submitted or not.
@@ -96,7 +100,7 @@ export default function VerifyAccount(props) {
     return undefined;
   });
 
-  const searchQuery = props.history.location.search;
+  const searchQuery = location.search;
 
   useEffect(()=> {
     if (searchQuery){
@@ -213,7 +217,7 @@ export default function VerifyAccount(props) {
                 setSubmitting(false);
                 startTimer();
                 setUserLoggedIn(data);
-                props.history.push('/');
+                navigate('/');
               } catch (e) {
                 setSubmitting(false);
                 const message = extractErrorMessage(e);

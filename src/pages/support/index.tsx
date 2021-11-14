@@ -1,17 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
-import chevron from '../../assets/images/icons/chevron-right.svg';
-import {Link} from 'react-router-dom';
+import chevron from '../../assets/images/vectors/icons/chevron-right.svg';
+import {Link} from 'gatsby';
 import Layout from '../../components/Layout';
 import {HelpIcon} from '../../constants/icons';
 
 function Support() {
-    return (
-      <Layout>
-          <SupportParent>
-              <div style={{textAlign: 'center'}}>
-                  <img src={HelpIcon} alt={'help'} style={{width: '48px'}}/>
-              </div>
+  return (
+    <Layout>
+      <SupportParent>
+        <div style={{textAlign: 'center'}}>
+          <img src={HelpIcon} alt={'help'} style={{width: '48px'}} />
+        </div>
 
               <h1>What do you need help with?</h1>
               <Link to={'/support/making-an-order-for-shoes-sneakers-nairobi'}>

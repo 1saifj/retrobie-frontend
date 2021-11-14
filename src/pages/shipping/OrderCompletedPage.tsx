@@ -7,7 +7,7 @@ import {OrderStatus, PaymentStatus} from '../../types';
 import {UserState} from '../../state/reducers/userReducers';
 import {RootStateOrAny, useSelector} from 'react-redux';
 import {useApi} from '../../hooks';
-import NotFound from '../not-found';
+import NotFound from '../../components/not-found';
 
 const OrderCompletedPage = function(props) {
 

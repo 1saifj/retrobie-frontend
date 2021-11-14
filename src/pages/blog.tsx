@@ -6,8 +6,8 @@ import SEOHeader from '../components/SEOHeader';
 function Blog() {
 
   useEffect(()=> {
-    if (process.env.NODE_ENV === 'production') window.location.replace('https://blog.retrobie.com');
-    else window.location.replace('http://localhost:8000');
+    // if (process.env.NODE_ENV === 'production') window.location.replace('https://blog.retrobie.com');
+    // else window.location.replace('http://localhost:8000');
   }, [])
 
   return (

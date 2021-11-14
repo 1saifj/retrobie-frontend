@@ -12,8 +12,8 @@ import {CartItemType, CartType, ProductType, ProductTypeOptionValue, VariantType
 import useSWR from 'swr';
 import {useNotify, useApi} from '../../hooks';
 import {EmptyState, RetroImage} from '../../components';
-import {ValueProposition, ImageSlider, JSONLD} from './components';
-import {useHistory} from 'react-router';
+import {ValueProposition, ImageSlider, JSONLD} from '../../components/modules/product';
+import {navigate} from 'gatsby';
 import RadioField from '../../components/input/RadioField';
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
@@ -37,14 +37,17 @@ const AddToCartValidationSchema = Yup.object({
  * @param match
  * @constructor
  */
-function ProductPage({match}) {
+function ProductPage(props) {
+  const match = props.match;
   const api = useApi();
   const dispatch = useDispatch();
   const {slug} = match.params;
 
-  const history = useHistory();
+
+  const location = props.location;
   const notify = useNotify();
 
+  const [screenWidth, setScreenWidth] = useState(0);
 
   const [sortedVariants, setSortedVariants] = useState<VariantType[]>([]);
 
@@ -69,8 +72,10 @@ function ProductPage({match}) {
 
   useEffect(() => {
 
+    setScreenWidth(window.screen.width);
+
     if (currentProduct) {
-      const query = history.location.search;
+      const query = location.search;
 
       if (query) {
         const searchParams = new URLSearchParams(query);
@@ -230,7 +235,7 @@ function ProductPage({match}) {
   }
 
   function setVariantIdToUrl(variant: VariantType) {
-    const query = history.location.search;
+    const query = location.search;
     const searchParams = new URLSearchParams(query);
 
     if (searchParams.has('variant')) {
@@ -238,7 +243,7 @@ function ProductPage({match}) {
     }
 
     searchParams.append('variant', variant.uuid);
-    history.replace(`?${searchParams.toString()}`);
+    navigate(`?${searchParams.toString()}`, {replace: true});
   }
 
   function getAvailableSizesForVariant(currentVariant: VariantType) {
@@ -348,7 +353,7 @@ function ProductPage({match}) {
     setConditionModalOpen(open);
   }
 
-  const isSmallScreen = () => window.screen.width < 500;
+  const isSmallScreen = () => screenWidth < 500;
 
   const getCartButtonText = (variant: VariantType, values) => {
 

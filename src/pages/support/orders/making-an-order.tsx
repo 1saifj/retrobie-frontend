@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import {CenterPageContent} from '../index';
 import {SupportParent} from '../../policies/shipping-policy';
 import SEOHeader from '../../../components/SEOHeader';
-import {Link} from 'react-router-dom';
+import {Link} from 'gatsby';
 import {WinkingEmoji} from '../../../constants/icons';
 
 function MakingAnOrder() {

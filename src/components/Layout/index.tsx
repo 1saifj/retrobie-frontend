@@ -7,7 +7,7 @@ import {Transition} from 'react-transition-group';
 import {ErrorIconDark} from '../../constants/icons';
 import {RootStateOrAny, useSelector} from 'react-redux';
 import {UserState} from '../../state/reducers/userReducers';
-import {Link} from 'react-router-dom';
+import {Link} from 'gatsby';
 
 
 const UnverifiedEmailNotification = () => {

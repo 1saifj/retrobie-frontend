@@ -9,7 +9,7 @@ import { replaceNonAlphanumeric} from '../../helpers';
 import {notify} from '../../helpers/views';
 import {Eye} from '../../constants/icons';
 import * as Yup from 'yup';
-import {Link, useHistory} from 'react-router-dom';
+import {Link, navigate} from 'gatsby';
 import {loginUserAction} from '../../state/actions';
 import {useDispatch} from 'react-redux';
 import {useApi} from '../../network';
@@ -68,7 +68,7 @@ const RegisterUser = ({hideFooter}) => {
 
   const api = useApi();
 
-  const history = useHistory();
+
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
@@ -119,7 +119,7 @@ const RegisterUser = ({hideFooter}) => {
                   // // We redirect them to the 'verify your account' page
                   // // But if they navigate away, they will still be able to
                   // // Access certain sections of the app.
-                  history.push('/accounts/verify');
+                  navigate('/accounts/verify');
 
                 } catch (e) {
                   // if there is a validation error

@@ -2,7 +2,7 @@ import React from 'react';
 import {Notification as BloomerNotification} from 'bloomer';
 import {AlertCircle, Check, CheckCircle, Info, XCircle} from 'react-feather';
 import {ErrorIconLight, WarningIconLight} from '../../constants/icons';
-import Tick from '../../assets/images/icons/tick.svg';
+import Tick from '../../assets/images/vectors/icons/tick.svg';
 
 type NotificationType = 'info' | 'error' | 'success' | 'warning';
 

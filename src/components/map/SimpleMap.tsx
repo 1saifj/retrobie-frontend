@@ -8,7 +8,7 @@ import {notify} from '../../helpers/views';
 import styled from 'styled-components';
 import axios from 'axios';
 import AutoCompleteInput from '../input/AutoCompleteInput';
-import CurrentLocationIcon from '../../assets/images/icons/current-location.svg';
+import CurrentLocationIcon from '../../assets/images/vectors/icons/current-location.svg';
 import {HashLink} from 'react-router-hash-link';
 
 type LocationIQPlace = {

@@ -102,7 +102,7 @@ const DesktopFiltersContainer = styled.div`
  * These should be the same as the set of keys in the {@link ProductType} object.
  * @param {ProductType[]} props.products - a list of products to be filtered through
  */
-const BrandProductsFilter =  function({allCriteria, products}: {allCriteria: Array<string>, products: FilteredProduct[]}) {
+const BrandProductsFilter = function(props) {
 
   const {
     setAllCriteria,
@@ -111,13 +111,15 @@ const BrandProductsFilter =  function({allCriteria, products}: {allCriteria: Arr
     setAllProducts,
   } = useFiltersV2();
 
-  const criteriaLength = allCriteria.length;
+  const criteriaLength = props.allCriteria.length;
+
+  const location = props.location;
 
   useEffect(() => {
-    // if criteria has been provided in props
-      if (allCriteria?.length) {
+      // if criteria has been provided in props
+      if (props.allCriteria?.length) {
         // set it to state
-        setAllCriteria(allCriteria)
+        setAllCriteria(props.allCriteria);
       }
     },
     // if the length of the criteria props changes, re-render this component.
@@ -126,12 +128,12 @@ const BrandProductsFilter =  function({allCriteria, products}: {allCriteria: Arr
   );
 
   useEffect(() => {
-    if (products) {
-      setAllProducts(products);
+    if (props.products) {
+      setAllProducts(props.products);
     }
-  }, [products]);
+  }, [props.products]);
 
-  if (!allCriteria?.length) {
+  if (!props.allCriteria?.length) {
     return (
       <>
         <div>No criteria provided.</div>
@@ -158,7 +160,7 @@ const BrandProductsFilter =  function({allCriteria, products}: {allCriteria: Arr
                     Array.from(criteriaMap.get(criteriaKey).keys())?.map((criteriaValue, index) => (
                       <FilterItem
                         applied={(() => {
-                          const params = qs.parse(window.location.search, {
+                          const params = qs.parse(location.search, {
                             ignoreQueryPrefix: true,
                           });
                           return String(criteriaValue) === String(params[criteriaKey]);
@@ -202,21 +204,5 @@ const FilterItem = styled.div<{applied?: boolean}>`
     cursor: pointer;
     border: 1px solid var(--color-border-lightgray);
   }
-`;
-
-const FiltersParent = styled(Container)`
-.product__filters {
-  display: flex;
-  gap: 64px;
-  flex-wrap: wrap;
-
-  @media screen and (max-width: 800px) {
-    flex-direction: column;
-    gap: 32px;
-  }
-  }
-}
-
-
 `;
 

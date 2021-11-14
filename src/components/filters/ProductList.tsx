@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {Link} from 'react-router-dom';
+import {Link} from 'gatsby';
 import {Tag} from 'bloomer';
 import {EmptyState, RetroImage} from '../index';
 import defaultHelpers, {formatNumberWithCommas} from '../../helpers';

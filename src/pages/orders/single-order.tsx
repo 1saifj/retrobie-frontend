@@ -14,7 +14,7 @@ import {useNotify} from '../../hooks';
 import {UserState} from '../../state/reducers/userReducers';
 import {RootStateOrAny, useSelector} from 'react-redux';
 import {mapStatus} from './index';
-import CustomModal from '../../components/CustomModal';
+import CustomModal from '../../components/modals/CustomModal';
 
 const SingleOrder= function({match: {params: {orderId}}}) {
 

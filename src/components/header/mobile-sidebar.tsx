@@ -4,7 +4,7 @@ import {Archive, ChevronRight, Smartphone, X} from 'react-feather';
 import React from 'react';
 import {UserState} from '../../state/reducers/userReducers';
 import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
-import {Link} from 'react-router-dom';
+import {Link} from 'gatsby';
 import {useApi} from '../../hooks';
 import {NormalCart} from '../../constants/icons';
 import {toggleSidebarAction} from '../../state/actions';

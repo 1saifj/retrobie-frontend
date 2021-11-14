@@ -2,7 +2,7 @@ import React from 'react';
 import {Layout} from '../../components';
 import {CenterPageContent} from '../support';
 import {SupportParent} from './shipping-policy';
-import {Link} from 'react-router-dom';
+import {Link} from 'gatsby';
 import SEOHeader from '../../components/SEOHeader';
 
 export default function() {

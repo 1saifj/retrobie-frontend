@@ -1,7 +1,7 @@
 import { toast, ToastOptions } from 'react-toastify';
 import React from 'react';
-import { ErrorIconLight, InfoLight, WarningIconLight } from '../constants/icons';
-import Tick from '../assets/images/icons/tick.svg';
+import {ErrorIconLight, InfoLight, WarningIconLight} from '../constants/icons';
+import Tick from '../assets/images/vectors/icons/tick.svg';
 import Loading from '../components/loading';
 
 const CloseButton = ({ closeToast }) => <button className="delete" onClick={closeToast} />;

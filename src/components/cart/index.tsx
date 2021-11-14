@@ -9,12 +9,11 @@ import {
   removeItemFromCartAction,
   toggleSidebarAction,
 } from '../../state/actions';
-import PropTypes from 'prop-types';
 import {Button} from 'bloomer';
-import Manga from '../../assets/images/icons/marginalia-online-shopping.png';
+import Manga from '../../assets/images/vectors/icons/marginalia-online-shopping.png';
 import {EmptyState} from '../../components';
 import {notify} from '../../helpers/views';
-import {useHistory} from 'react-router';
+import {navigate} from 'gatsby';
 import {Minus, Plus, X} from 'react-feather';
 import {CartItemType, CartType, ServerCartType} from '../../types';
 import Loading from '../loading';
@@ -74,22 +73,22 @@ export function isProductInStock(
   }
 }
 
-const TotalSection = ({hideCheckoutButton, onCheckout, cart, checkoutButtonDisabled, checkoutButtonIsLoading, checkoutButtonText}) => {
+const TotalSection = (props) => {
 
   const dispatch = useDispatch();
 
   const openOrCloseSidebar = (open: boolean) => dispatch(toggleSidebarAction({open}));
 
-  const history = useHistory();
+
+  const location = props.location;
 
   function redirectOrCloseSidebar(path: string) {
     openOrCloseSidebar(false);
 
-    if (history.location.pathname === path) {
+    if (location.pathname === path) {
       openOrCloseSidebar(false);
     } else {
-      if (history) history.push(path);
-      else window.location.href = path;
+      navigate(path);
     }
   }
 
@@ -97,7 +96,7 @@ const TotalSection = ({hideCheckoutButton, onCheckout, cart, checkoutButtonDisab
     posthog.capture('checked out cart', {
       cart_total: cart.total,
     });
-    await onCheckout?.(cart);
+    await props.onCheckout?.(cart);
   };
 
   return (
@@ -110,7 +109,7 @@ const TotalSection = ({hideCheckoutButton, onCheckout, cart, checkoutButtonDisab
             fontSize: '18px',
           }}
         >
-          Ksh. {formatNumberWithCommas(cart.total)}
+          Ksh. {formatNumberWithCommas(props.cart.total)}
         </h3>
         <>
           {/*
@@ -121,39 +120,39 @@ const TotalSection = ({hideCheckoutButton, onCheckout, cart, checkoutButtonDisab
               */}
         </>
       </div>
-      {!hideCheckoutButton && !onCheckout && (
+      {!props.hideCheckoutButton && !props.onCheckout && (
         <div>
           <Button
             isColor="primary"
-            disabled={checkoutButtonDisabled}
-            onClick={() => redirectOrCloseSidebar(`/checkout/${cart.id}`)}
-            isLoading={checkoutButtonIsLoading}
+            disabled={props.checkoutButtonDisabled}
+            onClick={() => redirectOrCloseSidebar(`/checkout/${props.cart.id}`)}
+            isLoading={props.checkoutButtonIsLoading}
             style={{
               width: '100%',
               fontSize: 18,
               fontWeight: 'bold',
             }}
           >
-            {checkoutButtonText || 'PROCEED TO CHECKOUT'}
+            {props.checkoutButtonText || 'PROCEED TO CHECKOUT'}
           </Button>
 
         </div>
       )}
 
-      {!hideCheckoutButton && onCheckout && (
+      {!props.hideCheckoutButton && props.onCheckout && (
         <div>
           <Button
             isColor="primary"
-            disabled={checkoutButtonDisabled}
-            isLoading={checkoutButtonIsLoading}
+            disabled={props.checkoutButtonDisabled}
+            isLoading={props.checkoutButtonIsLoading}
             style={{
               width: '100%',
               fontSize: 18,
               fontWeight: 'bold',
             }}
-            onClick={() => onCheckoutCart(cart)}
+            onClick={() => onCheckoutCart(props.cart)}
           >
-            {checkoutButtonText || 'PROCEED TO CHECKOUT'}
+            {props.checkoutButtonText || 'PROCEED TO CHECKOUT'}
           </Button>
         </div>
       )}
@@ -260,20 +259,7 @@ const CartItem = ({cart, cartItem, itemSize, bordered, redirectOrCloseSidebar, h
 };
 
 export default function Cart(
-  {
-    source,
-    size,
-    bordered,
-    hideRemoveButton,
-    hideAddButton,
-    hideCheckoutButton,
-    hideCloseButton,
-    showTitle,
-    onCheckout,
-    checkoutButtonText,
-    checkoutButtonDisabled,
-    checkoutButtonIsLoading,
-  }: {
+  props: {
     source?: ServerCartType
     size?: 'L' | 'S';
     bordered?: boolean;
@@ -286,36 +272,37 @@ export default function Cart(
     checkoutButtonText?: string;
     checkoutButtonDisabled?: boolean;
     checkoutButtonIsLoading?: boolean;
+    location?: any
   }) {
 
 
   const cartState: CartType = useSelector((state: RootStateOrAny) => state.cart);
   const [cart, setCart] = useState<CartType>(null);
   const dispatch = useDispatch();
-  const history = useHistory();
 
-  useEffect(()=> {
-    if (source?.cartItems) {
+  const location = props.location;
+
+  useEffect(() => {
+    if (props.source?.cartItems) {
       setCart({
-        ...source,
-        id: source.uuid,
-        items: source.cartItems,
+        ...(props.source),
+        id: props.source.uuid,
+        items: props.source.cartItems,
       });
     } else {
-      setCart(cartState)
+      setCart(cartState);
     }
-  }, [source, cartState])
+  }, [props.source, cartState]);
 
 
 
   function redirectOrCloseSidebar(path: string) {
     openOrCloseSidebar(false);
 
-    if (history.location.pathname === path) {
+    if (location.pathname === path) {
       openOrCloseSidebar(false);
     } else {
-      if (history) history.push(path);
-      else window.location.href = path;
+      navigate(path);
     }
   }
 
@@ -328,7 +315,7 @@ export default function Cart(
   return (
     <CartParent>
       {
-        !hideCloseButton && (
+        !props.hideCloseButton && (
           <div
             style={{display: 'flex'}}
             onClick={() => openOrCloseSidebar(false)}
@@ -341,7 +328,7 @@ export default function Cart(
         )
       }
       {
-        showTitle && (
+        props.showTitle && (
           <header>
             <h2 style={{color: '#222'}}>Your Cart</h2>
           </header>
@@ -354,20 +341,20 @@ export default function Cart(
               cart.items.map(cartItem => (
                 <CartItem
                   cartItem={cartItem}
-                  bordered={bordered}
-                  hideAddButton={hideAddButton}
-                  hideRemoveButton={hideRemoveButton}
-                  itemSize={size}
+                  bordered={props.bordered}
+                  hideAddButton={props.hideAddButton}
+                  hideRemoveButton={props.hideRemoveButton}
+                  itemSize={props.size}
                   redirectOrCloseSidebar={redirectOrCloseSidebar}
                   cart={cart}
                 />
               ))}
             <TotalSection
-              checkoutButtonIsLoading={checkoutButtonIsLoading}
-              checkoutButtonDisabled={checkoutButtonDisabled}
-              checkoutButtonText={checkoutButtonText}
-              hideCheckoutButton={hideCheckoutButton}
-              onCheckout={onCheckout}
+              checkoutButtonIsLoading={props.checkoutButtonIsLoading}
+              checkoutButtonDisabled={props.checkoutButtonDisabled}
+              checkoutButtonText={props.checkoutButtonText}
+              hideCheckoutButton={props.hideCheckoutButton}
+              onCheckout={props.onCheckout}
               cart={cart}
             />
           </CartContent>
